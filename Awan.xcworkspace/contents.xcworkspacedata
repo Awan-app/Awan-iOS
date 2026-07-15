@@ -2,6 +2,18 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Modules/Presentation">
+   </FileRef>
+   <FileRef
+      location = "group:Modules/Domain">
+   </FileRef>
+   <FileRef
+      location = "group:Modules/Network">
+   </FileRef>
+   <FileRef
+      location = "group:Modules/Data">
+   </FileRef>
+   <FileRef
       location = "group:Modules/Common">
    </FileRef>
    <FileRef
