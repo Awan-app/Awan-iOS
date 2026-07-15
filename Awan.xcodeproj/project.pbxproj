@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6D0C30983007943A004492E4 /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = 6D0C30973007943A004492E4 /* Common */; };
+		6D0C309A30079440004492E4 /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 6D0C309930079440004492E4 /* Presentation */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		3E51E43D30079E77009EDCE9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D0C309A30079440004492E4 /* Presentation in Frameworks */,
+				6D0C30983007943A004492E4 /* Common in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +85,7 @@
 				3E51E42C30079E70009EDCE9 /* Awan */,
 				3E51E43F30079E77009EDCE9 /* AwanTests */,
 				3E51E44930079E77009EDCE9 /* AwanUITests */,
+				6D0C309630079430004492E4 /* Frameworks */,
 				3E51E42B30079E70009EDCE9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +98,13 @@
 				3E51E44630079E77009EDCE9 /* AwanUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6D0C309630079430004492E4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +127,8 @@
 			);
 			name = Awan;
 			packageProductDependencies = (
+				6D0C30973007943A004492E4 /* Common */,
+				6D0C309930079440004492E4 /* Presentation */,
 			);
 			productName = Awan;
 			productReference = 3E51E42A30079E70009EDCE9 /* Awan.app */;
@@ -552,6 +569,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6D0C30973007943A004492E4 /* Common */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Common;
+		};
+		6D0C309930079440004492E4 /* Presentation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Presentation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3E51E42230079E70009EDCE9 /* Project object */;
 }
