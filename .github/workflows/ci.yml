@@ -17,7 +17,6 @@ on:
       - 'LICENSE'
   workflow_dispatch: {}
 
-# Cancel any in-progress run on the same branch/PR when a new commit is pushed
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -48,7 +47,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Select Xcode version (verified, with a clear failure if missing)
+      # 2. Select Xcode version
       - name: Set Xcode Version
         uses: maxim-lobanov/setup-xcode@v1
         with:
@@ -63,8 +62,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-
 
-      # 4. Resolve an available simulator dynamically instead of hardcoding
-      #    a device/OS combo that may not exist on the runner image.
+      # 4. Resolve an available simulator dynamically
       - name: Select Simulator
         id: simulator
         run: |
@@ -81,7 +79,6 @@ for runtime, devices in data['devices'].items():
             candidates.append((runtime, d['name'], d['udid']))
 if not candidates:
     sys.exit('No available iOS iPhone simulator found')
-# Prefer the newest runtime, then the newest-looking device name
 candidates.sort(reverse=True)
 runtime, name, udid = candidates[0]
 print(f'Selected {name} on {runtime}', file=sys.stderr)
@@ -89,7 +86,7 @@ print(udid)
 ")
           echo "udid=$DEVICE_UUID" >> "$GITHUB_OUTPUT"
 
-      # 5. Build first, separately from testing, for a clearer failure signal
+      # 5. Build first, separately from testing
       - name: Build for Testing
         run: |
           xcodebuild build-for-testing \
@@ -100,7 +97,7 @@ print(udid)
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO
 
-      # 6. Run Unit/UI Tests (AwanTests & AwanUITests) without rebuilding
+      # 6. Run Unit/UI Tests without rebuilding
       - name: Run Tests
         run: |
           xcodebuild test-without-building \
@@ -111,8 +108,7 @@ print(udid)
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO
 
-      # 7. Upload the .xcresult bundle so failures can be inspected in Xcode,
-      #    even when the previous step failed.
+      # 7. Upload the .xcresult bundle
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
