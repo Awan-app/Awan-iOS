@@ -7,13 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4CA335BA3007FBC3001DBF8D /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335B93007FBC3001DBF8D /* Shimmer */; };
+		4CA335BD3007FBDC001DBF8D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335BC3007FBDC001DBF8D /* Kingfisher */; };
+		4CA335C33007FC20001DBF8D /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335C23007FC20001DBF8D /* Alamofire */; };
+		4CA335C63007FC41001DBF8D /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335C53007FC41001DBF8D /* Swinject */; };
 		6D0C30983007943A004492E4 /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = 6D0C30973007943A004492E4 /* Common */; };
 		6D0C309A30079440004492E4 /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 6D0C309930079440004492E4 /* Presentation */; };
-		4CA3791C3007BFF400AE86E0 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA3791B3007BFF400AE86E0 /* Swinject */; };
-		4CA379223007CC9900AE86E0 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA379213007CC9900AE86E0 /* Alamofire */; };
-		4CA379253007CEBB00AE86E0 /* SwiftLintBinary in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA379243007CEBB00AE86E0 /* SwiftLintBinary */; };
-		4CA379283007DBB600AE86E0 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA379273007DBB600AE86E0 /* Kingfisher */; };
-		4CA3792B3007E10D00AE86E0 /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA3792A3007E10D00AE86E0 /* Shimmer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,13 +61,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CA335BD3007FBDC001DBF8D /* Kingfisher in Frameworks */,
+				4CA335C63007FC41001DBF8D /* Swinject in Frameworks */,
+				4CA335BA3007FBC3001DBF8D /* Shimmer in Frameworks */,
+				4CA335C33007FC20001DBF8D /* Alamofire in Frameworks */,
 				6D0C309A30079440004492E4 /* Presentation in Frameworks */,
 				6D0C30983007943A004492E4 /* Common in Frameworks */,
-				4CA379253007CEBB00AE86E0 /* SwiftLintBinary in Frameworks */,
-				4CA3792B3007E10D00AE86E0 /* Shimmer in Frameworks */,
-				4CA379223007CC9900AE86E0 /* Alamofire in Frameworks */,
-				4CA3791C3007BFF400AE86E0 /* Swinject in Frameworks */,
-				4CA379283007DBB600AE86E0 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,11 +137,10 @@
 			packageProductDependencies = (
 				6D0C30973007943A004492E4 /* Common */,
 				6D0C309930079440004492E4 /* Presentation */,
-				4CA3791B3007BFF400AE86E0 /* Swinject */,
-				4CA379213007CC9900AE86E0 /* Alamofire */,
-				4CA379243007CEBB00AE86E0 /* SwiftLintBinary */,
-				4CA379273007DBB600AE86E0 /* Kingfisher */,
-				4CA3792A3007E10D00AE86E0 /* Shimmer */,
+				4CA335B93007FBC3001DBF8D /* Shimmer */,
+				4CA335BC3007FBDC001DBF8D /* Kingfisher */,
+				4CA335C23007FC20001DBF8D /* Alamofire */,
+				4CA335C53007FC41001DBF8D /* Swinject */,
 			);
 			productName = Awan;
 			productReference = 3E51E42A30079E70009EDCE9 /* Awan.app */;
@@ -228,11 +225,10 @@
 			mainGroup = 3E51E42130079E70009EDCE9;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				4CA3791A3007BFF400AE86E0 /* XCRemoteSwiftPackageReference "Swinject" */,
-				4CA379203007CC9900AE86E0 /* XCRemoteSwiftPackageReference "Alamofire" */,
-				4CA379233007CEBB00AE86E0 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
-				4CA379263007DBB600AE86E0 /* XCRemoteSwiftPackageReference "Kingfisher" */,
-				4CA379293007E10D00AE86E0 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
+				4CA335B83007FBC3001DBF8D /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
+				4CA335BB3007FBDC001DBF8D /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				4CA335C13007FC20001DBF8D /* XCRemoteSwiftPackageReference "Alamofire" */,
+				4CA335C43007FC41001DBF8D /* XCRemoteSwiftPackageReference "Swinject" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3E51E42B30079E70009EDCE9 /* Products */;
@@ -592,48 +588,8 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCSwiftPackageProductDependency section */
-		6D0C30973007943A004492E4 /* Common */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Common;
-		};
-		6D0C309930079440004492E4 /* Presentation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Presentation;
 /* Begin XCRemoteSwiftPackageReference section */
-		4CA3791A3007BFF400AE86E0 /* XCRemoteSwiftPackageReference "Swinject" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Swinject/Swinject.git";
-			requirement = {
-				kind = exactVersion;
-				version = 2.10.0;
-			};
-		};
-		4CA379203007CC9900AE86E0 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
-			requirement = {
-				kind = exactVersion;
-				version = 5.12.0;
-			};
-		};
-		4CA379233007CEBB00AE86E0 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
-			requirement = {
-				kind = exactVersion;
-				version = 0.65.0;
-			};
-		};
-		4CA379263007DBB600AE86E0 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
-			requirement = {
-				kind = exactVersion;
-				version = 8.10.0;
-			};
-		};
-		4CA379293007E10D00AE86E0 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */ = {
+		4CA335B83007FBC3001DBF8D /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/markiv/SwiftUI-Shimmer.git";
 			requirement = {
@@ -641,33 +597,60 @@
 				version = 1.5.1;
 			};
 		};
+		4CA335BB3007FBDC001DBF8D /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = exactVersion;
+				version = 8.10.0;
+			};
+		};
+		4CA335C13007FC20001DBF8D /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = exactVersion;
+				version = 5.12.0;
+			};
+		};
+		4CA335C43007FC41001DBF8D /* XCRemoteSwiftPackageReference "Swinject" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Swinject/Swinject.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.10.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4CA3791B3007BFF400AE86E0 /* Swinject */ = {
+		4CA335B93007FBC3001DBF8D /* Shimmer */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4CA3791A3007BFF400AE86E0 /* XCRemoteSwiftPackageReference "Swinject" */;
-			productName = Swinject;
+			package = 4CA335B83007FBC3001DBF8D /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;
+			productName = Shimmer;
 		};
-		4CA379213007CC9900AE86E0 /* Alamofire */ = {
+		4CA335BC3007FBDC001DBF8D /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4CA379203007CC9900AE86E0 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
-		};
-		4CA379243007CEBB00AE86E0 /* SwiftLintBinary */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4CA379233007CEBB00AE86E0 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
-			productName = SwiftLintBinary;
-		};
-		4CA379273007DBB600AE86E0 /* Kingfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4CA379263007DBB600AE86E0 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			package = 4CA335BB3007FBDC001DBF8D /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
 		};
-		4CA3792A3007E10D00AE86E0 /* Shimmer */ = {
+		4CA335C23007FC20001DBF8D /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4CA379293007E10D00AE86E0 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;
-			productName = Shimmer;
+			package = 4CA335C13007FC20001DBF8D /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		4CA335C53007FC41001DBF8D /* Swinject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CA335C43007FC41001DBF8D /* XCRemoteSwiftPackageReference "Swinject" */;
+			productName = Swinject;
+		};
+		6D0C30973007943A004492E4 /* Common */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Common;
+		};
+		6D0C309930079440004492E4 /* Presentation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Presentation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
