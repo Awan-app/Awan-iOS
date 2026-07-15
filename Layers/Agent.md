@@ -1,10 +1,8 @@
 # Awan Layer Guide For Agents
 
-This guide defines ownership and allowed dependencies for the layer-first modules in Awan.
+This guide defines ownership and allowed dependencies for the layer-first modules. It contains technical conventions only; product behavior and domain algorithms belong in dedicated specifications.
 
 ## Standard Feature Placement
-
-A feature spans the existing layer packages instead of creating a feature package:
 
 ```text
 Modules/Common/Sources/Common/<SharedArea>
@@ -14,11 +12,11 @@ Modules/Domain/Sources/Domain/<Feature>
 Modules/Presentation/Sources/Presentation/<Feature>
 ```
 
-Only create folders in layers the feature actually needs.
+Create folders only in the layers a feature actually needs.
 
 ## Domain
 
-Purpose: business meaning and deterministic behavior.
+Purpose: business meaning, rules, and application operations.
 
 Typical folders:
 
@@ -33,26 +31,26 @@ Domain/<Feature>/
 
 Allowed:
 
-- Entities, value objects, and domain errors.
+- Entities and value objects.
 - Repository protocols.
-- Use-case protocols and implementations.
-- Validation and deterministic scheduling algorithms.
-- Foundation value types when platform-neutral.
+- Use cases and domain services.
+- Business validation and domain errors.
 
 Not allowed:
 
-- SwiftUI, Observation, navigation routes, or view state.
-- SwiftData/Core Data managed models.
-- URLSession, HTTP status handling, or DTOs.
+- SwiftUI, Combine presentation state, navigation routes, or view models.
+- Persistence models or queries.
+- URLSession, HTTP behavior, or DTOs.
 - Concrete repository implementations.
 - DI containers.
 
-Rules:
+Conventions:
 
-- Keep the Local Conflict Engine pure Swift and independently testable.
-- Prefer immutable `Equatable`, `Sendable` structs.
-- Use meaningful domain types rather than primitive strings for zone, priority, recurrence, and sync-independent identifiers.
-- Do not put display strings in Domain errors; map them in Presentation.
+- Prefer immutable `Equatable`, `Sendable` value types.
+- Keep use cases focused on one operation.
+- Express important concepts with domain types instead of unrelated primitives.
+- Return domain errors; Presentation maps them to user-facing text.
+- Unit-test business rules directly in Domain.
 
 ## Network
 
@@ -70,28 +68,28 @@ Network/<Feature>/
 
 Allowed:
 
-- URLSession/HTTP client behavior.
+- URLSession and HTTP client behavior.
 - Endpoint paths, methods, headers, and encoding.
 - Codable request/response DTOs.
-- Transport errors, authentication refresh, cancellation, and retry policy.
+- Transport errors, authentication mechanics, cancellation, and retry mechanics.
 
 Not allowed:
 
-- Domain use cases or scheduling rules.
-- SwiftUI and view state.
-- Local database queries.
-- Mapping policy that requires business decisions.
+- Business rules or use cases.
+- SwiftUI, view models, or UI state.
+- Persistence queries.
+- Domain decision-making.
 
-Rules:
+Conventions:
 
 - Keep secrets out of source and logs.
-- Keep `/v1/parse`, `/v1/sync`, and `/v1/auth/*` behind typed endpoint APIs.
-- Treat the AI task-breakdown response as a versioned wire contract.
-- Do not expose DTOs outside Network/Data integration boundaries.
+- Expose typed transport APIs.
+- Keep DTOs within the Network/Data boundary.
+- Map transport failures before they cross into Domain-facing repository APIs.
 
 ## Data
 
-Purpose: concrete repository behavior, persistence, mapping, and synchronization.
+Purpose: concrete repository behavior, persistence, mapping, and data coordination.
 
 Typical folders:
 
@@ -101,37 +99,33 @@ Data/<Feature>/
 |-- Models
 |-- Mappers
 |-- Repositories
-|-- Persistence
-`-- Sync
+`-- Persistence
 ```
 
 Allowed:
 
 - Implement Domain repository protocols.
 - Import Domain and Network.
-- Define SwiftData/Core Data models.
-- Read/write local storage.
+- Define persistence models and queries.
 - Call Network clients.
 - Map DTOs and persistence records to Domain entities.
-- Queue offline mutations and reconcile server state.
+- Coordinate local and remote data sources according to approved requirements.
 
 Not allowed:
 
-- SwiftUI views, screen state, or navigation.
-- Business rules that belong in a use case or conflict engine.
-- Leaking DTOs or persistence models to Domain/Presentation.
+- SwiftUI, view models, screen state, or navigation.
+- Business rules that belong in entities, use cases, or domain services.
+- Leaking DTOs or persistence models to Domain or Presentation.
 
-Rules:
+Conventions:
 
-- Read UI-facing state from local persistence.
-- Apply remote results to the local store, then let observation update the UI.
 - Keep mapping explicit and tested.
-- Hide Last-Write-Wins and sync-state details behind repositories.
-- Use an actor or another reviewed concurrency-safe boundary for the sync queue.
+- Keep concurrency-sensitive data coordination behind an actor or another reviewed safe boundary.
+- Repositories answer Domain contracts; they do not decide presentation behavior.
 
 ## Presentation
 
-Purpose: user interaction, UI state, and navigation.
+Purpose: user interaction, UI state, formatting, and navigation.
 
 Typical folders:
 
@@ -148,45 +142,47 @@ Presentation/<Feature>/
 Allowed:
 
 - SwiftUI views.
-- `@Observable`, `@MainActor` view models.
-- UI state and formatting.
+- Combine-based `ObservableObject` view models.
+- `@Published` UI state.
+- UI formatting and presentation-only transformations.
 - Typed routes and coordinators.
-- User intents that invoke use cases.
+- Calling injected Domain use cases.
 
 Not allowed:
 
-- Direct URLSession calls.
-- SwiftData/Core Data fetch/save behavior in views.
-- Constructing concrete repositories or data sources.
-- JSON/DTO mapping.
-- Core scheduling algorithms.
+- The Observation framework or `@Observable`.
+- Business logic, domain validation, or domain calculations in view models.
+- Direct networking or persistence access.
+- Constructing repositories, data sources, or network clients.
+- DTO or persistence-model mapping.
 
-Rules:
+Conventions:
 
-- Inject Domain use cases through initializers.
+- Mark view models `@MainActor`.
+- Inject use cases through initializers.
+- View models coordinate calls and publish UI state; use cases make business decisions.
 - Keep views declarative.
-- Model idle/loading/content/empty/failure states intentionally.
-- Keep coordinators responsible for paths, sheets, and auth/main flow changes.
-- Keep UI code accessible and localization-ready.
+- Model loading, content, empty, and failure states intentionally.
+- Keep coordinators responsible for navigation paths and modal presentation.
+- Keep UI accessible and localization-ready.
 
 ## Common
 
-Purpose: stable shared primitives and reusable UI infrastructure.
+Purpose: stable shared primitives with multiple consumers.
 
 Allowed:
 
-- Coordinator contracts used across presentation flows.
+- Shared coordinator contracts.
 - Design-system tokens and reusable non-feature UI controls.
-- Stable utilities needed by multiple real consumers.
+- Small stable utilities needed by multiple packages.
 
 Not allowed:
 
-- Feature-specific business logic.
-- A generic home for helpers used once.
-- Network DTOs or persistence models.
-- Concrete repositories.
+- Feature-specific behavior or business rules.
+- Helpers with only one consumer.
+- DTOs, persistence models, or repositories.
 
-Rule of thumb: require at least two genuine consumers and a stable abstraction before moving code to Common.
+Require at least two genuine consumers and a stable abstraction before moving code to Common.
 
 ## App Composition Root
 
@@ -195,14 +191,13 @@ Purpose: construct the dependency graph and configure application services.
 Allowed:
 
 - Create Network clients and Data repositories.
-- Inject repository-backed use cases into Presentation.
-- Configure SwiftData/Core Data containers.
-- Register background tasks and notifications.
-- Install the root coordinator into the SwiftUI environment.
+- Create use cases and inject them into Presentation.
+- Configure persistence and other app-wide platform services.
+- Install the root coordinator.
 
 Not allowed:
 
-- Feature business rules.
+- Business rules.
 - DTO/domain mapping.
 - Reusable screen implementation.
 
@@ -210,25 +205,23 @@ Use constructor injection. Do not add a service locator or DI framework without 
 
 ## Placement Cheat Sheet
 
-- New entity/value object: `Domain/<Feature>/Entities`.
-- New business operation: `Domain/<Feature>/UseCases`.
-- New repository contract: `Domain/<Feature>/Repositories`.
-- New REST DTO/endpoint: `Network/<Feature>`.
-- New remote/local source or mapper: `Data/<Feature>`.
-- New repository implementation: `Data/<Feature>/Repositories`.
-- New SwiftData/Core Data model: `Data/<Feature>/Persistence`.
-- New screen/view model: `Presentation/<Feature>`.
-- New navigation destination: `Presentation/Navigation` or the feature's navigation folder.
-- New reusable theme primitive: `Common/DesignSystem` only after it has multiple consumers.
+- Entity/value object: `Domain/<Feature>/Entities`.
+- Business operation: `Domain/<Feature>/UseCases`.
+- Repository contract: `Domain/<Feature>/Repositories`.
+- REST DTO or endpoint: `Network/<Feature>`.
+- Remote/local data source or mapper: `Data/<Feature>`.
+- Repository implementation: `Data/<Feature>/Repositories`.
+- Persistence model: `Data/<Feature>/Persistence`.
+- Screen or view model: `Presentation/<Feature>`.
+- Navigation destination: `Presentation/Navigation` or the feature navigation folder.
+- Shared theme primitive: `Common/DesignSystem` after multiple consumers exist.
 
 ## Cross-Layer Review Checklist
 
-Before finishing a feature:
-
 1. Domain has no UI, persistence, or transport imports.
 2. Presentation depends on abstractions rather than concrete Data types.
-3. Network DTOs and persistence records stop at Data mappers.
-4. Local persistence remains the source of truth.
-5. Scheduling behavior is deterministic and tested outside the UI.
-6. App composition is the only place that knows concrete implementations.
-7. Public declarations are limited to real package boundaries.
+3. View models contain no business logic.
+4. Network DTOs and persistence records stop at Data mappers.
+5. App composition is the only place that knows all concrete implementations.
+6. Public declarations are limited to necessary package boundaries.
+7. Tests are written at the layer where the behavior belongs.

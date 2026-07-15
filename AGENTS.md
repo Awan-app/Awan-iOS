@@ -1,23 +1,26 @@
 # Awan iOS Agent Instructions
 
-This file is the repository-level source of working instructions for Codex, Antigravity CLI, and other agents that support `AGENTS.md`. Read `Design.md`, `Layers/Agent.md`, and `Modules/UI_MODULE_STRUCTURE.md` before architecture-level work.
+This file defines repository workflow, architecture boundaries, and coding conventions for Codex, Antigravity CLI, and other coding agents that support `AGENTS.md`.
 
-## First Moves
+These instructions do not define product behavior or business rules. Use the relevant specification, ticket, or dedicated domain document for those decisions. Never infer or add product behavior from this file.
 
-Before editing:
+Read `Design.md`, `Layers/Agent.md`, and `Modules/UI_MODULE_STRUCTURE.md` before architecture-level work.
 
-- Run `git status --short` and preserve unrelated or uncommitted user changes.
+## Before Editing
+
+- Run `git status --short` and preserve unrelated user changes.
 - Confirm the active branch and fetch the latest remote state.
-- Inspect the relevant `Package.swift` and nearby files before choosing a pattern.
+- Inspect the relevant `Package.swift` and nearby code before choosing a pattern.
 - Prefer `rg` and `rg --files` for repository search.
 - Keep changes scoped to the active Jira ticket.
-- Do not edit generated build artifacts, `.build`, `.swiftpm`, `DerivedData`, `xcuserdata`, or secrets.
+- Do not edit generated artifacts, `.build`, `.swiftpm`, `DerivedData`, `xcuserdata`, or secrets.
+- Do not invent missing business requirements. Ask for the relevant specification when a ticket is insufficient.
 
 For ticketed work, create the branch before modifying project files.
 
 ## Git, Jira, Commit, And PR Naming
 
-Jira development linking depends on the issue key being present in Git activity. Use the key in the branch name, commit subject, and pull request title.
+Jira development linking depends on the issue key being present in Git activity.
 
 - Branch from the latest `development` unless the task explicitly requires another base.
 - Feature branch: `feature/AWAN-<number>-short-description`.
@@ -37,23 +40,9 @@ AWAN-25: add project agent guidance
 AWAN-25: Add project agent guidance
 ```
 
-## Product Contract
+## Architecture
 
-Awan is a native iOS, AI-assisted adaptive scheduling app for goals and tasks. Its promise is fluid adaptation without guilt or manual schedule repair: the system drafts and the user approves.
-
-The architecture is intentionally split:
-
-- The cloud AI Architect interprets intent and returns a strict, ordered task breakdown.
-- The on-device Local Conflict Engine performs all time placement, overlap detection, dependency ordering, and schedule recovery.
-- The AI must never choose start times or perform calendar math.
-- The Local Conflict Engine must never infer user intent.
-- The versioned JSON contract is the only boundary between those responsibilities.
-
-The iOS app is offline-first. Local persistence is the source of truth, the UI observes local state, and remote synchronization reconciles in the background.
-
-## Project Shape
-
-This repository uses layer-first Clean Architecture with Swift Package Manager modules:
+The repository uses layer-first Clean Architecture with Swift Package Manager modules:
 
 ```text
 Modules/
@@ -64,7 +53,7 @@ Modules/
 `-- Presentation
 ```
 
-Features are vertical folders repeated inside these layer packages. Do not create a new Swift package per feature unless the architecture is intentionally changed.
+Features are folders repeated inside the existing layer packages. Do not create a package per feature unless an architecture decision explicitly changes this structure.
 
 Preferred dependency direction:
 
@@ -77,86 +66,78 @@ Awan app composition root
 `-- Common
 ```
 
-Rules:
+- `Domain` owns entities, value objects, repository contracts, use cases, and business rules.
+- `Data` implements Domain repositories and owns data sources, persistence models, mapping, and data coordination.
+- `Network` owns transport, endpoints, authentication headers, request/response DTOs, and decoding.
+- `Presentation` owns SwiftUI, `ObservableObject` view models, UI state, coordinators, and routes.
+- `Common` contains stable utilities and reusable UI primitives shared by multiple consumers. It is not a dumping ground.
+- The `Awan` app target is the composition root. Use constructor injection; do not add a DI framework without an explicit decision.
 
-- `Domain` contains entities, value objects, repository contracts, use cases, validation, and the pure-Swift Local Conflict Engine.
-- `Data` implements Domain repositories, owns local/remote data sources, persistence models, sync queues, and mapping.
-- `Network` owns transport, endpoint definitions, authentication headers, request/response DTOs, and decoding concerns. It does not expose DTOs to Domain or Presentation.
-- `Presentation` owns SwiftUI, `@Observable` view models, UI state, coordinators, and routes. It depends on Domain abstractions rather than Data implementations.
-- `Common` holds stable, genuinely cross-layer utilities and reusable UI primitives. It is not a dumping ground for feature logic.
-- The `Awan` app target is the composition root. Use constructor injection. Do not introduce Swinject or another DI framework without an explicit decision.
+## View And ViewModel Rules
+
+Use SwiftUI with Combine-based `ObservableObject`. Do not use the Observation framework or `@Observable`.
+
+- View models conform to `ObservableObject`, are marked `@MainActor`, and expose mutable UI state using `@Published`.
+- Views remain declarative and render view-model state.
+- View models translate user actions into use-case calls and map results into presentation state.
+- View models must not contain business logic, validation rules, domain calculations, persistence decisions, or networking logic.
+- Business decisions belong in Domain use cases, entities, value objects, or domain services.
+- Data access goes through Domain repository abstractions.
+- Views and view models must not construct repositories, data sources, or network clients.
+- Use explicit loading, content, empty, and failure states where appropriate.
+- Coordinators and typed routes own navigation. Domain and Data remain navigation-agnostic.
 
 ## Swift And Concurrency Conventions
 
-- Use Swift 6 and honor strict concurrency diagnostics.
-- Use SwiftUI and the Observation framework for new presentation code.
-- Mark UI-facing view models and coordinators `@MainActor`.
-- Prefer immutable `struct` models and `Sendable` protocols/values across async boundaries.
-- Keep repositories, use cases, data sources, and the conflict engine off the main actor unless UI isolation is intentionally required.
-- Prefer `async`/`await`; model cancellation and errors explicitly.
-- Avoid force unwraps and `try!` in new code except for a proven programmer-invariant at the composition root.
+- The supported development toolchain is Xcode 16 with the repository's configured Swift language mode.
+- Honor strict concurrency diagnostics where enabled.
+- Prefer immutable `struct` models and `Sendable` values across async boundaries.
+- Prefer `async`/`await`; handle cancellation and errors explicitly.
+- Keep UI state mutations on `@MainActor`.
+- Avoid force unwraps and `try!` except for a documented programmer invariant.
 - Avoid global mutable state and new singletons.
-- Keep APIs internal by default; expose only what another package or the app target genuinely needs.
+- Keep APIs internal by default. Use `public` only for a real package boundary.
 - Use protocols at architectural boundaries, not for every concrete type.
+- Prefer small, focused types and methods with one responsibility.
+- Follow the existing code style before introducing a new pattern.
 
 ## Naming Conventions
 
-- Feature folders use domain nouns: `Goals`, `Tasks`, `Schedule`, `Zones`, `Authentication`, `Sync`.
-- Domain entity: noun, for example `Goal`, `ScheduledTask`, `DailyZone`.
-- Use case: verb plus noun plus `UseCase`, for example `CreateGoalUseCase`.
-- Repository contract: `<Feature>Repository`, for example `GoalRepository`.
-- Repository implementation: `Default<Feature>Repository` unless a more specific backend name improves clarity.
-- Data source: `<Source><Feature>DataSource`, for example `RemoteGoalDataSource` or `SwiftDataGoalDataSource`.
-- Transport model: suffix with `RequestDTO` or `ResponseDTO`.
-- Mapper: `toDomain()` and explicit initializers/extensions in Data; never add transport mapping to Domain entities.
-- View: `<Screen>View`; view model: `<Screen>ViewModel`; UI state: `<Screen>State`.
-- Coordinator: `<Flow>Coordinator`; route: `<Flow>Route`.
-- Test files mirror the production type: `<TypeName>Tests.swift`.
+- Feature folders use domain nouns: `<Feature>`.
+- Domain entity: noun, for example `<Entity>`.
+- Use case: verb plus noun plus `UseCase`, for example `Fetch<Feature>UseCase`.
+- Repository contract: `<Feature>Repository`.
+- Repository implementation: `Default<Feature>Repository` unless a more specific name is clearer.
+- Data source: `<Source><Feature>DataSource`, such as `Remote<Feature>DataSource`.
+- Transport models: `<Operation><Feature>RequestDTO` and `<Operation><Feature>ResponseDTO`.
+- Persistence models: `<Feature>Record` or a name matching the selected persistence framework's convention.
+- Mapper: explicit `toDomain()` or an initializer defined in Data.
+- View: `<Screen>View`.
+- View model: `<Screen>ViewModel`.
+- UI state: `<Screen>State`.
+- Coordinator: `<Flow>Coordinator`.
+- Route: `<Flow>Route`.
+- Test file: `<TypeName>Tests.swift`.
 
-## Core Scheduling Rules
+## Dependency And Data Boundaries
 
-- Represent task dependencies as a directed acyclic graph and reject cycles.
-- Detect interval overlap with `startA < endB && startB < endA`.
-- Place tasks only inside their assigned zone window.
-- Resolve dependency order before placement; break eligible ties by priority, then earliest deadline.
-- Never silently commit a material reschedule. Present an Intelligent Nudge and require user approval.
-- Treat background execution as opportunistic. Run a foreground catch-up when the nightly sweep is stale.
-- Respect iOS's pending local-notification limit; do not enqueue an unbounded reminder set.
-- Keep the conflict engine deterministic, Foundation-only where practical, and independently unit-testable.
-- Preserve byte-equivalent behavior with the shared Android/iOS test-vector contract.
+- Domain imports no UI, persistence, or transport framework.
+- Presentation depends on Domain abstractions, never concrete Data implementations.
+- Network DTOs and persistence models never escape into Domain or Presentation.
+- Mapping belongs in Data.
+- Network does not make business decisions.
+- Data does not own presentation state.
+- Common must not contain feature-specific behavior.
+- The app composition root is the only place that wires concrete implementations together.
 
-## Data And Offline-First Rules
+## Testing And Verification
 
-- The local database is the source of truth for UI reads.
-- UI writes are optimistic local mutations that are queued for synchronization.
-- Keep persistence models inside Data; map them to Domain entities.
-- Each synchronizable record must support server identity, server-assigned update time, user identity, and sync state (`clean`, `pending`, or `conflicted`) as required by the frozen API contract.
-- MVP reconciliation uses server timestamps with Last-Write-Wins unless the product contract changes.
-- Never leak authentication tokens, headers, user data, or raw secrets into logs, tests, fixtures, screenshots, comments, or documentation.
-
-## Presentation And Navigation Rules
-
-- Keep SwiftUI views declarative and move async decisions to `@MainActor` view models.
-- Model loading, content, empty, and failure states explicitly.
-- Inject use cases through initializers; views must not construct repositories or network clients.
-- Coordinators and typed route enums own app navigation. Features request navigation through callbacks or coordinator APIs rather than mutating unrelated flows.
-- Keep app-level auth/main flow switching in the existing coordinator structure.
-- Use accessible labels, Dynamic Type-friendly layouts, and no fixed widths that clip localized text.
-
-## Scope Guardrails
-
-MVP work includes authentication, onboarding preferences, zones, natural-language and manual goal creation, AI task breakdown, local scheduling, conflict nudges, recurring tasks, summaries, reminders, offline persistence, and cloud sync.
-
-Do not implement these deferred families unless a ticket explicitly brings them into scope:
-
-- Social/connected features, marketplace, challenges, or shared goals.
-- Personal/public templates or the RAG re-templating pipeline.
-- GitHub, Strava, or photo-based task verification.
-- Self-hosted/on-device AI, writable calendar integration, widgets, Live Activities, voice input, or advanced insights.
-
-## Verification
-
-Run the narrowest useful checks for the changed layer.
+- Test Domain rules and use cases without UI or infrastructure dependencies.
+- Test Data mappers, repository behavior, and data-source coordination independently.
+- Test view models by mocking use cases and asserting published UI-state transitions.
+- Do not test business rules through view-model tests; test them at the Domain boundary.
+- Add focused tests for new behavior and regressions.
+- Run the narrowest useful package tests and the workspace build when integration risk warrants it.
 
 ```bash
 swift test --package-path Modules/Domain
@@ -165,15 +146,14 @@ swift test --package-path Modules/Network
 xcodebuild -workspace Awan.xcworkspace -scheme Awan -destination 'platform=iOS Simulator,name=iPhone 16' build
 ```
 
-Use an installed simulator when the named device is unavailable. Add focused tests for use cases, conflict-engine vectors, mapping, repository reconciliation, sync behavior, and view-model state transitions.
-
-If a check cannot run, report the exact command and failure reason. Do not claim unrun verification.
+Use an installed simulator if the named device is unavailable. If a check cannot run, report the command and exact failure reason. Never claim unrun verification.
 
 ## Documentation Maintenance
 
-- Update `Design.md` when product scope, module responsibilities, data flow, or app flow changes.
-- Update `Layers/Agent.md` when a layer boundary or dependency direction changes.
-- Update `Modules/UI_MODULE_STRUCTURE.md` when the standard feature folder/naming pattern changes.
-- Update `AGENTS.md` and `.agents/rules/project-rules.md` when agent workflow, Git conventions, or verification expectations change.
+- Update `Design.md` when dependency direction or project-wide technical patterns change.
+- Update `Layers/Agent.md` when layer ownership changes.
+- Update `Modules/UI_MODULE_STRUCTURE.md` when the feature folder pattern or Presentation conventions change.
+- Update `AGENTS.md` and `.agents/rules/project-rules.md` when workflow or coding conventions change.
+- Keep product requirements and domain algorithms in their dedicated documents, not in agent configuration files.
 
-When in doubt, choose the smallest change that preserves dependency direction and the product contract.
+When in doubt, make the smallest change that preserves layer boundaries and existing conventions.

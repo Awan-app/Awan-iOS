@@ -1,10 +1,8 @@
 # Awan Layer-First UI Feature Structure
 
-Use this guide when adding a SwiftUI feature to the existing Common, Network, Data, Domain, and Presentation packages.
+Use this guide when adding a SwiftUI feature to the Common, Network, Data, Domain, and Presentation packages. This file defines structure and coding conventions only; it does not define product behavior.
 
 ## Target Shape
-
-For a feature named `<Feature>`, add only the responsibilities it needs:
 
 ```text
 Modules/
@@ -23,15 +21,16 @@ Modules/
 |   `-- Persistence
 `-- Presentation/Sources/Presentation/<Feature>/
     |-- ViewModels
-    `-- Views
-        |-- Components
-        |-- Sections
-        `-- States
+    |-- Views
+    |   |-- Components
+    |   |-- Sections
+    |   `-- States
+    `-- Navigation
 ```
 
 Do not create empty directories merely to match the diagram.
 
-## Example Request Flow
+## Dependency Flow
 
 ```text
 <Feature>View
@@ -39,18 +38,15 @@ Do not create empty directories merely to match the diagram.
 -> <Operation><Feature>UseCase
 -> <Feature>Repository protocol
 -> Default<Feature>Repository
--> local and/or remote data source
--> Network endpoint or local persistence
+-> local or remote data source
 ```
-
-Response flow:
 
 ```text
 ResponseDTO / persistence model
 -> Data mapper
 -> Domain entity
--> repository result/local observation
--> view-model state
+-> Use Case result
+-> ViewModel UI state
 -> SwiftUI rendering
 ```
 
@@ -60,29 +56,28 @@ Keep declarations internal by default.
 
 Usually public across packages:
 
-- Domain entities/value objects used by Presentation or Data.
+- Domain entities and value objects used by Data or Presentation.
 - Domain repository and use-case protocols.
-- Presentation entry views/factories required by the app target.
+- Presentation entry views or factories required by the app target.
 - Network client interfaces required by Data.
 
 Usually internal:
 
 - Concrete repository implementations.
-- Data sources, persistence models, DTO mappers.
-- Concrete screen components.
+- Data sources, persistence models, and DTO mappers.
+- Screen components.
 - View-model construction details.
 
-## View Model Pattern
+## ViewModel Pattern
 
-Use Observation for new screens:
+The project uses Combine-based `ObservableObject`. Do not use the Observation framework or `@Observable`.
 
 ```swift
-import Observation
+import Combine
 
-@Observable
 @MainActor
-public final class <Feature>ViewModel {
-    public private(set) var state: <Feature>State = .idle
+public final class <Feature>ViewModel: ObservableObject {
+    @Published public private(set) var state: <Feature>State = .idle
 
     private let useCase: any <Operation><Feature>UseCase
 
@@ -105,8 +100,6 @@ public final class <Feature>ViewModel {
 }
 ```
 
-Prefer an explicit state:
-
 ```swift
 public enum <Feature>State: Equatable, Sendable {
     case idle
@@ -117,7 +110,29 @@ public enum <Feature>State: Equatable, Sendable {
 }
 ```
 
-For complex screens, multiple focused state values are acceptable when one large enum would create invalid or unreadable combinations.
+For complex screens, multiple focused published properties are acceptable when one state enum becomes unreadable.
+
+### ViewModel Boundary
+
+A view model may:
+
+- Receive user events.
+- Call an injected use case.
+- Handle task cancellation.
+- Convert Domain results and errors into UI state.
+- Apply UI-only formatting.
+- Ask a coordinator to navigate.
+
+A view model must not:
+
+- Implement business rules or domain validation.
+- Perform domain calculations.
+- Decide persistence or caching policy.
+- Call URLSession or a persistence framework.
+- Construct or access a concrete repository.
+- Map transport DTOs or persistence records.
+
+If code changes an application outcome based on a business rule, move it to a Domain use case, entity, value object, or domain service.
 
 ## Domain Boundary Pattern
 
@@ -143,7 +158,7 @@ public struct Default<Operation><Feature>UseCase: <Operation><Feature>UseCase {
 }
 ```
 
-Do not import SwiftUI, SwiftData, Core Data, URLSession, or Network into Domain.
+Domain must not import SwiftUI, Combine, persistence frameworks, URLSession, or Network.
 
 ## Data Boundary Pattern
 
@@ -161,7 +176,7 @@ public struct Default<Feature>Repository: <Feature>Repository {
     }
 
     public func fetch() async throws -> <Entity> {
-        // Prefer local truth; refresh/reconcile through an explicit policy.
+        // Coordinate data sources according to the approved requirement.
     }
 }
 ```
@@ -169,10 +184,10 @@ public struct Default<Feature>Repository: <Feature>Repository {
 Map explicitly:
 
 ```text
-ResponseDTO -> Data model/persistence record -> Domain entity
+ResponseDTO -> Data model or persistence record -> Domain entity
 ```
 
-Never return a DTO or SwiftData/Core Data model to Presentation.
+Never return a DTO or persistence model to Presentation.
 
 ## Composition
 
@@ -181,46 +196,43 @@ The app target creates concrete implementations and injects them down the graph:
 ```text
 Network client
 -> Data sources
--> repository implementation
+-> Repository implementation
 -> Domain use case
--> Presentation view model/view
+-> Presentation view model and view
 ```
 
-Use constructor injection. Do not resolve dependencies from inside SwiftUI views.
+Use constructor injection. Do not resolve dependencies from inside SwiftUI views or view models.
 
 ## Navigation
 
-Use the existing coordinator pattern:
-
 - Add a typed route to the owning flow.
-- Add a destination mapping in that flow's root view/coordinator.
+- Add destination mapping in that flow's coordinator or root view.
 - Pass callbacks or coordinator operations into feature entry views.
 - Keep Domain and Data navigation-agnostic.
 
-## Feature Naming Example
-
-For goal creation:
+## Naming Example
 
 ```text
-Domain/Goals/Entities/Goal.swift
-Domain/Goals/Repositories/GoalRepository.swift
-Domain/Goals/UseCases/CreateGoalUseCase.swift
-Network/Goals/DTOs/ParseGoalRequestDTO.swift
-Network/Goals/DTOs/ParseGoalResponseDTO.swift
-Data/Goals/DataSources/RemoteGoalDataSource.swift
-Data/Goals/Mappers/GoalMapper.swift
-Data/Goals/Repositories/DefaultGoalRepository.swift
-Presentation/Goals/ViewModels/GoalCreationViewModel.swift
-Presentation/Goals/Views/GoalCreationView.swift
-Presentation/Goals/Views/GoalCreationState.swift
+Domain/<Feature>/Entities/<Entity>.swift
+Domain/<Feature>/Repositories/<Feature>Repository.swift
+Domain/<Feature>/UseCases/Fetch<Feature>UseCase.swift
+Network/<Feature>/DTOs/Fetch<Feature>RequestDTO.swift
+Network/<Feature>/DTOs/Fetch<Feature>ResponseDTO.swift
+Data/<Feature>/DataSources/Remote<Feature>DataSource.swift
+Data/<Feature>/Mappers/<Feature>Mapper.swift
+Data/<Feature>/Repositories/Default<Feature>Repository.swift
+Presentation/<Feature>/ViewModels/<Feature>ViewModel.swift
+Presentation/<Feature>/Views/<Feature>View.swift
+Presentation/<Feature>/Views/<Feature>State.swift
 ```
 
 ## Verification Checklist
 
-1. The branch, commit, and PR title contain the Jira key.
-2. Domain is platform-independent and deterministic.
-3. Presentation has no concrete data/network imports.
-4. DTOs and persistence types do not escape Data.
-5. New public API is necessary and minimal.
-6. Use cases, mappers, repositories, and view-model state transitions have focused tests.
-7. The affected package tests or the Awan workspace build pass.
+1. Domain is independent of UI and infrastructure frameworks.
+2. Presentation has no concrete Data or Network imports.
+3. View models use `ObservableObject` and `@Published`, not Observation.
+4. View models contain no business logic.
+5. DTOs and persistence types do not escape Data.
+6. Public API is necessary and minimal.
+7. Tests target the layer that owns the behavior.
+8. Affected package tests or the workspace build pass.
