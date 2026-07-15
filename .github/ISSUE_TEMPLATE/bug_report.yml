@@ -1,0 +1,42 @@
+name: Bug report
+description: Report a reproducible problem in Awan iOS.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please include enough detail for someone else to reproduce it.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Briefly describe the issue and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: App version or commit
+      placeholder: e.g. 1.0.0 (42) or abc1234
+  - type: input
+    id: ios-version
+    attributes:
+      label: iOS version and device
+      placeholder: e.g. iOS 18.0 on iPhone 15 Pro
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots, logs, or additional context
+      description: Please remove any sensitive information before attaching logs or screenshots.
