@@ -1,0 +1,73 @@
+name: Awan CI Workflow
+
+on:
+  push:
+    branches: [ "main", "develop"]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+  pull_request:
+    branches: [ "main", "develop" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: SwiftLint
+    runs-on: macos-14
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Run SwiftLint
+        run: swiftlint lint --strict --reporter github-actions-logging
+
+  build:
+    name: Build Application
+    runs-on: macos-14
+    needs: lint
+    timeout-minutes: 20
+
+    steps:
+      # 1. Checkout the repository code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Select Xcode version
+      - name: Set Xcode Version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.4'
+
+      # 3. Cache Swift Package Manager Dependencies
+      - name: Cache Swift PM
+        uses: actions/cache@v4
+        with:
+          path: SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      # 4. Build the main application using xcworkspace
+      - name: Build for Simulator
+        run: |
+          xcodebuild build \
+            -workspace Awan.xcworkspace \
+            -scheme Awan \
+            -destination "generic/platform=iOS Simulator" \
+            -clonedSourcePackagesDirPath SourcePackages \
+            CODE_SIGNING_ALLOWED=NO
