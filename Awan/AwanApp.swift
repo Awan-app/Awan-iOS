@@ -7,9 +7,12 @@
 
 import SwiftUI
 import SwiftData
+import Presentation
 
 @main
 struct AwanApp: App {
+    @State private var coordinator = AppCoordinator()
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -25,7 +28,8 @@ struct AwanApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppRootView()
+                .environment(coordinator)
         }
         .modelContainer(sharedModelContainer)
     }
