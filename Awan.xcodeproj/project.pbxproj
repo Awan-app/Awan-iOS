@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4CA3791C3007BFF400AE86E0 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA3791B3007BFF400AE86E0 /* Swinject */; };
+		4CA379223007CC9900AE86E0 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA379213007CC9900AE86E0 /* Alamofire */; };
+		4CA379253007CEBB00AE86E0 /* SwiftLintBinary in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA379243007CEBB00AE86E0 /* SwiftLintBinary */; };
+		4CA379283007DBB600AE86E0 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA379273007DBB600AE86E0 /* Kingfisher */; };
+		4CA3792B3007E10D00AE86E0 /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA3792A3007E10D00AE86E0 /* Shimmer */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		3E51E43D30079E77009EDCE9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +60,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CA379253007CEBB00AE86E0 /* SwiftLintBinary in Frameworks */,
+				4CA3792B3007E10D00AE86E0 /* Shimmer in Frameworks */,
+				4CA379223007CC9900AE86E0 /* Alamofire in Frameworks */,
+				4CA3791C3007BFF400AE86E0 /* Swinject in Frameworks */,
+				4CA379283007DBB600AE86E0 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +125,11 @@
 			);
 			name = Awan;
 			packageProductDependencies = (
+				4CA3791B3007BFF400AE86E0 /* Swinject */,
+				4CA379213007CC9900AE86E0 /* Alamofire */,
+				4CA379243007CEBB00AE86E0 /* SwiftLintBinary */,
+				4CA379273007DBB600AE86E0 /* Kingfisher */,
+				4CA3792A3007E10D00AE86E0 /* Shimmer */,
 			);
 			productName = Awan;
 			productReference = 3E51E42A30079E70009EDCE9 /* Awan.app */;
@@ -195,6 +213,13 @@
 			);
 			mainGroup = 3E51E42130079E70009EDCE9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4CA3791A3007BFF400AE86E0 /* XCRemoteSwiftPackageReference "Swinject" */,
+				4CA379203007CC9900AE86E0 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				4CA379233007CEBB00AE86E0 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				4CA379263007DBB600AE86E0 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				4CA379293007E10D00AE86E0 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3E51E42B30079E70009EDCE9 /* Products */;
 			projectDirPath = "";
@@ -552,6 +577,77 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4CA3791A3007BFF400AE86E0 /* XCRemoteSwiftPackageReference "Swinject" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Swinject/Swinject.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.10.0;
+			};
+		};
+		4CA379203007CC9900AE86E0 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = exactVersion;
+				version = 5.12.0;
+			};
+		};
+		4CA379233007CEBB00AE86E0 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = exactVersion;
+				version = 0.65.0;
+			};
+		};
+		4CA379263007DBB600AE86E0 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = exactVersion;
+				version = 8.10.0;
+			};
+		};
+		4CA379293007E10D00AE86E0 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/markiv/SwiftUI-Shimmer.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4CA3791B3007BFF400AE86E0 /* Swinject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CA3791A3007BFF400AE86E0 /* XCRemoteSwiftPackageReference "Swinject" */;
+			productName = Swinject;
+		};
+		4CA379213007CC9900AE86E0 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CA379203007CC9900AE86E0 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		4CA379243007CEBB00AE86E0 /* SwiftLintBinary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CA379233007CEBB00AE86E0 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
+			productName = SwiftLintBinary;
+		};
+		4CA379273007DBB600AE86E0 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CA379263007DBB600AE86E0 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		4CA3792A3007E10D00AE86E0 /* Shimmer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CA379293007E10D00AE86E0 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;
+			productName = Shimmer;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3E51E42230079E70009EDCE9 /* Project object */;
 }
