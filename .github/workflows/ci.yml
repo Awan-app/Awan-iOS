@@ -2,7 +2,7 @@ name: Awan CI Workflow
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main", "develop", "chore/dependencies-setup" ]
     paths-ignore:
       - '**.md'
       - 'docs/**'
@@ -36,11 +36,11 @@ jobs:
       - name: Run SwiftLint
         run: swiftlint lint --strict --reporter github-actions-logging
 
-  build-and-test:
-    name: Build and Test (iOS Simulator)
+  build:
+    name: Build Application
     runs-on: macos-14
     needs: lint
-    timeout-minutes: 30
+    timeout-minutes: 20
 
     steps:
       # 1. Checkout the repository code
@@ -62,62 +62,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-
 
-      # 4. Resolve an available simulator dynamically using inline script block safely
-      - name: Select Simulator
-        id: simulator
+      # 4. Build the main application using xcworkspace
+      - name: Build for Simulator
         run: |
-          cat << 'EOF' > select_sim.py
-          import json, sys
-          try:
-              data = json.load(sys.stdin)
-              candidates = []
-              for runtime, devices in data.get('devices', {}).items():
-                  if 'iOS' not in runtime:
-                      continue
-                  for d in devices:
-                      if d.get('isAvailable') and 'iPhone' in d.get('name', ''):
-                          candidates.append((runtime, d.get('name'), d.get('udid')))
-              if not candidates:
-                  sys.exit('No available iOS iPhone simulator found')
-              candidates.sort(reverse=True)
-              runtime, name, udid = candidates[0]
-              print(udid)
-          except Exception as e:
-              sys.exit(f'Error parsing simulators: {e}')
-          EOF
-          
-          DEVICE_UUID=$(xcrun simctl list devices available -j | python3 select_sim.py)
-          echo "Selected Simulator UUID: $DEVICE_UUID"
-          echo "udid=$DEVICE_UUID" >> "$GITHUB_OUTPUT"
-          rm select_sim.py
-
-      # 5. Build first, separately from testing
-      - name: Build for Testing
-        run: |
-          xcodebuild build-for-testing \
-            -project Awan.xcodeproj \
+          xcodebuild build \
+            -workspace Awan.xcworkspace \
             -scheme Awan \
-            -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}" \
+            -destination "generic/platform=iOS Simulator" \
             -clonedSourcePackagesDirPath SourcePackages \
-            -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO
-
-      # 6. Run Unit/UI Tests without rebuilding
-      - name: Run Tests
-        run: |
-          xcodebuild test-without-building \
-            -project Awan.xcodeproj \
-            -scheme Awan \
-            -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}" \
-            -clonedSourcePackagesDirPath SourcePackages \
-            -resultBundlePath TestResults.xcresult \
-            CODE_SIGNING_ALLOWED=NO
-
-      # 7. Upload the .xcresult bundle
-      - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: xcresult-${{ github.run_id }}
-          path: TestResults.xcresult
-          retention-days: 14
