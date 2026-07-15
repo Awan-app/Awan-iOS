@@ -63,13 +63,15 @@ Appropriate responsibilities:
 - Domain services and validation.
 - Domain errors and results.
 
-Domain must remain independent of SwiftUI, Combine-based presentation state, persistence frameworks, URLSession, transport DTOs, and dependency-injection frameworks.
+Domain must remain independent of SwiftUI, Combine-based presentation state, persistence frameworks, networking frameworks, transport DTOs, and dependency-injection frameworks.
 
 Business logic belongs here, not in views, view models, repositories, or network clients.
 
 ## Network
 
 Network owns remote transport and wire formats.
+
+Alamofire is the project's selected networking library. Implementation details are intentionally outside this guide.
 
 Appropriate responsibilities:
 
@@ -112,7 +114,7 @@ Appropriate responsibilities:
 
 View models must not contain business logic. They may coordinate a use-case call, handle cancellation, and convert its output or error into UI state. Validation and decisions that change domain outcomes belong in Domain.
 
-Presentation must not access URLSession, persistence frameworks, DTOs, concrete repositories, or data sources directly.
+Presentation must not access Alamofire or other networking APIs, persistence frameworks, DTOs, concrete repositories, or data sources directly.
 
 ## App Composition Root
 

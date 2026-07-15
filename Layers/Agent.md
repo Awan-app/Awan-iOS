@@ -40,7 +40,7 @@ Not allowed:
 
 - SwiftUI, Combine presentation state, navigation routes, or view models.
 - Persistence models or queries.
-- URLSession, HTTP behavior, or DTOs.
+- Networking frameworks, HTTP behavior, or DTOs.
 - Concrete repository implementations.
 - DI containers.
 
@@ -56,6 +56,8 @@ Conventions:
 
 Purpose: HTTP transport and wire formats.
 
+Alamofire is the selected networking library. Implementation details are intentionally outside this guide.
+
 Typical folders:
 
 ```text
@@ -68,7 +70,7 @@ Network/<Feature>/
 
 Allowed:
 
-- URLSession and HTTP client behavior.
+- HTTP client behavior.
 - Endpoint paths, methods, headers, and encoding.
 - Codable request/response DTOs.
 - Transport errors, authentication mechanics, cancellation, and retry mechanics.

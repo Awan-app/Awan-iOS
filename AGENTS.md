@@ -68,7 +68,7 @@ Awan app composition root
 
 - `Domain` owns entities, value objects, repository contracts, use cases, and business rules.
 - `Data` implements Domain repositories and owns data sources, persistence models, mapping, and data coordination.
-- `Network` owns transport, endpoints, authentication headers, request/response DTOs, and decoding.
+- `Network` owns transport, endpoints, authentication headers, request/response DTOs, and decoding. Alamofire is the selected networking library.
 - `Presentation` owns SwiftUI, `ObservableObject` view models, UI state, coordinators, and routes.
 - `Common` contains stable utilities and reusable UI primitives shared by multiple consumers. It is not a dumping ground.
 - The `Awan` app target is the composition root. Use constructor injection; do not add a DI framework without an explicit decision.

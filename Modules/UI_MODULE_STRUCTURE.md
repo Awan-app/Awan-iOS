@@ -128,7 +128,7 @@ A view model must not:
 - Implement business rules or domain validation.
 - Perform domain calculations.
 - Decide persistence or caching policy.
-- Call URLSession or a persistence framework.
+- Call a networking API or persistence framework.
 - Construct or access a concrete repository.
 - Map transport DTOs or persistence records.
 
@@ -158,7 +158,7 @@ public struct Default<Operation><Feature>UseCase: <Operation><Feature>UseCase {
 }
 ```
 
-Domain must not import SwiftUI, Combine, persistence frameworks, URLSession, or Network.
+Domain must not import SwiftUI, Combine, persistence frameworks, networking frameworks, or Network.
 
 ## Data Boundary Pattern
 
