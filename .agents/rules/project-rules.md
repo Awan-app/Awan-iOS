@@ -4,7 +4,6 @@ Always apply the repository instructions and architecture references below befor
 
 - @/AGENTS.md
 - @/Design.md
-- @/Layers/Agent.md
 - @/Modules/UI_MODULE_STRUCTURE.md
 
 Key conventions:

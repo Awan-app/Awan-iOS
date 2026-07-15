@@ -8,6 +8,7 @@ Use this guide when adding a SwiftUI feature to the Common, Network, Data, Domai
 Modules/
 |-- Domain/Sources/Domain/<Feature>/
 |   |-- Entities
+|   |-- Errors
 |   |-- Repositories
 |   `-- UseCases
 |-- Network/Sources/Network/<Feature>/
@@ -28,7 +29,7 @@ Modules/
     `-- Navigation
 ```
 
-Do not create empty directories merely to match the diagram.
+The `Errors` folder is optional. Add it when a feature has typed Domain errors that an entity, domain service, or use case may throw. Do not create empty directories merely to match the diagram.
 
 ## Dependency Flow
 
@@ -160,6 +161,8 @@ public struct Default<Operation><Feature>UseCase: <Operation><Feature>UseCase {
 
 Domain must not import SwiftUI, Combine, persistence frameworks, networking frameworks, or Network.
 
+When a use case can fail for a domain reason, define the typed error in `Domain/<Feature>/Errors`. A use case is not required to throw when its operation has no meaningful failure case.
+
 ## Data Boundary Pattern
 
 ```swift
@@ -214,6 +217,7 @@ Use constructor injection. Do not resolve dependencies from inside SwiftUI views
 
 ```text
 Domain/<Feature>/Entities/<Entity>.swift
+Domain/<Feature>/Errors/<Feature>Error.swift
 Domain/<Feature>/Repositories/<Feature>Repository.swift
 Domain/<Feature>/UseCases/Fetch<Feature>UseCase.swift
 Network/<Feature>/DTOs/Fetch<Feature>RequestDTO.swift

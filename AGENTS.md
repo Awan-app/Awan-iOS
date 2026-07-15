@@ -4,7 +4,7 @@ This file defines repository workflow, architecture boundaries, and coding conve
 
 These instructions do not define product behavior or business rules. Use the relevant specification, ticket, or dedicated domain document for those decisions. Never infer or add product behavior from this file.
 
-Read `Design.md`, `Layers/Agent.md`, and `Modules/UI_MODULE_STRUCTURE.md` before architecture-level work.
+Read `Design.md` and `Modules/UI_MODULE_STRUCTURE.md` before architecture-level work.
 
 ## Before Editing
 
@@ -105,6 +105,7 @@ Use SwiftUI with Combine-based `ObservableObject`. Do not use the Observation fr
 
 - Feature folders use domain nouns: `<Feature>`.
 - Domain entity: noun, for example `<Entity>`.
+- Domain error: `<Feature>Error`, stored in `Domain/<Feature>/Errors` when typed domain failures are needed.
 - Use case: verb plus noun plus `UseCase`, for example `Fetch<Feature>UseCase`.
 - Repository contract: `<Feature>Repository`.
 - Repository implementation: `Default<Feature>Repository` unless a more specific name is clearer.
@@ -151,7 +152,7 @@ Use an installed simulator if the named device is unavailable. If a check cannot
 ## Documentation Maintenance
 
 - Update `Design.md` when dependency direction or project-wide technical patterns change.
-- Update `Layers/Agent.md` when layer ownership changes.
+- Update `Design.md` when layer ownership changes.
 - Update `Modules/UI_MODULE_STRUCTURE.md` when the feature folder pattern or Presentation conventions change.
 - Update `AGENTS.md` and `.agents/rules/project-rules.md` when workflow or coding conventions change.
 - Keep product requirements and domain algorithms in their dedicated documents, not in agent configuration files.
