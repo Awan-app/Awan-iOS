@@ -5,7 +5,7 @@
 //  Created by Manona on 15/07/2026.
 //
 
-import SwiftUI
+import Observation
 import Common
 
 public enum AppFlow: Sendable {
