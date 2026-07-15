@@ -5,17 +5,23 @@ import PackageDescription
 
 let package = Package(
     name: "Presentation",
+    platforms: [.iOS(.v18)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "Presentation",
             targets: ["Presentation"]),
     ],
+    dependencies: [
+        // Local Common package — provides the Coordinating protocol.
+        .package(path: "../Common"),
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "Presentation"),
+            name: "Presentation",
+            dependencies: ["Common"]),
         .testTarget(
             name: "PresentationTests",
             dependencies: ["Presentation"]
