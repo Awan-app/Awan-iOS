@@ -62,29 +62,34 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-
 
-      # 4. Resolve an available simulator dynamically
+      # 4. Resolve an available simulator dynamically using inline script block safely
       - name: Select Simulator
         id: simulator
         run: |
-          DEVICE_UUID=$(xcrun simctl list devices available -j \
-            | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-candidates = []
-for runtime, devices in data['devices'].items():
-    if 'iOS' not in runtime:
-        continue
-    for d in devices:
-        if d.get('isAvailable') and 'iPhone' in d['name']:
-            candidates.append((runtime, d['name'], d['udid']))
-if not candidates:
-    sys.exit('No available iOS iPhone simulator found')
-candidates.sort(reverse=True)
-runtime, name, udid = candidates[0]
-print(f'Selected {name} on {runtime}', file=sys.stderr)
-print(udid)
-")
+          cat << 'EOF' > select_sim.py
+          import json, sys
+          try:
+              data = json.load(sys.stdin)
+              candidates = []
+              for runtime, devices in data.get('devices', {}).items():
+                  if 'iOS' not in runtime:
+                      continue
+                  for d in devices:
+                      if d.get('isAvailable') and 'iPhone' in d.get('name', ''):
+                          candidates.append((runtime, d.get('name'), d.get('udid')))
+              if not candidates:
+                  sys.exit('No available iOS iPhone simulator found')
+              candidates.sort(reverse=True)
+              runtime, name, udid = candidates[0]
+              print(udid)
+          except Exception as e:
+              sys.exit(f'Error parsing simulators: {e}')
+          EOF
+          
+          DEVICE_UUID=$(xcrun simctl list devices available -j | python3 select_sim.py)
+          echo "Selected Simulator UUID: $DEVICE_UUID"
           echo "udid=$DEVICE_UUID" >> "$GITHUB_OUTPUT"
+          rm select_sim.py
 
       # 5. Build first, separately from testing
       - name: Build for Testing
