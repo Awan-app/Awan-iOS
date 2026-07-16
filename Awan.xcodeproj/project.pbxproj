@@ -13,6 +13,8 @@
 		4CA335C63007FC41001DBF8D /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335C53007FC41001DBF8D /* Swinject */; };
 		6D0C30983007943A004492E4 /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = 6D0C30973007943A004492E4 /* Common */; };
 		6D0C309A30079440004492E4 /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 6D0C309930079440004492E4 /* Presentation */; };
+		7D0C30983007943A004492E4 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 7D0C30973007943A004492E4 /* Domain */; };
+		7D0C309A30079440004492E4 /* Data in Frameworks */ = {isa = PBXBuildFile; productRef = 7D0C309930079440004492E4 /* Data */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +65,8 @@
 			files = (
 				4CA335BD3007FBDC001DBF8D /* Kingfisher in Frameworks */,
 				4CA335C63007FC41001DBF8D /* Swinject in Frameworks */,
+				7D0C309A30079440004492E4 /* Data in Frameworks */,
+				7D0C30983007943A004492E4 /* Domain in Frameworks */,
 				4CA335BA3007FBC3001DBF8D /* Shimmer in Frameworks */,
 				4CA335C33007FC20001DBF8D /* Alamofire in Frameworks */,
 				6D0C309A30079440004492E4 /* Presentation in Frameworks */,
@@ -137,6 +141,8 @@
 			packageProductDependencies = (
 				6D0C30973007943A004492E4 /* Common */,
 				6D0C309930079440004492E4 /* Presentation */,
+				7D0C30973007943A004492E4 /* Domain */,
+				7D0C309930079440004492E4 /* Data */,
 				4CA335B93007FBC3001DBF8D /* Shimmer */,
 				4CA335BC3007FBDC001DBF8D /* Kingfisher */,
 				4CA335C23007FC20001DBF8D /* Alamofire */,
@@ -651,6 +657,14 @@
 		6D0C309930079440004492E4 /* Presentation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Presentation;
+		};
+		7D0C30973007943A004492E4 /* Domain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Domain;
+		};
+		7D0C309930079440004492E4 /* Data */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Data;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

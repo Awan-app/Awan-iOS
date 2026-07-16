@@ -12,6 +12,7 @@ import Presentation
 @main
 struct AwanApp: App {
     @State private var coordinator = AppCoordinator()
+    private let dependencies = AppDependencyContainer()
 
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
