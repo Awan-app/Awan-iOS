@@ -1,3 +1,4 @@
+import Common
 import SwiftUI
 
 struct GoalCreatorSheet: View {
@@ -27,20 +28,20 @@ struct GoalCreatorSheet: View {
                 VStack(spacing: 22) {
                     VStack(spacing: 8) {
                         Image(systemName: "trophy.fill")
-                            .font(.system(size: 58, weight: .black))
-                            .foregroundStyle(Color(awanHex: "#FFD43B"))
+                            .font(AppFonts.goalHeroSymbol)
+                            .foregroundStyle(AppColors.reward)
                             .symbolEffect(.wiggle, options: .repeat(2), value: durationMinutes)
                         Text("Build a 7-day quest")
-                            .font(.system(.title2, design: .rounded, weight: .black))
+                            .font(AppFonts.title2Black)
                         Text("One focused step every day")
-                            .font(.system(.subheadline, design: .rounded, weight: .bold))
-                            .foregroundStyle(.secondary)
+                            .font(AppFonts.subheadlineBold)
+                            .foregroundStyle(AppColors.textSecondary)
                     }
 
-                    PlayfulCard {
+                    AppCard {
                         VStack(spacing: 18) {
                             TextField("Goal name", text: $name)
-                                .font(.system(.body, design: .rounded, weight: .semibold))
+                                .font(AppFonts.bodySemibold)
                                 .textFieldStyle(.roundedBorder)
                                 .accessibilityIdentifier("goal-name-field")
                             Stepper(value: $durationMinutes, in: 15...180, step: 15) {
@@ -49,7 +50,7 @@ struct GoalCreatorSheet: View {
                                     Spacer()
                                     Text("\(durationMinutes) min")
                                 }
-                                .font(.system(.body, design: .rounded, weight: .bold))
+                                .font(AppFonts.bodyBold)
                             }
                             Menu {
                                 ForEach(zones) { zone in
@@ -61,38 +62,44 @@ struct GoalCreatorSheet: View {
                                     Spacer()
                                     Image(systemName: "chevron.up.chevron.down")
                                 }
-                                .font(.system(.body, design: .rounded, weight: .bold))
+                                .font(AppFonts.bodyBold)
                                 .padding(12)
-                                .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 12))
+                                .background(
+                                    AppColors.textPrimary.opacity(0.05),
+                                    in: RoundedRectangle(cornerRadius: 12)
+                                )
                             }
-                            .tint(.primary)
+                            .tint(AppColors.textPrimary)
                         }
                     }
 
                     sevenDayPreview
 
-                    GamifiedButton(
+                    AppButton(
                         title: "Start 7-day quest",
                         icon: "flag.checkered",
-                        color: Color(awanHex: "#A560E8")
-                    ) {
-                        guard let zoneID else { return }
-                        let cleanName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-                        guard !cleanName.isEmpty else { return }
-                        onCreate(cleanName, zoneID, durationMinutes)
-                        dismiss()
-                    }
+                        color: AppColors.accentPurple,
+                        onTap: {
+                            guard let zoneID else { return }
+                            let cleanName = name.trimmingCharacters(
+                                in: .whitespacesAndNewlines
+                            )
+                            guard !cleanName.isEmpty else { return }
+                            onCreate(cleanName, zoneID, durationMinutes)
+                            dismiss()
+                        }
+                    )
                     .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || zoneID == nil)
                     .opacity(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.55 : 1)
                     .accessibilityIdentifier("save-goal-button")
                 }
                 .padding(20)
             }
-            .background(Color(awanHex: "#F7F8FC").ignoresSafeArea())
+            .background(AppColors.sheetBackground.ignoresSafeArea())
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Close") { dismiss() }
-                        .font(.system(.body, design: .rounded, weight: .bold))
+                        .font(AppFonts.bodyBold)
                 }
             }
         }
@@ -104,12 +111,12 @@ struct GoalCreatorSheet: View {
                 let day = Calendar.current.date(byAdding: .day, value: index, to: startDay) ?? startDay
                 VStack(spacing: 7) {
                     Text(day.formatted(.dateTime.weekday(.narrow)))
-                        .font(.system(.caption, design: .rounded, weight: .heavy))
+                        .font(AppFonts.captionHeavy)
                     ZStack {
-                        Circle().fill(Color(awanHex: "#A560E8").opacity(0.15))
+                        Circle().fill(AppColors.accentPurple.opacity(0.15))
                         Text("\(index + 1)")
-                            .font(.system(.subheadline, design: .rounded, weight: .black))
-                            .foregroundStyle(Color(awanHex: "#A560E8"))
+                            .font(AppFonts.subheadlineBlack)
+                            .foregroundStyle(AppColors.accentPurple)
                     }
                     .frame(width: 34, height: 34)
                 }
@@ -117,7 +124,7 @@ struct GoalCreatorSheet: View {
             }
         }
         .padding(14)
-        .background(.background, in: RoundedRectangle(cornerRadius: 20))
+        .background(AppColors.surface, in: RoundedRectangle(cornerRadius: 20))
     }
 
     private var selectedZone: TimelineZoneOption? {

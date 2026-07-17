@@ -1,5 +1,7 @@
+import Common
 import Domain
 import Foundation
+import SwiftUI
 
 struct ScheduleTimelineStateMapper {
     private let calendar: Calendar
@@ -36,13 +38,17 @@ struct ScheduleTimelineStateMapper {
                 TimelineZoneItem(
                     id: $0.id,
                     name: $0.name,
-                    colorHex: $0.color.hex,
+                    color: AppColors.runtime(hex: $0.color.hex),
                     startMinutes: $0.startTime.minutesSinceMidnight,
                     endMinutes: $0.endTime.minutesSinceMidnight
                 )
             },
             zoneOptions: workspace.zones.map {
-                TimelineZoneOption(id: $0.id, name: $0.name, colorHex: $0.color.hex)
+                TimelineZoneOption(
+                    id: $0.id,
+                    name: $0.name,
+                    color: AppColors.runtime(hex: $0.color.hex)
+                )
             },
             taskEditorsByID: Dictionary(
                 uniqueKeysWithValues: workspace.tasks.map { task in
@@ -99,9 +105,10 @@ struct ScheduleTimelineStateMapper {
                 id: session.id,
                 taskID: task.id,
                 title: task.title,
-                zoneColorHex: zones
-                    .first(where: { $0.id == session.zoneID })?
-                    .color.hex ?? "#777777",
+                zoneColor: zones
+                    .first(where: { $0.id == session.zoneID })
+                    .map { AppColors.runtime(hex: $0.color.hex) }
+                    ?? AppColors.runtimeFallback,
                 start: session.timeRange.start,
                 end: session.timeRange.end,
                 startMinutes: ((components.hour ?? 0) * 60) + (components.minute ?? 0),
@@ -208,11 +215,16 @@ struct ScheduleNudgePresenter {
                 message: "Two quests share the same time. Keep the combo or give each task its own space.",
                 icon: "bolt.heart.fill",
                 actions: [
-                    action("Keep overlap", "checkmark.circle.fill", "#58CC02", .dismiss),
+                    action(
+                        "Keep overlap",
+                        "checkmark.circle.fill",
+                        AppColors.accentGreen,
+                        .dismiss
+                    ),
                     action(
                         "Separate",
                         "arrow.up.and.down",
-                        "#1CB0F6",
+                        AppColors.accentBlue,
                         .separateOverlap(
                             OverlappingSessionsRequest(
                             firstSessionID: firstSessionID,
@@ -223,7 +235,7 @@ struct ScheduleNudgePresenter {
                     action(
                         "Move second",
                         "arrow.down.circle.fill",
-                        "#A560E8",
+                        AppColors.accentPurple,
                         .moveOverlap(
                             OverlappingSessionsRequest(
                             firstSessionID: firstSessionID,
@@ -244,7 +256,7 @@ struct ScheduleNudgePresenter {
                     action(
                         "Shift the chain",
                         "calendar.badge.clock",
-                        "#1CB0F6",
+                        AppColors.accentBlue,
                         .shiftGoalChain(
                             ShiftGoalDependencyChainRequest(
                                 goalID: goalID,
@@ -255,7 +267,7 @@ struct ScheduleNudgePresenter {
                     action(
                         "Double up",
                         "square.stack.3d.up.fill",
-                        "#FF9600",
+                        AppColors.warning,
                         .stackTasks(
                             StackDependentTasksRequest(
                             missedTaskID: missedTaskID,
@@ -266,7 +278,7 @@ struct ScheduleNudgePresenter {
                     action(
                         "Make independent",
                         "link.badge.minus",
-                        "#A560E8",
+                        AppColors.accentPurple,
                         .makeTaskIndependent(
                             MakeTaskIndependentRequest(
                                 taskID: successorTaskID,
@@ -274,7 +286,7 @@ struct ScheduleNudgePresenter {
                             )
                         )
                     ),
-                    action("Later", "xmark.circle.fill", "#AFAFAF", .dismiss),
+                    action("Later", "xmark.circle.fill", AppColors.neutralAction, .dismiss),
                 ]
             )
         case let .zoneReconfigured(zoneID, previousZone, affectedSessionIDs):
@@ -283,11 +295,11 @@ struct ScheduleNudgePresenter {
                 message: "A session now sits outside the updated zone. Your hand-placed times will always stay sacred.",
                 icon: "slider.horizontal.3",
                 actions: [
-                    action("Keep session", "lock.fill", "#58CC02", .dismiss),
+                    action("Keep session", "lock.fill", AppColors.accentGreen, .dismiss),
                     action(
                         "Move into zone",
                         "wand.and.stars",
-                        "#1CB0F6",
+                        AppColors.accentBlue,
                         .replanZoneSessions(
                             ReplanZoneSessionsRequest(
                             zoneID: zoneID,
@@ -299,7 +311,7 @@ struct ScheduleNudgePresenter {
                     action(
                         "Undo zone change",
                         "arrow.uturn.backward",
-                        "#FF4B4B",
+                        AppColors.destructive,
                         .restoreZone(previousZone)
                     ),
                 ]
@@ -319,7 +331,7 @@ struct ScheduleNudgePresenter {
                 action(
                     "Keep extra time",
                     "lock.fill",
-                    "#58CC02",
+                    AppColors.accentGreen,
                     .keepFixedOverAllocation(
                         FixedOverAllocationRequest(
                         taskID: taskID,
@@ -335,7 +347,7 @@ struct ScheduleNudgePresenter {
                     action(
                         "Trim to task",
                         "scissors",
-                        "#FF9600",
+                        AppColors.warning,
                         .trimFixedOverAllocation(
                             FixedOverAllocationRequest(
                             taskID: taskID,
@@ -369,7 +381,7 @@ struct ScheduleNudgePresenter {
                     action(
                         "Keep time",
                         "lock.fill",
-                        "#58CC02",
+                        AppColors.accentGreen,
                         .keepFixedSessionsOutsideZone(
                             KeepFixedSessionsOutsideZoneRequest(
                             taskID: taskID,
@@ -381,7 +393,7 @@ struct ScheduleNudgePresenter {
                     action(
                         "Move into zone",
                         "wand.and.stars",
-                        "#1CB0F6",
+                        AppColors.accentBlue,
                         .moveFixedSessionsIntoZone(
                             MoveFixedSessionsIntoZoneRequest(
                             taskID: taskID,
@@ -395,7 +407,7 @@ struct ScheduleNudgePresenter {
                     action(
                         "Undo zone change",
                         "arrow.uturn.backward",
-                        "#FF4B4B",
+                        AppColors.destructive,
                         .restoreTaskZone(
                             RestoreTaskZoneRequest(
                             taskID: taskID,
@@ -420,7 +432,12 @@ struct ScheduleNudgePresenter {
                 color(for: candidate.kind),
                 .applyCandidate(candidate)
             )
-        } + [action("Leave for now", "clock.badge.exclamationmark", "#AFAFAF", .dismiss)]
+        } + [action(
+            "Leave for now",
+            "clock.badge.exclamationmark",
+            AppColors.neutralAction,
+            .dismiss
+        )]
         return TimelineNudgeModel(
             title: "This quest needs more room",
             message: "Only \(issue.availableMinutes) minutes fit here. You need \(missing) more minutes.",
@@ -432,13 +449,13 @@ struct ScheduleNudgePresenter {
     private func action(
         _ title: String,
         _ icon: String,
-        _ colorHex: String,
+        _ color: Color,
         _ command: ScheduleNudgeCommand
     ) -> TimelineNudgeAction {
         TimelineNudgeAction(
             title: title,
             icon: icon,
-            colorHex: colorHex,
+            color: color,
             command: command
         )
     }
@@ -461,12 +478,12 @@ struct ScheduleNudgePresenter {
         }
     }
 
-    private func color(for kind: ResolutionKind) -> String {
+    private func color(for kind: ResolutionKind) -> Color {
         switch kind {
-        case .splitWithinToday: "#58CC02"
-        case .continuePastZone: "#FF9600"
-        case .splitAcrossDays: "#A560E8"
-        case .scheduleNextAvailableDay: "#1CB0F6"
+        case .splitWithinToday: AppColors.accentGreen
+        case .continuePastZone: AppColors.warning
+        case .splitAcrossDays: AppColors.accentPurple
+        case .scheduleNextAvailableDay: AppColors.accentBlue
         }
     }
 }

@@ -1,3 +1,4 @@
+import Common
 import Domain
 import SwiftUI
 
@@ -13,7 +14,7 @@ public struct ScheduleTimelineView: View {
         let state = viewModel.state
 
         ZStack {
-            Color(awanHex: "#F5F7FB").ignoresSafeArea()
+            AppColors.screenBackground.ignoresSafeArea()
             ScrollView {
                 LazyVStack(spacing: 20) {
                     QuestHeaderView(
@@ -56,7 +57,10 @@ public struct ScheduleTimelineView: View {
                 ProgressView()
                     .controlSize(.large)
                     .padding(22)
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+                    .background(
+                        AppMaterials.loadingOverlay,
+                        in: RoundedRectangle(cornerRadius: 20)
+                    )
                     .transition(.scale.combined(with: .opacity))
             }
         }
@@ -89,20 +93,18 @@ public struct ScheduleTimelineView: View {
 
     private var actionButtons: some View {
         HStack(spacing: 13) {
-            GamifiedButton(
+            AppButton(
                 title: "Add task",
                 icon: "plus.circle.fill",
-                color: Color(awanHex: "#58CC02"),
-                compact: true,
-                action: { viewModel.send(.presentCreateTask) }
+                color: AppColors.accentGreen,
+                onTap: { viewModel.send(.presentCreateTask) }
             )
             .accessibilityIdentifier("add-task-button")
-            GamifiedButton(
+            AppButton(
                 title: "7-task goal",
                 icon: "trophy.fill",
-                color: Color(awanHex: "#A560E8"),
-                compact: true,
-                action: { viewModel.send(.presentCreateGoal) }
+                color: AppColors.accentPurple,
+                onTap: { viewModel.send(.presentCreateGoal) }
             )
             .accessibilityIdentifier("add-goal-button")
         }

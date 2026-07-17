@@ -1,3 +1,4 @@
+import Common
 import SwiftUI
 
 struct DayTimelineView: View {
@@ -49,13 +50,16 @@ struct DayTimelineView: View {
             .frame(height: totalHeight)
         }
         .frame(minHeight: 520)
-        .background(.background, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .background(
+            AppColors.surface,
+            in: RoundedRectangle(cornerRadius: 26, style: .continuous)
+        )
         .overlay {
             RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .stroke(Color.black.opacity(0.05), lineWidth: 1.5)
+                .stroke(AppColors.outline.opacity(0.05), lineWidth: 1.5)
         }
         .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
-        .shadow(color: Color.black.opacity(0.06), radius: 16, y: 7)
+        .shadow(color: AppColors.shadow.opacity(0.06), radius: 16, y: 7)
     }
 
     @ViewBuilder
@@ -71,10 +75,10 @@ struct DayTimelineView: View {
                 let y = yPosition(forMinutes: visibleStart)
                 ZStack(alignment: .topLeading) {
                     Rectangle()
-                        .fill(Color(awanHex: zone.colorHex).opacity(0.09))
+                        .fill(zone.color.opacity(0.09))
                     Text(zone.name.uppercased())
-                        .font(.system(size: 9, weight: .black, design: .rounded))
-                        .foregroundStyle(Color(awanHex: zone.colorHex).opacity(0.8))
+                        .font(AppFonts.microBlack)
+                        .foregroundStyle(zone.color.opacity(0.8))
                         .padding(.top, 7)
                         .padding(.leading, 10)
                 }
@@ -89,12 +93,12 @@ struct DayTimelineView: View {
         ForEach(Self.startHour...Self.endHour, id: \.self) { hour in
             let y = CGFloat(hour - Self.startHour) * Self.hourHeight
             Text(timeLabel(hour))
-                .font(.system(size: 10, weight: .bold, design: .rounded))
-                .foregroundStyle(.secondary)
+                .font(AppFonts.hourLabel)
+                .foregroundStyle(AppColors.textSecondary)
                 .frame(width: labelWidth - 8, alignment: .trailing)
                 .offset(y: y - 7)
             Rectangle()
-                .fill(Color.primary.opacity(0.08))
+                .fill(AppColors.textPrimary.opacity(0.08))
                 .frame(height: 1)
                 .offset(x: labelWidth, y: y)
         }
@@ -103,13 +107,13 @@ struct DayTimelineView: View {
     private func emptyState(plotWidth: CGFloat) -> some View {
         VStack(spacing: 12) {
             Image(systemName: "figure.run.circle.fill")
-                .font(.system(size: 52, weight: .black))
-                .foregroundStyle(Color(awanHex: "#58CC02").opacity(0.8))
+                .font(AppFonts.heroSymbol)
+                .foregroundStyle(AppColors.accentGreen.opacity(0.8))
             Text("Your day is ready for adventure")
-                .font(.system(.headline, design: .rounded, weight: .black))
+                .font(AppFonts.headlineBlack)
             Text("Create a quest or try the conflict lab above.")
-                .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                .foregroundStyle(.secondary)
+                .font(AppFonts.subheadlineSemibold)
+                .foregroundStyle(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
         }
         .frame(width: plotWidth - 20)
@@ -138,30 +142,30 @@ private struct TimelineSessionCard: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 5) {
                 Image(systemName: item.isMissed ? "exclamationmark.circle.fill" : "star.fill")
-                    .font(.caption2.weight(.black))
+                    .font(AppFonts.caption2IconBlack)
                 Text(item.title)
-                    .font(.system(.subheadline, design: .rounded, weight: .black))
+                    .font(AppFonts.subheadlineBlack)
                     .lineLimit(2)
             }
             if item.durationMinutes >= 45 {
                 Text(timeText)
-                    .font(.system(.caption2, design: .rounded, weight: .bold))
+                    .font(AppFonts.caption2Bold)
                     .opacity(0.82)
                 if item.blocking {
                     Label("Your time", systemImage: "lock.fill")
-                        .font(.system(size: 9, weight: .heavy, design: .rounded))
+                        .font(AppFonts.microHeavy)
                         .opacity(0.75)
                 }
             }
         }
-        .foregroundStyle(.white)
+        .foregroundStyle(AppColors.onAccent)
         .padding(.horizontal, 11)
         .padding(.vertical, 9)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(cardColor.gradient, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .stroke(.white.opacity(0.28), lineWidth: 1.5)
+                .stroke(AppColors.onAccent.opacity(0.28), lineWidth: 1.5)
         }
         .shadow(color: cardColor.opacity(0.6), radius: isDragging ? 14 : 0, y: isDragging ? 8 : 4)
         .scaleEffect(isDragging ? 1.025 : 1)
@@ -191,8 +195,8 @@ private struct TimelineSessionCard: View {
     }
 
     private var cardColor: Color {
-        if item.isMissed { return Color(awanHex: "#FF4B4B") }
-        return Color(awanHex: item.zoneColorHex)
+        if item.isMissed { return AppColors.destructive }
+        return item.zoneColor
     }
 
     private var timeText: String {

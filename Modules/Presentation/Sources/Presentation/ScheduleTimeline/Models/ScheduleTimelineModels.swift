@@ -1,5 +1,7 @@
+import Common
 import Domain
 import Foundation
+import SwiftUI
 
 public enum ScheduleTimelineSheet: Identifiable, Hashable {
     case createTask
@@ -24,7 +26,7 @@ public enum ScheduleTimelineStatus: Hashable {
 public struct TimelineZoneItem: Identifiable, Hashable {
     public let id: UUID
     public let name: String
-    public let colorHex: String
+    public let color: Color
     public let startMinutes: Int
     public let endMinutes: Int
 }
@@ -32,7 +34,7 @@ public struct TimelineZoneItem: Identifiable, Hashable {
 public struct TimelineZoneOption: Identifiable, Hashable {
     public let id: UUID
     public let name: String
-    public let colorHex: String
+    public let color: Color
 }
 
 public struct TimelineTaskEditorModel: Identifiable, Hashable {
@@ -48,7 +50,7 @@ public struct TimelineSessionItem: Identifiable, Hashable {
     public let id: UUID
     public let taskID: UUID
     public let title: String
-    public let zoneColorHex: String
+    public let zoneColor: Color
     public let start: Date
     public let end: Date
     public let startMinutes: Int
@@ -62,7 +64,7 @@ public struct TimelineSessionItem: Identifiable, Hashable {
 public struct TimelineNudgeAction: Identifiable, Hashable {
     public let title: String
     public let icon: String
-    public let colorHex: String
+    public let color: Color
     let command: ScheduleNudgeCommand
 
     public var id: String { title }

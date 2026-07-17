@@ -6,6 +6,12 @@ Use this guide when adding a SwiftUI feature to the Common, Network, Data, Domai
 
 ```text
 Modules/
+|-- Common/Sources/Common/DesignSystem/
+|   |-- AppColors.swift
+|   |-- AppFonts.swift
+|   |-- AppMaterials.swift
+|   |-- Components
+|   `-- Resources
 |-- Domain/Sources/Domain/<Feature>/
 |   |-- Entities
 |   |-- Errors
@@ -34,6 +40,19 @@ Modules/
 ```
 
 The `Errors` folder is optional. Add it when a feature has typed Domain errors that an entity, domain service, or use case may throw. Do not create empty directories merely to match the diagram.
+
+## Shared Design System
+
+App-wide visual tokens and generic SwiftUI primitives belong in Common:
+
+- Use `AppColors` for every fixed color, semantic color, surface, border, and shadow.
+- Convert runtime color data, such as a zone hex received from an API, only through `AppColors.runtime(hex:)` at the Presentation mapping boundary.
+- Use `AppFonts` instead of declaring system fonts directly in feature views.
+- Use `AppMaterials` for shared material surfaces.
+- Put only feature-independent components such as `AppButton` and `AppCard` in Common. Headers, timelines, nudges, and other feature-specific views remain in Presentation.
+- Every Common SwiftUI view must provide named light- and dark-mode `#Preview` configurations in its source file.
+
+Presentation must not contain hard-coded hex literals, direct SwiftUI named colors such as `.white` or `.secondary`, feature-local color parsers, or direct system-font declarations. Opacity and gradients may be applied to values obtained from `AppColors`.
 
 ## Dependency Flow
 
