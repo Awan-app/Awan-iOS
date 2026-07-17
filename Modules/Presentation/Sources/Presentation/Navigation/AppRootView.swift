@@ -9,8 +9,11 @@ import SwiftUI
 
 public struct AppRootView: View {
     @Environment(AppCoordinator.self) private var coordinator
+    private let scheduleViewModel: ScheduleTimelineViewModel
 
-    public init() {}
+    public init(scheduleViewModel: ScheduleTimelineViewModel) {
+        self.scheduleViewModel = scheduleViewModel
+    }
 
     public var body: some View {
         switch coordinator.currentFlow {
@@ -20,7 +23,7 @@ public struct AppRootView: View {
             }
         case .main:
             NavigationStack(path: Bindable(coordinator.mainCoordinator).path) {
-                EmptyView()
+                ScheduleTimelineView(viewModel: scheduleViewModel)
             }
         }
     }

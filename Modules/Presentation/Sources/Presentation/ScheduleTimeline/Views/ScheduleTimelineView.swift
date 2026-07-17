@@ -1,0 +1,186 @@
+import Domain
+import SwiftUI
+
+public struct ScheduleTimelineView: View {
+    @State private var viewModel: ScheduleTimelineViewModel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    public init(viewModel: ScheduleTimelineViewModel) {
+        _viewModel = State(initialValue: viewModel)
+    }
+
+    public var body: some View {
+        let state = viewModel.state
+
+        ZStack {
+            Color(awanHex: "#F5F7FB").ignoresSafeArea()
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    QuestHeaderView(
+                        selectedDayTitle: state.selectedDayTitle,
+                        scheduledMinutes: state.scheduledMinutes,
+                        goalProgress: state.activeGoalProgress
+                    )
+                    ScenarioControlsView(
+                        onScenario: { viewModel.send(.simulate($0)) },
+                        onReset: { viewModel.send(.resetSimulation) }
+                    )
+                    WeekStripView(
+                        days: state.weekDays,
+                        selectedDay: state.selectedDay,
+                        onSelect: { viewModel.send(.selectDay($0)) }
+                    )
+                    actionButtons
+                    DayTimelineView(
+                        zones: state.zones,
+                        items: state.timelineItems,
+                        onMove: { sessionID, points in
+                            viewModel.send(
+                                .moveSession(
+                                sessionID: sessionID,
+                                verticalPoints: points,
+                                hourHeight: DayTimelineView.hourHeight
+                                )
+                            )
+                        },
+                        onTap: { viewModel.send(.presentEditTask($0)) }
+                    )
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 28)
+            }
+            .scrollDismissesKeyboard(.interactively)
+
+            if state.isLoading {
+                ProgressView()
+                    .controlSize(.large)
+                    .padding(22)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+                    .transition(.scale.combined(with: .opacity))
+            }
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if let nudge = state.activeNudge {
+                GamifiedNudgeView(model: nudge) { action in
+                    viewModel.send(.performNudgeAction(action.id))
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity).combined(with: .scale(scale: 0.94)))
+            }
+        }
+        .animation(
+            reduceMotion ? .easeInOut(duration: 0.15) : .spring(response: 0.52, dampingFraction: 0.78),
+            value: state.activeNudge != nil
+        )
+        .animation(.spring(response: 0.45, dampingFraction: 0.8), value: state.timelineItems)
+        .sheet(item: sheetBinding) { sheet in
+            sheetContent(sheet)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+        }
+        .alert("Something got in the way", isPresented: errorBinding) {
+            Button("Got it") { viewModel.send(.dismissError) }
+        } message: {
+            Text(state.errorMessage ?? "Please try again.")
+        }
+        .task { viewModel.send(.appeared) }
+        .sensoryFeedback(.impact(weight: .medium), trigger: state.timelineItems.count)
+    }
+
+    private var actionButtons: some View {
+        HStack(spacing: 13) {
+            GamifiedButton(
+                title: "Add task",
+                icon: "plus.circle.fill",
+                color: Color(awanHex: "#58CC02"),
+                compact: true,
+                action: { viewModel.send(.presentCreateTask) }
+            )
+            .accessibilityIdentifier("add-task-button")
+            GamifiedButton(
+                title: "7-task goal",
+                icon: "trophy.fill",
+                color: Color(awanHex: "#A560E8"),
+                compact: true,
+                action: { viewModel.send(.presentCreateGoal) }
+            )
+            .accessibilityIdentifier("add-goal-button")
+        }
+    }
+
+    @ViewBuilder
+    private func sheetContent(_ sheet: ScheduleTimelineSheet) -> some View {
+        switch sheet {
+        case .createTask:
+            TaskEditorSheet(
+                task: nil,
+                zones: viewModel.state.zoneOptions,
+                selectedDay: viewModel.state.selectedDay,
+                onSave: { title, duration, zoneID, isSplittable in
+                    viewModel.send(
+                        .createTask(
+                            ScheduleTaskSubmission(
+                                title: title,
+                                durationMinutes: duration,
+                                zoneID: zoneID,
+                                isSplittable: isSplittable
+                            )
+                        )
+                    )
+                }
+            )
+        case .createGoal:
+            GoalCreatorSheet(
+                zones: viewModel.state.zoneOptions,
+                startDay: viewModel.state.selectedDay,
+                onCreate: { name, zoneID, duration in
+                    viewModel.send(
+                        .createGoal(
+                            ScheduleGoalSubmission(
+                                name: name,
+                                zoneID: zoneID,
+                                taskDurationMinutes: duration
+                            )
+                        )
+                    )
+                }
+            )
+        case let .editTask(id):
+            if let task = viewModel.state.taskEditorsByID[id] {
+                TaskEditorSheet(
+                    task: task,
+                    zones: viewModel.state.zoneOptions,
+                    selectedDay: viewModel.state.selectedDay,
+                    onSave: { title, duration, zoneID, isSplittable in
+                        viewModel.send(
+                            .updateTask(
+                                taskID: task.id,
+                                submission: ScheduleTaskSubmission(
+                                    title: title,
+                                    durationMinutes: duration,
+                                    zoneID: zoneID,
+                                    isSplittable: isSplittable
+                                )
+                            )
+                        )
+                    },
+                    onDelete: { viewModel.send(.deleteTask(task.id)) }
+                )
+            }
+        }
+    }
+
+    private var errorBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.state.errorMessage != nil },
+            set: { if !$0 { viewModel.send(.dismissError) } }
+        )
+    }
+
+    private var sheetBinding: Binding<ScheduleTimelineSheet?> {
+        Binding(
+            get: { viewModel.state.presentedSheet },
+            set: { if $0 == nil { viewModel.send(.dismissSheet) } }
+        )
+    }
+}

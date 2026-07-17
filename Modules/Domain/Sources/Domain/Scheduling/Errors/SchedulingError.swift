@@ -10,4 +10,6 @@ public enum SchedulingError: Error, Equatable, Sendable {
     case missingZone(taskID: UUID, zoneID: UUID)
     case missingDependency(taskID: UUID, dependencyID: UUID)
     case dependencyCycle(taskIDs: Set<UUID>)
+    case entityNotFound(id: UUID)
+    case invalidScenarioState
 }

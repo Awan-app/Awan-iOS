@@ -2,6 +2,7 @@ import Foundation
 
 public struct AwanTask: Identifiable, Hashable, Sendable {
     public let id: UUID
+    public let title: String
     public let goalID: UUID?
     public let zoneID: UUID?
     public let duration: TaskDuration
@@ -10,6 +11,7 @@ public struct AwanTask: Identifiable, Hashable, Sendable {
 
     public init(
         id: UUID,
+        title: String = "Untitled Task",
         goalID: UUID? = nil,
         zoneID: UUID? = nil,
         duration: TaskDuration,
@@ -17,6 +19,7 @@ public struct AwanTask: Identifiable, Hashable, Sendable {
         dependencyIDs: Set<UUID> = []
     ) {
         self.id = id
+        self.title = title
         self.goalID = goalID
         self.zoneID = zoneID
         self.duration = duration

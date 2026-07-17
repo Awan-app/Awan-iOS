@@ -11,4 +11,12 @@ public struct DefaultZoneRepository: ZoneRepository {
         let records = try await localDataSource.fetchZones()
         return try records.map { try $0.toDomain() }
     }
+
+    public func updateZone(_ zone: Zone) async throws {
+        try await localDataSource.updateZone(ZoneRecord(domain: zone))
+    }
+
+    public func resetZones() async throws {
+        try await localDataSource.resetZones()
+    }
 }

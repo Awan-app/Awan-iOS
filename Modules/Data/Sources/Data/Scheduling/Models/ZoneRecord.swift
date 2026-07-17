@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ZoneRecord: Hashable, Sendable {
+public struct ZoneRecord: Identifiable, Hashable, Sendable {
     public let id: UUID
     public let name: String
     public let colorHex: String

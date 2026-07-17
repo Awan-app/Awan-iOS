@@ -10,7 +10,10 @@ Modules/
 |   |-- Entities
 |   |-- Errors
 |   |-- Repositories
+|   |-- Services
 |   `-- UseCases
+|       |-- <Entity>
+|       `-- <OperationGroup>
 |-- Network/Sources/Network/<Feature>/
 |   |-- Endpoints
 |   `-- DTOs
@@ -21,6 +24,7 @@ Modules/
 |   |-- Repositories
 |   `-- Persistence
 `-- Presentation/Sources/Presentation/<Feature>/
+    |-- Models
     |-- ViewModels
     |-- Views
     |   |-- Components
@@ -71,14 +75,15 @@ Usually internal:
 
 ## ViewModel Pattern
 
-The project uses Combine-based `ObservableObject`. Do not use the Observation framework or `@Observable`.
+The project uses the Observation framework.
 
 ```swift
-import Combine
+import Observation
 
+@Observable
 @MainActor
-public final class <Feature>ViewModel: ObservableObject {
-    @Published public private(set) var state: <Feature>State = .idle
+public final class <Feature>ViewModel {
+    public private(set) var state: <Feature>State = .idle
 
     private let useCase: any <Operation><Feature>UseCase
 
@@ -112,6 +117,33 @@ public enum <Feature>State: Equatable, Sendable {
 ```
 
 For complex screens, multiple focused published properties are acceptable when one state enum becomes unreadable.
+
+### MVI Pattern For Complex Screens
+
+When a screen has many interactions, prefer one action boundary and one observable state:
+
+```swift
+public enum <Screen>Action {
+    case appeared
+    case selectedItem(UUID)
+    case dismissedError
+}
+
+@Observable
+@MainActor
+public final class <Screen>ViewModel {
+    public private(set) var state: <Screen>State
+
+    public func send(_ action: <Screen>Action) {
+        // Reduce UI-only actions or dispatch a focused use case.
+    }
+}
+```
+
+- Views only send actions and render state.
+- Do not retain mutable shadow copies of observable state fields in the view model.
+- Use one Domain use case per data query or mutation; sheet and alert changes remain presentation reductions.
+- Group numerous use-case dependencies in an immutable, explicitly typed feature bundle with named properties. Do not add dynamic lookup or resolver access to the bundle.
 
 ### ViewModel Boundary
 
@@ -234,7 +266,7 @@ Presentation/<Feature>/Views/<Feature>State.swift
 
 1. Domain is independent of UI and infrastructure frameworks.
 2. Presentation has no concrete Data or Network imports.
-3. View models use `ObservableObject` and `@Published`, not Observation.
+3. View models use `@Observable`; views use `@State`, `@Bindable`, and `@Environment` at ownership boundaries.
 4. View models contain no business logic.
 5. DTOs and persistence types do not escape Data.
 6. Public API is necessary and minimal.

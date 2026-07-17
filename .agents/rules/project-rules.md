@@ -13,7 +13,7 @@ Key conventions:
 - Create ticket work from the latest `development` branch using `feature/AWAN-<number>-short-description` before editing.
 - Put the same Jira key in the commit subject and pull request title.
 - Feature pull requests target `development` and are ready for review unless explicitly requested as drafts.
-- Use SwiftUI with Combine-based `ObservableObject` and `@Published`; do not use the Observation framework or `@Observable`.
+- Use SwiftUI with the Observation framework: `@Observable` view models plus `@State`, `@Bindable`, and `@Environment` at view ownership boundaries.
 - View models coordinate use-case calls and UI state only. They must never contain business rules, domain validation, persistence policy, or networking logic.
 - Preserve dependency direction and do not leak DTOs, persistence models, or concrete repositories across layers.
 - Use constructor injection, Swift concurrency, minimal public APIs, and focused verification.

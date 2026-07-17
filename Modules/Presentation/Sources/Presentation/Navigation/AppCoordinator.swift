@@ -21,7 +21,7 @@ public final class AppCoordinator {
     public let mainCoordinator: MainCoordinator
     public private(set) var currentFlow: AppFlow
 
-    public init(initialFlow: AppFlow = .auth) {
+    public init(initialFlow: AppFlow = .main) {
         self.authCoordinator = AuthCoordinator()
         self.mainCoordinator = MainCoordinator()
         self.currentFlow = initialFlow
