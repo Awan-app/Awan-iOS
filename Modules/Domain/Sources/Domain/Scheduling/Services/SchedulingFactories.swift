@@ -16,7 +16,7 @@ extension Session {
     func replacing(
         zoneID: UUID?? = nil,
         timeRange: TimeRange? = nil,
-        placement: Placement? = nil,
+        blocking: Bool? = nil,
         status: Status? = nil
     ) -> Session {
         Session(
@@ -24,7 +24,7 @@ extension Session {
             taskID: taskID,
             zoneID: zoneID ?? self.zoneID,
             timeRange: timeRange ?? self.timeRange,
-            placement: placement ?? self.placement,
+            blocking: blocking ?? self.blocking,
             status: status ?? self.status
         )
     }

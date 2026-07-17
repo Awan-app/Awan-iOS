@@ -31,6 +31,7 @@ public struct UpdateTaskRequest: Hashable, Sendable {
     public let durationMinutes: Int
     public let zoneID: UUID?
     public let isSplittable: Bool
+    public let blocking: Bool
     public let selectedDay: Date
     public let timeZone: TimeZone
 
@@ -40,6 +41,7 @@ public struct UpdateTaskRequest: Hashable, Sendable {
         durationMinutes: Int,
         zoneID: UUID?,
         isSplittable: Bool,
+        blocking: Bool,
         selectedDay: Date,
         timeZone: TimeZone
     ) {
@@ -48,6 +50,7 @@ public struct UpdateTaskRequest: Hashable, Sendable {
         self.durationMinutes = durationMinutes
         self.zoneID = zoneID
         self.isSplittable = isSplittable
+        self.blocking = blocking
         self.selectedDay = selectedDay
         self.timeZone = timeZone
     }

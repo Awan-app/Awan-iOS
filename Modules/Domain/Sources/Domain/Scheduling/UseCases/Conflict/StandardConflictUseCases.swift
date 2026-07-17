@@ -29,7 +29,7 @@ public struct DefaultApplyScheduleCandidateUseCase: ApplyScheduleCandidateUseCas
                     taskID: draft.taskID,
                     zoneID: draft.zoneID,
                     timeRange: draft.timeRange,
-                    placement: .engineManaged,
+                    blocking: false,
                     status: .planned
                 )
             )
@@ -71,7 +71,7 @@ public struct DefaultSeparateOverlappingSessionsUseCase: SeparateOverlappingSess
             end: second.timeRange.start
         )
         try await sessionRepository.updateSession(
-            first.replacing(timeRange: range, placement: .userFixed)
+            first.replacing(timeRange: range, blocking: true)
         )
         return ScheduleOperationResult(
             workspace: try await workspaceProvider.load(),
@@ -110,7 +110,7 @@ public struct DefaultMoveOverlappingSessionUseCase: MoveOverlappingSessionUseCas
             end: first.timeRange.end.addingTimeInterval(duration)
         )
         try await sessionRepository.updateSession(
-            second.replacing(timeRange: range, placement: .userFixed)
+            second.replacing(timeRange: range, blocking: true)
         )
         return ScheduleOperationResult(
             workspace: try await workspaceProvider.load(),
@@ -169,7 +169,7 @@ public struct DefaultShiftGoalDependencyChainUseCase: ShiftGoalDependencyChainUs
             try await sessionRepository.updateSession(
                 session.replacing(
                     timeRange: try TimeRange(start: start, end: end),
-                    placement: .engineManaged,
+                    blocking: false,
                     status: .planned
                 )
             )
@@ -223,7 +223,7 @@ public struct DefaultStackDependentTasksUseCase: StackDependentTasksUseCase {
             try await sessionRepository.updateSession(
                 session.replacing(
                     timeRange: successor.timeRange,
-                    placement: .userFixed,
+                    blocking: true,
                     status: .planned
                 )
             )

@@ -77,7 +77,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
                 minutes: 90,
                 timeZone: timeZone
             ),
-            placement: .userFixed,
+            blocking: true,
             status: .planned
         )
         let secondSession = Session(
@@ -91,7 +91,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
                 minutes: 90,
                 timeZone: timeZone
             ),
-            placement: .userFixed,
+            blocking: true,
             status: .planned
         )
         try await sessionRepository.addSession(firstSession)
@@ -133,7 +133,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
                     minutes: 450,
                     timeZone: timeZone
                 ),
-                placement: .userFixed,
+                blocking: true,
                 status: .planned
             )
         )
@@ -218,7 +218,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
                 minutes: 60,
                 timeZone: timeZone
             ),
-            placement: .engineManaged,
+            blocking: false,
             status: .planned
         )
         try await taskRepository.addTask(task)

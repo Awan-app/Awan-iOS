@@ -6,17 +6,20 @@ public struct ScheduleTaskSubmission: Hashable {
     public let durationMinutes: Int
     public let zoneID: UUID?
     public let isSplittable: Bool
+    public let blocking: Bool
 
     public init(
         title: String,
         durationMinutes: Int,
         zoneID: UUID?,
-        isSplittable: Bool
+        isSplittable: Bool,
+        blocking: Bool
     ) {
         self.title = title
         self.durationMinutes = durationMinutes
         self.zoneID = zoneID
         self.isSplittable = isSplittable
+        self.blocking = blocking
     }
 }
 

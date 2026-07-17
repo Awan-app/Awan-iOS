@@ -61,7 +61,7 @@ public struct DefaultTaskScheduleReconciler: TaskScheduleReconciling {
         let taskSessions = workspace.sessions.filter { $0.taskID == request.taskID }
         let completedSessions = taskSessions.filter { $0.status == .completed }
         let plannedFixedSessions = taskSessions.filter {
-            $0.status == .planned && $0.placement == .userFixed
+            $0.status == .planned && $0.blocking
         }
         let completedMinutes = completedSessions.reduce(0) {
             $0 + $1.timeRange.durationMinutes
@@ -204,7 +204,7 @@ public struct DefaultTaskScheduleReconciler: TaskScheduleReconciling {
             taskID: draft.taskID,
             zoneID: draft.zoneID,
             timeRange: draft.timeRange,
-            placement: .engineManaged,
+            blocking: false,
             status: .planned
         )
     }

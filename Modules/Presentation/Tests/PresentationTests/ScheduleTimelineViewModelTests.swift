@@ -91,7 +91,8 @@ final class ScheduleTimelineViewModelTests: XCTestCase {
                     title: "Polished",
                     durationMinutes: 210,
                     zoneID: zoneID,
-                    isSplittable: true
+                    isSplittable: true,
+                    blocking: false
                 )
             )
         )
@@ -103,6 +104,7 @@ final class ScheduleTimelineViewModelTests: XCTestCase {
         let request = await stub.lastUpdateRequest
         XCTAssertEqual(request?.taskID, taskID)
         XCTAssertEqual(request?.durationMinutes, 210)
+        XCTAssertEqual(request?.blocking, false)
         XCTAssertEqual(request?.selectedDay, date(day: 20))
     }
 
@@ -197,7 +199,7 @@ final class ScheduleTimelineViewModelTests: XCTestCase {
                 start: start,
                 end: start.addingTimeInterval(TimeInterval(sessionMinutes * 60))
             ),
-            placement: .engineManaged,
+            blocking: false,
             status: .planned
         )
         return ScheduleWorkspace(zones: [zone], goals: [], tasks: [task], sessions: [session])

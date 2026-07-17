@@ -116,14 +116,15 @@ public struct ScheduleTimelineView: View {
                 task: nil,
                 zones: viewModel.state.zoneOptions,
                 selectedDay: viewModel.state.selectedDay,
-                onSave: { title, duration, zoneID, isSplittable in
+                onSave: { title, duration, zoneID, isSplittable, blocking in
                     viewModel.send(
                         .createTask(
                             ScheduleTaskSubmission(
                                 title: title,
                                 durationMinutes: duration,
                                 zoneID: zoneID,
-                                isSplittable: isSplittable
+                                isSplittable: isSplittable,
+                                blocking: blocking
                             )
                         )
                     )
@@ -151,7 +152,7 @@ public struct ScheduleTimelineView: View {
                     task: task,
                     zones: viewModel.state.zoneOptions,
                     selectedDay: viewModel.state.selectedDay,
-                    onSave: { title, duration, zoneID, isSplittable in
+                    onSave: { title, duration, zoneID, isSplittable, blocking in
                         viewModel.send(
                             .updateTask(
                                 taskID: task.id,
@@ -159,7 +160,8 @@ public struct ScheduleTimelineView: View {
                                     title: title,
                                     durationMinutes: duration,
                                     zoneID: zoneID,
-                                    isSplittable: isSplittable
+                                    isSplittable: isSplittable,
+                                    blocking: blocking
                                 )
                             )
                         )

@@ -37,7 +37,7 @@ struct DayTimelineView: View {
                         }
                         .frame(width: cardWidth, height: max(46, CGFloat(item.durationMinutes) / 60 * Self.hourHeight - 4))
                         .offset(x: x, y: y + 2)
-                        .zIndex(item.isUserFixed ? 3 : 2)
+                        .zIndex(item.blocking ? 3 : 2)
                     }
 
                     if items.isEmpty {
@@ -147,7 +147,7 @@ private struct TimelineSessionCard: View {
                 Text(timeText)
                     .font(.system(.caption2, design: .rounded, weight: .bold))
                     .opacity(0.82)
-                if item.isUserFixed {
+                if item.blocking {
                     Label("Your time", systemImage: "lock.fill")
                         .font(.system(size: 9, weight: .heavy, design: .rounded))
                         .opacity(0.75)

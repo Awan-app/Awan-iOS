@@ -22,7 +22,7 @@ public struct DefaultMoveSessionUseCase: MoveSessionUseCase {
         try await sessionRepository.updateSession(
             session.replacing(
                 timeRange: request.newTimeRange,
-                placement: .userFixed
+                blocking: true
             )
         )
         return try await workspaceProvider.load()

@@ -61,7 +61,7 @@ public struct DefaultTrimFixedOverAllocationUseCase: TrimFixedOverAllocationUseC
             .filter {
                 $0.taskID == request.taskID
                     && $0.status == .planned
-                    && $0.placement == .userFixed
+                    && $0.blocking
             }
             .sorted { $0.timeRange.start > $1.timeRange.start }
         var excessMinutes = max(
@@ -197,7 +197,7 @@ public struct DefaultMoveFixedSessionsIntoZoneUseCase: MoveFixedSessionsIntoZone
                 session.replacing(
                     zoneID: .some(request.zoneID),
                     timeRange: range,
-                    placement: .userFixed
+                    blocking: true
                 )
             )
             movedRanges.append(range)

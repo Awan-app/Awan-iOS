@@ -1,3 +1,5 @@
+import Foundation
+
 public protocol UpdateTaskUseCase: Sendable {
     func execute(_ request: UpdateTaskRequest) async throws -> ScheduleOperationResult
 }
@@ -36,8 +38,23 @@ public struct DefaultUpdateTaskUseCase: UpdateTaskUseCase {
         )
         try await taskRepository.updateTask(updatedTask)
 
+        let plannedSessions = try await sessionRepository.fetchSessions()
+            .filter { $0.taskID == updatedTask.id && $0.status == .planned }
+        let blockingChanged = plannedSessions.contains {
+            $0.blocking != request.blocking
+        }
+        let zoneChanged = previousTask.zoneID != updatedTask.zoneID
+        let durationIncrease = max(
+            0,
+            updatedTask.duration.minutes - previousTask.duration.minutes
+        )
+        let sessionToExtendID = plannedSessions
+            .sorted { $0.timeRange.start < $1.timeRange.start }
+            .first?
+            .id
         let requiresReconciliation = previousTask.duration != updatedTask.duration
-            || previousTask.zoneID != updatedTask.zoneID
+            || zoneChanged
+            || blockingChanged
         guard requiresReconciliation else {
             return ScheduleOperationResult(
                 workspace: try await workspaceProvider.load(),
@@ -45,18 +62,28 @@ public struct DefaultUpdateTaskUseCase: UpdateTaskUseCase {
             )
         }
 
-        let taskSessions = try await sessionRepository.fetchSessions()
-            .filter { $0.taskID == updatedTask.id }
-        for session in taskSessions where session.status == .planned {
-            switch session.placement {
-            case .engineManaged:
-                try await sessionRepository.deleteSession(id: session.id)
-            case .userFixed where previousTask.zoneID != updatedTask.zoneID:
+        for session in plannedSessions {
+            if request.blocking {
+                let extendedRange: TimeRange?
+                if session.id == sessionToExtendID, durationIncrease > 0 {
+                    extendedRange = try TimeRange(
+                        start: session.timeRange.start,
+                        end: session.timeRange.end.addingTimeInterval(
+                            TimeInterval(durationIncrease * 60)
+                        )
+                    )
+                } else {
+                    extendedRange = nil
+                }
                 try await sessionRepository.updateSession(
-                    session.replacing(zoneID: .some(updatedTask.zoneID))
+                    session.replacing(
+                        zoneID: zoneChanged ? .some(updatedTask.zoneID) : nil,
+                        timeRange: extendedRange,
+                        blocking: true
+                    )
                 )
-            case .userFixed:
-                break
+            } else {
+                try await sessionRepository.deleteSession(id: session.id)
             }
         }
 

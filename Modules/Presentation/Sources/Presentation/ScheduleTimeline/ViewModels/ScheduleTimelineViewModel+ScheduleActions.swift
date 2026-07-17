@@ -32,6 +32,7 @@ extension ScheduleTimelineViewModel {
             durationMinutes: submission.durationMinutes,
             zoneID: submission.zoneID,
             isSplittable: submission.isSplittable,
+            blocking: submission.blocking,
             selectedDay: state.selectedDay,
             timeZone: timeZone
         )

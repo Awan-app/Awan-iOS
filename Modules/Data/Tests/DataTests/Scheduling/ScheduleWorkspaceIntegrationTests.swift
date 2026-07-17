@@ -28,7 +28,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         XCTAssertEqual(task.title, "Build timeline")
         XCTAssertEqual(session.taskID, task.id)
         XCTAssertEqual(session.timeRange.start, date(day: 20, hour: 9))
-        XCTAssertEqual(session.placement, .engineManaged)
+        XCTAssertFalse(session.blocking)
 
         let updated = try await useCase.updateTask(
             updateRequest(
@@ -110,7 +110,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         XCTAssertEqual(second.timeRange.start, first.timeRange.end)
         XCTAssertEqual(second.timeRange, originalSecond.timeRange)
         XCTAssertNotEqual(first.timeRange, originalFirst.timeRange)
-        XCTAssertEqual(first.placement, .userFixed)
+        XCTAssertTrue(first.blocking)
     }
 
     func testOverflowScenarioOffersApprovalCandidatesWithoutSchedulingTomorrow() async throws {
@@ -169,7 +169,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         let second = try XCTUnwrap(resolved.workspace.sessions.first { $0.id == secondID })
         XCTAssertEqual(first.timeRange, originalFirst.timeRange)
         XCTAssertEqual(second.timeRange.start, first.timeRange.end)
-        XCTAssertEqual(second.placement, .userFixed)
+        XCTAssertTrue(second.blocking)
     }
 
     func testMissedChainResolutionsShiftStackAndCutDependencyWithoutLeavingGoal() async throws {
@@ -223,7 +223,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         )
         XCTAssertEqual(missedSession.timeRange, successorSession.timeRange)
         XCTAssertEqual(missedSession.status, .planned)
-        XCTAssertEqual(missedSession.placement, .userFixed)
+        XCTAssertTrue(missedSession.blocking)
 
         let independentScenario = try await useCase.simulate(
             .missedDependencyChain,
@@ -269,7 +269,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
             replanned.workspace.sessions.first { sessionIDs.contains($0.id) }
         )
         XCTAssertEqual(movedSession.timeRange.start, date(day: 20, hour: 10))
-        XCTAssertEqual(movedSession.placement, .engineManaged)
+        XCTAssertFalse(movedSession.blocking)
 
         let restoreScenario = try await useCase.simulate(
             .zoneReconfiguration,
@@ -406,7 +406,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
             taskID: original.taskID,
             zoneID: original.zoneID,
             timeRange: original.timeRange,
-            placement: original.placement,
+            blocking: original.blocking,
             status: .completed
         )
         try await system.sessionRepository.updateSession(completed)
@@ -442,7 +442,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         XCTAssertEqual(reduced.workspace.sessions, [completed])
     }
 
-    func testFixedSessionIncreasePreservesTimeAndSchedulesOnlyRemainder() async throws {
+    func testBlockingSessionIncreaseExtendsExistingSession() async throws {
         let system = makeSystem()
         let workspace = try await system.useCase.loadWorkspace()
         let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
@@ -473,17 +473,62 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                 minutes: 180,
                 zoneID: workZone.id,
                 isSplittable: false,
+                blocking: true,
                 day: date(day: 20)
             )
         )
 
-        let fixed = try XCTUnwrap(updated.workspace.sessions.first { $0.id == original.id })
-        let remainder = try XCTUnwrap(updated.workspace.sessions.first { $0.id != original.id })
-        XCTAssertEqual(fixed.timeRange, fixedRange)
-        XCTAssertEqual(fixed.placement, .userFixed)
-        XCTAssertEqual(remainder.timeRange.start, date(day: 20, hour: 11))
-        XCTAssertEqual(remainder.timeRange.end, date(day: 20, hour: 13))
-        XCTAssertEqual(remainder.placement, .engineManaged)
+        let session = try XCTUnwrap(updated.workspace.sessions.first)
+        XCTAssertEqual(updated.workspace.sessions.count, 1)
+        XCTAssertEqual(session.id, original.id)
+        XCTAssertEqual(session.timeRange.start, fixedRange.start)
+        XCTAssertEqual(session.timeRange.end, date(day: 20, hour: 13))
+        XCTAssertTrue(session.blocking)
+    }
+
+    func testTaskDetailsCanReleaseBlockingSessionBackToEngine() async throws {
+        let system = makeSystem()
+        let workspace = try await system.useCase.loadWorkspace()
+        let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
+        let created = try await system.useCase.addTask(
+            CreateTaskRequest(
+                title: "Release fixed time",
+                durationMinutes: 60,
+                zoneID: workZone.id,
+                isSplittable: false,
+                selectedDay: date(day: 20),
+                timeZone: timeZone
+            )
+        )
+        let task = try XCTUnwrap(created.workspace.tasks.first)
+        let original = try XCTUnwrap(created.workspace.sessions.first)
+        _ = try await system.useCase.moveSession(
+            MoveSessionRequest(
+                sessionID: original.id,
+                newTimeRange: try TimeRange(
+                    start: date(day: 20, hour: 13),
+                    end: date(day: 20, hour: 14)
+                )
+            )
+        )
+
+        let released = try await system.useCase.updateTask(
+            updateRequest(
+                taskID: task.id,
+                title: task.title,
+                minutes: 60,
+                zoneID: workZone.id,
+                isSplittable: false,
+                blocking: false,
+                day: date(day: 20)
+            )
+        )
+
+        let session = try XCTUnwrap(released.workspace.sessions.first)
+        XCTAssertNotEqual(session.id, original.id)
+        XCTAssertFalse(session.blocking)
+        XCTAssertEqual(session.timeRange.start, date(day: 20, hour: 9))
+        XCTAssertEqual(session.timeRange.end, date(day: 20, hour: 10))
     }
 
     func testFixedSessionReductionRequiresExplicitKeepOrTrim() async throws {
@@ -513,6 +558,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                 minutes: 60,
                 zoneID: workZone.id,
                 isSplittable: false,
+                blocking: true,
                 day: date(day: 20)
             )
         )
@@ -545,7 +591,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         XCTAssertEqual(session.id, original.id)
         XCTAssertEqual(session.timeRange.start, original.timeRange.start)
         XCTAssertEqual(session.timeRange.end, date(day: 20, hour: 10))
-        XCTAssertEqual(session.placement, .userFixed)
+        XCTAssertTrue(session.blocking)
     }
 
     func testFixedSessionZoneEditAdoptsZoneAndSupportsMoveAndUndo() async throws {
@@ -575,6 +621,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                 minutes: 60,
                 zoneID: studyZone.id,
                 isSplittable: false,
+                blocking: true,
                 day: date(day: 20)
             )
         )
@@ -603,7 +650,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         )
         let movedSession = try XCTUnwrap(moved.workspace.sessions.first)
         XCTAssertEqual(movedSession.timeRange.start, date(day: 20, hour: 18))
-        XCTAssertEqual(movedSession.placement, .userFixed)
+        XCTAssertTrue(movedSession.blocking)
 
         let undoSystem = makeSystem()
         let undoWorkspace = try await undoSystem.useCase.loadWorkspace()
@@ -631,6 +678,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                 minutes: 60,
                 zoneID: undoStudyZone.id,
                 isSplittable: false,
+                blocking: true,
                 day: date(day: 20)
             )
         )
@@ -988,6 +1036,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         minutes: Int,
         zoneID: UUID?,
         isSplittable: Bool,
+        blocking: Bool = false,
         day: Date
     ) -> UpdateTaskRequest {
         UpdateTaskRequest(
@@ -996,6 +1045,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
             durationMinutes: minutes,
             zoneID: zoneID,
             isSplittable: isSplittable,
+            blocking: blocking,
             selectedDay: day,
             timeZone: timeZone
         )

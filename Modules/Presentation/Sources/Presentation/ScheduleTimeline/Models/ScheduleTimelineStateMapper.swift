@@ -45,15 +45,20 @@ struct ScheduleTimelineStateMapper {
                 TimelineZoneOption(id: $0.id, name: $0.name, colorHex: $0.color.hex)
             },
             taskEditorsByID: Dictionary(
-                uniqueKeysWithValues: workspace.tasks.map {
+                uniqueKeysWithValues: workspace.tasks.map { task in
                     (
-                        $0.id,
+                        task.id,
                         TimelineTaskEditorModel(
-                            id: $0.id,
-                            title: $0.title,
-                            durationMinutes: $0.duration.minutes,
-                            zoneID: $0.zoneID,
-                            isSplittable: $0.isSplittable
+                            id: task.id,
+                            title: task.title,
+                            durationMinutes: task.duration.minutes,
+                            zoneID: task.zoneID,
+                            isSplittable: task.isSplittable,
+                            blocking: workspace.sessions.contains { session in
+                                session.taskID == task.id
+                                    && session.status == .planned
+                                    && session.blocking
+                            }
                         )
                     )
                 }
@@ -110,7 +115,7 @@ struct ScheduleTimelineStateMapper {
                 durationMinutes: session.timeRange.durationMinutes,
                 lane: lanesBySessionID[session.id] ?? 0,
                 laneCount: laneCount,
-                isUserFixed: session.placement == .userFixed,
+                blocking: session.blocking,
                 isMissed: session.status == .missed
             )
         }

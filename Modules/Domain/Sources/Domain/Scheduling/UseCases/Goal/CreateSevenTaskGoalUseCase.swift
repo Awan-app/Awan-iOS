@@ -109,7 +109,7 @@ public struct DefaultCreateSevenTaskGoalUseCase: CreateSevenTaskGoalUseCase {
             taskID: draft.taskID,
             zoneID: draft.zoneID,
             timeRange: draft.timeRange,
-            placement: .engineManaged,
+            blocking: false,
             status: .planned
         )
     }

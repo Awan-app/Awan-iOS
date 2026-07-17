@@ -45,7 +45,7 @@ public struct DefaultReplanZoneSessionsUseCase: ReplanZoneSessionsUseCase {
                 session.replacing(
                     zoneID: .some(request.zoneID),
                     timeRange: range,
-                    placement: .engineManaged
+                    blocking: false
                 )
             )
             cursor = range.end

@@ -41,6 +41,7 @@ public struct TimelineTaskEditorModel: Identifiable, Hashable {
     public let durationMinutes: Int
     public let zoneID: UUID?
     public let isSplittable: Bool
+    public let blocking: Bool
 }
 
 public struct TimelineSessionItem: Identifiable, Hashable {
@@ -54,7 +55,7 @@ public struct TimelineSessionItem: Identifiable, Hashable {
     public let durationMinutes: Int
     public let lane: Int
     public let laneCount: Int
-    public let isUserFixed: Bool
+    public let blocking: Bool
     public let isMissed: Bool
 }
 

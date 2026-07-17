@@ -5,19 +5,20 @@ struct TaskEditorSheet: View {
     let task: TimelineTaskEditorModel?
     let zones: [TimelineZoneOption]
     let selectedDay: Date
-    let onSave: (String, Int, UUID?, Bool) -> Void
+    let onSave: (String, Int, UUID?, Bool, Bool) -> Void
     let onDelete: (() -> Void)?
 
     @State private var title: String
     @State private var durationMinutes: Int
     @State private var zoneID: UUID?
     @State private var isSplittable: Bool
+    @State private var blocking: Bool
 
     init(
         task: TimelineTaskEditorModel?,
         zones: [TimelineZoneOption],
         selectedDay: Date,
-        onSave: @escaping (String, Int, UUID?, Bool) -> Void,
+        onSave: @escaping (String, Int, UUID?, Bool, Bool) -> Void,
         onDelete: (() -> Void)? = nil
     ) {
         self.task = task
@@ -29,6 +30,7 @@ struct TaskEditorSheet: View {
         _durationMinutes = State(initialValue: task?.durationMinutes ?? 60)
         _zoneID = State(initialValue: task?.zoneID ?? zones.first?.id)
         _isSplittable = State(initialValue: task?.isSplittable ?? true)
+        _blocking = State(initialValue: task?.blocking ?? false)
     }
 
     var body: some View {
@@ -78,6 +80,17 @@ struct TaskEditorSheet: View {
                                     .font(.system(.body, design: .rounded, weight: .bold))
                             }
                             .tint(Color(awanHex: "#58CC02"))
+                            if task != nil {
+                                Toggle(isOn: $blocking) {
+                                    Label(
+                                        "Keep scheduled time fixed",
+                                        systemImage: "lock.fill"
+                                    )
+                                    .font(.system(.body, design: .rounded, weight: .bold))
+                                }
+                                .tint(Color(awanHex: "#FF9600"))
+                                .accessibilityIdentifier("task-blocking-toggle")
+                            }
                         }
                     }
 
@@ -88,7 +101,13 @@ struct TaskEditorSheet: View {
                     ) {
                         let cleanTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
                         guard !cleanTitle.isEmpty else { return }
-                        onSave(cleanTitle, durationMinutes, zoneID, isSplittable)
+                        onSave(
+                            cleanTitle,
+                            durationMinutes,
+                            zoneID,
+                            isSplittable,
+                            blocking
+                        )
                         dismiss()
                     }
                     .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)

@@ -1,11 +1,6 @@
 import Foundation
 
 public struct Session: Identifiable, Hashable, Sendable {
-    public enum Placement: Hashable, Sendable {
-        case engineManaged
-        case userFixed
-    }
-
     public enum Status: Hashable, Sendable {
         case planned
         case completed
@@ -17,7 +12,7 @@ public struct Session: Identifiable, Hashable, Sendable {
     public let taskID: UUID
     public let zoneID: UUID?
     public let timeRange: TimeRange
-    public let placement: Placement
+    public let blocking: Bool
     public let status: Status
 
     public init(
@@ -25,14 +20,14 @@ public struct Session: Identifiable, Hashable, Sendable {
         taskID: UUID,
         zoneID: UUID?,
         timeRange: TimeRange,
-        placement: Placement,
+        blocking: Bool,
         status: Status
     ) {
         self.id = id
         self.taskID = taskID
         self.zoneID = zoneID
         self.timeRange = timeRange
-        self.placement = placement
+        self.blocking = blocking
         self.status = status
     }
 

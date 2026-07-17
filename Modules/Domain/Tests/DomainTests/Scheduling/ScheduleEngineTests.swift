@@ -18,7 +18,7 @@ final class ScheduleEngineTests: XCTestCase {
             taskID: fixedTask.id,
             zoneID: zone.id,
             timeRange: fixedRange,
-            placement: .userFixed,
+            blocking: true,
             status: .planned
         )
         let snapshot = SchedulingSnapshot(
@@ -57,7 +57,7 @@ final class ScheduleEngineTests: XCTestCase {
             taskID: occupyingTask.id,
             zoneID: zone.id,
             timeRange: occupiedRange,
-            placement: .userFixed,
+            blocking: true,
             status: .planned
         )
         let snapshot = SchedulingSnapshot(
@@ -95,7 +95,7 @@ final class ScheduleEngineTests: XCTestCase {
                     start: date(day: 17, hour: 9),
                     end: date(day: 17, hour: 11)
                 ),
-                placement: .userFixed,
+                blocking: true,
                 status: .planned
             ),
             Session(
@@ -106,7 +106,7 @@ final class ScheduleEngineTests: XCTestCase {
                     start: date(day: 17, hour: 10),
                     end: date(day: 17, hour: 12)
                 ),
-                placement: .userFixed,
+                blocking: true,
                 status: .planned
             ),
         ]
