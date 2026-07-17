@@ -25,23 +25,6 @@ struct OtpVerificationView: View {
             .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Custom Navigation Bar
-                HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "chevron.left")
-                                .font(AppFonts.subheadlineHeavy)
-                            Text("BACK")
-                                .font(AppFonts.subheadlineHeavy)
-                        }
-                        .foregroundColor(AppColors.accentBlue)
-                    }
-                    Spacer()
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
 
                 Spacer()
                     .frame(height: 48)
@@ -61,17 +44,14 @@ struct OtpVerificationView: View {
 
                 // Subtitle
                 VStack(spacing: 4) {
-                    Text("Enter the code we sent to 7absayed@gmail.com")
+                    Text("Enter the code we sent to")
                         .font(AppFonts.subheadlineSemibold)
                         .foregroundColor(AppColors.textSecondary)
-
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Text("Edit")
+                    
+                        Text("andrew@gmail.com")
                             .font(AppFonts.subheadlineBold)
                             .foregroundColor(AppColors.accentBlue)
-                    }
+                    
                 }
                 .padding(.bottom, 32)
 
