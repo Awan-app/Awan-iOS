@@ -12,6 +12,12 @@ import Presentation
 @main
 struct AwanApp: App {
     @State private var coordinator = AppCoordinator()
+    private let scheduleViewModel: ScheduleTimelineViewModel
+
+    init() {
+        let dependencies = AppDependencyContainer()
+        scheduleViewModel = dependencies.resolve(ScheduleTimelineViewModel.self)
+    }
 
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -28,7 +34,7 @@ struct AwanApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppRootView()
+            AppRootView(scheduleViewModel: scheduleViewModel)
                 .environment(coordinator)
         }
         .modelContainer(sharedModelContainer)

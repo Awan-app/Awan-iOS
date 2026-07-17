@@ -63,7 +63,7 @@ Appropriate responsibilities:
 - Domain services and validation.
 - Domain errors and results.
 
-Domain must remain independent of SwiftUI, Combine-based presentation state, persistence frameworks, networking frameworks, transport DTOs, and dependency-injection frameworks.
+Domain must remain independent of SwiftUI, Observation-based presentation state, persistence frameworks, networking frameworks, transport DTOs, and dependency-injection frameworks.
 
 Business logic belongs here, not in views, view models, repositories, or network clients.
 
@@ -101,13 +101,13 @@ Data must not contain SwiftUI views, presentation state, navigation, or business
 
 Presentation owns UI rendering, UI state, user events, and navigation.
 
-Use SwiftUI with Combine-based `ObservableObject` view models. The project does not use the Observation framework or `@Observable`.
+Use SwiftUI with Observation-based view models.
 
 Appropriate responsibilities:
 
 - SwiftUI views.
-- `@MainActor` view models conforming to `ObservableObject`.
-- `@Published` presentation state.
+- `@MainActor` view models using `@Observable`.
+- Observable stored presentation state, with `@State`, `@Bindable`, and `@Environment` used at SwiftUI ownership boundaries.
 - Formatting and UI-only transformations.
 - Coordinators and typed routes.
 - Calling injected Domain use cases in response to user actions.
@@ -133,7 +133,7 @@ Use constructor injection. Do not resolve dependencies inside views or view mode
 ```text
 User action
 -> SwiftUI View
--> ObservableObject ViewModel
+-> Observation ViewModel
 -> Domain Use Case
 -> Domain Repository Contract
 -> Data Repository Implementation
@@ -150,6 +150,27 @@ DTO or persistence model
 ```
 
 Each boundary uses types owned by the receiving layer. DTOs and persistence models stop in Data; presentation models stop in Presentation.
+
+## MVI Presentation Flow
+
+Complex screens use a unidirectional Model-View-Intent flow:
+
+```text
+SwiftUI View
+-> Screen Action
+-> Observation ViewModel
+-> Focused Domain Use Case
+-> Domain Result
+-> Presentation Mapper
+-> Screen State
+-> SwiftUI View
+```
+
+- Views send actions through one view-model entry point and never invoke use cases directly.
+- The observable screen state is the only mutable UI source of truth.
+- UI-only actions reduce state synchronously; data queries and mutations invoke focused use cases.
+- A feature may inject an immutable, explicitly typed use-case bundle to keep constructors readable. The bundle contains no lookup behavior and is not a service locator.
+- Shared business orchestration belongs in Domain services so focused use cases do not duplicate rules.
 
 ## Navigation
 

@@ -69,15 +69,16 @@ Awan app composition root
 - `Domain` owns entities, value objects, repository contracts, use cases, and business rules.
 - `Data` implements Domain repositories and owns data sources, persistence models, mapping, and data coordination.
 - `Network` owns transport, endpoints, authentication headers, request/response DTOs, and decoding. Alamofire is the selected networking library.
-- `Presentation` owns SwiftUI, `ObservableObject` view models, UI state, coordinators, and routes.
+- `Presentation` owns SwiftUI, Observation-based view models, UI state, coordinators, and routes.
 - `Common` contains stable utilities and reusable UI primitives shared by multiple consumers. It is not a dumping ground.
 - The `Awan` app target is the composition root. Use constructor injection; do not add a DI framework without an explicit decision.
 
 ## View And ViewModel Rules
 
-Use SwiftUI with Combine-based `ObservableObject`. Do not use the Observation framework or `@Observable`.
+Use SwiftUI with the Observation framework.
 
-- View models conform to `ObservableObject`, are marked `@MainActor`, and expose mutable UI state using `@Published`.
+- View models use `@Observable`, are marked `@MainActor`, and expose UI state as observable stored properties.
+- Views own injected observable reference types with `@State`, derive bindings with `@Bindable`, and share app-wide observable dependencies through `@Environment` when appropriate.
 - Views remain declarative and render view-model state.
 - View models translate user actions into use-case calls and map results into presentation state.
 - View models must not contain business logic, validation rules, domain calculations, persistence decisions, or networking logic.
