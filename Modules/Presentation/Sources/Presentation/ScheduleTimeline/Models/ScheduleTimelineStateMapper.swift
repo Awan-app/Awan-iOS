@@ -80,24 +80,17 @@ struct ScheduleTimelineStateMapper {
         let visibleSessions = sessions
             .filter { calendar.isDate($0.timeRange.start, inSameDayAs: selectedDay) }
             .filter { $0.status != .cancelled }
-            .sorted { $0.timeRange.start < $1.timeRange.start }
-        var laneEnds: [Date] = []
-        var lanesBySessionID: [UUID: Int] = [:]
-        for session in visibleSessions {
-            if let lane = laneEnds.firstIndex(where: { $0 <= session.timeRange.start }) {
-                laneEnds[lane] = session.timeRange.end
-                lanesBySessionID[session.id] = lane
-            } else {
-                lanesBySessionID[session.id] = laneEnds.count
-                laneEnds.append(session.timeRange.end)
-            }
-        }
-        let laneCount = max(1, laneEnds.count)
+            .sorted(by: sessionOrder)
+        let placements = lanePlacements(for: visibleSessions)
 
         return visibleSessions.compactMap { session in
             guard let task = tasks.first(where: { $0.id == session.taskID }) else {
                 return nil
             }
+            let placement = placements[session.id] ?? TimelineLanePlacement(
+                lane: 0,
+                laneCount: 1
+            )
             let components = calendar.dateComponents(
                 [.hour, .minute],
                 from: session.timeRange.start
@@ -113,12 +106,73 @@ struct ScheduleTimelineStateMapper {
                 end: session.timeRange.end,
                 startMinutes: ((components.hour ?? 0) * 60) + (components.minute ?? 0),
                 durationMinutes: session.timeRange.durationMinutes,
-                lane: lanesBySessionID[session.id] ?? 0,
-                laneCount: laneCount,
+                lane: placement.lane,
+                laneCount: placement.laneCount,
                 blocking: session.blocking,
                 isMissed: session.status == .missed
             )
         }
+    }
+
+    private func lanePlacements(
+        for sessions: [Session]
+    ) -> [UUID: TimelineLanePlacement] {
+        var groups: [[Session]] = []
+        var currentGroup: [Session] = []
+        var currentGroupEnd: Date?
+
+        for session in sessions {
+            if let groupEnd = currentGroupEnd,
+               session.timeRange.start >= groupEnd {
+                groups.append(currentGroup)
+                currentGroup = []
+                currentGroupEnd = nil
+            }
+
+            currentGroup.append(session)
+            currentGroupEnd = max(
+                currentGroupEnd ?? session.timeRange.end,
+                session.timeRange.end
+            )
+        }
+        if !currentGroup.isEmpty {
+            groups.append(currentGroup)
+        }
+
+        var result: [UUID: TimelineLanePlacement] = [:]
+        for group in groups {
+            var laneEnds: [Date] = []
+            var lanesBySessionID: [UUID: Int] = [:]
+
+            for session in group {
+                if let lane = laneEnds.firstIndex(where: { $0 <= session.timeRange.start }) {
+                    laneEnds[lane] = session.timeRange.end
+                    lanesBySessionID[session.id] = lane
+                } else {
+                    lanesBySessionID[session.id] = laneEnds.count
+                    laneEnds.append(session.timeRange.end)
+                }
+            }
+
+            let laneCount = max(1, laneEnds.count)
+            for session in group {
+                result[session.id] = TimelineLanePlacement(
+                    lane: lanesBySessionID[session.id] ?? 0,
+                    laneCount: laneCount
+                )
+            }
+        }
+        return result
+    }
+
+    private func sessionOrder(_ lhs: Session, _ rhs: Session) -> Bool {
+        if lhs.timeRange.start != rhs.timeRange.start {
+            return lhs.timeRange.start < rhs.timeRange.start
+        }
+        if lhs.timeRange.end != rhs.timeRange.end {
+            return lhs.timeRange.end > rhs.timeRange.end
+        }
+        return lhs.id.uuidString < rhs.id.uuidString
     }
 
     private func goalProgress(in workspace: ScheduleWorkspace) -> Double {
@@ -132,6 +186,11 @@ struct ScheduleTimelineStateMapper {
         }.count
         return Double(completed) / Double(goalTasks.count)
     }
+}
+
+private struct TimelineLanePlacement {
+    let lane: Int
+    let laneCount: Int
 }
 
 struct ScheduleNudgePresenter {
