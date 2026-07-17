@@ -61,7 +61,7 @@ struct OtpVerificationView: View {
                         .foregroundColor(AppColors.textSecondary)
                     
                     Button(action: {}) {
-                        Text("· Edit")
+                        Text("Edit")
                             .font(AppFonts.subheadlineBold)
                             .foregroundColor(AppColors.accentBlue)
                     }
@@ -89,8 +89,10 @@ struct OtpVerificationView: View {
                 // Verification status
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(AppColors.accentBlue)
-                        .font(.system(size: 16, weight: .bold))
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, AppColors.accentBlue)
+                        .font(.system(size: 20, weight: .black))
+                        .shadow(color: AppColors.accentBlue.opacity(0.6), radius: 0, x: 0, y: 2)
                     Text("Verified — drifting you in...")
                         .font(AppFonts.subheadlineBold)
                         .foregroundColor(AppColors.accentBlue)
@@ -116,10 +118,8 @@ struct OtpVerificationView: View {
                 }
                 .padding(.bottom, 32)
             }
+            .toolbar(.hidden)
         }
-#if os(iOS)
-        .toolbar(.hidden, for: .navigationBar)
-#endif
     }
     
     private func getChar(at index: Int) -> String {
