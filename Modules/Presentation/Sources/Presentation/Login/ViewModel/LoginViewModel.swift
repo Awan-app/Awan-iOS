@@ -7,6 +7,7 @@
 
 import Foundation
 import Observation
+import Domain
 import Network
 
 public enum LoginState: Equatable, Sendable {
@@ -24,6 +25,7 @@ public final class LoginViewModel {
     public private(set) var isOffline: Bool = false
     public private(set) var hasAttemptedSubmit: Bool = false
     private var rateLimitTask: Task<Void, Never>?
+    private let requestOTPUseCase: RequestOTPUseCase
     private let monitor = NWPathMonitor()
         
     public var email: String = "" {
@@ -55,7 +57,12 @@ public final class LoginViewModel {
         return nil
     }
         
-    public init() {
+    public var isShowingErrorAlert: Bool = false
+    public var alertMessage: String = ""
+    public var onSuccess: (() -> Void)?
+        
+    public init(requestOTPUseCase: RequestOTPUseCase) {
+        self.requestOTPUseCase = requestOTPUseCase
         startNetworkMonitoring()
     }
     
@@ -67,13 +74,33 @@ public final class LoginViewModel {
     public func onSendCodeTapped() {
         hasAttemptedSubmit = true
         guard isValidEmail else { return }
+        guard !isOffline else { return }
         
         state = .loading
         
         Task {
-            try? await Task.sleep(for: .seconds(2))
-            if !Task.isCancelled {
-                state = .idle
+            do {
+                let _ = try await requestOTPUseCase.execute(email: email)
+                if !Task.isCancelled {
+                    state = .idle
+                    onSuccess?()
+                }
+            } catch let error as AuthError {
+                if !Task.isCancelled {
+                    if case .rateLimited(let seconds) = error {
+                        triggerRateLimit(seconds: seconds)
+                    } else {
+                        state = .idle
+                        alertMessage = error.localizedDescription
+                        isShowingErrorAlert = true
+                    }
+                }
+            } catch {
+                if !Task.isCancelled {
+                    state = .idle
+                    alertMessage = error.localizedDescription
+                    isShowingErrorAlert = true
+                }
             }
         }
     }
@@ -96,16 +123,16 @@ public final class LoginViewModel {
         monitor.start(queue: queue)
     }
         
-    public func triggerRateLimit() {
+    public func triggerRateLimit(seconds: Int) {
         rateLimitTask?.cancel()
-        state = .rateLimited(secondsRemaining: 38)
+        state = .rateLimited(secondsRemaining: seconds)
         rateLimitTask = Task {
-            var seconds = 38
-            while seconds > 0 {
+            var currentSeconds = seconds
+            while currentSeconds > 0 {
                 try? await Task.sleep(for: .seconds(1))
                 if Task.isCancelled { return }
-                seconds -= 1
-                state = .rateLimited(secondsRemaining: seconds)
+                currentSeconds -= 1
+                state = .rateLimited(secondsRemaining: currentSeconds)
             }
             if !Task.isCancelled {
                 state = .idle

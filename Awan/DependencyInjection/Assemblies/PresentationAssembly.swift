@@ -4,9 +4,10 @@ import Swinject
 
 struct PresentationAssembly: Assembly {
     func assemble(container: Container) {
-        container.register(LoginViewModel.self) { _ in
-            MainActor.assumeIsolated {
-                LoginViewModel()
+        container.register(LoginViewModel.self) { resolver in
+            let useCase = Self.resolve(RequestOTPUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                LoginViewModel(requestOTPUseCase: useCase)
             }
         }
         container.register(ScheduleTimelineUseCases.self) { resolver in
