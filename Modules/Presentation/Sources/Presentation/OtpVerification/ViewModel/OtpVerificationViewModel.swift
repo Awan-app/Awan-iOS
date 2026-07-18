@@ -6,22 +6,23 @@
 import Foundation
 import Observation
 import Domain
-import Network
 
 @Observable
 @MainActor
 public final class OtpVerificationViewModel {
-    
+    public static let codeLength = 6
+
     public private(set) var state: VerificationState = .idle
     public let email: String
-    public var code: String = "" {
-        didSet {
-            if code.count == 6 && state != .verifying {
-                verifyOTP()
-            }
-        }
+    public private(set) var codeDigits = Array(
+        repeating: "",
+        count: OtpVerificationViewModel.codeLength
+    )
+
+    public var code: String {
+        codeDigits.joined()
     }
-    
+
     public var isShowingErrorAlert: Bool = false
     public var alertMessage: String = ""
     public var onSuccess: (() -> Void)?
@@ -35,6 +36,42 @@ public final class OtpVerificationViewModel {
     public init(email: String, verifyOTPUseCase: VerifyOTPUseCase) {
         self.email = email
         self.verifyOTPUseCase = verifyOTPUseCase
+    }
+
+    @discardableResult
+    public func updateCodeDigit(_ input: String, at index: Int) -> Int? {
+        guard codeDigits.indices.contains(index), state != .verifying else {
+            return nil
+        }
+
+        guard !input.isEmpty else {
+            codeDigits[index] = ""
+            return index
+        }
+
+        var enteredDigits = input.filter { $0.isASCII && $0.isNumber }
+        guard !enteredDigits.isEmpty else {
+            return index
+        }
+
+        if !codeDigits[index].isEmpty,
+           enteredDigits.count == 2,
+           enteredDigits.first == codeDigits[index].first {
+            enteredDigits = String(enteredDigits.suffix(1))
+        }
+
+        var lastUpdatedIndex = index
+        for (offset, digit) in enteredDigits.prefix(codeDigits.count - index).enumerated() {
+            lastUpdatedIndex = index + offset
+            codeDigits[lastUpdatedIndex] = String(digit)
+        }
+
+        if code.count == Self.codeLength {
+            verifyOTP()
+            return nil
+        }
+
+        return nextEmptyDigitIndex(after: lastUpdatedIndex)
     }
     
     public func verifyOTP() {
@@ -67,13 +104,27 @@ public final class OtpVerificationViewModel {
     
     public func resetError() {
         state = .idle
-        code = ""
+        clearCode()
         isShowingErrorAlert = false
     }
     
     public func resendCode() {
         // Here you would call requestOTPUseCase again if needed
         state = .idle
-        code = ""
+        clearCode()
+    }
+
+    private func nextEmptyDigitIndex(after index: Int) -> Int? {
+        let nextIndex = index + 1
+        if nextIndex < codeDigits.count,
+           let emptyIndex = codeDigits[nextIndex...].firstIndex(where: \.isEmpty) {
+            return emptyIndex
+        }
+
+        return codeDigits.firstIndex(where: \.isEmpty)
+    }
+
+    private func clearCode() {
+        codeDigits = Array(repeating: "", count: Self.codeLength)
     }
 }

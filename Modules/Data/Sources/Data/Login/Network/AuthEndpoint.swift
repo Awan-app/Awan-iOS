@@ -15,7 +15,7 @@ enum AuthEndpoint: APIEndpoint {
     case logout(deviceId: String)
 
     var baseURL: String {
-        return "http://192.168.1.10:8080/api/v1/auth" // Replace with actual base URL config later
+        return "http://localhost:8080/api/v1/auth" // Replace with actual base URL config later
     }
 
     var path: String {

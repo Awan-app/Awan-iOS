@@ -11,8 +11,8 @@ import SwiftUI
 
 struct OtpVerificationView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var myOtp : String = ""
     @State private var viewModel: OtpVerificationViewModel
+    @FocusState private var focusedDigitIndex: Int?
 
     init(viewModel: OtpVerificationViewModel) {
         self.viewModel = viewModel
@@ -62,14 +62,22 @@ struct OtpVerificationView: View {
                 // OTP Fields
                 VStack(spacing: 8) {
                     HStack(spacing: 8) {
-                        ForEach(0..<6, id: \.self) { index in
-                            let char = getChar(at: index)
-                            Text(viewModel.state == .success ? "" : char)
+                        ForEach(0..<OtpVerificationViewModel.codeLength, id: \.self) { index in
+                            TextField(
+                                "",
+                                text: codeDigitBinding(at: index),
+                                prompt: Text("")
+                            )
                                 .font(AppFonts.title3Black)
                                 .foregroundColor(
                                     viewModel.state == .failure
                                         ? AppColors.destructive : AppColors.textPrimary
                                 )
+                                .multilineTextAlignment(.center)
+                                .textFieldStyle(.plain)
+                                .otpKeyboard()
+                                .focused($focusedDigitIndex, equals: index)
+                                .disabled(viewModel.state == .verifying)
                                 .frame(width: 44, height: 52)
                                 .background(AppColors.otpWhite)
                                 .cornerRadius(12)
@@ -80,17 +88,8 @@ struct OtpVerificationView: View {
                                                 ? AppColors.destructive : AppColors.accentBlue,
                                             lineWidth: 1.5)
                                 )
+                                .accessibilityLabel("Verification code digit \(index + 1)")
                         }
-                    }
-                    .overlay {
-                        // Invisible text field to capture input
-                        TextField("", text: $myOtp)
-                            .keyboardType(.numberPad)
-                            .opacity(0)
-                            .disabled(viewModel.state == .verifying)
-                    }
-                    .onChange(of: myOtp) { oldValue, newValue in
-                        viewModel.code = newValue
                     }
                     
                     Spacer().frame(height: 5)
@@ -130,7 +129,7 @@ struct OtpVerificationView: View {
                 VStack(spacing: 12) {
                     Button(action: {
                         viewModel.resendCode()
-                        myOtp = ""
+                        focusedDigitIndex = 0
                     }) {
                         HStack(spacing: 6) {
                             Image(systemName: "arrow.counterclockwise")
@@ -150,21 +149,37 @@ struct OtpVerificationView: View {
                 .padding(.bottom, 32)
             }
         }
+        .onAppear {
+            focusedDigitIndex = viewModel.codeDigits.firstIndex(where: \.isEmpty)
+        }
         .alert("Error", isPresented: Bindable(viewModel).isShowingErrorAlert) {
             Button("OK", role: .cancel) {
                 viewModel.resetError()
-                myOtp = ""
+                focusedDigitIndex = 0
             }
         } message: {
             Text(viewModel.alertMessage)
         }
     }
-    
-    private func getChar(at index: Int) -> String {
-        guard index < myOtp.count else { return "" }
-        let charIndex = myOtp.index(myOtp.startIndex, offsetBy: index)
-        return String(myOtp[charIndex])
+
+    private func codeDigitBinding(at index: Int) -> Binding<String> {
+        Binding(
+            get: { viewModel.codeDigits[index] },
+            set: { input in
+                focusedDigitIndex = viewModel.updateCodeDigit(input, at: index)
+            }
+        )
     }
 }
 
-
+private extension View {
+    @ViewBuilder
+    func otpKeyboard() -> some View {
+#if os(iOS)
+        self.keyboardType(.numberPad)
+            .textContentType(.oneTimeCode)
+#else
+        self
+#endif
+    }
+}
