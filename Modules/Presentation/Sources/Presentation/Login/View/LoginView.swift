@@ -8,15 +8,15 @@
 import SwiftUI
 import Common
 
-public struct LoginView: View {
+struct LoginView: View {
     @State private var viewModel: LoginViewModel
     @State private var isAnimatingLogo = false
 
-    public init(viewModel: LoginViewModel = LoginViewModel()) {
+    init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
     }
 
-    public var body: some View {
+    var body: some View {
         VStack(spacing: 24) {
             Spacer(minLength: 16)
             logoAndHeaderSection

@@ -7,19 +7,24 @@
 
 import SwiftUI
 
-public struct AppRootView: View {
+struct AppRootView: View {
     @Environment(AppCoordinator.self) private var coordinator
+    private let loginViewModel: LoginViewModel
     private let scheduleViewModel: ScheduleTimelineViewModel
 
-    public init(scheduleViewModel: ScheduleTimelineViewModel) {
+    init(
+        loginViewModel: LoginViewModel,
+        scheduleViewModel: ScheduleTimelineViewModel
+    ) {
+        self.loginViewModel = loginViewModel
         self.scheduleViewModel = scheduleViewModel
     }
 
-    public var body: some View {
+    var body: some View {
         switch coordinator.currentFlow {
         case .auth:
             NavigationStack(path: Bindable(coordinator.authCoordinator).path) {
-                EmptyView()
+                LoginView(viewModel: loginViewModel)
             }
         case .main:
             NavigationStack(path: Bindable(coordinator.mainCoordinator).path) {
