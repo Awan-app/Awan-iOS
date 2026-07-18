@@ -21,6 +21,8 @@ public enum AppColors {
     public static let onAccent = asset("OnAccent")
     public static let outline = asset("Outline")
     public static let shadow = asset("Shadow")
+    public static let otpTopColor = asset("OtpTopColor")
+    public static let otpWhite = asset("OtpWhite")
 
     public static func runtime(hex: String) -> Color {
         let cleaned = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
