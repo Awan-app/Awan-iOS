@@ -9,12 +9,13 @@ import Common
 import Domain
 import SwiftUI
 
-struct OtpVerificationView: View {
-    @Environment(\.dismiss) var dismiss
+public struct OtpVerificationView: View {
 
     @State private var verificationState: VerificationState = .idle
+    
+    public init() {}
 
-    var body: some View {
+    public var body: some View {
         ZStack {
             // Background Gradient
             LinearGradient(

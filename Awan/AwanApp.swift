@@ -34,8 +34,9 @@ struct AwanApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppRootView(scheduleViewModel: scheduleViewModel)
-                .environment(coordinator)
+//            AppRootView(scheduleViewModel: scheduleViewModel)
+//                .environment(coordinator)
+            OtpVerificationView()
         }
         .modelContainer(sharedModelContainer)
     }
