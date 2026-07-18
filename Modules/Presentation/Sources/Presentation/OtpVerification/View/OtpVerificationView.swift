@@ -11,8 +11,12 @@ import SwiftUI
 
 struct OtpVerificationView: View {
     @Environment(\.dismiss) var dismiss
+    @State private var myOtp : String = ""
+    @State private var viewModel: OtpVerificationViewModel
 
-    @State private var verificationState: VerificationState = .idle
+    init(viewModel: OtpVerificationViewModel) {
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         ZStack {
@@ -48,7 +52,7 @@ struct OtpVerificationView: View {
                         .font(AppFonts.subheadlineSemibold)
                         .foregroundColor(AppColors.textSecondary)
                     
-                        Text("andrew@gmail.com")
+                    Text(viewModel.email)
                             .font(AppFonts.subheadlineBold)
                             .foregroundColor(AppColors.accentBlue)
                     
@@ -59,12 +63,11 @@ struct OtpVerificationView: View {
                 VStack(spacing: 8) {
                     HStack(spacing: 8) {
                         ForEach(0..<6, id: \.self) { index in
-                            // Hide the code if verification was successful
-                            // let char = verificationState == .success ? "" : getChar(at: index)
-                            Text("")
+                            let char = getChar(at: index)
+                            Text(viewModel.state == .success ? "" : char)
                                 .font(AppFonts.title3Black)
                                 .foregroundColor(
-                                    verificationState == .failure
+                                    viewModel.state == .failure
                                         ? AppColors.destructive : AppColors.textPrimary
                                 )
                                 .frame(width: 44, height: 52)
@@ -73,33 +76,46 @@ struct OtpVerificationView: View {
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(
-                                            verificationState == .failure
+                                            viewModel.state == .failure
                                                 ? AppColors.destructive : AppColors.accentBlue,
                                             lineWidth: 1.5)
                                 )
                         }
                     }
+                    .overlay {
+                        // Invisible text field to capture input
+                        TextField("", text: $myOtp)
+                            .keyboardType(.numberPad)
+                            .opacity(0)
+                            .disabled(viewModel.state == .verifying)
+                    }
+                    .onChange(of: myOtp) { oldValue, newValue in
+                        viewModel.code = newValue
+                    }
+                    
                     Spacer().frame(height: 5)
                     // Verification status
-                    HStack(spacing: 8) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(.white, AppColors.accentBlue)
-                            .font(.system(size: 20, weight: .black))
-                            .shadow(color: AppColors.accentBlue.opacity(0.6), radius: 0, x: 0, y: 2)
-
-                        HStack(spacing: 0) {
-                            Text("Verified — drifting you in")
-                                .font(AppFonts.subheadlineBold)
-                                .foregroundColor(AppColors.accentBlue)
-
-                            TypingDotsView()
-                                .padding(.leading, 2)
-                                .padding(.bottom, 1)
+                    if viewModel.state == .verifying || viewModel.state == .success {
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(.white, AppColors.accentBlue)
+                                .font(.system(size: 20, weight: .black))
+                                .shadow(color: AppColors.accentBlue.opacity(0.6), radius: 0, x: 0, y: 2)
+    
+                            HStack(spacing: 0) {
+                                Text("Verified — drifting you in")
+                                    .font(AppFonts.subheadlineBold)
+                                    .foregroundColor(AppColors.accentBlue)
+    
+                                TypingDotsView()
+                                    .padding(.leading, 2)
+                                    .padding(.bottom, 1)
+                            }
                         }
                     }
 
-                    if verificationState == .failure {
+                    if viewModel.state == .failure {
                         OtpFailureAlertView()
                             .padding(.top, 4)
                     } else {
@@ -113,8 +129,8 @@ struct OtpVerificationView: View {
                 // Bottom Section
                 VStack(spacing: 12) {
                     Button(action: {
-                        // Handle resend code
-                        verificationState = .idle
+                        viewModel.resendCode()
+                        myOtp = ""
                     }) {
                         HStack(spacing: 6) {
                             Image(systemName: "arrow.counterclockwise")
@@ -124,8 +140,8 @@ struct OtpVerificationView: View {
                         }
                         .foregroundColor(AppColors.accentBlue)
                     }
-                    .disabled(verificationState == .verifying)
-                    .opacity(verificationState == .verifying ? 0.5 : 1.0)
+                    .disabled(viewModel.state == .verifying)
+                    .opacity(viewModel.state == .verifying ? 0.5 : 1.0)
 
                     Text("Numeric keypad · auto-submits on the 6th digit")
                         .font(AppFonts.captionHeavy)
@@ -134,11 +150,21 @@ struct OtpVerificationView: View {
                 .padding(.bottom, 32)
             }
         }
-
+        .alert("Error", isPresented: Bindable(viewModel).isShowingErrorAlert) {
+            Button("OK", role: .cancel) {
+                viewModel.resetError()
+                myOtp = ""
+            }
+        } message: {
+            Text(viewModel.alertMessage)
+        }
     }
-
+    
+    private func getChar(at index: Int) -> String {
+        guard index < myOtp.count else { return "" }
+        let charIndex = myOtp.index(myOtp.startIndex, offsetBy: index)
+        return String(myOtp[charIndex])
+    }
 }
 
-#Preview {
-    OtpVerificationView()
-}
+

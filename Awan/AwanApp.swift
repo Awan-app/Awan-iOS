@@ -14,11 +14,15 @@ struct AwanApp: App {
     @State private var coordinator = AppCoordinator(initialFlow: .auth)
     private let loginViewModel: LoginViewModel
     private let scheduleViewModel: ScheduleTimelineViewModel
+    private let makeOtpViewModel: (String) -> OtpVerificationViewModel
 
     init() {
         let dependencies = AppDependencyContainer()
         loginViewModel = dependencies.resolve(LoginViewModel.self)
         scheduleViewModel = dependencies.resolve(ScheduleTimelineViewModel.self)
+        makeOtpViewModel = { email in
+            dependencies.resolve(OtpVerificationViewModel.self, argument: email)
+        }
     }
 
     var sharedModelContainer: ModelContainer = {
@@ -38,7 +42,8 @@ struct AwanApp: App {
         WindowGroup {
             PresentationFactory().makeAppRootView(
                     loginViewModel: loginViewModel,
-                    scheduleViewModel: scheduleViewModel
+                    scheduleViewModel: scheduleViewModel,
+                    makeOtpViewModel: makeOtpViewModel
                 )
                 .environment(coordinator)
         }

@@ -10,6 +10,12 @@ struct PresentationAssembly: Assembly {
                 LoginViewModel(requestOTPUseCase: useCase)
             }
         }
+        container.register(OtpVerificationViewModel.self) { (resolver, email: String) in
+            let useCase = Self.resolve(VerifyOTPUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                OtpVerificationViewModel(email: email, verifyOTPUseCase: useCase)
+            }
+        }
         container.register(ScheduleTimelineUseCases.self) { resolver in
             ScheduleTimelineUseCases(
                 workspace: Self.resolve(LoadScheduleWorkspaceUseCase.self, from: resolver),

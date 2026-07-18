@@ -11,13 +11,16 @@ struct AppRootView: View {
     @Environment(AppCoordinator.self) private var coordinator
     private let loginViewModel: LoginViewModel
     private let scheduleViewModel: ScheduleTimelineViewModel
+    private let makeOtpViewModel: (String) -> OtpVerificationViewModel
 
     init(
         loginViewModel: LoginViewModel,
-        scheduleViewModel: ScheduleTimelineViewModel
+        scheduleViewModel: ScheduleTimelineViewModel,
+        makeOtpViewModel: @escaping (String) -> OtpVerificationViewModel
     ) {
         self.loginViewModel = loginViewModel
         self.scheduleViewModel = scheduleViewModel
+        self.makeOtpViewModel = makeOtpViewModel
     }
 
     var body: some View {
@@ -29,8 +32,8 @@ struct AppRootView: View {
                         switch route {
                         case .login:
                             LoginView(viewModel: loginViewModel)
-                        case .otpVerification:
-                            OtpVerificationView()
+                        case .otpVerification(let email):
+                            OtpVerificationView(viewModel: makeOtpViewModel(email))
                         }
                     }
             }

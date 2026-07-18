@@ -6,11 +6,13 @@ public struct PresentationFactory {
     @MainActor
     public func makeAppRootView(
         loginViewModel: LoginViewModel,
-        scheduleViewModel: ScheduleTimelineViewModel
+        scheduleViewModel: ScheduleTimelineViewModel,
+        makeOtpViewModel: @escaping (String) -> OtpVerificationViewModel
     ) -> some View {
         AppRootView(
             loginViewModel: loginViewModel,
-            scheduleViewModel: scheduleViewModel
+            scheduleViewModel: scheduleViewModel,
+            makeOtpViewModel: makeOtpViewModel
         )
     }
 }

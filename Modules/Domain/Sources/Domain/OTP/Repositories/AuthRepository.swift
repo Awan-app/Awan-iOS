@@ -9,4 +9,5 @@ import Foundation
 
 public protocol AuthRepository: Sendable {
     func requestOTP(email: String) async throws -> OTPRequestResult
+    func verifyOTP(email: String, code: String, deviceId: String) async throws -> VerifyOTPResult
 }

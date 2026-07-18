@@ -28,6 +28,31 @@ public final class AuthRepositoryImpl: AuthRepository {
         }
     }
     
+    public func verifyOTP(email: String, code: String, deviceId: String) async throws -> VerifyOTPResult {
+        do {
+            let response = try await remoteDataSource.verifyOTP(email: email, code: code, deviceId: deviceId)
+            
+            if let accessData = response.accessToken.data(using: .utf8),
+               let refreshData = response.refreshToken.data(using: .utf8) {
+                try KeychainHelper.shared.save(accessData, service: "Awan.AccessToken", account: response.user.id)
+                try KeychainHelper.shared.save(refreshData, service: "Awan.RefreshToken", account: response.user.id)
+                
+                print("--- DEBUG: RECEIVED TOKENS ---")
+                print("Access Token: \(response.accessToken)")
+                print("Refresh Token: \(response.refreshToken)")
+                print("------------------------------")
+            }
+            
+            return response.toDomain()
+        } catch let error as NetworkError {
+            throw mapNetworkErrorToAuthError(error)
+        } catch let error as KeychainError {
+            throw AuthError.unknown(message: "Failed to securely store session: \(error)")
+        } catch {
+            throw AuthError.unknown(message: error.localizedDescription)
+        }
+    }
+    
     private func mapNetworkErrorToAuthError(_ error: NetworkError) -> AuthError {
         switch error {
         case .httpError(_, let apiError):
