@@ -18,7 +18,7 @@ struct LoginView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Spacer(minLength: 16)
+            Spacer(minLength: 0)
             logoAndHeaderSection
             formSection
             dividerSection
@@ -39,6 +39,7 @@ struct LoginView: View {
             )
             .ignoresSafeArea()
         )
+        .ignoresSafeArea(.all, edges: .top)
     }
 
     private var logoAndHeaderSection: some View {
