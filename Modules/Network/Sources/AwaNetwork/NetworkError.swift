@@ -198,3 +198,21 @@ public indirect enum JSONValue: Decodable, Sendable, Equatable {
         }
     }
 }
+
+// MARK: - EmptyResponse
+
+/// Sentinel return type for endpoints that return **204 No Content**.
+///
+/// Pass this as the generic parameter `T` in ``NetworkServiceProtocol/request(_:)``
+/// for endpoints with no response body — for example Logout:
+///
+/// ```swift
+/// let _: EmptyResponse = try await networkService.request(AuthEndpoint.logout(deviceId: id))
+/// ```
+///
+/// ``NetworkClient`` detects `EmptyResponse` and skips JSON decoding,
+/// returning a value immediately when the server sends an empty body.
+public struct EmptyResponse: Decodable, Sendable {
+    public init() {}
+    public init(from decoder: any Decoder) throws {}
+}

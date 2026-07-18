@@ -16,6 +16,10 @@ import Alamofire
 /// as `NetworkServiceProtocol` into repositories — never reference the
 /// concrete type outside of the composition root.
 ///
+/// One generic ``request(_:)`` handles **all** endpoints:
+/// - JSON-body responses → pass any `Decodable` model.
+/// - 204 No Content (Logout) → pass ``EmptyResponse``.
+///
 /// ```swift
 /// // Composition root
 /// let repo = DefaultAuthRepository(networkService: NetworkClient.shared)
@@ -63,24 +67,7 @@ public final class NetworkClient: NetworkServiceProtocol {
         return try decodeResponse(dataResponse)
     }
 
-    /// Performs an async network request that expects a **204 No Content** response (e.g. Logout).
-    ///
-    /// - Parameter endpoint: Any value conforming to ``APIEndpoint``.
-    /// - Throws: ``NetworkError`` — see the enum for all possible failure cases.
-    public func requestEmpty(_ endpoint: any APIEndpoint) async throws {
-        let urlRequest = try buildURLRequest(from: endpoint)
 
-        let dataResponse = await session
-            .request(urlRequest)
-            .validate(statusCode: 200..<300)
-            .serializingData()
-            .response
-
-        // For 204, Alamofire may succeed with empty data — that is the expected path.
-        if let afError = dataResponse.error {
-            throw try mapAlamofireError(afError, responseData: dataResponse.data)
-        }
-    }
 
     // MARK: - Private Helpers
 
@@ -115,11 +102,19 @@ public final class NetworkClient: NetworkServiceProtocol {
     }
 
     /// Decodes a successful `DataResponse` into `T`, or maps errors into ``NetworkError``.
+    ///
+    /// When `T` is ``EmptyResponse``, an empty body (204 No Content) is handled
+    /// without attempting JSON decoding — making one generic function sufficient
+    /// for every endpoint in the auth contract.
     private func decodeResponse<T: Decodable>(_ response: DataResponse<Data, AFError>) throws -> T {
         switch response.result {
         case .success(let data):
-            // 204 No Content reached via request<T> — caller used the wrong method.
+            // 204 No Content path — return EmptyResponse without decoding.
             if data.isEmpty {
+                if let empty = EmptyResponse() as? T {
+                    return empty
+                }
+                // Caller used request<T> with a non-EmptyResponse type on a 204 endpoint.
                 throw NetworkError.noContent
             }
             do {
