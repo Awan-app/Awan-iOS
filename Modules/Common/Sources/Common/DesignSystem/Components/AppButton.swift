@@ -112,7 +112,7 @@ private struct PressedDepthButtonStyle: ButtonStyle {
             title: "Start quest",
             icon: "star.fill",
             color: AppColors.accentGreen,
-            onTap: {},
+            onTap: {}
         )
         AppButton(
             title: "Compact",
