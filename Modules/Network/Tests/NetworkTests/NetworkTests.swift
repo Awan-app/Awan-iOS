@@ -1,5 +1,5 @@
 import XCTest
-@testable import Network
+@testable import AwaNetwork
 
 final class NetworkTests: XCTestCase {
     func testExample() throws {

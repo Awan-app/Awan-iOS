@@ -11,11 +11,13 @@ import Presentation
 
 @main
 struct AwanApp: App {
-    @State private var coordinator = AppCoordinator()
+    @State private var coordinator = AppCoordinator(initialFlow: .auth)
+    private let loginViewModel: LoginViewModel
     private let scheduleViewModel: ScheduleTimelineViewModel
 
     init() {
         let dependencies = AppDependencyContainer()
+        loginViewModel = dependencies.resolve(LoginViewModel.self)
         scheduleViewModel = dependencies.resolve(ScheduleTimelineViewModel.self)
     }
 
@@ -34,9 +36,11 @@ struct AwanApp: App {
 
     var body: some Scene {
         WindowGroup {
-//            AppRootView(scheduleViewModel: scheduleViewModel)
-//                .environment(coordinator)
-            OtpVerificationView()
+            PresentationFactory().makeAppRootView(
+                    loginViewModel: loginViewModel,
+                    scheduleViewModel: scheduleViewModel
+                )
+                .environment(coordinator)
         }
         .modelContainer(sharedModelContainer)
     }
