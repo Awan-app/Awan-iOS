@@ -2,7 +2,7 @@ name: Awan CI Workflow
 
 on:
   push:
-    branches: [ "main", "develop"]
+    branches: [ "main", "development"]
     paths-ignore:
       - '**.md'
       - 'docs/**'
