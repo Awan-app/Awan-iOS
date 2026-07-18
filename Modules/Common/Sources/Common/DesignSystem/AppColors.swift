@@ -24,6 +24,13 @@ public enum AppColors {
     public static let otpTopColor = asset("OtpTopColor")
     public static let otpWhite = asset("OtpWhite")
 
+    public static let brandDarkBlue = asset("BrandDarkBlue")
+
+    // TODO: These are meant to be the canonical shared colors. Once the OTP branch merges,
+    // delete its OTP-specific color assets and repoint them to use these skyGradient properties instead.
+    public static let skyGradientTop = asset("SkyGradientTop")
+    public static let skyGradientBottom = asset("SkyGradientBottom")
+
     public static func runtime(hex: String) -> Color {
         let cleaned = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         guard cleaned.count == 6,
