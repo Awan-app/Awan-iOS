@@ -57,18 +57,6 @@ extension NetworkError: LocalizedError {
 }
 
 // MARK: - APIErrorResponse
-
-/// The standard error envelope returned by all Awan API endpoints on 4xx / 5xx.
-///
-/// ```json
-/// {
-///   "message": "…",
-///   "statusCode": 400,
-///   "errorCode": "OTP_INVALID_CODE",
-///   "info": { … },
-///   "timestamp": "…"
-/// }
-/// ```
 public struct APIErrorResponse: Decodable, Sendable {
     /// Human-readable description of the error.
     public let message: String
@@ -84,9 +72,7 @@ public struct APIErrorResponse: Decodable, Sendable {
 
 // MARK: - APIErrorCode
 
-/// Every documented error code from the Awan Authentication API contract.
-///
-/// Use the `unknown` case to handle future codes gracefully without breaking existing logic.
+
 public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
 
     // MARK: OTP — Request endpoint

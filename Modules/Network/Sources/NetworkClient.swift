@@ -8,29 +8,15 @@
 import Foundation
 import Alamofire
 
-// MARK: - NetworkClient
 
-/// The concrete, singleton network client for the Awan app.
-///
-/// Use `NetworkClient.shared` from the app composition root and inject it
-/// as `NetworkServiceProtocol` into repositories — never reference the
-/// concrete type outside of the composition root.
-///
-/// One generic ``request(_:)`` handles **all** endpoints:
-/// - JSON-body responses → pass any `Decodable` model.
-/// - 204 No Content (Logout) → pass ``EmptyResponse``.
-///
-/// ```swift
-/// // Composition root
-/// let repo = DefaultAuthRepository(networkService: NetworkClient.shared)
-/// ```
+
+
 public final class NetworkClient: NetworkServiceProtocol {
 
     // MARK: Singleton
 
     public static let shared = NetworkClient()
 
-    // MARK: Private
 
     private let session: Session
     private let jsonDecoder: JSONDecoder
@@ -48,13 +34,6 @@ public final class NetworkClient: NetworkServiceProtocol {
         // The API uses camelCase, so no key decoding strategy override is needed.
     }
 
-    // MARK: - NetworkServiceProtocol
-
-    /// Performs an async network request and decodes the JSON response body into `T`.
-    ///
-    /// - Parameter endpoint: Any value conforming to ``APIEndpoint``.
-    /// - Returns: A decoded instance of `T`.
-    /// - Throws: ``NetworkError`` — see the enum for all possible failure cases.
     public func request<T: Decodable>(_ endpoint: any APIEndpoint) async throws -> T {
         let urlRequest = try buildURLRequest(from: endpoint)
 
@@ -69,9 +48,7 @@ public final class NetworkClient: NetworkServiceProtocol {
 
 
 
-    // MARK: - Private Helpers
-
-    /// Constructs a `URLRequest` from an ``APIEndpoint``.
+   
     private func buildURLRequest(from endpoint: any APIEndpoint) throws -> URLRequest {
         guard let url = endpoint.fullURL else {
             throw NetworkError.invalidURL
@@ -101,11 +78,7 @@ public final class NetworkClient: NetworkServiceProtocol {
         return urlRequest
     }
 
-    /// Decodes a successful `DataResponse` into `T`, or maps errors into ``NetworkError``.
-    ///
-    /// When `T` is ``EmptyResponse``, an empty body (204 No Content) is handled
-    /// without attempting JSON decoding — making one generic function sufficient
-    /// for every endpoint in the auth contract.
+
     private func decodeResponse<T: Decodable>(_ response: DataResponse<Data, AFError>) throws -> T {
         switch response.result {
         case .success(let data):
