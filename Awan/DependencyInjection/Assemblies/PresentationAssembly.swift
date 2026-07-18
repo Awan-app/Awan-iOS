@@ -4,6 +4,11 @@ import Swinject
 
 struct PresentationAssembly: Assembly {
     func assemble(container: Container) {
+        container.register(LoginViewModel.self) { _ in
+            MainActor.assumeIsolated {
+                LoginViewModel()
+            }
+        }
         container.register(ScheduleTimelineUseCases.self) { resolver in
             ScheduleTimelineUseCases(
                 workspace: Self.resolve(LoadScheduleWorkspaceUseCase.self, from: resolver),

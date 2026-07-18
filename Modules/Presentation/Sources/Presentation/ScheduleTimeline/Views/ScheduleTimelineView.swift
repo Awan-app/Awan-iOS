@@ -2,15 +2,15 @@ import Common
 import Domain
 import SwiftUI
 
-public struct ScheduleTimelineView: View {
+struct ScheduleTimelineView: View {
     @State private var viewModel: ScheduleTimelineViewModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    public init(viewModel: ScheduleTimelineViewModel) {
+    init(viewModel: ScheduleTimelineViewModel) {
         _viewModel = State(initialValue: viewModel)
     }
 
-    public var body: some View {
+    var body: some View {
         let state = viewModel.state
 
         ZStack {
