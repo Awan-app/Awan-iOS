@@ -30,8 +30,10 @@ struct EmailTextField: View {
                 .kerning(1.2)
 
             TextField("", text: $text, prompt: Text("Enter your email").foregroundStyle(AppColors.textSecondary.opacity(0.5)))
+#if os(iOS)
                 .keyboardType(.emailAddress)
                 .textInputAutocapitalization(.never)
+#endif
                 .autocorrectionDisabled()
                 .font(.system(.body, design: .rounded, weight: .semibold))
                 .padding()

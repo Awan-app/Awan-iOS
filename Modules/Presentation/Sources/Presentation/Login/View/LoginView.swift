@@ -9,6 +9,7 @@ import SwiftUI
 import Common
 
 struct LoginView: View {
+    @Environment(AppCoordinator.self) private var appCoordinator
     @State private var viewModel: LoginViewModel
     @State private var isAnimatingLogo = false
 
@@ -40,6 +41,16 @@ struct LoginView: View {
             .ignoresSafeArea()
         )
         .ignoresSafeArea(.all, edges: .top)
+        .alert("Error", isPresented: Bindable(viewModel).isShowingErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(viewModel.alertMessage)
+        }
+        .onAppear {
+            viewModel.onSuccess = {
+                appCoordinator.authCoordinator.push(AuthRoute.otpVerification(email: viewModel.email))
+            }
+        }
     }
 
     private var logoAndHeaderSection: some View {
@@ -204,8 +215,10 @@ struct LoginView: View {
     }
 
     private func triggerHaptic() {
+#if canImport(UIKit)
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
+#endif
     }
 }
 

@@ -25,6 +25,14 @@ struct AppRootView: View {
         case .auth:
             NavigationStack(path: Bindable(coordinator.authCoordinator).path) {
                 LoginView(viewModel: loginViewModel)
+                    .navigationDestination(for: AuthRoute.self) { route in
+                        switch route {
+                        case .login:
+                            LoginView(viewModel: loginViewModel)
+                        case .otpVerification:
+                            OtpVerificationView()
+                        }
+                    }
             }
         case .main:
             NavigationStack(path: Bindable(coordinator.mainCoordinator).path) {
