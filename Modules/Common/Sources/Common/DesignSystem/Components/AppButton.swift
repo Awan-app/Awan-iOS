@@ -16,6 +16,7 @@ public struct AppButton: View {
     private let shadowColor: Color?
     private let size: Size
     private let expandsHorizontally: Bool
+    private let useGradient: Bool
     private let onTap: () -> Void
 
     public init(
@@ -28,6 +29,7 @@ public struct AppButton: View {
         shadowColor: Color? = nil,
         size: Size = .regular,
         expandsHorizontally: Bool = true,
+        useGradient: Bool = true,
         onTap: @escaping () -> Void
     ) {
         self.title = title
@@ -39,6 +41,7 @@ public struct AppButton: View {
         self.shadowColor = shadowColor
         self.size = size
         self.expandsHorizontally = expandsHorizontally
+        self.useGradient = useGradient
         self.onTap = onTap
     }
 
@@ -69,7 +72,8 @@ public struct AppButton: View {
                 foregroundColor: foregroundColor,
                 borderColor: borderColor,
                 shadowColor: shadowColor,
-                size: size
+                size: size,
+                useGradient: useGradient
             )
         )
         .accessibilityLabel(title)
@@ -82,6 +86,7 @@ private struct PressedDepthButtonStyle: ButtonStyle {
     let borderColor: Color?
     let shadowColor: Color?
     let size: AppButton.Size
+    let useGradient: Bool
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -90,7 +95,7 @@ private struct PressedDepthButtonStyle: ButtonStyle {
             .padding(.horizontal, size == .regular ? 16 : 14)
             .padding(.vertical, size == .large ? 18 : size == .regular ? 13 : 11)
             .background(
-                color.gradient,
+                useGradient ? AnyShapeStyle(color.gradient) : AnyShapeStyle(color),
                 in: RoundedRectangle(
                     cornerRadius: size == .large ? 18 : size == .regular ? 16 : 14,
                     style: .continuous

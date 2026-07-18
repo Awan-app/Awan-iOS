@@ -47,13 +47,10 @@ struct LoginView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
-                .offset(y: isAnimatingLogo ? -5 : 5)
-                .animation(
-                    .easeInOut(duration: 2.0).repeatForever(autoreverses: true),
-                    value: isAnimatingLogo
-                )
-                .onAppear {
-                    isAnimatingLogo = true
+                .phaseAnimator([false, true]) { content, phase in
+                    content.offset(y: phase ? -2 : 2)
+                } animation: { _ in
+                    .easeInOut(duration: 3.0)
                 }
 
             VStack(spacing: 8) {
@@ -73,9 +70,22 @@ struct LoginView: View {
 
     private var formSection: some View {
         VStack(spacing: 24) {
+            let isRateLimited: Bool = {
+                if case .rateLimited = viewModel.state { return true }
+                return false
+            }()
+            let rateLimitMessage: String? = {
+                if case .rateLimited(let seconds) = viewModel.state {
+                    return "Too many attempts. Try again in \(seconds) s."
+                }
+                return nil
+            }()
+
             EmailTextField(
                 text: $viewModel.email,
-                errorMessage: viewModel.errorMessage
+                errorMessage: rateLimitMessage ?? viewModel.errorMessage,
+                isOffline: viewModel.isOffline && viewModel.hasAttemptedSubmit,
+                isRateLimited: isRateLimited
             )
 
             sendCodeButton
@@ -83,23 +93,44 @@ struct LoginView: View {
     }
 
     private var sendCodeButton: some View {
-        AppButton(
-            title: "SEND CODE",
+        let isRateLimited: Bool = {
+            if case .rateLimited = viewModel.state { return true }
+            return false
+        }()
+        let rateLimitSeconds: Int? = {
+            if case .rateLimited(let seconds) = viewModel.state { return seconds }
+            return nil
+        }()
+        let isReady = viewModel.isValidEmail
+        let isLoading = viewModel.state == .loading
+        let isActive = (isReady || isLoading) && !isRateLimited
+        
+        let buttonTitle: String = {
+            if isLoading { return "SENDING..." }
+            if let seconds = rateLimitSeconds {
+                return "SEND CODE • 0:\(String(format: "%02d", seconds))"
+            }
+            return "SEND CODE"
+        }()
+        
+        return AppButton(
+            title: buttonTitle,
             icon: nil,
-            color: AppColors.skyGradientTop.opacity(0.4),
-            foregroundColor: AppColors.brandDarkBlue,
+            color: isActive ? AppColors.accentBlue : AppColors.skyGradientTop.opacity(0.4),
+            foregroundColor: isActive ? AppColors.onAccent : AppColors.brandDarkBlue.opacity(0.5),
+            shadowColor: isActive ? nil : .clear,
             size: .large,
             onTap: {
                 triggerHaptic()
                 viewModel.onSendCodeTapped()
             }
         )
+        .disabled(isLoading || isRateLimited)
         .overlay {
-            if viewModel.state == .loading {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(AppColors.skyGradientTop.opacity(0.4))
+            if isLoading {
                 ProgressView()
-                    .tint(AppColors.brandDarkBlue)
+                    .tint(AppColors.onAccent)
+                    .offset(x: -60)
             }
         }
     }
@@ -141,8 +172,10 @@ struct LoginView: View {
                 iconAsset: "google-icon",
                 color: AppColors.surface,
                 foregroundColor: AppColors.brandDarkBlue,
-                borderColor: AppColors.skyGradientTop,
+                borderColor: AppColors.accentBlue,
+                shadowColor: .clear,
                 size: .regular,
+                useGradient: false,
                 onTap: {
                     triggerHaptic()
                     viewModel.onGoogleSignInTapped()

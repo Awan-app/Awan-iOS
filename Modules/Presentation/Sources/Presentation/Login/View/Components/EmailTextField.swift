@@ -11,10 +11,15 @@ import Common
 struct EmailTextField: View {
     @Binding var text: String
     var errorMessage: String?
+    var isOffline: Bool
+    var isRateLimited: Bool
+    @FocusState private var isFocused: Bool
 
-    init(text: Binding<String>, errorMessage: String? = nil) {
+    init(text: Binding<String>, errorMessage: String? = nil, isOffline: Bool = false, isRateLimited: Bool = false) {
         self._text = text
         self.errorMessage = errorMessage
+        self.isOffline = isOffline
+        self.isRateLimited = isRateLimited
     }
 
     var body: some View {
@@ -30,22 +35,44 @@ struct EmailTextField: View {
                 .autocorrectionDisabled()
                 .font(.system(.body, design: .rounded, weight: .semibold))
                 .padding()
+                .focused($isFocused)
                 .background(AppColors.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .shadow(color: AppColors.skyGradientTop, radius: 12, x: 0, y: 6)
                 .overlay {
-                    if errorMessage != nil {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(AppColors.destructive, lineWidth: 1.5)
-                    }
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(
+                            (errorMessage != nil && !isRateLimited) ? AppColors.destructive :
+                                ((isFocused || !text.isEmpty) ? AppColors.accentBlue : AppColors.brandDarkBlue.opacity(0.15)),
+                            lineWidth: 1.5
+                        )
                 }
 
-            if let errorMessage {
-                Text(errorMessage)
-                    .font(.system(.caption, design: .rounded, weight: .heavy))
-                    .foregroundStyle(AppColors.destructive)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+            if isOffline {
+                HStack(spacing: 8) {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(.orange)
+                    Text("You're offline — we'll send the code when you reconnect.")
+                        .font(AppFonts.captionHeavy)
+                        .foregroundStyle(.white)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(AppColors.brandDarkBlue)
+                .cornerRadius(12)
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            } else if let errorMessage {
+                HStack(spacing: 4) {
+                    Image(systemName: isRateLimited ? "clock.fill" : "exclamationmark.circle.fill")
+                        .font(.system(size: 12))
+                    Text(errorMessage)
+                        .font(.system(.caption, design: .rounded, weight: .heavy))
+                }
+                .foregroundStyle(isRateLimited ? .orange : AppColors.destructive)
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
         .animation(.snappy, value: errorMessage)
+        .animation(.snappy, value: isOffline)
     }
 }
