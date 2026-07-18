@@ -34,7 +34,7 @@ struct AwanApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppRootView(scheduleViewModel: scheduleViewModel)
+            LoginView(viewModel: LoginViewModel())
                 .environment(coordinator)
         }
         .modelContainer(sharedModelContainer)
