@@ -6,11 +6,9 @@
 //
 
 import Common
-import Domain
 import SwiftUI
 
 struct OtpVerificationView: View {
-    @Environment(\.dismiss) var dismiss
     @State private var viewModel: OtpVerificationViewModel
     @FocusState private var focusedDigitIndex: Int?
 
@@ -33,11 +31,7 @@ struct OtpVerificationView: View {
                 Spacer()
                     .frame(height: 48)
 
-                // Cloud Icon
-                AppImages.otpCloudIcon
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 80, height: 80)
+                AuthCloudLogoView()
                     .padding(.bottom, 24)
 
                 // Title
@@ -70,21 +64,21 @@ struct OtpVerificationView: View {
                             )
                                 .font(AppFonts.title3Black)
                                 .foregroundColor(
-                                    viewModel.state == .failure
+                                    viewModel.state.isFailure
                                         ? AppColors.destructive : AppColors.textPrimary
                                 )
                                 .multilineTextAlignment(.center)
                                 .textFieldStyle(.plain)
                                 .otpKeyboard()
                                 .focused($focusedDigitIndex, equals: index)
-                                .disabled(viewModel.state == .verifying)
+                                .disabled(viewModel.isInputDisabled)
                                 .frame(width: 44, height: 52)
                                 .background(AppColors.otpWhite)
                                 .cornerRadius(12)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(
-                                            viewModel.state == .failure
+                                            viewModel.state.isFailure
                                                 ? AppColors.destructive : AppColors.accentBlue,
                                             lineWidth: 1.5)
                                 )
@@ -114,9 +108,18 @@ struct OtpVerificationView: View {
                         }
                     }
 
-                    if viewModel.state == .failure {
-                        OtpFailureAlertView()
-                            .padding(.top, 4)
+                    if let errorState = viewModel.state.error {
+                        Group {
+                            switch errorState {
+                            case .network:
+                                NetworkErrorView(
+                                    message: "You're offline — reconnect to verify or resend your code."
+                                )
+                            case .inline(let message):
+                                OtpFailureAlertView(message: message)
+                            }
+                        }
+                        .padding(.top, 4)
                     } else {
                         Spacer().frame(height: 24)
                     }
@@ -129,18 +132,25 @@ struct OtpVerificationView: View {
                 VStack(spacing: 12) {
                     Button(action: {
                         viewModel.resendCode()
-                        focusedDigitIndex = 0
                     }) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "arrow.counterclockwise")
+                        if viewModel.resendSecondsRemaining > 0 {
+                            Text("RESEND CODE • \(viewModel.formattedResendTime)")
                                 .font(AppFonts.captionHeavy)
-                            Text("RESEND CODE")
-                                .font(AppFonts.captionHeavy)
+                        } else {
+                            HStack(spacing: 6) {
+                                Text("RESEND CODE")
+                                    .font(AppFonts.captionHeavy)
+                                Image(systemName: "arrow.counterclockwise")
+                                    .font(AppFonts.captionHeavy)
+                            }
                         }
-                        .foregroundColor(AppColors.accentBlue)
                     }
-                    .disabled(viewModel.state == .verifying)
-                    .opacity(viewModel.state == .verifying ? 0.5 : 1.0)
+                    .foregroundColor(
+                        viewModel.resendSecondsRemaining > 0
+                            ? AppColors.textSecondary : AppColors.accentBlue
+                    )
+                    .disabled(viewModel.isResendDisabled)
+                    .opacity(viewModel.isResending ? 0.5 : 1)
 
                     Text("Numeric keypad · auto-submits on the 6th digit")
                         .font(AppFonts.captionHeavy)
@@ -152,13 +162,8 @@ struct OtpVerificationView: View {
         .onAppear {
             focusedDigitIndex = viewModel.codeDigits.firstIndex(where: \.isEmpty)
         }
-        .alert("Error", isPresented: Bindable(viewModel).isShowingErrorAlert) {
-            Button("OK", role: .cancel) {
-                viewModel.resetError()
-                focusedDigitIndex = 0
-            }
-        } message: {
-            Text(viewModel.alertMessage)
+        .onChange(of: viewModel.inputResetID) {
+            focusedDigitIndex = 0
         }
     }
 
@@ -175,11 +180,7 @@ struct OtpVerificationView: View {
 private extension View {
     @ViewBuilder
     func otpKeyboard() -> some View {
-#if os(iOS)
         self.keyboardType(.numberPad)
             .textContentType(.oneTimeCode)
-#else
-        self
-#endif
     }
 }
