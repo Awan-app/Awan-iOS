@@ -4,9 +4,38 @@ import Swinject
 
 struct PresentationAssembly: Assembly {
     func assemble(container: Container) {
-        container.register(LoginViewModel.self) { _ in
+        container.register(AppCoordinator.self) { _ in
             MainActor.assumeIsolated {
-                LoginViewModel()
+                AppCoordinator()
+            }
+        }
+        .inObjectScope(.container)
+
+        container.register(AuthenticationState.self) { resolver in
+            let useCase = Self.resolve(ObserveAuthenticationUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                AuthenticationState(observeAuthenticationUseCase: useCase)
+            }
+        }
+        .inObjectScope(.container)
+
+        container.register(LoginViewModel.self) { resolver in
+            let useCase = Self.resolve(RequestOTPUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                LoginViewModel(requestOTPUseCase: useCase)
+            }
+        }
+
+        container.register(OtpVerificationViewModel.self) {
+            (resolver, context: OtpVerificationContext) in
+            let requestUseCase = Self.resolve(RequestOTPUseCase.self, from: resolver)
+            let verifyUseCase = Self.resolve(VerifyOTPUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                OtpVerificationViewModel(
+                    context: context,
+                    requestOTPUseCase: requestUseCase,
+                    verifyOTPUseCase: verifyUseCase
+                )
             }
         }
         container.register(ScheduleTimelineUseCases.self) { resolver in
@@ -39,6 +68,30 @@ struct PresentationAssembly: Assembly {
                 ScheduleTimelineViewModel(useCases: useCases)
             }
         }
+
+        container.register(PresentationFactory.self) { resolver in
+            let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
+            let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
+            let loginViewModel = Self.resolve(LoginViewModel.self, from: resolver)
+            let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
+
+            return MainActor.assumeIsolated {
+                PresentationFactory(
+                    appCoordinator: appCoordinator,
+                    authenticationState: authenticationState,
+                    loginViewModel: loginViewModel,
+                    scheduleViewModel: scheduleViewModel,
+                    makeOtpViewModel: { context in
+                        Self.resolve(
+                            OtpVerificationViewModel.self,
+                            argument: context,
+                            from: resolver
+                        )
+                    }
+                )
+            }
+        }
+        .inObjectScope(.container)
     }
 
     private static func makeConflictUseCases(
@@ -82,6 +135,19 @@ struct PresentationAssembly: Assembly {
     ) -> Service {
         guard let service = resolver.resolve(serviceType) else {
             preconditionFailure("Missing Presentation dependency for \(serviceType)")
+        }
+        return service
+    }
+
+    private static func resolve<Service, Argument>(
+        _ serviceType: Service.Type,
+        argument: Argument,
+        from resolver: Resolver
+    ) -> Service {
+        guard let service = resolver.resolve(serviceType, argument: argument) else {
+            preconditionFailure(
+                "Missing Presentation dependency for \(serviceType) with argument \(Argument.self)"
+            )
         }
         return service
     }

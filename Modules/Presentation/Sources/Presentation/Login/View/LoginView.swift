@@ -7,11 +7,11 @@
 
 import SwiftUI
 import Common
+import UIKit
 
 struct LoginView: View {
+    @Environment(AppCoordinator.self) private var appCoordinator
     @State private var viewModel: LoginViewModel
-    @State private var isAnimatingLogo = false
-
     init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
     }
@@ -40,19 +40,23 @@ struct LoginView: View {
             .ignoresSafeArea()
         )
         .ignoresSafeArea(.all, edges: .top)
+        .onAppear {
+            viewModel.onSuccess = { email, result in
+                appCoordinator.authCoordinator.push(
+                    .otpVerification(
+                        OtpVerificationContext(
+                            email: email,
+                            initialResendSeconds: result.resendAvailableInSeconds
+                        )
+                    )
+                )
+            }
+        }
     }
 
     private var logoAndHeaderSection: some View {
         VStack(spacing: 16) {
-            Image("login-logo")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-                .phaseAnimator([false, true]) { content, phase in
-                    content.offset(y: phase ? -2 : 2)
-                } animation: { _ in
-                    .easeInOut(duration: 3.0)
-                }
+            AuthCloudLogoView()
 
             VStack(spacing: 8) {
                 Text("Awan")
@@ -81,11 +85,16 @@ struct LoginView: View {
                 }
                 return nil
             }()
+            let requestError: AuthenticationErrorState? = {
+                guard case .failure(let error) = viewModel.state else { return nil }
+                return error
+            }()
 
             EmailTextField(
                 text: $viewModel.email,
-                errorMessage: rateLimitMessage ?? viewModel.errorMessage,
-                isOffline: viewModel.isOffline && viewModel.hasAttemptedSubmit,
+                errorState: rateLimitMessage.map(AuthenticationErrorState.inline)
+                    ?? viewModel.validationErrorMessage.map(AuthenticationErrorState.inline)
+                    ?? requestError,
                 isRateLimited: isRateLimited
             )
 
@@ -208,4 +217,3 @@ struct LoginView: View {
         generator.impactOccurred()
     }
 }
-

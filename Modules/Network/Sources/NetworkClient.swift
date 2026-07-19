@@ -8,18 +8,12 @@
 import Foundation
 import Alamofire
 
-
-
-
-public final class NetworkClient: NetworkServiceProtocol {
-
-    // MARK: Singleton
-
+public final class NetworkClient: NetworkServiceProtocol, @unchecked Sendable {
     public static let shared = NetworkClient()
-
 
     private let session: Session
     private let jsonDecoder: JSONDecoder
+    private let authenticationInterceptor: AuthenticationInterceptor<AuthSessionAuthenticator>
 
     // MARK: Init
 
@@ -29,16 +23,26 @@ public final class NetworkClient: NetworkServiceProtocol {
         configuration.timeoutIntervalForResource = 60
 
         session = Session(configuration: configuration)
-
+        authenticationInterceptor = AuthenticationInterceptor(
+            authenticator: AuthSessionAuthenticator(),
+            credential: AuthSessionStore.session,
+            refreshWindow: .init(interval: 60, maximumAttempts: 1)
+        )
         jsonDecoder = JSONDecoder()
-        // The API uses camelCase, so no key decoding strategy override is needed.
+    }
+
+    func setSession(_ session: AuthSession?) {
+        authenticationInterceptor.credential = session
     }
 
     public func request<T: Decodable>(_ endpoint: any APIEndpoint) async throws -> T {
         let urlRequest = try buildURLRequest(from: endpoint)
+        let interceptor = endpoint.requiresAuthentication
+            ? authenticationInterceptor
+            : nil
 
         let dataResponse = await session
-            .request(urlRequest)
+            .request(urlRequest, interceptor: interceptor)
             .validate(statusCode: 200..<300)
             .serializingData()
             .response
@@ -46,9 +50,6 @@ public final class NetworkClient: NetworkServiceProtocol {
         return try decodeResponse(dataResponse)
     }
 
-
-
-   
     private func buildURLRequest(from endpoint: any APIEndpoint) throws -> URLRequest {
         guard let url = endpoint.fullURL else {
             throw NetworkError.invalidURL

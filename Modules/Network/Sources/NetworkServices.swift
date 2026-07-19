@@ -9,6 +9,5 @@ import Foundation
 
 
 public protocol NetworkServiceProtocol: Sendable {
- 
     func request<T: Decodable>(_ endpoint: any APIEndpoint) async throws -> T
 }
