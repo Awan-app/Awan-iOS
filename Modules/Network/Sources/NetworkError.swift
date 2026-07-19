@@ -64,10 +64,56 @@ public struct APIErrorResponse: Decodable, Sendable {
     public let statusCode: Int
     /// Machine-readable error code constant.
     public let errorCode: APIErrorCode
-    /// Optional metadata (remaining attempts, retry delay, validation errors, etc.)
-    public let info: [String: JSONValue]?
+    /// Typed metadata for validation and authentication failures.
+    public let info: APIErrorInfo?
     /// ISO-8601 timestamp from the server.
     public let timestamp: String?
+}
+
+public struct APIErrorInfo: Decodable, Sendable, Equatable {
+    public let retryAfterSeconds: Int?
+    public let remainingAttempts: Int?
+    public let validationErrors: [APIFieldValidationError]
+
+    private enum CodingKeys: String, CodingKey {
+        case retryAfterSeconds
+        case remainingAttempts
+        case validationErrors = "errors"
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        retryAfterSeconds = Self.decodeInteger(
+            forKey: .retryAfterSeconds,
+            from: container
+        )
+        remainingAttempts = Self.decodeInteger(
+            forKey: .remainingAttempts,
+            from: container
+        )
+        validationErrors = try container.decodeIfPresent(
+            [APIFieldValidationError].self,
+            forKey: .validationErrors
+        ) ?? []
+    }
+
+    private static func decodeInteger(
+        forKey key: CodingKeys,
+        from container: KeyedDecodingContainer<CodingKeys>
+    ) -> Int? {
+        if let value = try? container.decode(Int.self, forKey: key) {
+            return value
+        }
+        if let value = try? container.decode(Double.self, forKey: key) {
+            return Int(value)
+        }
+        return nil
+    }
+}
+
+public struct APIFieldValidationError: Decodable, Sendable, Equatable {
+    public let field: String
+    public let message: String
 }
 
 // MARK: - APIErrorCode
@@ -76,15 +122,21 @@ public struct APIErrorResponse: Decodable, Sendable {
 public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
 
     // MARK: OTP — Request endpoint
-    /// 429 — Rate limit hit. Check `info["retryAfterSeconds"]`.
+    /// 429 — Rate limit hit. Check `info.retryAfterSeconds`.
     case otpRateLimitExceeded
 
     // MARK: OTP — Both endpoints
     /// 422 — Invalid email format or missing / malformed fields.
     case validationError
 
+    // MARK: Onboarding endpoint
+    /// 400 — The supplied IANA timezone identifier is invalid.
+    case invalidTimezone
+    /// 409 — The authenticated user already completed onboarding.
+    case onboardingAlreadyCompleted
+
     // MARK: OTP — Verify endpoint
-    /// 400 — Wrong code. Check `info["remainingAttempts"]`.
+    /// 400 — Wrong code. Check `info.remainingAttempts`.
     case otpInvalidCode
     /// 400 — OTP has expired or was never requested.
     case otpExpiredOrNotFound
@@ -112,6 +164,8 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         switch rawValue {
         case "OTP_RATE_LIMIT_EXCEEDED":       self = .otpRateLimitExceeded
         case "VALIDATION_ERROR":              self = .validationError
+        case "INVALID_TIMEZONE":              self = .invalidTimezone
+        case "ONBOARDING_ALREADY_COMPLETED":  self = .onboardingAlreadyCompleted
         case "OTP_INVALID_CODE":              self = .otpInvalidCode
         case "OTP_EXPIRED_OR_NOT_FOUND":      self = .otpExpiredOrNotFound
         case "OTP_LOCKED":                    self = .otpLocked
@@ -126,6 +180,8 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         switch self {
         case .otpRateLimitExceeded:          return "OTP_RATE_LIMIT_EXCEEDED"
         case .validationError:               return "VALIDATION_ERROR"
+        case .invalidTimezone:               return "INVALID_TIMEZONE"
+        case .onboardingAlreadyCompleted:    return "ONBOARDING_ALREADY_COMPLETED"
         case .otpInvalidCode:                return "OTP_INVALID_CODE"
         case .otpExpiredOrNotFound:          return "OTP_EXPIRED_OR_NOT_FOUND"
         case .otpLocked:                     return "OTP_LOCKED"
@@ -133,54 +189,6 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case .refreshTokenExpired:           return "REFRESH_TOKEN_EXPIRED"
         case .refreshTokenReuseDetected:     return "REFRESH_TOKEN_REUSE_DETECTED"
         case .unknown(let code):             return code
-        }
-    }
-}
-
-// MARK: - JSONValue
-
-/// A type-safe representation of arbitrary JSON values used in `APIErrorResponse.info`.
-///
-/// Callers can pattern-match to extract typed metadata, for example:
-/// ```swift
-/// if case .int(let remaining) = apiError.info?["remainingAttempts"] {
-///     print("Attempts left: \(remaining)")
-/// }
-/// ```
-public indirect enum JSONValue: Decodable, Sendable, Equatable {
-    case string(String)
-    case int(Int)
-    case double(Double)
-    case bool(Bool)
-    case object([String: JSONValue])
-    case array([JSONValue])
-    case null
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-
-        if container.decodeNil() {
-            self = .null
-        } else if let boolValue = try? container.decode(Bool.self) {
-            self = .bool(boolValue)
-        } else if let intValue = try? container.decode(Int.self) {
-            self = .int(intValue)
-        } else if let doubleValue = try? container.decode(Double.self) {
-            self = .double(doubleValue)
-        } else if let stringValue = try? container.decode(String.self) {
-            self = .string(stringValue)
-        } else if let objectValue = try? container.decode([String: JSONValue].self) {
-            self = .object(objectValue)
-        } else if let arrayValue = try? container.decode([JSONValue].self) {
-            self = .array(arrayValue)
-        } else {
-            throw DecodingError.typeMismatch(
-                JSONValue.self,
-                DecodingError.Context(
-                    codingPath: decoder.codingPath,
-                    debugDescription: "Unsupported JSON value type"
-                )
-            )
         }
     }
 }

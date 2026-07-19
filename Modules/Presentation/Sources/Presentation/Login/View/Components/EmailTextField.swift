@@ -10,15 +10,17 @@ import Common
 
 struct EmailTextField: View {
     @Binding var text: String
-    var errorMessage: String?
-    var isOffline: Bool
+    var errorState: AuthenticationErrorState?
     var isRateLimited: Bool
     @FocusState private var isFocused: Bool
 
-    init(text: Binding<String>, errorMessage: String? = nil, isOffline: Bool = false, isRateLimited: Bool = false) {
+    init(
+        text: Binding<String>,
+        errorState: AuthenticationErrorState? = nil,
+        isRateLimited: Bool = false
+    ) {
         self._text = text
-        self.errorMessage = errorMessage
-        self.isOffline = isOffline
+        self.errorState = errorState
         self.isRateLimited = isRateLimited
     }
 
@@ -29,7 +31,12 @@ struct EmailTextField: View {
                 .foregroundStyle(AppColors.brandDarkBlue)
                 .kerning(1.2)
 
-            TextField("", text: $text, prompt: Text("Enter your email").foregroundStyle(AppColors.textSecondary.opacity(0.5)))
+            TextField(
+                "",
+                text: $text,
+                prompt: Text("Enter your email")
+                    .foregroundStyle(AppColors.textSecondary.opacity(0.5))
+            )
                 .keyboardType(.emailAddress)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
@@ -40,39 +47,39 @@ struct EmailTextField: View {
                 .overlay {
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .stroke(
-                            (errorMessage != nil && !isRateLimited) ? AppColors.destructive :
+                            (hasInlineError && !isRateLimited) ? AppColors.destructive :
                                 ((isFocused || !text.isEmpty) ? AppColors.accentBlue : AppColors.brandDarkBlue.opacity(0.15)),
                             lineWidth: 1.5
                         )
                 }
 
-            if isOffline {
-                HStack(spacing: 8) {
-                    Image(systemName: "exclamationmark.circle.fill")
-                        .foregroundStyle(.orange)
-                    Text("You're offline — we'll send the code when you reconnect.")
-                        .font(AppFonts.captionHeavy)
-                        .foregroundStyle(.white)
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(AppColors.brandDarkBlue)
-                .cornerRadius(12)
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            } else if let errorMessage {
-                HStack(spacing: 4) {
-                    Image(systemName: isRateLimited ? "clock.fill" : "exclamationmark.circle.fill")
+            if let errorState {
+                switch errorState {
+                case .network:
+                    NetworkErrorView(
+                        message: "You're offline — we'll send the code when you reconnect."
+                    )
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                case .inline(let message):
+                    HStack(spacing: 4) {
+                        Image(
+                            systemName: isRateLimited
+                                ? "clock.fill" : "exclamationmark.circle.fill"
+                        )
                         .font(.system(size: 12))
-                    Text(errorMessage)
-                        .font(.system(.caption, design: .rounded, weight: .heavy))
+                        Text(message)
+                            .font(.system(.caption, design: .rounded, weight: .heavy))
+                    }
+                    .foregroundStyle(isRateLimited ? AppColors.warning : AppColors.destructive)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
                 }
-                .foregroundStyle(isRateLimited ? .orange : AppColors.destructive)
-                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .animation(.snappy, value: errorMessage)
-        .animation(.snappy, value: isOffline)
+        .animation(.snappy, value: errorState)
+    }
+
+    private var hasInlineError: Bool {
+        guard case .inline = errorState else { return false }
+        return true
     }
 }

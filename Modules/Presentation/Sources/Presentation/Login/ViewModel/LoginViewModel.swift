@@ -7,12 +7,14 @@
 
 import Foundation
 import Observation
+import Domain
 import Network
 
 public enum LoginState: Equatable, Sendable {
     case idle
     case loading
     case rateLimited(secondsRemaining: Int)
+    case failure(AuthenticationErrorState)
 }
 
 
@@ -21,15 +23,19 @@ public enum LoginState: Equatable, Sendable {
 public final class LoginViewModel {
     
     public private(set) var state: LoginState = .idle
-    public private(set) var isOffline: Bool = false
     public private(set) var hasAttemptedSubmit: Bool = false
+    private var isOffline = false
     private var rateLimitTask: Task<Void, Never>?
+    private let requestOTPUseCase: RequestOTPUseCase
     private let monitor = NWPathMonitor()
         
     public var email: String = "" {
         didSet {
             if hasAttemptedSubmit {
                 hasAttemptedSubmit = false
+            }
+            if case .failure = state {
+                state = .idle
             }
         }
     }
@@ -41,7 +47,7 @@ public final class LoginViewModel {
         return email.wholeMatch(of: emailRegex) != nil
     }
     
-    public var errorMessage: String? {
+    public var validationErrorMessage: String? {
         guard hasAttemptedSubmit else { return nil }
         
         if email.isEmpty {
@@ -54,8 +60,11 @@ public final class LoginViewModel {
         
         return nil
     }
+
+    public var onSuccess: ((String, OTPRequestResult) -> Void)?
         
-    public init() {
+    public init(requestOTPUseCase: RequestOTPUseCase) {
+        self.requestOTPUseCase = requestOTPUseCase
         startNetworkMonitoring()
     }
     
@@ -67,13 +76,31 @@ public final class LoginViewModel {
     public func onSendCodeTapped() {
         hasAttemptedSubmit = true
         guard isValidEmail else { return }
+        guard !isOffline else {
+            state = .failure(.network)
+            return
+        }
+
+        let requestedEmail = email
         
         state = .loading
         
         Task {
-            try? await Task.sleep(for: .seconds(2))
-            if !Task.isCancelled {
-                state = .idle
+            do {
+                let result = try await requestOTPUseCase.execute(email: requestedEmail)
+                if !Task.isCancelled {
+                    state = .idle
+                    onSuccess?(requestedEmail, result)
+                }
+            } catch {
+                guard !Task.isCancelled else { return }
+
+                if let authError = error as? AuthError,
+                   case .rateLimited(let seconds) = authError {
+                    triggerRateLimit(seconds: seconds)
+                } else {
+                    state = .failure(AuthenticationErrorState(error: error))
+                }
             }
         }
     }
@@ -96,16 +123,16 @@ public final class LoginViewModel {
         monitor.start(queue: queue)
     }
         
-    public func triggerRateLimit() {
+    public func triggerRateLimit(seconds: Int) {
         rateLimitTask?.cancel()
-        state = .rateLimited(secondsRemaining: 38)
+        state = .rateLimited(secondsRemaining: seconds)
         rateLimitTask = Task {
-            var seconds = 38
-            while seconds > 0 {
+            var currentSeconds = seconds
+            while currentSeconds > 0 {
                 try? await Task.sleep(for: .seconds(1))
                 if Task.isCancelled { return }
-                seconds -= 1
-                state = .rateLimited(secondsRemaining: seconds)
+                currentSeconds -= 1
+                state = .rateLimited(secondsRemaining: currentSeconds)
             }
             if !Task.isCancelled {
                 state = .idle
