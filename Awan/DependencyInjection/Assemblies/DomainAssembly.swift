@@ -121,6 +121,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(AuthRepository.self, from: resolver)
             )
         }
+        container.register(CompleteOnboardingUseCase.self) { resolver in
+            DefaultCompleteOnboardingUseCase(
+                repository: Self.resolve(OnboardingRepositoryProtocol.self, from: resolver)
+            )
+        }
     }
 
     private func registerConflictUseCases(in container: Container) {
