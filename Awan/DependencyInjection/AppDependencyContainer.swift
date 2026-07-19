@@ -18,4 +18,11 @@ final class AppDependencyContainer {
         }
         return service
     }
+
+    func resolve<Service, Arg1>(_ serviceType: Service.Type, argument: Arg1) -> Service {
+        guard let service = resolver.resolve(serviceType, argument: argument) else {
+            preconditionFailure("Missing app dependency for \(serviceType) with argument \(Arg1.self)")
+        }
+        return service
+    }
 }

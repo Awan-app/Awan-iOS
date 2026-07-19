@@ -15,11 +15,13 @@ public protocol APIEndpoint {
     var queryParameters: [String: String]? { get }
     var body: (any Encodable)? { get }
     var headers: [String: String] { get }
+    var requiresAuthentication: Bool { get }
 }
 
 public extension APIEndpoint {
     var body: (any Encodable)? { nil }
     var headers: [String: String] { [:] }
+    var requiresAuthentication: Bool { false }
 
     var fullURL: URL? {
         var components = URLComponents(string: baseURL + path)

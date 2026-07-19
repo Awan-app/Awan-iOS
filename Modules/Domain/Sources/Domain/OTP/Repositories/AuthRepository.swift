@@ -9,4 +9,7 @@ import Foundation
 
 public protocol AuthRepository: Sendable {
     func requestOTP(email: String) async throws -> OTPRequestResult
+    func verifyOTP(email: String, code: String) async throws -> VerifyOTPResult
+    func observeAuthenticatedUser() -> AsyncStream<UserEntity?>
+    func logout() async throws
 }

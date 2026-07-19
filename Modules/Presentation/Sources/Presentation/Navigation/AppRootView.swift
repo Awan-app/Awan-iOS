@@ -9,35 +9,51 @@ import SwiftUI
 
 struct AppRootView: View {
     @Environment(AppCoordinator.self) private var coordinator
-    private let loginViewModel: LoginViewModel
-    private let scheduleViewModel: ScheduleTimelineViewModel
+    @Environment(AuthenticationState.self) private var authenticationState
+    private let factory: PresentationFactory
 
-    init(
-        loginViewModel: LoginViewModel,
-        scheduleViewModel: ScheduleTimelineViewModel
-    ) {
-        self.loginViewModel = loginViewModel
-        self.scheduleViewModel = scheduleViewModel
+    init(factory: PresentationFactory) {
+        self.factory = factory
     }
 
     var body: some View {
-        switch coordinator.currentFlow {
-        case .auth:
-            NavigationStack(path: Bindable(coordinator.authCoordinator).path) {
-                LoginView(viewModel: loginViewModel)
-                    .navigationDestination(for: AuthRoute.self) { route in
-                        switch route {
-                        case .login:
-                            LoginView(viewModel: loginViewModel)
-                        case .otpVerification:
-                            OtpVerificationView()
-                        }
+        Group {
+            switch authenticationState.status {
+            case .checking:
+                ProgressView()
+            case .unauthenticated:
+                authenticationFlow
+            case .authenticated:
+                mainFlow
+            }
+        }
+        .task {
+            authenticationState.start()
+        }
+        .onChange(of: authenticationState.status) { _, status in
+            if status == .unauthenticated {
+                coordinator.authCoordinator.popToRoot()
+            }
+        }
+    }
+
+    private var authenticationFlow: some View {
+        NavigationStack(path: Bindable(coordinator.authCoordinator).path) {
+            factory.makeLoginView()
+                .navigationDestination(for: AuthRoute.self) { route in
+                    switch route {
+                    case .login:
+                        factory.makeLoginView()
+                    case .otpVerification(let context):
+                        factory.makeOtpVerificationView(context: context)
                     }
-            }
-        case .main:
-            NavigationStack(path: Bindable(coordinator.mainCoordinator).path) {
-                ScheduleTimelineView(viewModel: scheduleViewModel)
-            }
+                }
+        }
+    }
+
+    private var mainFlow: some View {
+        NavigationStack(path: Bindable(coordinator.mainCoordinator).path) {
+            factory.makeScheduleTimelineView()
         }
     }
 }

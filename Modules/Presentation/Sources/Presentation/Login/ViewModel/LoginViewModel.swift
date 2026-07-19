@@ -14,6 +14,7 @@ public enum LoginState: Equatable, Sendable {
     case idle
     case loading
     case rateLimited(secondsRemaining: Int)
+    case failure(AuthenticationErrorState)
 }
 
 
@@ -22,8 +23,8 @@ public enum LoginState: Equatable, Sendable {
 public final class LoginViewModel {
     
     public private(set) var state: LoginState = .idle
-    public private(set) var isOffline: Bool = false
     public private(set) var hasAttemptedSubmit: Bool = false
+    private var isOffline = false
     private var rateLimitTask: Task<Void, Never>?
     private let requestOTPUseCase: RequestOTPUseCase
     private let monitor = NWPathMonitor()
@@ -32,6 +33,9 @@ public final class LoginViewModel {
         didSet {
             if hasAttemptedSubmit {
                 hasAttemptedSubmit = false
+            }
+            if case .failure = state {
+                state = .idle
             }
         }
     }
@@ -43,7 +47,7 @@ public final class LoginViewModel {
         return email.wholeMatch(of: emailRegex) != nil
     }
     
-    public var errorMessage: String? {
+    public var validationErrorMessage: String? {
         guard hasAttemptedSubmit else { return nil }
         
         if email.isEmpty {
@@ -56,10 +60,8 @@ public final class LoginViewModel {
         
         return nil
     }
-        
-    public var isShowingErrorAlert: Bool = false
-    public var alertMessage: String = ""
-    public var onSuccess: (() -> Void)?
+
+    public var onSuccess: ((String, OTPRequestResult) -> Void)?
         
     public init(requestOTPUseCase: RequestOTPUseCase) {
         self.requestOTPUseCase = requestOTPUseCase
@@ -74,32 +76,30 @@ public final class LoginViewModel {
     public func onSendCodeTapped() {
         hasAttemptedSubmit = true
         guard isValidEmail else { return }
-        guard !isOffline else { return }
+        guard !isOffline else {
+            state = .failure(.network)
+            return
+        }
+
+        let requestedEmail = email
         
         state = .loading
         
         Task {
             do {
-                let _ = try await requestOTPUseCase.execute(email: email)
+                let result = try await requestOTPUseCase.execute(email: requestedEmail)
                 if !Task.isCancelled {
                     state = .idle
-                    onSuccess?()
-                }
-            } catch let error as AuthError {
-                if !Task.isCancelled {
-                    if case .rateLimited(let seconds) = error {
-                        triggerRateLimit(seconds: seconds)
-                    } else {
-                        state = .idle
-                        alertMessage = error.localizedDescription
-                        isShowingErrorAlert = true
-                    }
+                    onSuccess?(requestedEmail, result)
                 }
             } catch {
-                if !Task.isCancelled {
-                    state = .idle
-                    alertMessage = error.localizedDescription
-                    isShowingErrorAlert = true
+                guard !Task.isCancelled else { return }
+
+                if let authError = error as? AuthError,
+                   case .rateLimited(let seconds) = authError {
+                    triggerRateLimit(seconds: seconds)
+                } else {
+                    state = .failure(AuthenticationErrorState(error: error))
                 }
             }
         }

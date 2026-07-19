@@ -106,6 +106,21 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(AuthRepository.self, from: resolver)
             )
         }
+        container.register(VerifyOTPUseCase.self) { resolver in
+            VerifyOTPUseCase(
+                repository: Self.resolve(AuthRepository.self, from: resolver)
+            )
+        }
+        container.register(ObserveAuthenticationUseCase.self) { resolver in
+            ObserveAuthenticationUseCase(
+                repository: Self.resolve(AuthRepository.self, from: resolver)
+            )
+        }
+        container.register(LogoutUseCase.self) { resolver in
+            LogoutUseCase(
+                repository: Self.resolve(AuthRepository.self, from: resolver)
+            )
+        }
     }
 
     private func registerConflictUseCases(in container: Container) {

@@ -30,33 +30,39 @@ public struct OTPRequestResponseDTO: Decodable, Sendable {
     }
 }
 
-// MARK: - Verify OTP (Placeholders for compilation)
-struct OTPVerifyRequestDTO: Encodable {
-    let email: String
-    let code: String
-    let deviceId: String
+// MARK: - Verify OTP
+public struct OTPVerifyRequestDTO: Encodable, Sendable {
+    public let email: String
+    public let code: String
+    public let deviceId: String
+    
+    public init(email: String, code: String, deviceId: String) {
+        self.email = email
+        self.code = code
+        self.deviceId = deviceId
+    }
 }
 
-struct OTPVerifyResponseDTO: Decodable {
-    let accessToken: String
-    let accessTokenExpiresIn: Int
-    let refreshToken: String
-    // user etc.
+public struct OTPVerifyUserDTO: Decodable, Sendable {
+    public let id: String
+    public let email: String
+    public let isNew: Bool
 }
 
-// MARK: - Refresh Token (Placeholders for compilation)
-struct RefreshTokenRequestDTO: Encodable {
-    let refreshToken: String
-    let deviceId: String
+public struct OTPVerifyResponseDTO: Decodable, Sendable {
+    public let accessToken: String
+    public let accessTokenExpiresIn: Int
+    public let refreshToken: String
+    public let user: OTPVerifyUserDTO
+    
+    public func toDomain() -> VerifyOTPResult {
+        return VerifyOTPResult(
+            user: UserEntity(id: user.id, email: user.email, isNew: user.isNew)
+        )
+    }
 }
 
-struct RefreshTokenResponseDTO: Decodable {
-    let accessToken: String
-    let accessTokenExpiresIn: Int
-    let refreshToken: String
-}
-
-// MARK: - Logout (Placeholders for compilation)
-struct LogoutRequestDTO: Encodable {
+// MARK: - Logout
+struct LogoutRequestDTO: Encodable, Sendable {
     let deviceId: String
 }
