@@ -12,36 +12,68 @@ import Domain
 public final class OtpVerificationViewModel {
     public static let codeLength = 6
 
-    public private(set) var state: VerificationState = .idle
-    public let email: String
+    public private(set) var state: OtpVerificationState = .idle
+    public let context: OtpVerificationContext
     public private(set) var codeDigits = Array(
         repeating: "",
         count: OtpVerificationViewModel.codeLength
     )
+    public private(set) var isResending = false
+    public private(set) var resendSecondsRemaining: Int
+    public private(set) var inputResetID = 0
 
     public var code: String {
         codeDigits.joined()
     }
 
-    public var isShowingErrorAlert: Bool = false
-    public var alertMessage: String = ""
+    public var email: String {
+        context.email
+    }
+
+    public var formattedResendTime: String {
+        let minutes = resendSecondsRemaining / 60
+        let seconds = resendSecondsRemaining % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+
+    public var isResendDisabled: Bool {
+        resendSecondsRemaining > 0 || isResending || state == .verifying
+    }
+
+    public var isInputDisabled: Bool {
+        state == .verifying || isResending
+    }
+
     public var onSuccess: (() -> Void)?
-    
+
+    private let requestOTPUseCase: RequestOTPUseCase
     private let verifyOTPUseCase: VerifyOTPUseCase
-    
+    private var resendCountdownTask: Task<Void, Never>?
+
     private var deviceId: String {
         return "123e4567-e89b-12d3-a456-426614174000"
     }
-    
-    public init(email: String, verifyOTPUseCase: VerifyOTPUseCase) {
-        self.email = email
+
+    public init(
+        context: OtpVerificationContext,
+        requestOTPUseCase: RequestOTPUseCase,
+        verifyOTPUseCase: VerifyOTPUseCase
+    ) {
+        self.context = context
+        self.requestOTPUseCase = requestOTPUseCase
         self.verifyOTPUseCase = verifyOTPUseCase
+        resendSecondsRemaining = max(0, context.initialResendSeconds)
+        startResendCountdown(seconds: resendSecondsRemaining)
     }
 
     @discardableResult
     public func updateCodeDigit(_ input: String, at index: Int) -> Int? {
-        guard codeDigits.indices.contains(index), state != .verifying else {
+        guard codeDigits.indices.contains(index), !isInputDisabled else {
             return nil
+        }
+
+        if case .failure = state {
+            state = .idle
         }
 
         guard !input.isEmpty else {
@@ -75,43 +107,59 @@ public final class OtpVerificationViewModel {
     }
     
     public func verifyOTP() {
-        guard code.count == 6 else { return }
+        guard code.count == Self.codeLength, !isResending else { return }
         state = .verifying
         
         Task {
             do {
-                let result = try await verifyOTPUseCase.execute(email: email, code: code, deviceId: deviceId)
+                _ = try await verifyOTPUseCase.execute(
+                    email: email,
+                    code: code,
+                    deviceId: deviceId
+                )
                 if !Task.isCancelled {
                     state = .success
-                    print("Token stored successfully for user: \(result.user.email)")
                     onSuccess?()
                 }
-            } catch let error as AuthError {
-                if !Task.isCancelled {
-                    state = .failure
-                    alertMessage = error.localizedDescription
-                    isShowingErrorAlert = true
-                }
             } catch {
-                if !Task.isCancelled {
-                    state = .failure
-                    alertMessage = error.localizedDescription
-                    isShowingErrorAlert = true
-                }
+                guard !Task.isCancelled else { return }
+
+                state = .failure(AuthenticationErrorState(error: error))
+                clearCodeAndRequestFocus()
             }
         }
     }
-    
-    public func resetError() {
-        state = .idle
-        clearCode()
-        isShowingErrorAlert = false
-    }
-    
+
     public func resendCode() {
-        // Here you would call requestOTPUseCase again if needed
+        guard !isResendDisabled else { return }
+
+        isResending = true
         state = .idle
-        clearCode()
+
+        Task {
+            do {
+                let result = try await requestOTPUseCase.execute(email: email)
+                guard !Task.isCancelled else { return }
+
+                isResending = false
+                state = .idle
+                clearCodeAndRequestFocus()
+                startResendCountdown(seconds: result.resendAvailableInSeconds)
+            } catch {
+                guard !Task.isCancelled else { return }
+
+                isResending = false
+                let presentedError = AuthenticationErrorState(error: error)
+                state = .failure(presentedError)
+                if let authError = error as? AuthError,
+                   case .rateLimited(let seconds) = authError {
+                    startResendCountdown(
+                        seconds: seconds,
+                        errorToClearOnCompletion: presentedError
+                    )
+                }
+            }
+        }
     }
 
     private func nextEmptyDigitIndex(after index: Int) -> Int? {
@@ -124,7 +172,43 @@ public final class OtpVerificationViewModel {
         return codeDigits.firstIndex(where: \.isEmpty)
     }
 
-    private func clearCode() {
+    private func clearCodeAndRequestFocus() {
         codeDigits = Array(repeating: "", count: Self.codeLength)
+        inputResetID += 1
+    }
+
+    private func startResendCountdown(
+        seconds: Int,
+        errorToClearOnCompletion: AuthenticationErrorState? = nil
+    ) {
+        resendCountdownTask?.cancel()
+        resendSecondsRemaining = max(0, seconds)
+
+        guard resendSecondsRemaining > 0 else {
+            clearErrorIfNeeded(errorToClearOnCompletion)
+            return
+        }
+
+        resendCountdownTask = Task { [weak self] in
+            while !Task.isCancelled {
+                do {
+                    try await Task.sleep(for: .seconds(1))
+                } catch {
+                    return
+                }
+
+                guard let self, !Task.isCancelled else { return }
+                resendSecondsRemaining = max(0, resendSecondsRemaining - 1)
+
+                guard resendSecondsRemaining == 0 else { continue }
+                clearErrorIfNeeded(errorToClearOnCompletion)
+                return
+            }
+        }
+    }
+
+    private func clearErrorIfNeeded(_ error: AuthenticationErrorState?) {
+        guard let error, state == .failure(error) else { return }
+        state = .idle
     }
 }

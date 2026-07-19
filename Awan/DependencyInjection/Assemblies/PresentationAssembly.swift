@@ -10,10 +10,17 @@ struct PresentationAssembly: Assembly {
                 LoginViewModel(requestOTPUseCase: useCase)
             }
         }
-        container.register(OtpVerificationViewModel.self) { (resolver, email: String) in
-            let useCase = Self.resolve(VerifyOTPUseCase.self, from: resolver)
+
+        container.register(OtpVerificationViewModel.self) {
+            (resolver, context: OtpVerificationContext) in
+            let requestUseCase = Self.resolve(RequestOTPUseCase.self, from: resolver)
+            let verifyUseCase = Self.resolve(VerifyOTPUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
-                OtpVerificationViewModel(email: email, verifyOTPUseCase: useCase)
+                OtpVerificationViewModel(
+                    context: context,
+                    requestOTPUseCase: requestUseCase,
+                    verifyOTPUseCase: verifyUseCase
+                )
             }
         }
         container.register(ScheduleTimelineUseCases.self) { resolver in
