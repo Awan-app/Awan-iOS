@@ -4,6 +4,13 @@ import Swinject
 
 struct PresentationAssembly: Assembly {
     func assemble(container: Container) {
+        container.register(AppCoordinator.self) { _ in
+            MainActor.assumeIsolated {
+                AppCoordinator(initialFlow: .auth)
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(LoginViewModel.self) { resolver in
             let useCase = Self.resolve(RequestOTPUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
@@ -53,6 +60,28 @@ struct PresentationAssembly: Assembly {
                 ScheduleTimelineViewModel(useCases: useCases)
             }
         }
+
+        container.register(PresentationFactory.self) { resolver in
+            let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
+            let loginViewModel = Self.resolve(LoginViewModel.self, from: resolver)
+            let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
+
+            return MainActor.assumeIsolated {
+                PresentationFactory(
+                    appCoordinator: appCoordinator,
+                    loginViewModel: loginViewModel,
+                    scheduleViewModel: scheduleViewModel,
+                    makeOtpViewModel: { context in
+                        Self.resolve(
+                            OtpVerificationViewModel.self,
+                            argument: context,
+                            from: resolver
+                        )
+                    }
+                )
+            }
+        }
+        .inObjectScope(.container)
     }
 
     private static func makeConflictUseCases(
@@ -96,6 +125,19 @@ struct PresentationAssembly: Assembly {
     ) -> Service {
         guard let service = resolver.resolve(serviceType) else {
             preconditionFailure("Missing Presentation dependency for \(serviceType)")
+        }
+        return service
+    }
+
+    private static func resolve<Service, Argument>(
+        _ serviceType: Service.Type,
+        argument: Argument,
+        from resolver: Resolver
+    ) -> Service {
+        guard let service = resolver.resolve(serviceType, argument: argument) else {
+            preconditionFailure(
+                "Missing Presentation dependency for \(serviceType) with argument \(Argument.self)"
+            )
         }
         return service
     }

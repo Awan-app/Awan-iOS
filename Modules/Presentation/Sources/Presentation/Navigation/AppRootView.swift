@@ -9,37 +9,29 @@ import SwiftUI
 
 struct AppRootView: View {
     @Environment(AppCoordinator.self) private var coordinator
-    private let loginViewModel: LoginViewModel
-    private let scheduleViewModel: ScheduleTimelineViewModel
-    private let makeOtpViewModel: (String) -> OtpVerificationViewModel
+    private let factory: PresentationFactory
 
-    init(
-        loginViewModel: LoginViewModel,
-        scheduleViewModel: ScheduleTimelineViewModel,
-        makeOtpViewModel: @escaping (String) -> OtpVerificationViewModel
-    ) {
-        self.loginViewModel = loginViewModel
-        self.scheduleViewModel = scheduleViewModel
-        self.makeOtpViewModel = makeOtpViewModel
+    init(factory: PresentationFactory) {
+        self.factory = factory
     }
 
     var body: some View {
         switch coordinator.currentFlow {
         case .auth:
             NavigationStack(path: Bindable(coordinator.authCoordinator).path) {
-                LoginView(viewModel: loginViewModel)
+                factory.makeLoginView()
                     .navigationDestination(for: AuthRoute.self) { route in
                         switch route {
                         case .login:
-                            LoginView(viewModel: loginViewModel)
-                        case .otpVerification(let email):
-                            OtpVerificationView(viewModel: makeOtpViewModel(email))
+                            factory.makeLoginView()
+                        case .otpVerification(let context):
+                            factory.makeOtpVerificationView(context: context)
                         }
                     }
             }
         case .main:
             NavigationStack(path: Bindable(coordinator.mainCoordinator).path) {
-                ScheduleTimelineView(viewModel: scheduleViewModel)
+                factory.makeScheduleTimelineView()
             }
         }
     }
