@@ -1,63 +1,111 @@
-//
-//  DefaultAuthRepository.swift
-//  Data
-//
-//  Created by Awan on 18/07/2026.
-//
-
-import Foundation
-import Domain
 import AwaNetwork
+import Domain
+import Foundation
 
-public final class AuthRepositoryImpl: AuthRepository {
+public final class AuthRepositoryImpl: AuthRepository, @unchecked Sendable {
     private let remoteDataSource: AuthDataSource
+    private let sessionDataSource: AuthSessionDataSource
 
-    public init(remoteDataSource: AuthDataSource) {
+    public init(
+        remoteDataSource: AuthDataSource,
+        sessionDataSource: AuthSessionDataSource
+    ) {
         self.remoteDataSource = remoteDataSource
+        self.sessionDataSource = sessionDataSource
     }
 
     public func requestOTP(email: String) async throws -> OTPRequestResult {
         do {
-            let response = try await remoteDataSource.requestOTP(email: email)
-            return response.toDomain()
+            return try await remoteDataSource.requestOTP(email: email).toDomain()
         } catch let error as NetworkError {
             throw mapNetworkErrorToAuthError(error)
         } catch {
-         
             throw AuthError.unknown(message: error.localizedDescription)
         }
     }
-    
-    public func verifyOTP(email: String, code: String, deviceId: String) async throws -> VerifyOTPResult {
+
+    public func verifyOTP(email: String, code: String) async throws -> VerifyOTPResult {
         do {
-            let response = try await remoteDataSource.verifyOTP(email: email, code: code, deviceId: deviceId)
-            
-            if let accessData = response.accessToken.data(using: .utf8),
-               let refreshData = response.refreshToken.data(using: .utf8) {
-                try KeychainHelper.shared.save(accessData, service: "Awan.AccessToken", account: response.user.id)
-                try KeychainHelper.shared.save(refreshData, service: "Awan.RefreshToken", account: response.user.id)
-                
-                print("--- DEBUG: RECEIVED TOKENS ---")
-                print("Access Token: \(response.accessToken)")
-                print("Refresh Token: \(response.refreshToken)")
-                print("------------------------------")
-            }
-            
+            let deviceId = try sessionDataSource.deviceId()
+            let response = try await remoteDataSource.verifyOTP(
+                email: email,
+                code: code,
+                deviceId: deviceId
+            )
+            let session = AuthSession(
+                accessToken: response.accessToken,
+                refreshToken: response.refreshToken,
+                accessTokenExpiresAt: Date().addingTimeInterval(
+                    TimeInterval(max(0, response.accessTokenExpiresIn))
+                ),
+                user: AuthSessionUser(
+                    id: response.user.id,
+                    email: response.user.email,
+                    isNew: response.user.isNew
+                )
+            )
+
+            try sessionDataSource.save(session)
             return response.toDomain()
         } catch let error as NetworkError {
             throw mapNetworkErrorToAuthError(error)
-        } catch let error as KeychainError {
-            throw AuthError.unknown(message: "Failed to securely store session: \(error)")
         } catch {
             throw AuthError.unknown(message: error.localizedDescription)
         }
     }
-    
+
+    public func observeAuthenticatedUser() -> AsyncStream<UserEntity?> {
+        let users = sessionDataSource.observeSessionUser()
+
+        return AsyncStream { continuation in
+            let task = Task {
+                for await user in users {
+                    guard !Task.isCancelled else { break }
+                    continuation.yield(user?.toDomain())
+                }
+                continuation.finish()
+            }
+            continuation.onTermination = { _ in task.cancel() }
+        }
+    }
+
+    public func logout() async throws {
+        let deviceId = try? sessionDataSource.deviceId()
+        var remoteError: Error?
+
+        if localSessionExists(), let deviceId {
+            do {
+                try await remoteDataSource.logout(deviceId: deviceId)
+            } catch {
+                remoteError = error
+            }
+        }
+
+        do {
+            try sessionDataSource.clear()
+        } catch where remoteError == nil {
+            throw AuthError.unknown(message: "Failed to securely clear session: \(error)")
+        } catch {
+            // The remote error remains the primary result, but the in-memory credential is still cleared.
+        }
+
+        if let networkError = remoteError as? NetworkError {
+            throw mapNetworkErrorToAuthError(networkError)
+        }
+        if let remoteError {
+            throw AuthError.unknown(message: remoteError.localizedDescription)
+        }
+    }
+
+    private func localSessionExists() -> Bool {
+        sessionDataSource.hasSession
+    }
+
     private func mapNetworkErrorToAuthError(_ error: NetworkError) -> AuthError {
         switch error {
         case .httpError(_, let apiError):
-            guard let apiError = apiError else { return .networkFailure }
-            
+            guard let apiError else { return .networkFailure }
+
             switch apiError.errorCode {
             case .otpRateLimitExceeded:
                 var retryAfter = 60
@@ -67,35 +115,33 @@ public final class AuthRepositoryImpl: AuthRepository {
                     retryAfter = Int(seconds)
                 }
                 return .rateLimited(retryAfterSeconds: retryAfter)
-                
             case .validationError:
                 return .invalidEmail
-                
             case .otpInvalidCode:
                 var attempts = 0
                 if case .int(let remaining) = apiError.info?["remainingAttempts"] {
                     attempts = remaining
                 }
                 return .invalidCode(remainingAttempts: attempts)
-                
             case .otpExpiredOrNotFound:
                 return .expiredOrNotFound
-                
             case .otpLocked:
                 return .locked
-                
             default:
                 return .unknown(message: apiError.message)
             }
-            
         case .underlying:
             return .networkFailure
-            
         case .decodingFailed, .encodingFailed:
             return .unknown(message: "Data processing failed.")
-            
         case .invalidURL, .noContent:
             return .unknown(message: "Invalid request.")
         }
+    }
+}
+
+private extension AuthSessionUser {
+    func toDomain() -> UserEntity {
+        UserEntity(id: id, email: email, isNew: isNew)
     }
 }

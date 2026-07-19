@@ -30,7 +30,7 @@ public struct OTPRequestResponseDTO: Decodable, Sendable {
     }
 }
 
-// MARK: - Verify OTP (Placeholders for compilation)
+// MARK: - Verify OTP
 public struct OTPVerifyRequestDTO: Encodable, Sendable {
     public let email: String
     public let code: String
@@ -62,19 +62,7 @@ public struct OTPVerifyResponseDTO: Decodable, Sendable {
     }
 }
 
-// MARK: - Refresh Token (Placeholders for compilation)
-struct RefreshTokenRequestDTO: Encodable {
-    let refreshToken: String
-    let deviceId: String
-}
-
-struct RefreshTokenResponseDTO: Decodable {
-    let accessToken: String
-    let accessTokenExpiresIn: Int
-    let refreshToken: String
-}
-
-// MARK: - Logout (Placeholders for compilation)
-struct LogoutRequestDTO: Encodable {
+// MARK: - Logout
+struct LogoutRequestDTO: Encodable, Sendable {
     let deviceId: String
 }

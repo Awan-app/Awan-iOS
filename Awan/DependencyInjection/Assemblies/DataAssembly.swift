@@ -1,6 +1,7 @@
 import Data
 import Domain
 import AwaNetwork
+import Foundation
 import Swinject
 
 struct DataAssembly: Assembly {
@@ -41,18 +42,26 @@ struct DataAssembly: Assembly {
             NetworkClient.shared
         }
         .inObjectScope(.container)
-        
+
+        container.register(AuthSessionDataSource.self) { _ in
+            LocalAuthSessionDataSource()
+        }
+        .inObjectScope(.container)
+
         container.register(AuthDataSource.self) { resolver in
             RemoteAuthDataSource(
                 networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
             )
         }
-        
+        .inObjectScope(.container)
+
         container.register(AuthRepository.self) { resolver in
             AuthRepositoryImpl(
-                remoteDataSource: Self.resolve(AuthDataSource.self, from: resolver)
+                remoteDataSource: Self.resolve(AuthDataSource.self, from: resolver),
+                sessionDataSource: Self.resolve(AuthSessionDataSource.self, from: resolver)
             )
         }
+        .inObjectScope(.container)
     }
 
     private static func resolve<Service>(

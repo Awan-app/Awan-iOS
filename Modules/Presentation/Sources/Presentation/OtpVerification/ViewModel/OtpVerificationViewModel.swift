@@ -44,15 +44,9 @@ public final class OtpVerificationViewModel {
         state == .verifying || isResending
     }
 
-    public var onSuccess: (() -> Void)?
-
     private let requestOTPUseCase: RequestOTPUseCase
     private let verifyOTPUseCase: VerifyOTPUseCase
     private var resendCountdownTask: Task<Void, Never>?
-
-    private var deviceId: String {
-        return "123e4567-e89b-12d3-a456-426614174000"
-    }
 
     public init(
         context: OtpVerificationContext,
@@ -114,12 +108,10 @@ public final class OtpVerificationViewModel {
             do {
                 _ = try await verifyOTPUseCase.execute(
                     email: email,
-                    code: code,
-                    deviceId: deviceId
+                    code: code
                 )
                 if !Task.isCancelled {
                     state = .success
-                    onSuccess?()
                 }
             } catch {
                 guard !Task.isCancelled else { return }

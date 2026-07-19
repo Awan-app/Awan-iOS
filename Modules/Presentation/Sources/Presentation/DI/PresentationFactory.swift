@@ -3,17 +3,20 @@ import SwiftUI
 @MainActor
 public struct PresentationFactory {
     private let appCoordinator: AppCoordinator
+    private let authenticationState: AuthenticationState
     private let loginViewModel: LoginViewModel
     private let scheduleViewModel: ScheduleTimelineViewModel
     private let makeOtpViewModel: (OtpVerificationContext) -> OtpVerificationViewModel
 
     public init(
         appCoordinator: AppCoordinator,
+        authenticationState: AuthenticationState,
         loginViewModel: LoginViewModel,
         scheduleViewModel: ScheduleTimelineViewModel,
         makeOtpViewModel: @escaping (OtpVerificationContext) -> OtpVerificationViewModel
     ) {
         self.appCoordinator = appCoordinator
+        self.authenticationState = authenticationState
         self.loginViewModel = loginViewModel
         self.scheduleViewModel = scheduleViewModel
         self.makeOtpViewModel = makeOtpViewModel
@@ -22,6 +25,7 @@ public struct PresentationFactory {
     public func makeAppRootView() -> some View {
         AppRootView(factory: self)
             .environment(appCoordinator)
+            .environment(authenticationState)
     }
 
     func makeLoginView() -> some View {

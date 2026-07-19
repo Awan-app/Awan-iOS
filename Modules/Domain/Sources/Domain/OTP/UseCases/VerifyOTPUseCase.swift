@@ -12,7 +12,7 @@ public struct VerifyOTPUseCase: Sendable {
         self.repository = repository
     }
 
-    public func execute(email: String, code: String, deviceId: String) async throws -> VerifyOTPResult {
-        return try await repository.verifyOTP(email: email, code: code, deviceId: deviceId)
+    public func execute(email: String, code: String) async throws -> VerifyOTPResult {
+        return try await repository.verifyOTP(email: email, code: code)
     }
 }

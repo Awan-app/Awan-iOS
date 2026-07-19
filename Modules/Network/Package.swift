@@ -21,6 +21,10 @@ let package = Package(
         .package(
             url: "https://github.com/Alamofire/Alamofire.git",
             from: "5.10.0"
+        ),
+        .package(
+            url: "https://github.com/auth0/SimpleKeychain.git",
+            from: "1.3.0"
         )
     ],
     targets: [
@@ -29,7 +33,8 @@ let package = Package(
         .target(
             name: "AwaNetwork",
             dependencies: [
-                .product(name: "Alamofire", package: "Alamofire")
+                .product(name: "Alamofire", package: "Alamofire"),
+                .product(name: "SimpleKeychain", package: "SimpleKeychain")
             ]
         ),
         .testTarget(
@@ -38,4 +43,3 @@ let package = Package(
         )
     ]
 )
-

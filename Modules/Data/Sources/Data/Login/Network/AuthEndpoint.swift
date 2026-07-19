@@ -11,11 +11,10 @@ import AwaNetwork
 enum AuthEndpoint: APIEndpoint {
     case requestOTP(email: String)
     case verifyOTP(email: String, code: String, deviceId: String)
-    case refreshToken(token: String, deviceId: String)
     case logout(deviceId: String)
 
     var baseURL: String {
-        return "http://localhost:8080/api/v1/auth" // Replace with actual base URL config later
+        NetworkConfiguration.authBaseURL
     }
 
     var path: String {
@@ -24,8 +23,6 @@ enum AuthEndpoint: APIEndpoint {
             return "/otp/request"
         case .verifyOTP:
             return "/otp/verify"
-        case .refreshToken:
-            return "/refresh"
         case .logout:
             return "/logout"
         }
@@ -33,7 +30,7 @@ enum AuthEndpoint: APIEndpoint {
 
     var method: HTTPMethod {
         switch self {
-        case .requestOTP, .verifyOTP, .refreshToken, .logout:
+        case .requestOTP, .verifyOTP, .logout:
             return .post
         }
     }
@@ -44,8 +41,6 @@ enum AuthEndpoint: APIEndpoint {
             return OTPRequestRequestDTO(email: email)
         case .verifyOTP(let email, let code, let deviceId):
             return OTPVerifyRequestDTO(email: email, code: code, deviceId: deviceId)
-        case .refreshToken(let token, let deviceId):
-            return RefreshTokenRequestDTO(refreshToken: token, deviceId: deviceId)
         case .logout(let deviceId):
             return LogoutRequestDTO(deviceId: deviceId)
         }
@@ -53,5 +48,12 @@ enum AuthEndpoint: APIEndpoint {
 
     var queryParameters: [String: String]? {
         return nil
+    }
+
+    var requiresAuthentication: Bool {
+        if case .logout = self {
+            return true
+        }
+        return false
     }
 }

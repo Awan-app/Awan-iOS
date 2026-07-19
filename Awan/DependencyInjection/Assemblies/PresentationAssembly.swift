@@ -6,7 +6,15 @@ struct PresentationAssembly: Assembly {
     func assemble(container: Container) {
         container.register(AppCoordinator.self) { _ in
             MainActor.assumeIsolated {
-                AppCoordinator(initialFlow: .auth)
+                AppCoordinator()
+            }
+        }
+        .inObjectScope(.container)
+
+        container.register(AuthenticationState.self) { resolver in
+            let useCase = Self.resolve(ObserveAuthenticationUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                AuthenticationState(observeAuthenticationUseCase: useCase)
             }
         }
         .inObjectScope(.container)
@@ -63,12 +71,14 @@ struct PresentationAssembly: Assembly {
 
         container.register(PresentationFactory.self) { resolver in
             let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
+            let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
             let loginViewModel = Self.resolve(LoginViewModel.self, from: resolver)
             let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
                     appCoordinator: appCoordinator,
+                    authenticationState: authenticationState,
                     loginViewModel: loginViewModel,
                     scheduleViewModel: scheduleViewModel,
                     makeOtpViewModel: { context in
