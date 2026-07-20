@@ -30,10 +30,14 @@ public struct DefaultUpdateTaskUseCase: UpdateTaskUseCase {
         let updatedTask = try AwanTask(
             id: previousTask.id,
             title: request.title,
+            description: previousTask.description,
+            status: previousTask.status,
             goalID: previousTask.goalID,
             zoneID: request.zoneID,
             duration: TaskDuration(minutes: request.durationMinutes),
             isSplittable: request.isSplittable,
+            mandatory: previousTask.mandatory,
+            estimatedPoints: previousTask.estimatedPoints,
             dependencyIDs: previousTask.dependencyIDs
         )
         try await taskRepository.updateTask(updatedTask)

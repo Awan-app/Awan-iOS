@@ -185,7 +185,14 @@ public struct DefaultShiftGoalDependencyChainUseCase: ShiftGoalDependencyChainUs
                 throw SchedulingError.invalidTimeRange
             }
             try await goalRepository.updateGoal(
-                Goal(id: goal.id, name: goal.name, deadline: deadline)
+                Goal(
+                    id: goal.id,
+                    name: goal.name,
+                    description: goal.description,
+                    status: goal.status,
+                    deadline: deadline,
+                    createdAt: goal.createdAt
+                )
             )
         }
         return ScheduleOperationResult(
@@ -262,10 +269,14 @@ public struct DefaultMakeTaskIndependentUseCase: MakeTaskIndependentUseCase {
             AwanTask(
                 id: task.id,
                 title: task.title,
+                description: task.description,
+                status: task.status,
                 goalID: task.goalID,
                 zoneID: task.zoneID,
                 duration: task.duration,
                 isSplittable: task.isSplittable,
+                mandatory: task.mandatory,
+                estimatedPoints: task.estimatedPoints,
                 dependencyIDs: task.dependencyIDs.subtracting([request.dependencyID])
             )
         )
