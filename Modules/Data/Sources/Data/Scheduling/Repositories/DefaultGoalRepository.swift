@@ -6,9 +6,19 @@ public struct DefaultGoalRepository: GoalRepository {
 
     public init(store: InMemoryScheduleDataSource) { self.store = store }
 
-    public func fetchGoals() async throws -> [Goal] { await store.fetchGoals() }
-    public func addGoal(_ goal: Goal) async throws { await store.addGoal(goal) }
-    public func updateGoal(_ goal: Goal) async throws { await store.updateGoal(goal) }
-    public func deleteGoal(id: UUID) async throws { await store.deleteGoal(id: id) }
-    public func deleteAllGoals() async throws { await store.deleteAllGoals() }
+    public func fetchGoals() async throws -> [Goal] {
+        try await store.fetchGoals().map { try $0.toDomain() }
+    }
+    public func addGoal(_ goal: Goal) async throws {
+        try await store.addGoal(GoalRecord(domain: goal))
+    }
+    public func updateGoal(_ goal: Goal) async throws {
+        try await store.updateGoal(GoalRecord(domain: goal))
+    }
+    public func deleteGoal(id: UUID) async throws {
+        try await store.deleteGoal(id: id)
+    }
+    public func deleteAllGoals() async throws {
+        try await store.deleteAllGoals()
+    }
 }
