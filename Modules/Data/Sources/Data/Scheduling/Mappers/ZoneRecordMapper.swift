@@ -7,7 +7,9 @@ extension ZoneRecord {
             name: name,
             color: ZoneColor(hex: colorHex),
             startTime: LocalTime(hour: startHour, minute: startMinute),
-            endTime: LocalTime(hour: endHour, minute: endMinute)
+            endTime: LocalTime(hour: endHour, minute: endMinute),
+            templateID: templateID,
+            templateOverrideID: templateOverrideID
         )
     }
 
@@ -19,7 +21,9 @@ extension ZoneRecord {
             startHour: zone.startTime.hour,
             startMinute: zone.startTime.minute,
             endHour: zone.endTime.hour,
-            endMinute: zone.endTime.minute
+            endMinute: zone.endTime.minute,
+            templateID: zone.templateID,
+            templateOverrideID: zone.templateOverrideID
         )
     }
 }
