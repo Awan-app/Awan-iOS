@@ -4,9 +4,15 @@ import SwiftData
 final class AppDependencyContainer {
     let resolver: Resolver
 
-    init(modelContainer: ModelContainer) {
+    init(
+        modelContainer: ModelContainer? = nil,
+        schedulingImplementation: SchedulingDataSourceImplementation = .swiftData
+    ) {
         let assembler = Assembler([
-            DataAssembly(modelContainer: modelContainer),
+            DataAssembly(
+                modelContainer: modelContainer,
+                schedulingImplementation: schedulingImplementation
+            ),
             DomainAssembly(),
             PresentationAssembly(),
         ])

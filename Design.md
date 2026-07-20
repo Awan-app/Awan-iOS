@@ -107,7 +107,8 @@ The production local store uses SwiftData and follows these boundaries:
 - Presentation never receives a `ModelContext`, imports SwiftData, uses `@Query`, or reads persistence values directly. Local values must be loaded through Domain use cases and processed by the scheduling engine before Presentation renders them.
 - Template aggregate writes reconcile their owned zones, and aggregate deletion explicitly removes those zones in the same context because ownership uses UUID fields rather than SwiftData relationships.
 - Repository implementations depend on local data-source protocols rather than persistence-framework-specific implementations.
-- Tests exercise the real SwiftData actors with isolated in-memory `ModelContainer` instances; the array-backed in-memory scheduling source has been removed.
+- Tests exercise the real SwiftData actors with isolated in-memory `ModelContainer` instances.
+- Development previews can instead inject six focused in-memory local sources with linked mock data. This selection is made only in the app composition root; repositories and Presentation use the same abstractions in either mode.
 
 ## Presentation
 

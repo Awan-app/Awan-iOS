@@ -12,10 +12,34 @@ import Presentation
 
 @main
 struct AwanApp: App {
+    // Change this to `.swiftData` to use the persistent scheduling implementation.
+    private static let schedulingImplementation: SchedulingDataSourceImplementation =
+        .inMemory(.preview)
+
     private let presentationFactory: PresentationFactory
-    private let sharedModelContainer: ModelContainer
+    private let sharedModelContainer: ModelContainer?
 
     init() {
+        sharedModelContainer = switch Self.schedulingImplementation {
+        case .swiftData:
+            Self.makeSchedulingModelContainer()
+        case .inMemory:
+            nil
+        }
+        let dependencies = AppDependencyContainer(
+            modelContainer: sharedModelContainer,
+            schedulingImplementation: Self.schedulingImplementation
+        )
+        presentationFactory = dependencies.resolve(PresentationFactory.self)
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            presentationFactory.makeAppRootView()
+        }
+    }
+
+    private static func makeSchedulingModelContainer() -> ModelContainer {
         let schema = SchedulingPersistence.schema
         let configuration = ModelConfiguration(
             "AwanScheduling",
@@ -25,20 +49,12 @@ struct AwanApp: App {
             cloudKitDatabase: .none
         )
         do {
-            sharedModelContainer = try ModelContainer(
+            return try ModelContainer(
                 for: schema,
                 configurations: [configuration]
             )
         } catch {
             fatalError("Could not create scheduling ModelContainer: \(error)")
-        }
-        let dependencies = AppDependencyContainer(modelContainer: sharedModelContainer)
-        presentationFactory = dependencies.resolve(PresentationFactory.self)
-    }
-
-    var body: some Scene {
-        WindowGroup {
-            presentationFactory.makeAppRootView()
         }
     }
 }

@@ -5,43 +5,25 @@ import Foundation
 import Swinject
 import SwiftData
 
-struct DataAssembly: Assembly {
-    private let modelContainer: ModelContainer
+enum SchedulingDataSourceImplementation {
+    case swiftData
+    case inMemory(SchedulingMockData)
+}
 
-    init(modelContainer: ModelContainer) {
+struct DataAssembly: Assembly {
+    private let modelContainer: ModelContainer?
+    private let schedulingImplementation: SchedulingDataSourceImplementation
+
+    init(
+        modelContainer: ModelContainer? = nil,
+        schedulingImplementation: SchedulingDataSourceImplementation = .swiftData
+    ) {
         self.modelContainer = modelContainer
+        self.schedulingImplementation = schedulingImplementation
     }
 
     func assemble(container: Container) {
-        container.register(LocalTaskDataSource.self) { _ in
-            SwiftDataTaskDataSource(modelContainer: modelContainer)
-        }
-        .inObjectScope(.container)
-
-        container.register(LocalGoalDataSource.self) { _ in
-            SwiftDataGoalDataSource(modelContainer: modelContainer)
-        }
-        .inObjectScope(.container)
-
-        container.register(LocalSessionDataSource.self) { _ in
-            SwiftDataSessionDataSource(modelContainer: modelContainer)
-        }
-        .inObjectScope(.container)
-
-        container.register(LocalZoneDataSource.self) { _ in
-            SwiftDataZoneDataSource(modelContainer: modelContainer)
-        }
-        .inObjectScope(.container)
-
-        container.register(LocalTemplateDataSource.self) { _ in
-            SwiftDataTemplateDataSource(modelContainer: modelContainer)
-        }
-        .inObjectScope(.container)
-
-        container.register(LocalTemplateOverrideDataSource.self) { _ in
-            SwiftDataTemplateOverrideDataSource(modelContainer: modelContainer)
-        }
-        .inObjectScope(.container)
+        registerSchedulingDataSources(in: container)
 
         container.register(ZoneRepository.self) { resolver in
             DefaultZoneRepository(
@@ -107,6 +89,54 @@ struct DataAssembly: Assembly {
             )
         }
         .inObjectScope(.container)
+    }
+
+    private func registerSchedulingDataSources(in container: Container) {
+        switch schedulingImplementation {
+        case .swiftData:
+            guard let modelContainer else {
+                preconditionFailure("SwiftData scheduling requires a ModelContainer")
+            }
+            container.register(LocalTaskDataSource.self) { _ in
+                SwiftDataTaskDataSource(modelContainer: modelContainer)
+            }
+            .inObjectScope(.container)
+            container.register(LocalGoalDataSource.self) { _ in
+                SwiftDataGoalDataSource(modelContainer: modelContainer)
+            }
+            .inObjectScope(.container)
+            container.register(LocalSessionDataSource.self) { _ in
+                SwiftDataSessionDataSource(modelContainer: modelContainer)
+            }
+            .inObjectScope(.container)
+            container.register(LocalZoneDataSource.self) { _ in
+                SwiftDataZoneDataSource(modelContainer: modelContainer)
+            }
+            .inObjectScope(.container)
+            container.register(LocalTemplateDataSource.self) { _ in
+                SwiftDataTemplateDataSource(modelContainer: modelContainer)
+            }
+            .inObjectScope(.container)
+            container.register(LocalTemplateOverrideDataSource.self) { _ in
+                SwiftDataTemplateOverrideDataSource(modelContainer: modelContainer)
+            }
+            .inObjectScope(.container)
+
+        case .inMemory(let data):
+            let sources = InMemorySchedulingDataSources(data: data)
+            container.register(LocalTaskDataSource.self) { _ in sources.task }
+                .inObjectScope(.container)
+            container.register(LocalGoalDataSource.self) { _ in sources.goal }
+                .inObjectScope(.container)
+            container.register(LocalSessionDataSource.self) { _ in sources.session }
+                .inObjectScope(.container)
+            container.register(LocalZoneDataSource.self) { _ in sources.zone }
+                .inObjectScope(.container)
+            container.register(LocalTemplateDataSource.self) { _ in sources.template }
+                .inObjectScope(.container)
+            container.register(LocalTemplateOverrideDataSource.self) { _ in sources.templateOverride }
+                .inObjectScope(.container)
+        }
     }
 
     private static func resolve<Service>(
