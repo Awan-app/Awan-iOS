@@ -61,7 +61,7 @@ public struct DefaultUpdateTaskUseCase: UpdateTaskUseCase {
             || blockingChanged
         guard requiresReconciliation else {
             return ScheduleOperationResult(
-                workspace: try await workspaceProvider.load(),
+                workspace: try await workspaceProvider.load(for: request.selectedDay),
                 nudge: nil
             )
         }
