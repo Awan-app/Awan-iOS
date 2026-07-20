@@ -51,13 +51,13 @@ struct OnboardingWelcomeView: View {
 
     private var titleSection: some View {
         VStack(spacing: 12) {
-            Text("Hi, I'm Awan.\nThe sky is yours today.")
+            Text(L10n.Onboarding.welcomeTitle)
                 .font(.system(size: 28, weight: .black, design: .rounded))
                 .foregroundStyle(AppColors.brandDarkBlue)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text("Tell me a little about your day and I'll\nbuild a schedule that quietly heals itself\nwhen life happens.")
+            Text(L10n.Onboarding.welcomeSubtitle)
                 .font(AppFonts.bodySemibold)
                 .foregroundStyle(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -68,7 +68,7 @@ struct OnboardingWelcomeView: View {
     private var actionSection: some View {
         VStack(spacing: 16) {
             AppButton(
-                title: "LET'S GO",
+                title: L10n.Onboarding.letsGo,
                 icon: nil,
                 color: AppColors.accentBlue,
                 foregroundColor: AppColors.onAccent,
@@ -82,7 +82,7 @@ struct OnboardingWelcomeView: View {
                 viewModel.skipOnboarding()
             } label: {
                 HStack(spacing: 4) {
-                    Text("Skip setup")
+                    Text(L10n.Onboarding.skipSetup)
                         .font(AppFonts.subheadlineHeavy)
                     Image(systemName: "arrow.right")
                         .font(.system(size: 12, weight: .bold))

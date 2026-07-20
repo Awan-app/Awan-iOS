@@ -26,7 +26,7 @@ struct EmailTextField: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("EMAIL")
+            Text(L10n.Login.emailLabel)
                 .font(.system(.caption, design: .rounded, weight: .heavy))
                 .foregroundStyle(AppColors.brandDarkBlue)
                 .kerning(1.2)
@@ -34,7 +34,7 @@ struct EmailTextField: View {
             TextField(
                 "",
                 text: $text,
-                prompt: Text("Enter your email")
+                prompt: Text(L10n.Login.emailPrompt)
                     .foregroundStyle(AppColors.textSecondary.opacity(0.5))
             )
                 .keyboardType(.emailAddress)
@@ -57,7 +57,7 @@ struct EmailTextField: View {
                 switch errorState {
                 case .network:
                     NetworkErrorView(
-                        message: "You're offline — we'll send the code when you reconnect."
+                        message: L10n.Login.offlineError
                     )
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 case .inline(let message):

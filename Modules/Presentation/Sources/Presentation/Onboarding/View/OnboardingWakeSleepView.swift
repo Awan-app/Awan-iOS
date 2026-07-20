@@ -55,7 +55,7 @@ struct OnboardingWakeSleepView: View {
     // MARK: - Sections
 
     private var headerSection: some View {
-        Text("When does your day begin and end?")
+        Text(L10n.Onboarding.wakeSleepTitle)
             .font(.system(size: 26, weight: .black, design: .rounded))
             .foregroundStyle(AppColors.brandDarkBlue)
     }
@@ -64,14 +64,14 @@ struct OnboardingWakeSleepView: View {
         VStack(spacing: 12) {
             timeRow(
                 icon: "☀️",
-                label: "I usually wake up at",
+                label: L10n.Onboarding.wakeLabel,
                 time: $viewModel.wakeupTime,
                 isHighlighted: false
             )
 
             timeRow(
                 icon: "🌙",
-                label: "I usually sleep at",
+                label: L10n.Onboarding.sleepLabel,
                 time: $viewModel.sleepTime,
                 isHighlighted: true
             )
@@ -127,7 +127,7 @@ struct OnboardingWakeSleepView: View {
     }
 
     private var midnightNote: some View {
-        Text("Sleeps past midnight? I'll wrap the night for you.")
+        Text(L10n.Onboarding.midnightNote)
             .font(AppFonts.captionHeavy)
             .foregroundStyle(AppColors.textSecondary)
             .frame(maxWidth: .infinity)
@@ -136,7 +136,7 @@ struct OnboardingWakeSleepView: View {
 
     private var continueButton: some View {
         AppButton(
-            title: "CONTINUE",
+            title: L10n.Common.continue,
             icon: nil,
             color: AppColors.accentBlue,
             foregroundColor: AppColors.onAccent,

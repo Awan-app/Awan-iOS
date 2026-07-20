@@ -9,7 +9,7 @@ struct WeekStripView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("THIS WEEK")
+            Text(L10n.Schedule.thisWeek)
                 .font(AppFonts.captionBlack)
                 .foregroundStyle(AppColors.textSecondary)
                 .tracking(0.8)

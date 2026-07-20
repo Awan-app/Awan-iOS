@@ -1,14 +1,9 @@
+import Domain
 import Foundation
 
-public enum GoalStatus: String, Hashable, Sendable {
-    case active
-    case completed
-    case cancelled
-}
-
-public struct Goal: Identifiable, Hashable, Sendable {
+public struct GoalRecord: Identifiable, Hashable, Sendable {
     public let id: UUID
-    public let name: String
+    public let title: String
     public let description: String?
     public let status: GoalStatus
     public let deadline: Date
@@ -16,14 +11,14 @@ public struct Goal: Identifiable, Hashable, Sendable {
 
     public init(
         id: UUID,
-        name: String,
-        description: String? = nil,
-        status: GoalStatus = .active,
+        title: String,
+        description: String?,
+        status: GoalStatus,
         deadline: Date,
-        createdAt: Date = Date()
+        createdAt: Date
     ) {
         self.id = id
-        self.name = name
+        self.title = title
         self.description = description
         self.status = status
         self.deadline = deadline

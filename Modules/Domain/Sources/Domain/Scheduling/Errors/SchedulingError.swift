@@ -12,4 +12,7 @@ public enum SchedulingError: Error, Equatable, Sendable {
     case dependencyCycle(taskIDs: Set<UUID>)
     case entityNotFound(id: UUID)
     case invalidScenarioState
+    case invalidSessionStatus(raw: String)
+    case invalidTaskStatus(raw: String)
+    case invalidGoalStatus(raw: String)
 }

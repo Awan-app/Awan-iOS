@@ -38,12 +38,12 @@ struct DayPreviewCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text("YOUR DAY")
+                Text(L10n.Onboarding.yourDayLabel)
                     .font(AppFonts.captionHeavy)
                     .foregroundStyle(AppColors.textSecondary)
                     .kerning(1)
                 Spacer()
-                Text("\(availableHours) h of open sky")
+                Text(L10n.Onboarding.openSkyHours(availableHours))
                     .font(AppFonts.captionHeavy)
                     .foregroundStyle(AppColors.textSecondary)
             }
@@ -77,7 +77,7 @@ struct DayPreviewCard: View {
 
                     Spacer()
 
-                    Text("Zones will fill this in next")
+                    Text(L10n.Onboarding.zonesFillNext)
                         .font(AppFonts.caption2Bold)
                         .foregroundStyle(AppColors.brandDarkBlue.opacity(0.6))
                         .padding(.horizontal, 12)

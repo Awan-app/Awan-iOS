@@ -71,11 +71,11 @@ struct OnboardingYourNameView: View {
     private var headerSection: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("What should I call you?")
+                Text(L10n.Onboarding.nameTitle)
                     .font(.system(size: 26, weight: .black, design: .rounded))
                     .foregroundStyle(AppColors.brandDarkBlue)
 
-                Text("Just your name — I'll use it to greet you each morning.")
+                Text(L10n.Onboarding.nameSubtitle)
                     .font(AppFonts.bodySemibold)
                     .foregroundStyle(AppColors.textSecondary)
             }
@@ -92,12 +92,12 @@ struct OnboardingYourNameView: View {
     private var nameFieldsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 6) {
-                Text("FIRST NAME")
+                Text(L10n.Onboarding.firstNameLabel)
                     .font(AppFonts.captionHeavy)
                     .foregroundStyle(AppColors.textSecondary)
                     .kerning(1)
 
-                TextField("Sam", text: $viewModel.firstName)
+                TextField(L10n.Onboarding.firstNamePlaceholder, text: $viewModel.firstName)
                     .font(AppFonts.bodyBold)
                     .foregroundStyle(AppColors.textPrimary)
                     .padding(.horizontal, 16)
@@ -122,12 +122,12 @@ struct OnboardingYourNameView: View {
             }
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("LAST NAME")
+                Text(L10n.Onboarding.lastNameLabel)
                     .font(AppFonts.captionHeavy)
                     .foregroundStyle(AppColors.textSecondary)
                     .kerning(1)
 
-                TextField("Rivera", text: $viewModel.lastName)
+                TextField(L10n.Onboarding.lastNamePlaceholder, text: $viewModel.lastName)
                     .font(AppFonts.bodyBold)
                     .foregroundStyle(AppColors.textPrimary)
                     .padding(.horizontal, 16)
@@ -167,7 +167,7 @@ struct OnboardingYourNameView: View {
                 }
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("PREVIEW")
+                Text(L10n.Onboarding.previewLabel)
                     .font(AppFonts.microHeavy)
                     .foregroundStyle(AppColors.textSecondary)
                     .kerning(0.5)
@@ -182,7 +182,7 @@ struct OnboardingYourNameView: View {
 
     private var continueButton: some View {
         AppButton(
-            title: "CONTINUE",
+            title: L10n.Common.continue,
             icon: nil,
             color: viewModel.isNameValid
                 ? AppColors.accentBlue

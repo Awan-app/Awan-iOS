@@ -13,7 +13,7 @@ struct ChangeAnytimeTag: View {
         HStack(spacing: 6) {
             Image(systemName: "arrow.triangle.2.circlepath")
                 .font(.system(size: 12, weight: .bold))
-            Text("You can change this anytime")
+            Text(L10n.Onboarding.changeAnytime)
                 .font(AppFonts.caption2Bold)
         }
         .foregroundStyle(AppColors.accentBlue)

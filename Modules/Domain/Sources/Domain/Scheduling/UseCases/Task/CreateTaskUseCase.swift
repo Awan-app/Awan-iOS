@@ -21,9 +21,11 @@ public struct DefaultCreateTaskUseCase: CreateTaskUseCase {
         let task = try AwanTask(
             id: idGenerator.makeUUID(),
             title: request.title,
+            goalID: nil,
             zoneID: request.zoneID,
             duration: TaskDuration(minutes: request.durationMinutes),
-            isSplittable: request.isSplittable
+            isSplittable: request.isSplittable,
+            dependencyIDs: []
         )
         try await taskRepository.addTask(task)
         return try await reconciler.reconcile(

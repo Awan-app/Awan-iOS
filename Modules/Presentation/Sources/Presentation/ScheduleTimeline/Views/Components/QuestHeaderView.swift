@@ -10,7 +10,7 @@ struct QuestHeaderView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("AWAN QUESTS")
+                    Text(L10n.Schedule.questsTitle)
                         .font(AppFonts.captionBlack)
                         .foregroundStyle(AppColors.accentGreen)
                         .tracking(1.2)
@@ -27,7 +27,7 @@ struct QuestHeaderView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(AppColors.warningSurface, in: Capsule())
-                .accessibilityLabel("Seven day streak")
+                .accessibilityLabel(L10n.Schedule.streakAccessibility)
             }
 
             HStack(spacing: 14) {
@@ -52,10 +52,10 @@ struct QuestHeaderView: View {
 
                 VStack(alignment: .leading, spacing: 7) {
                     HStack {
-                        Text(goalProgress > 0 ? "Quest chain" : "Today's adventure")
+                        Text(goalProgress > 0 ? L10n.Schedule.questChain : L10n.Schedule.todaysAdventure)
                             .font(AppFonts.headlineBlack)
                         Spacer()
-                        Text("\(scheduledMinutes) min")
+                        Text(L10n.Schedule.minutesScheduled(scheduledMinutes))
                             .font(AppFonts.subheadlineHeavy)
                             .foregroundStyle(AppColors.accentBlue)
                     }

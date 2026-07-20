@@ -115,9 +115,11 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
         let overflow = try AwanTask(
             id: idGenerator.makeUUID(),
             title: "Prepare presentation",
+            goalID: nil,
             zoneID: workZone.id,
-            duration: TaskDuration(minutes: 90),
-            isSplittable: true
+            duration: TaskDuration(minutes: 60),
+            isSplittable: true,
+            dependencyIDs: []
         )
         try await taskRepository.addTask(filler)
         try await taskRepository.addTask(overflow)
@@ -257,9 +259,11 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
         try AwanTask(
             id: idGenerator.makeUUID(),
             title: title,
+            goalID: nil,
             zoneID: zoneID,
             duration: TaskDuration(minutes: minutes),
-            isSplittable: false
+            isSplittable: true,
+            dependencyIDs: []
         )
     }
 
