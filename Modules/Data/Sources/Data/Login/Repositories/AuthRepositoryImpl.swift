@@ -108,21 +108,15 @@ public final class AuthRepositoryImpl: AuthRepository, @unchecked Sendable {
 
             switch apiError.errorCode {
             case .otpRateLimitExceeded:
-                var retryAfter = 60
-                if case .int(let seconds) = apiError.info?["retryAfterSeconds"] {
-                    retryAfter = seconds
-                } else if case .double(let seconds) = apiError.info?["retryAfterSeconds"] {
-                    retryAfter = Int(seconds)
-                }
-                return .rateLimited(retryAfterSeconds: retryAfter)
+                return .rateLimited(
+                    retryAfterSeconds: apiError.info?.retryAfterSeconds ?? 60
+                )
             case .validationError:
                 return .invalidEmail
             case .otpInvalidCode:
-                var attempts = 0
-                if case .int(let remaining) = apiError.info?["remainingAttempts"] {
-                    attempts = remaining
-                }
-                return .invalidCode(remainingAttempts: attempts)
+                return .invalidCode(
+                    remainingAttempts: apiError.info?.remainingAttempts ?? 0
+                )
             case .otpExpiredOrNotFound:
                 return .expiredOrNotFound
             case .otpLocked:

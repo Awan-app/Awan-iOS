@@ -62,6 +62,20 @@ struct DataAssembly: Assembly {
             )
         }
         .inObjectScope(.container)
+
+        container.register(OnboardingDataSourceProtocol.self) { resolver in
+            OnboardingDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+        .inObjectScope(.container)
+
+        container.register(OnboardingRepositoryProtocol.self) { resolver in
+            OnboardingRepository(
+                remoteDataSource: Self.resolve(OnboardingDataSourceProtocol.self, from: resolver)
+            )
+        }
+        .inObjectScope(.container)
     }
 
     private static func resolve<Service>(
