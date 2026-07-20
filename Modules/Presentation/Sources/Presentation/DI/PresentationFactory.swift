@@ -7,19 +7,22 @@ public struct PresentationFactory {
     private let loginViewModel: LoginViewModel
     private let scheduleViewModel: ScheduleTimelineViewModel
     private let makeOtpViewModel: (OtpVerificationContext) -> OtpVerificationViewModel
+    private let onboardingViewModel: OnboardingViewModel
 
     public init(
         appCoordinator: AppCoordinator,
         authenticationState: AuthenticationState,
         loginViewModel: LoginViewModel,
         scheduleViewModel: ScheduleTimelineViewModel,
-        makeOtpViewModel: @escaping (OtpVerificationContext) -> OtpVerificationViewModel
+        makeOtpViewModel: @escaping (OtpVerificationContext) -> OtpVerificationViewModel,
+        onboardingViewModel: OnboardingViewModel
     ) {
         self.appCoordinator = appCoordinator
         self.authenticationState = authenticationState
         self.loginViewModel = loginViewModel
         self.scheduleViewModel = scheduleViewModel
         self.makeOtpViewModel = makeOtpViewModel
+        self.onboardingViewModel = onboardingViewModel
     }
 
     public func makeAppRootView() -> some View {
@@ -39,4 +42,21 @@ public struct PresentationFactory {
     func makeScheduleTimelineView() -> some View {
         ScheduleTimelineView(viewModel: scheduleViewModel)
     }
+
+    func makeOnboardingWelcomeView() -> some View {
+        OnboardingWelcomeView(viewModel: onboardingViewModel)
+    }
+
+    func makeOnboardingYourNameView() -> some View {
+        OnboardingYourNameView(viewModel: onboardingViewModel)
+    }
+
+    func makeOnboardingWakeSleepView() -> some View {
+        OnboardingWakeSleepView(viewModel: onboardingViewModel)
+    }
+
+    func makeOnboardingSuggestedZonesView() -> some View {
+        OnboardingSuggestedZonesView(viewModel: onboardingViewModel)
+    }
 }
+

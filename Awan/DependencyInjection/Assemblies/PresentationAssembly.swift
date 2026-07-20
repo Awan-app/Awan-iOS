@@ -69,11 +69,20 @@ struct PresentationAssembly: Assembly {
             }
         }
 
+        container.register(OnboardingViewModel.self) { resolver in
+            let useCase = Self.resolve(CompleteOnboardingUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                OnboardingViewModel(completeOnboardingUseCase: useCase)
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(PresentationFactory.self) { resolver in
             let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
             let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
             let loginViewModel = Self.resolve(LoginViewModel.self, from: resolver)
             let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
+            let onboardingViewModel = Self.resolve(OnboardingViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
@@ -87,7 +96,8 @@ struct PresentationAssembly: Assembly {
                             argument: context,
                             from: resolver
                         )
-                    }
+                    },
+                    onboardingViewModel: onboardingViewModel
                 )
             }
         }
