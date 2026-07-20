@@ -222,6 +222,6 @@ struct TaskLength: View {
 }
 
 #Preview {
-    //    TaskLength()
-    //        .environment(OnboardingCoordinator())
+    TaskLength(viewModel: .preview)
+        .environment(AppCoordinator())
 }

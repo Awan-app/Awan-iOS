@@ -41,7 +41,6 @@ struct OnboardingWelcomeView: View {
             )
             .ignoresSafeArea()
         )
-        .navigationBarBackButtonHidden(true)
     }
 
     // MARK: - Sections
@@ -92,4 +91,9 @@ struct OnboardingWelcomeView: View {
             }
         }
     }
+}
+
+#Preview {
+    OnboardingWelcomeView(viewModel: .preview)
+        .environment(AppCoordinator())
 }

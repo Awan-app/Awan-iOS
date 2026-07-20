@@ -50,7 +50,6 @@ struct OnboardingWakeSleepView: View {
             )
             .ignoresSafeArea()
         )
-        .navigationBarBackButtonHidden(true)
     }
 
     // MARK: - Sections
@@ -147,4 +146,9 @@ struct OnboardingWakeSleepView: View {
             }
         )
     }
+}
+
+#Preview {
+    OnboardingWakeSleepView(viewModel: .preview)
+        .environment(AppCoordinator())
 }

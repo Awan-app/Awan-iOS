@@ -7,7 +7,6 @@ private struct ReasonItem: Identifiable {
     let mutedPart: String
 }
 
-
 struct NotificationView: View {
     @Environment(AppCoordinator.self) private var appCoordinator
     @Bindable var viewModel: OnboardingViewModel
@@ -23,78 +22,82 @@ struct NotificationView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                VStack(alignment: .center, spacing: 32) {
-                        OnboardingStepHeader(
-                            currentStep: 7,
-                            totalSteps: viewModel.totalSteps,
-                            onSkip: { viewModel.skipOnboarding() }
-                        )
+                OnboardingStepHeader(
+                    currentStep: 7,
+                    totalSteps: viewModel.totalSteps,
+                    onSkip: { viewModel.skipOnboarding() }
+                )
+                .padding(.horizontal, 24)
 
-                        AuthCloudLogoView()
-                            .padding(.top, 8)
+                Spacer(minLength: 16)
 
-                        Text("Want a gentle nudge\nwhen it's time?")
-                            .font(.system(size: 28, weight: .black, design: .rounded))
-                            .foregroundColor(AppColors.brandDarkBlue)
-                            .multilineTextAlignment(.center)
-                            .lineLimit(2)
+                VStack(alignment: .center, spacing: 20) {
+                    AuthCloudLogoView()
 
-                        NotificationPreviewCard(
-                            appName: "Awan",
-                            timestamp: "now",
-                            message: "Work starts in 5 min — Design review is up first."
-                        )
-                        .padding(.horizontal, 8)
+                    Text("Want a gentle nudge\nwhen it's time?")
+                        .font(.system(size: 26, weight: .black, design: .rounded))
+                        .foregroundColor(AppColors.brandDarkBlue)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
 
-                        VStack(alignment: .leading, spacing: 24) {
-                            ForEach(reasons) { reason in
-                                NudgeReasonRow(
-                                    boldPart: reason.boldPart, mutedPart: reason.mutedPart)
-                            }
+                    NotificationPreviewCard(
+                        appName: "Awan",
+                        timestamp: "now",
+                        message: "Work starts in 5 min — Design review is up first."
+                    )
+                    .padding(.horizontal, 8)
+
+                    VStack(alignment: .leading, spacing: 16) {
+                        ForEach(reasons) { reason in
+                            NudgeReasonRow(
+                                boldPart: reason.boldPart, mutedPart: reason.mutedPart)
                         }
-                        .padding(.horizontal, 16)
-
-                        VStack(spacing: 16) {
-                            Text("The system will ask next — this is just so you know why.")
-                                .font(AppFonts.caption2Bold)
-                                .foregroundColor(AppColors.textSecondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 16)
-
-                            AppButton(
-                                title: "TURN ON NUDGES",
-                                icon: nil,
-                                color: AppColors.accentBlue,
-                                foregroundColor: AppColors.onAccent,
-                                size: .large,
-                                onTap: {
-                                    viewModel.notificationsEnabled = true
-                                    viewModel.completeOnboarding()
-                                }
-                            )
-
-                            Button(action: {
-                                viewModel.notificationsEnabled = false
-                                viewModel.completeOnboarding()
-                            }) {
-                                HStack(spacing: 4) {
-                                    Text("Not now")
-                                }
-                                .font(AppFonts.subheadlineHeavy)
-                                .foregroundColor(AppColors.accentBlue)
-                            }
-                            .padding(.vertical, 8)
-                        }
-                        .padding(.top, 16)
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 40)
+                    .padding(.horizontal, 16)
+
+                    VStack(spacing: 12) {
+                        Text("The system will ask next — this is just so you know why.")
+                            .font(AppFonts.caption2Bold)
+                            .foregroundColor(AppColors.textSecondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
+
+                        AppButton(
+                            title: "TURN ON NUDGES",
+                            icon: nil,
+                            color: AppColors.accentBlue,
+                            foregroundColor: AppColors.onAccent,
+                            size: .large,
+                            onTap: {
+                                viewModel.notificationsEnabled = true
+                                viewModel.completeOnboarding()
+                            }
+                        )
+
+                        Button(action: {
+                            viewModel.notificationsEnabled = false
+                            viewModel.completeOnboarding()
+                        }) {
+                            HStack(spacing: 4) {
+                                Text("Not now")
+                            }
+                            .font(AppFonts.subheadlineHeavy)
+                            .foregroundColor(AppColors.accentBlue)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .padding(.top, 8)
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
+                
+                Spacer(minLength: 16)
             }
         }
     }
 }
 
-//#Preview {
-//    NotificationView()
-//        .environment(OnboardingCoordinator())
-//}
+#Preview {
+    NotificationView(viewModel: .preview)
+        .environment(AppCoordinator())
+}

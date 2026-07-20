@@ -61,7 +61,6 @@ struct OnboardingYourNameView: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden(true)
         .onAppear {
             focusedField = .firstName
         }
@@ -200,4 +199,9 @@ struct OnboardingYourNameView: View {
         )
         .disabled(!viewModel.isNameValid)
     }
+}
+
+#Preview {
+    OnboardingYourNameView(viewModel: .preview)
+        .environment(AppCoordinator())
 }

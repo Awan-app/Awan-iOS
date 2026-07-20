@@ -75,5 +75,6 @@ struct AddRealTask: View {
 }
 
 #Preview {
-    //AddRealTask()
+    AddRealTask(viewModel: .preview)
+        .environment(AppCoordinator())
 }

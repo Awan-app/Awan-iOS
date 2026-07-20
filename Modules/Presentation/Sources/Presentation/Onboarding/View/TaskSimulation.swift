@@ -152,5 +152,6 @@ struct TaskSimulation: View {
 }
 
 #Preview {
-    //TaskSimulation()
+    TaskSimulation(viewModel: .preview)
+        .environment(AppCoordinator())
 }

@@ -5,8 +5,8 @@
 //  Created by Me3bed on 20/07/2026.
 //
 
-import SwiftUI
 import Common
+import SwiftUI
 
 struct OnboardingStepHeader: View {
     let currentStep: Int

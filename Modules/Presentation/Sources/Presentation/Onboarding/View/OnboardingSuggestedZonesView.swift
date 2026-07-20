@@ -49,7 +49,6 @@ struct OnboardingSuggestedZonesView: View {
             )
             .ignoresSafeArea()
         )
-        .navigationBarBackButtonHidden(true)
     }
 
     // MARK: - Sections
@@ -122,4 +121,9 @@ struct OnboardingSuggestedZonesView: View {
             )
         }
     }
+}
+
+#Preview {
+    OnboardingSuggestedZonesView(viewModel: .preview)
+        .environment(AppCoordinator())
 }
