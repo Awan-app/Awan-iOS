@@ -45,7 +45,7 @@ struct OnboardingSuggestedZonesView: View {
     // MARK: - Sections
 
     private var headerSection: some View {
-        Text("Here's a day I sketched for you")
+        Text(L10n.Onboarding.zonesTitle)
             .font(.system(size: 26, weight: .black, design: .rounded))
             .foregroundStyle(AppColors.brandDarkBlue)
     }
@@ -54,7 +54,7 @@ struct OnboardingSuggestedZonesView: View {
         HStack(spacing: 6) {
             Image(systemName: "arrow.triangle.2.circlepath")
                 .font(.system(size: 12, weight: .bold))
-            Text("Drag any edge to adjust")
+            Text(L10n.Onboarding.changeAnytime)
                 .font(AppFonts.caption2Bold)
         }
         .foregroundStyle(AppColors.accentBlue)
@@ -89,7 +89,7 @@ struct OnboardingSuggestedZonesView: View {
     private var bottomButtons: some View {
         HStack(spacing: 12) {
             AppButton(
-                title: "SET MANUALLY",
+                title: L10n.Onboarding.setManually,
                 icon: nil,
                 color: AppColors.surface,
                 foregroundColor: AppColors.brandDarkBlue,
@@ -102,7 +102,7 @@ struct OnboardingSuggestedZonesView: View {
             )
 
             AppButton(
-                title: "USE THIS",
+                title: L10n.Onboarding.useThis,
                 icon: nil,
                 color: AppColors.accentBlue,
                 foregroundColor: AppColors.onAccent,

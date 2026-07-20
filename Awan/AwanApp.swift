@@ -9,9 +9,11 @@ import SwiftUI
 import SwiftData
 import Data
 import Presentation
+import Common
 
 @main
 struct AwanApp: App {
+    @State private var languageManager = LanguageManager()
     // Change this to `.swiftData` to use the persistent scheduling implementation.
     private static let schedulingImplementation: SchedulingDataSourceImplementation =
         .inMemory(.preview)
@@ -36,7 +38,11 @@ struct AwanApp: App {
     var body: some Scene {
         WindowGroup {
             presentationFactory.makeAppRootView()
+            .environment(languageManager)
+            .environment(\.locale, Locale(identifier: languageManager.currentLanguage.rawValue))
+            .environment(\.layoutDirection, languageManager.currentLanguage == .arabic ? .rightToLeft : .leftToRight)
         }
+       
     }
 
     private static func makeSchedulingModelContainer() -> ModelContainer {

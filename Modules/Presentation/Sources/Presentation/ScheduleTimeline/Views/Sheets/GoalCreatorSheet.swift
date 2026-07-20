@@ -31,24 +31,24 @@ struct GoalCreatorSheet: View {
                             .font(AppFonts.goalHeroSymbol)
                             .foregroundStyle(AppColors.reward)
                             .symbolEffect(.wiggle, options: .repeat(2), value: durationMinutes)
-                        Text("Build a 7-day quest")
+                        Text(L10n.Schedule.buildQuestTitle)
                             .font(AppFonts.title2Black)
-                        Text("One focused step every day")
+                        Text(L10n.Schedule.buildQuestSubtitle)
                             .font(AppFonts.subheadlineBold)
                             .foregroundStyle(AppColors.textSecondary)
                     }
 
                     AppCard {
                         VStack(spacing: 18) {
-                            TextField("Goal name", text: $name)
+                            TextField(L10n.Schedule.goalName, text: $name)
                                 .font(AppFonts.bodySemibold)
                                 .textFieldStyle(.roundedBorder)
                                 .accessibilityIdentifier("goal-name-field")
                             Stepper(value: $durationMinutes, in: 15...180, step: 15) {
                                 HStack {
-                                    Label("Each step", systemImage: "timer")
+                                    Label(L10n.Schedule.eachStep, systemImage: "timer")
                                     Spacer()
-                                    Text("\(durationMinutes) min")
+                                    Text(L10n.Schedule.minutesScheduled(durationMinutes))
                                 }
                                 .font(AppFonts.bodyBold)
                             }
@@ -58,7 +58,7 @@ struct GoalCreatorSheet: View {
                                 }
                             } label: {
                                 HStack {
-                                    Label(selectedZone?.name ?? "Choose zone", systemImage: "square.3.layers.3d")
+                                    Label(selectedZone?.name ?? L10n.Schedule.chooseZone, systemImage: "square.3.layers.3d")
                                     Spacer()
                                     Image(systemName: "chevron.up.chevron.down")
                                 }
@@ -76,7 +76,7 @@ struct GoalCreatorSheet: View {
                     sevenDayPreview
 
                     AppButton(
-                        title: "Start 7-day quest",
+                        title: L10n.Schedule.startQuest,
                         icon: "flag.checkered",
                         color: AppColors.accentPurple,
                         onTap: {
@@ -98,7 +98,7 @@ struct GoalCreatorSheet: View {
             .background(AppColors.sheetBackground.ignoresSafeArea())
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Close") { dismiss() }
+                    Button(L10n.Common.close) { dismiss() }
                         .font(AppFonts.bodyBold)
                 }
             }

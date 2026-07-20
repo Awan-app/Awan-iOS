@@ -59,12 +59,12 @@ struct LoginView: View {
             AuthCloudLogoView()
 
             VStack(spacing: 8) {
-                Text("Awan")
+                Text(L10n.Login.appTitle)
                     .font(.system(size: 32, weight: .black, design: .rounded))
                     .foregroundStyle(AppColors.brandDarkBlue)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("Your day, drawn as a sky.\nSign in — we'll float you a code.")
+                Text(L10n.Login.subtitle)
                     .font(.system(.body, design: .rounded, weight: .semibold))
                     .foregroundStyle(AppColors.textSecondary)
                     .multilineTextAlignment(.center)
@@ -116,11 +116,11 @@ struct LoginView: View {
         let isActive = (isReady || isLoading) && !isRateLimited
         
         let buttonTitle: String = {
-            if isLoading { return "SENDING..." }
+            if isLoading { return L10n.Login.sending }
             if let seconds = rateLimitSeconds {
-                return "SEND CODE • 0:\(String(format: "%02d", seconds))"
+                return L10n.Login.sendCodeTimer(String(format: "%02d", seconds))
             }
-            return "SEND CODE"
+            return L10n.Login.sendCode
         }()
         
         return AppButton(
@@ -150,7 +150,7 @@ struct LoginView: View {
             Capsule()
                 .fill(AppColors.brandDarkBlue.opacity(0.3))
                 .frame(height: 1.5)
-            Text("OR")
+            Text(L10n.Login.or)
                 .font(.system(.caption, design: .rounded, weight: .heavy))
                 .foregroundStyle(AppColors.brandDarkBlue)
                 .kerning(1)
@@ -164,7 +164,7 @@ struct LoginView: View {
     private var socialSection: some View {
         VStack(spacing: 16) {
             AppButton(
-                title: "Sign in with Apple",
+                title: L10n.Login.signInWithApple,
                 icon: nil,
                 iconAsset: "apple-icon",
                 color: AppColors.textPrimary,
@@ -174,10 +174,10 @@ struct LoginView: View {
                     viewModel.onAppleSignInTapped()
                 }
             )
-            .accessibilityLabel("Sign in with Apple")
+            .accessibilityLabel(L10n.Login.signInWithApple)
 
             AppButton(
-                title: "Continue with Google",
+                title: L10n.Login.continueWithGoogle,
                 icon: nil,
                 iconAsset: "google-icon",
                 color: AppColors.surface,
@@ -191,21 +191,21 @@ struct LoginView: View {
                     viewModel.onGoogleSignInTapped()
                 }
             )
-            .accessibilityLabel("Continue with Google")
+            .accessibilityLabel(L10n.Login.continueWithGoogle)
         }
     }
 
     private var footerSection: some View {
         (
-            Text("No passwords, ever. By continuing you agree to Awan's ")
+            Text(L10n.Login.footerTermsPrefix)
                 .foregroundStyle(AppColors.textSecondary)
-            + Text("Terms")
+            + Text(L10n.Login.terms)
                 .foregroundStyle(AppColors.accentBlue)
-            + Text(" & ")
+            + Text(L10n.Login.and)
                 .foregroundStyle(AppColors.textSecondary)
-            + Text("Privacy")
+            + Text(L10n.Login.privacy)
                 .foregroundStyle(AppColors.accentBlue)
-            + Text(".")
+            + Text(L10n.Login.dot)
                 .foregroundStyle(AppColors.textSecondary)
         )
         .font(.system(.caption, design: .rounded, weight: .heavy))
