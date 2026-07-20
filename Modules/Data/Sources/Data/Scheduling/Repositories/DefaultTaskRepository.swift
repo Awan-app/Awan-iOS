@@ -6,9 +6,19 @@ public struct DefaultTaskRepository: TaskRepository {
 
     public init(store: InMemoryScheduleDataSource) { self.store = store }
 
-    public func fetchTasks() async throws -> [AwanTask] { await store.fetchTasks() }
-    public func addTask(_ task: AwanTask) async throws { await store.addTask(task) }
-    public func updateTask(_ task: AwanTask) async throws { await store.updateTask(task) }
-    public func deleteTask(id: UUID) async throws { await store.deleteTask(id: id) }
-    public func deleteAllTasks() async throws { await store.deleteAllTasks() }
+    public func fetchTasks() async throws -> [AwanTask] {
+        try await store.fetchTasks().map { try $0.toDomain() }
+    }
+    public func addTask(_ task: AwanTask) async throws {
+        try await store.addTask(TaskRecord(domain: task))
+    }
+    public func updateTask(_ task: AwanTask) async throws {
+        try await store.updateTask(TaskRecord(domain: task))
+    }
+    public func deleteTask(id: UUID) async throws {
+        try await store.deleteTask(id: id)
+    }
+    public func deleteAllTasks() async throws {
+        try await store.deleteAllTasks()
+    }
 }

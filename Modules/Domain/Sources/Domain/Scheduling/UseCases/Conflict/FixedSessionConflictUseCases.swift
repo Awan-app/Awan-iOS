@@ -245,10 +245,14 @@ public struct DefaultRestoreTaskZoneUseCase: RestoreTaskZoneUseCase {
             AwanTask(
                 id: task.id,
                 title: task.title,
+                description: task.description,
+                status: task.status,
                 goalID: task.goalID,
                 zoneID: request.previousZoneID,
                 duration: task.duration,
                 isSplittable: task.isSplittable,
+                mandatory: task.mandatory,
+                estimatedPoints: task.estimatedPoints,
                 dependencyIDs: task.dependencyIDs
             )
         )
