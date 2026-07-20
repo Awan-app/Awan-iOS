@@ -5,51 +5,84 @@
 //  Created by AndrewMagdy on 19/07/2026.
 //
 
-import SwiftUI
 import Common
-
-
-// remove this model and use the right one for zone
-struct Zone: Identifiable {
-    let id = UUID()
-    let name: String
-    let timeRange: String
-    let dotColor: Color
-    let backgroundTint: Color
-}
+import Domain
+import SwiftUI
 
 struct ZoneRow: View {
     let zone: Zone
-    
+
+    private var dotColor: Color {
+        AppColors.runtime(hex: zone.color.hex)
+    }
+
     var body: some View {
         HStack {
             HStack(spacing: 8) {
                 Circle()
-                    .fill(zone.dotColor)
+                    .fill(dotColor)
                     .frame(width: 8, height: 8)
-                
+
                 Text(zone.name)
                     .font(AppFonts.bodyBold)
-                    .foregroundColor(zone.dotColor)
+                    .foregroundColor(dotColor)
             }
-            
+
             Spacer()
-            
-            Text(zone.timeRange)
+
+            Text(timeRangeString)
                 .font(AppFonts.captionHeavy)
                 .foregroundColor(AppColors.textSecondary)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(zone.backgroundTint)
+        .background(dotColor.opacity(0.12))
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    private var timeRangeString: String {
+        let startIsPM = zone.startTime.hour >= 12
+        let endIsPM = zone.endTime.hour >= 12
+        
+        let startStr = formatTime(zone.startTime, includeAMPM: startIsPM != endIsPM)
+        let endStr = formatTime(zone.endTime, includeAMPM: true)
+        
+        return "\(startStr) – \(endStr)"
+    }
+    
+    private func formatTime(_ time: LocalTime, includeAMPM: Bool) -> String {
+        let isPM = time.hour >= 12
+        let displayHour = time.hour % 12 == 0 ? 12 : time.hour % 12
+        let displayMinute = String(format: "%02d", time.minute)
+        
+        if includeAMPM {
+            return "\(displayHour):\(displayMinute) \(isPM ? "PM" : "AM")"
+        } else {
+            return "\(displayHour):\(displayMinute)"
+        }
     }
 }
 
 #Preview {
     VStack(spacing: 10) {
-        ZoneRow(zone: Zone(name: "Study", timeRange: "7:00 – 9:30 AM", dotColor: AppColors.accentPurple, backgroundTint: AppColors.accentPurple.opacity(0.12)))
-        ZoneRow(zone: Zone(name: "Work", timeRange: "9:30 AM – 1:00 PM", dotColor: AppColors.accentBlue, backgroundTint: AppColors.accentBlue.opacity(0.10)))
+        ZoneRow(
+            zone: Zone(
+                id: UUID(),
+                name: "Study",
+                color: try! ZoneColor(hex: "#800080"),
+                startTime: try! LocalTime(hour: 7, minute: 0),
+                endTime: try! LocalTime(hour: 9, minute: 30)
+            )
+        )
+        ZoneRow(
+            zone: Zone(
+                id: UUID(),
+                name: "Work",
+                color: try! ZoneColor(hex: "#0000FF"),
+                startTime: try! LocalTime(hour: 9, minute: 30),
+                endTime: try! LocalTime(hour: 13, minute: 0)
+            )
+        )
     }
     .padding()
     .background(AppColors.screenBackground)

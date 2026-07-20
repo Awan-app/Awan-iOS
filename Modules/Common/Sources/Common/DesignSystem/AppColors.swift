@@ -34,6 +34,17 @@ public enum AppColors {
     public static let skyGradientTop = asset("SkyGradientTop")
     public static let skyGradientBottom = asset("SkyGradientBottom")
 
+    public static var skyGradient: LinearGradient {
+        LinearGradient(
+            stops: [
+                .init(color: skyGradientTop, location: 0.0),
+                .init(color: skyGradientBottom, location: 0.5),
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
     public static func runtime(hex: String) -> Color {
         let cleaned = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         guard cleaned.count == 6,
