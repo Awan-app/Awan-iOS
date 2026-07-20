@@ -6,33 +6,16 @@
 //
 
 import Foundation
-
-// MARK: - NetworkError
-
-/// All errors that can be thrown by ``NetworkClient``.
 public enum NetworkError: Error, Sendable {
-    /// The endpoint's `fullURL` computed property returned `nil`.
+    
     case invalidURL
-
-    /// Encoding the request body into JSON failed.
     case encodingFailed(any Error & Sendable)
-
-    /// The server replied with a 4xx or 5xx status code.
-    /// `apiError` carries the decoded standard error envelope when available.
     case httpError(statusCode: Int, apiError: APIErrorResponse?)
-
-    /// The success response body could not be decoded into the expected type.
     case decodingFailed(any Error & Sendable)
-
-    /// A transport-level or Alamofire session error occurred.
     case underlying(any Error & Sendable)
-
-    /// The server returned 204 No Content where a body was expected, or
-    /// the caller used `request(_:)` on a no-content endpoint.
     case noContent
 }
 
-// MARK: - LocalizedError
 
 extension NetworkError: LocalizedError {
     public var errorDescription: String? {
@@ -56,17 +39,11 @@ extension NetworkError: LocalizedError {
     }
 }
 
-// MARK: - APIErrorResponse
 public struct APIErrorResponse: Decodable, Sendable {
-    /// Human-readable description of the error.
     public let message: String
-    /// Mirrors the HTTP status code.
     public let statusCode: Int
-    /// Machine-readable error code constant.
     public let errorCode: APIErrorCode
-    /// Typed metadata for validation and authentication failures.
     public let info: APIErrorInfo?
-    /// ISO-8601 timestamp from the server.
     public let timestamp: String?
 }
 
@@ -116,47 +93,32 @@ public struct APIFieldValidationError: Decodable, Sendable, Equatable {
     public let message: String
 }
 
-// MARK: - APIErrorCode
-
 
 public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
 
-    // MARK: OTP — Request endpoint
-    /// 429 — Rate limit hit. Check `info.retryAfterSeconds`.
     case otpRateLimitExceeded
-
-    // MARK: OTP — Both endpoints
-    /// 422 — Invalid email format or missing / malformed fields.
     case validationError
 
-    // MARK: Onboarding endpoint
-    /// 400 — The supplied IANA timezone identifier is invalid.
     case invalidTimezone
-    /// 409 — The authenticated user already completed onboarding.
     case onboardingAlreadyCompleted
-
-    // MARK: OTP — Verify endpoint
-    /// 400 — Wrong code. Check `info.remainingAttempts`.
     case otpInvalidCode
-    /// 400 — OTP has expired or was never requested.
     case otpExpiredOrNotFound
-    /// 400 — Account locked after 5 failed attempts; a new OTP must be requested.
     case otpLocked
-
-    // MARK: Refresh Token endpoint
-    /// 401 — Refresh token doesn't exist or device ID doesn't match.
     case refreshTokenInvalid
-    /// 401 — Token is older than 30 days. User must log in again.
     case refreshTokenExpired
-    /// 401 — Security alert: a previously revoked token was reused.
-    ///        All active sessions are instantly revoked.
     case refreshTokenReuseDetected
 
-    // MARK: Catch-all
-    /// Any error code not listed in the current contract.
+    case goalNotFound
+    case taskNotFound
+    case invalidOperation
+    case duplicateTempId
+    case unknownTempId
+    case taskCyclicDependency
     case unknown(String)
 
-    // MARK: RawRepresentable
+    case userNotFound
+    case invalidSleepSchedule
+    case insufficientPoints
 
     public typealias RawValue = String
 
@@ -172,6 +134,15 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case "REFRESH_TOKEN_INVALID":         self = .refreshTokenInvalid
         case "REFRESH_TOKEN_EXPIRED":         self = .refreshTokenExpired
         case "REFRESH_TOKEN_REUSE_DETECTED":  self = .refreshTokenReuseDetected
+        case "GOAL_NOT_FOUND":                self = .goalNotFound
+        case "TASK_NOT_FOUND":                self = .taskNotFound
+        case "INVALID_OPERATION":             self = .invalidOperation
+        case "DUPLICATE_TEMP_ID":             self = .duplicateTempId
+        case "UNKNOWN_TEMP_ID":               self = .unknownTempId
+        case "TASK_CYCLIC_DEPENDENCY":        self = .taskCyclicDependency
+        case "USER_NOT_FOUND":                self = .userNotFound
+        case "INVALID_SLEEP_SCHEDULE":        self = .invalidSleepSchedule
+        case "INSUFFICIENT_POINTS":           self = .insufficientPoints
         default:                              self = .unknown(rawValue)
         }
     }
@@ -188,24 +159,21 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case .refreshTokenInvalid:           return "REFRESH_TOKEN_INVALID"
         case .refreshTokenExpired:           return "REFRESH_TOKEN_EXPIRED"
         case .refreshTokenReuseDetected:     return "REFRESH_TOKEN_REUSE_DETECTED"
+        case .goalNotFound:                  return "GOAL_NOT_FOUND"
+        case .taskNotFound:                  return "TASK_NOT_FOUND"
+        case .invalidOperation:              return "INVALID_OPERATION"
+        case .duplicateTempId:               return "DUPLICATE_TEMP_ID"
+        case .unknownTempId:                 return "UNKNOWN_TEMP_ID"
+        case .taskCyclicDependency:          return "TASK_CYCLIC_DEPENDENCY"
+        case .userNotFound:                  return "USER_NOT_FOUND"
+        case .invalidSleepSchedule:          return "INVALID_SLEEP_SCHEDULE"
+        case .insufficientPoints:            return "INSUFFICIENT_POINTS"
         case .unknown(let code):             return code
         }
     }
 }
 
-// MARK: - EmptyResponse
 
-/// Sentinel return type for endpoints that return **204 No Content**.
-///
-/// Pass this as the generic parameter `T` in ``NetworkServiceProtocol/request(_:)``
-/// for endpoints with no response body — for example Logout:
-///
-/// ```swift
-/// let _: EmptyResponse = try await networkService.request(AuthEndpoint.logout(deviceId: id))
-/// ```
-///
-/// ``NetworkClient`` detects `EmptyResponse` and skips JSON decoding,
-/// returning a value immediately when the server sends an empty body.
 public struct EmptyResponse: Decodable, Sendable {
     public init() {}
     public init(from decoder: any Decoder) throws {}
