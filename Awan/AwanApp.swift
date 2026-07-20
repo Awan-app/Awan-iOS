@@ -8,9 +8,11 @@
 import SwiftUI
 import SwiftData
 import Presentation
+import Common
 
 @main
 struct AwanApp: App {
+    @State private var languageManager = LanguageManager()
     private let presentationFactory: PresentationFactory
 
     init() {
@@ -34,6 +36,9 @@ struct AwanApp: App {
     var body: some Scene {
         WindowGroup {
             presentationFactory.makeAppRootView()
+                .environment(languageManager)
+                .environment(\.locale, Locale(identifier: languageManager.currentLanguage.rawValue))
+                .environment(\.layoutDirection, languageManager.currentLanguage == .arabic ? .rightToLeft : .leftToRight)
         }
         .modelContainer(sharedModelContainer)
     }
