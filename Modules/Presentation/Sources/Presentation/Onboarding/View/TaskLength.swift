@@ -9,6 +9,7 @@ import Common
 import SwiftUI
 
 struct TaskLength: View {
+    @Environment(OnboardingCoordinator.self) private var coordinator
     @State private var sliderValue: Int = 2
 
     let labels = ["30", "45", "60", "90", "120", "3h"]
@@ -42,7 +43,7 @@ struct TaskLength: View {
             .padding(.horizontal, 24)
             .padding(.top, 20)
 
-            OnboardingProgressBar(currentStep: 4)
+            OnboardingProgressBar(currentStep: 4, totalSteps: 7)
                 .padding(.horizontal, 24)
                 .padding(.top, 24)
 
@@ -196,7 +197,7 @@ struct TaskLength: View {
 
             // Continue Button
             OnboardingContinueButton(title: "CONTINUE") {
-                // Continue action
+                coordinator.push(.taskSimulation)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 20)
@@ -208,4 +209,5 @@ struct TaskLength: View {
 
 #Preview {
     TaskLength()
+        .environment(OnboardingCoordinator())
 }

@@ -58,5 +58,21 @@ public struct PresentationFactory {
     func makeOnboardingSuggestedZonesView() -> some View {
         OnboardingSuggestedZonesView(viewModel: onboardingViewModel)
     }
+
+    func makeTaskLengthView() -> some View {
+        TaskLength()
+    }
+
+    func makeTaskSimulationView() -> some View {
+        TaskSimulation()
+    }
+
+    func makeAddRealTaskView() -> some View {
+        AddRealTask()
+    }
+
+    func makeNotificationView() -> some View {
+        NotificationView()
+    }
 }
 

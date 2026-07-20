@@ -9,8 +9,7 @@ private struct ReasonItem: Identifiable {
 
 
 struct NotificationView: View {
-
-    
+    @Environment(OnboardingCoordinator.self) private var coordinator
     private let reasons: [ReasonItem] = [
         ReasonItem(boldPart: "Only when a block starts", mutedPart: "— no buzzing all day."),
         ReasonItem(boldPart: "Stay in flow", mutedPart: "— gentle reminders to keep you on track."),
@@ -82,4 +81,5 @@ struct NotificationView: View {
 
 #Preview {
     NotificationView()
+        .environment(OnboardingCoordinator())
 }

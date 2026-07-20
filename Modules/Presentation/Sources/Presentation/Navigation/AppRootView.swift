@@ -66,6 +66,14 @@ struct AppRootView: View {
                         factory.makeOnboardingWakeSleepView()
                     case .suggestedZones:
                         factory.makeOnboardingSuggestedZonesView()
+                    case .taskLength:
+                        factory.makeTaskLengthView()
+                    case .taskSimulation:
+                        factory.makeTaskSimulationView()
+                    case .addRealTask:
+                        factory.makeAddRealTaskView()
+                    case .notification:
+                        factory.makeNotificationView()
                     }
                 }
         }

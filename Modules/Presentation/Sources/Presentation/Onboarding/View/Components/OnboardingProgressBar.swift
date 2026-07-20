@@ -1,33 +1,34 @@
+//
+//  OnboardingProgressBar.swift
+//  Awan
+//
+//  Created by Me3bed on 20/07/2026.
+//
+
 import SwiftUI
 import Common
 
 struct OnboardingProgressBar: View {
     let currentStep: Int
     let totalSteps: Int
-    
-    init(currentStep: Int, totalSteps: Int = 6) {
-        self.currentStep = currentStep
-        self.totalSteps = totalSteps
-    }
-    
+
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             ForEach(0..<totalSteps, id: \.self) { index in
                 Capsule()
-                    .fill(index < currentStep ? AppColors.accentBlue : AppColors.accentBlue.opacity(0.1))
-                    .frame(height: 6)
+                    .fill(index < currentStep ? AppColors.accentBlue : AppColors.divider)
+                    .frame(height: 4)
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: currentStep)
     }
 }
 
 #Preview {
-    ZStack {
-        AppColors.screenBackground.ignoresSafeArea()
-        VStack(spacing: 20) {
-            OnboardingProgressBar(currentStep: 4)
-            OnboardingProgressBar(currentStep: 6)
-        }
-        .padding()
+    VStack(spacing: 20) {
+        OnboardingProgressBar(currentStep: 1, totalSteps: 6)
+        OnboardingProgressBar(currentStep: 3, totalSteps: 6)
+        OnboardingProgressBar(currentStep: 6, totalSteps: 6)
     }
+    .padding()
 }

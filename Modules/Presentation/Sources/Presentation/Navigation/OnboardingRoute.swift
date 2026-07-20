@@ -11,6 +11,10 @@ public enum OnboardingRoute: Hashable, Identifiable, Sendable {
     case yourName
     case wakeSleep
     case suggestedZones
+    case taskLength
+    case taskSimulation
+    case addRealTask
+    case notification
 
     public var id: Self { self }
 }

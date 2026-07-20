@@ -21,7 +21,7 @@ struct TaskSimulation: View {
             
             VStack(spacing: 0) {
                 // Top Bar progress
-                OnboardingProgressBar(currentStep: 4)
+                OnboardingProgressBar(currentStep: 5, totalSteps: 7)
                     .padding(.horizontal, 24)
                     .padding(.top, 24)
                 
