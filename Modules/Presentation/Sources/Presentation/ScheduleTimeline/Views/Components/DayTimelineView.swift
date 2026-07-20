@@ -109,9 +109,9 @@ struct DayTimelineView: View {
             Image(systemName: "figure.run.circle.fill")
                 .font(AppFonts.heroSymbol)
                 .foregroundStyle(AppColors.accentGreen.opacity(0.8))
-            Text("Your day is ready for adventure")
+            Text(L10n.Schedule.emptyTitle)
                 .font(AppFonts.headlineBlack)
-            Text("Create a quest or try the conflict lab above.")
+            Text(L10n.Schedule.emptySubtitle)
                 .font(AppFonts.subheadlineSemibold)
                 .foregroundStyle(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -152,7 +152,7 @@ private struct TimelineSessionCard: View {
                     .font(AppFonts.caption2Bold)
                     .opacity(0.82)
                 if item.blocking {
-                    Label("Your time", systemImage: "lock.fill")
+                    Label(L10n.Schedule.yourTime, systemImage: "lock.fill")
                         .font(AppFonts.microHeavy)
                         .opacity(0.75)
                 }
@@ -190,7 +190,7 @@ private struct TimelineSessionCard: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(item.title), \(timeText)")
         .accessibilityValue(timeText)
-        .accessibilityHint("Drag vertically to change time in fifteen minute steps")
+        .accessibilityHint(L10n.Schedule.dragHintAccessibility)
         .accessibilityIdentifier("timeline-task-\(item.title)")
     }
 

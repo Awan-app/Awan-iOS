@@ -62,7 +62,7 @@ struct AddZoneButton: View {
             HStack(spacing: 6) {
                 Image(systemName: "plus")
                     .font(.system(size: 14, weight: .bold))
-                Text("Add a zone")
+                Text(L10n.Onboarding.addZone)
                     .font(AppFonts.subheadlineHeavy)
             }
             .foregroundStyle(AppColors.textSecondary)

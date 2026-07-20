@@ -19,7 +19,7 @@ struct OnboardingStepHeader: View {
                 Spacer()
 
                 Button(action: onSkip) {
-                    Text("Skip")
+                    Text(L10n.Onboarding.skip)
                         .font(AppFonts.subheadlineHeavy)
                         .foregroundStyle(AppColors.accentBlue)
                 }
