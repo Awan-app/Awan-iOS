@@ -1,23 +1,24 @@
 import Foundation
+import SwiftData
 
-public struct TaskRecord: Identifiable, Hashable, Sendable {
-    public let id: UUID
-    public let title: String
-    public let description: String?
-    public let statusRaw: String
-    public let goalID: UUID?
-    public let zoneID: UUID?
-    public let estimatedDurationMinutes: Int
-    public let allowTaskSplitting: Bool
-    public let mandatory: Bool
-    public let estimatedPoints: Int
-    public let dependencyIDs: [UUID]
-    public let order: Int
+@Model
+final class TaskModel {
+    @Attribute(.unique) var id: UUID
+    var title: String
+    var taskDescription: String?
+    var statusRaw: String
+    var goalID: UUID?
+    var zoneID: UUID?
+    var estimatedDurationMinutes: Int
+    var allowTaskSplitting: Bool
+    var mandatory: Bool
+    var estimatedPoints: Int
+    var dependencyIDs: [UUID]
 
-    public init(
+    init(
         id: UUID,
         title: String,
-        description: String?,
+        taskDescription: String?,
         statusRaw: String,
         goalID: UUID?,
         zoneID: UUID?,
@@ -25,12 +26,11 @@ public struct TaskRecord: Identifiable, Hashable, Sendable {
         allowTaskSplitting: Bool,
         mandatory: Bool,
         estimatedPoints: Int,
-        dependencyIDs: [UUID],
-        order: Int = 0
+        dependencyIDs: [UUID]
     ) {
         self.id = id
         self.title = title
-        self.description = description
+        self.taskDescription = taskDescription
         self.statusRaw = statusRaw
         self.goalID = goalID
         self.zoneID = zoneID
@@ -39,6 +39,5 @@ public struct TaskRecord: Identifiable, Hashable, Sendable {
         self.mandatory = mandatory
         self.estimatedPoints = estimatedPoints
         self.dependencyIDs = dependencyIDs
-        self.order = order
     }
 }

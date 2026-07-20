@@ -1,17 +1,19 @@
 import Foundation
+import SwiftData
 
-public struct ZoneRecord: Identifiable, Hashable, Sendable {
-    public let id: UUID
-    public let name: String
-    public let colorHex: String
-    public let startHour: Int
-    public let startMinute: Int
-    public let endHour: Int
-    public let endMinute: Int
-    public let templateID: UUID?
-    public let templateOverrideID: UUID?
+@Model
+final class ZoneModel {
+    @Attribute(.unique) var id: UUID
+    var name: String
+    var colorHex: String
+    var startHour: Int
+    var startMinute: Int
+    var endHour: Int
+    var endMinute: Int
+    var templateID: UUID?
+    var templateOverrideID: UUID?
 
-    public init(
+    init(
         id: UUID,
         name: String,
         colorHex: String,
@@ -19,8 +21,8 @@ public struct ZoneRecord: Identifiable, Hashable, Sendable {
         startMinute: Int,
         endHour: Int,
         endMinute: Int,
-        templateID: UUID? = nil,
-        templateOverrideID: UUID? = nil
+        templateID: UUID?,
+        templateOverrideID: UUID?
     ) {
         self.id = id
         self.name = name
