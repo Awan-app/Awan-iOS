@@ -5,6 +5,7 @@ import SwiftUI
 struct ScheduleTimelineView: View {
     @State private var viewModel: ScheduleTimelineViewModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(LanguageManager.self) private var languageManager
 
     init(viewModel: ScheduleTimelineViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -17,11 +18,22 @@ struct ScheduleTimelineView: View {
             AppColors.screenBackground.ignoresSafeArea()
             ScrollView {
                 LazyVStack(spacing: 20) {
-                    QuestHeaderView(
-                        selectedDayTitle: state.selectedDayTitle,
-                        scheduledMinutes: state.scheduledMinutes,
-                        goalProgress: state.activeGoalProgress
-                    )
+                    HStack {
+                        QuestHeaderView(
+                            selectedDayTitle: state.selectedDayTitle,
+                            scheduledMinutes: state.scheduledMinutes,
+                            goalProgress: state.activeGoalProgress
+                        )
+                        
+                        Menu {
+                            Button("English") { languageManager.currentLanguage = .english }
+                            Button("العربية") { languageManager.currentLanguage = .arabic }
+                        } label: {
+                            Image(systemName: "globe")
+                                .font(.title)
+                                .foregroundColor(AppColors.accentBlue)
+                        }
+                    }
                     ScenarioControlsView(
                         onScenario: { viewModel.send(.simulate($0)) },
                         onReset: { viewModel.send(.resetSimulation) }
@@ -82,10 +94,10 @@ struct ScheduleTimelineView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
         }
-        .alert("Something got in the way", isPresented: errorBinding) {
-            Button("Got it") { viewModel.send(.dismissError) }
+        .alert(L10n.Schedule.errorTitle, isPresented: errorBinding) {
+            Button(L10n.Common.gotIt) { viewModel.send(.dismissError) }
         } message: {
-            Text(state.errorMessage ?? "Please try again.")
+            Text(state.errorMessage ?? L10n.Common.pleaseTryAgain)
         }
         .task { viewModel.send(.appeared) }
         .sensoryFeedback(.impact(weight: .medium), trigger: state.timelineItems.count)
@@ -94,14 +106,14 @@ struct ScheduleTimelineView: View {
     private var actionButtons: some View {
         HStack(spacing: 13) {
             AppButton(
-                title: "Add task",
+                title: L10n.Schedule.addTask,
                 icon: "plus.circle.fill",
                 color: AppColors.accentGreen,
                 onTap: { viewModel.send(.presentCreateTask) }
             )
             .accessibilityIdentifier("add-task-button")
             AppButton(
-                title: "7-task goal",
+                title: L10n.Schedule.addGoal,
                 icon: "trophy.fill",
                 color: AppColors.accentPurple,
                 onTap: { viewModel.send(.presentCreateGoal) }

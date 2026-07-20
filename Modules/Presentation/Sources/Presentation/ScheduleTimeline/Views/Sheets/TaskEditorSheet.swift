@@ -41,22 +41,22 @@ struct TaskEditorSheet: View {
                     mascotHeader
                     AppCard {
                         VStack(alignment: .leading, spacing: 18) {
-                            labeledField("Quest name", icon: "pencil.line") {
-                                TextField("What will you conquer?", text: $title)
+                            labeledField(L10n.Schedule.questName, icon: "pencil.line") {
+                                TextField(L10n.Schedule.questNamePlaceholder, text: $title)
                                     .font(AppFonts.bodySemibold)
                                     .textFieldStyle(.roundedBorder)
                                     .accessibilityIdentifier("task-title-field")
                             }
-                            labeledField("Duration", icon: "timer") {
+                            labeledField(L10n.Schedule.duration, icon: "timer") {
                                 Stepper(value: $durationMinutes, in: 15...480, step: 15) {
-                                    Text("\(durationMinutes) minutes")
+                                    Text(L10n.Schedule.durationMinutes(durationMinutes))
                                         .font(AppFonts.bodyBold)
                                 }
                                 .accessibilityIdentifier("task-duration-stepper")
                             }
-                            labeledField("Zone", icon: "square.3.layers.3d") {
+                            labeledField(L10n.Schedule.zone, icon: "square.3.layers.3d") {
                                 Menu {
-                                    Button("Standalone") { zoneID = nil }
+                                    Button(L10n.Schedule.standalone) { zoneID = nil }
                                     ForEach(zones) { zone in
                                         Button(zone.name) { zoneID = zone.id }
                                     }
@@ -80,14 +80,14 @@ struct TaskEditorSheet: View {
                                 .accessibilityIdentifier("task-zone-menu")
                             }
                             Toggle(isOn: $isSplittable) {
-                                Label("Can split into sessions", systemImage: "rectangle.split.2x1")
+                                Label(L10n.Schedule.canSplit, systemImage: "rectangle.split.2x1")
                                     .font(AppFonts.bodyBold)
                             }
                             .tint(AppColors.accentGreen)
                             if task != nil {
                                 Toggle(isOn: $blocking) {
                                     Label(
-                                        "Keep scheduled time fixed",
+                                        L10n.Schedule.keepFixed,
                                         systemImage: "lock.fill"
                                     )
                                     .font(AppFonts.bodyBold)
@@ -99,7 +99,7 @@ struct TaskEditorSheet: View {
                     }
 
                     AppButton(
-                        title: task == nil ? "Create quest" : "Save changes",
+                        title: task == nil ? L10n.Schedule.createQuest : L10n.Schedule.saveChanges,
                         icon: task == nil ? "sparkles" : "checkmark.seal.fill",
                         color: AppColors.accentGreen,
                         onTap: {
@@ -123,7 +123,7 @@ struct TaskEditorSheet: View {
 
                     if let onDelete {
                         AppButton(
-                            title: "Delete quest",
+                            title: L10n.Schedule.deleteQuest,
                             icon: "trash.fill",
                             color: AppColors.destructive,
                             onTap: {
@@ -138,7 +138,7 @@ struct TaskEditorSheet: View {
             .background(AppColors.sheetBackground.ignoresSafeArea())
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Close") { dismiss() }
+                    Button(L10n.Common.close) { dismiss() }
                         .font(AppFonts.bodyBold)
                 }
             }
@@ -153,7 +153,7 @@ struct TaskEditorSheet: View {
                     task == nil ? AppColors.accentPurple : AppColors.accentBlue
                 )
                 .symbolEffect(.bounce, value: durationMinutes)
-            Text(task == nil ? "New daily quest" : "Tune your quest")
+            Text(task == nil ? L10n.Schedule.newQuest : L10n.Schedule.tuneQuest)
                 .font(AppFonts.title2Black)
             Text(selectedDay.formatted(.dateTime.weekday(.wide).month().day()))
                 .font(AppFonts.subheadlineBold)
@@ -175,8 +175,8 @@ struct TaskEditorSheet: View {
     }
 
     private var selectedZoneName: String {
-        guard let zoneID else { return "Standalone" }
-        return zones.first(where: { $0.id == zoneID })?.name ?? "Choose zone"
+        guard let zoneID else { return L10n.Schedule.standalone }
+        return zones.first(where: { $0.id == zoneID })?.name ?? L10n.Schedule.chooseZone
     }
 
     private var selectedZoneColor: Color {
