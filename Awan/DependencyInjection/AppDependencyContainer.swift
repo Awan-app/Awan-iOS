@@ -1,11 +1,12 @@
 import Swinject
+import SwiftData
 
 final class AppDependencyContainer {
     let resolver: Resolver
 
-    init() {
+    init(modelContainer: ModelContainer) {
         let assembler = Assembler([
-            DataAssembly(),
+            DataAssembly(modelContainer: modelContainer),
             DomainAssembly(),
             PresentationAssembly(),
         ])

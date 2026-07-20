@@ -3,38 +3,69 @@ import Domain
 import AwaNetwork
 import Foundation
 import Swinject
+import SwiftData
 
 struct DataAssembly: Assembly {
+    private let modelContainer: ModelContainer
+
+    init(modelContainer: ModelContainer) {
+        self.modelContainer = modelContainer
+    }
+
     func assemble(container: Container) {
-        container.register(InMemoryScheduleDataSource.self) { _ in
-            InMemoryScheduleDataSource()
+        container.register(LocalTaskDataSource.self) { _ in
+            SwiftDataTaskDataSource(modelContainer: modelContainer)
         }
         .inObjectScope(.container)
 
-        container.register(LocalZoneDataSource.self) { resolver in
-            Self.resolve(InMemoryScheduleDataSource.self, from: resolver)
+        container.register(LocalGoalDataSource.self) { _ in
+            SwiftDataGoalDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+
+        container.register(LocalSessionDataSource.self) { _ in
+            SwiftDataSessionDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+
+        container.register(LocalZoneDataSource.self) { _ in
+            SwiftDataZoneDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+
+        container.register(LocalTemplateDataSource.self) { _ in
+            SwiftDataTemplateDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+
+        container.register(LocalTemplateOverrideDataSource.self) { _ in
+            SwiftDataTemplateOverrideDataSource(modelContainer: modelContainer)
         }
         .inObjectScope(.container)
 
         container.register(ZoneRepository.self) { resolver in
-            guard let dataSource = resolver.resolve(LocalZoneDataSource.self) else {
-                preconditionFailure("LocalZoneDataSource must be registered before ZoneRepository")
-            }
-            return DefaultZoneRepository(localDataSource: dataSource)
+            DefaultZoneRepository(
+                zoneDataSource: Self.resolve(LocalZoneDataSource.self, from: resolver),
+                templateDataSource: Self.resolve(LocalTemplateDataSource.self, from: resolver),
+                templateOverrideDataSource: Self.resolve(
+                    LocalTemplateOverrideDataSource.self,
+                    from: resolver
+                )
+            )
         }
         container.register(TaskRepository.self) { resolver in
             DefaultTaskRepository(
-                store: Self.resolve(InMemoryScheduleDataSource.self, from: resolver)
+                localDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver)
             )
         }
         container.register(GoalRepository.self) { resolver in
             DefaultGoalRepository(
-                store: Self.resolve(InMemoryScheduleDataSource.self, from: resolver)
+                localDataSource: Self.resolve(LocalGoalDataSource.self, from: resolver)
             )
         }
         container.register(SessionRepository.self) { resolver in
             DefaultSessionRepository(
-                store: Self.resolve(InMemoryScheduleDataSource.self, from: resolver)
+                localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver)
             )
         }
         

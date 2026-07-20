@@ -7,34 +7,38 @@
 
 import SwiftUI
 import SwiftData
+import Data
 import Presentation
 
 @main
 struct AwanApp: App {
     private let presentationFactory: PresentationFactory
+    private let sharedModelContainer: ModelContainer
 
     init() {
-        let dependencies = AppDependencyContainer()
+        let schema = SchedulingPersistence.schema
+        let configuration = ModelConfiguration(
+            "AwanScheduling",
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            groupContainer: .none,
+            cloudKitDatabase: .none
+        )
+        do {
+            sharedModelContainer = try ModelContainer(
+                for: schema,
+                configurations: [configuration]
+            )
+        } catch {
+            fatalError("Could not create scheduling ModelContainer: \(error)")
+        }
+        let dependencies = AppDependencyContainer(modelContainer: sharedModelContainer)
         presentationFactory = dependencies.resolve(PresentationFactory.self)
     }
-
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
 
     var body: some Scene {
         WindowGroup {
             presentationFactory.makeAppRootView()
         }
-        .modelContainer(sharedModelContainer)
     }
 }
