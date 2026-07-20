@@ -1,5 +1,6 @@
 import Domain
 import Foundation
+import SwiftData
 import XCTest
 @testable import Data
 
@@ -7,7 +8,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     private let timeZone = TimeZone(secondsFromGMT: 0) ?? .gmt
 
     func testTaskCRUDSchedulesInSelectedDaysZone() async throws {
-        let useCase = makeSystem().useCase
+        let useCase = try await makeSystem().useCase
         let workspace = try await useCase.loadWorkspace()
         let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
         let selectedDay = date(day: 20)
@@ -50,7 +51,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testSevenTaskGoalCreatesSequentialChainAcrossSevenDays() async throws {
-        let useCase = makeSystem().useCase
+        let useCase = try await makeSystem().useCase
         let workspace = try await useCase.loadWorkspace()
         let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
         let startDay = date(day: 20)
@@ -83,7 +84,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testOverlapScenarioOnlyChangesAfterExplicitResolution() async throws {
-        let useCase = makeSystem().useCase
+        let useCase = try await makeSystem().useCase
 
         let simulated = try await useCase.simulate(
             .overlap,
@@ -114,7 +115,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testOverflowScenarioOffersApprovalCandidatesWithoutSchedulingTomorrow() async throws {
-        let useCase = makeSystem().useCase
+        let useCase = try await makeSystem().useCase
 
         let result = try await useCase.simulate(
             .zoneOverflow,
@@ -149,7 +150,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testMoveSecondOverlapResolutionKeepsFirstSessionFixed() async throws {
-        let useCase = makeSystem().useCase
+        let useCase = try await makeSystem().useCase
         let simulated = try await useCase.simulate(
             .overlap,
             on: date(day: 20),
@@ -173,7 +174,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testMissedChainResolutionsShiftStackAndCutDependencyWithoutLeavingGoal() async throws {
-        let useCase = makeSystem().useCase
+        let useCase = try await makeSystem().useCase
         let simulated = try await useCase.simulate(
             .missedDependencyChain,
             on: date(day: 20),
@@ -243,13 +244,13 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testZoneReconfigurationCanReplanOrRestoreWithoutMovingSilently() async throws {
-        let useCase = makeSystem().useCase
+        let useCase = try await makeSystem().useCase
         let simulated = try await useCase.simulate(
             .zoneReconfiguration,
             on: date(day: 20),
             in: timeZone
         )
-        guard case let .zoneReconfigured(zoneID, previousZone, sessionIDs) = simulated.nudge else {
+        guard case let .zoneReconfigured(zoneID, _, sessionIDs) = simulated.nudge else {
             return XCTFail("Expected a zone reconfiguration nudge")
         }
         let unchangedSession = try XCTUnwrap(
@@ -280,11 +281,14 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
             return XCTFail("Expected a zone reconfiguration nudge")
         }
         let restored = try await useCase.resolve(.restoreZone(zoneToRestore))
-        XCTAssertEqual(restored.workspace.zones.first { $0.id == previousZone.id }, previousZone)
+        XCTAssertEqual(
+            restored.workspace.zones.first { $0.id == zoneToRestore.id },
+            zoneToRestore
+        )
     }
 
     func testTitleOnlyEditKeepsExistingSessionIdentityAndRange() async throws {
-        let system = makeSystem()
+        let system = try await makeSystem()
         let workspace = try await system.useCase.loadWorkspace()
         let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
         let created = try await system.useCase.addTask(
@@ -318,7 +322,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testReducingEngineManagedTaskRebuildsShorterSession() async throws {
-        let system = makeSystem()
+        let system = try await makeSystem()
         let workspace = try await system.useCase.loadWorkspace()
         let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
         let created = try await system.useCase.addTask(
@@ -352,7 +356,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testEngineManagedZoneEditReplansInsideNewZone() async throws {
-        let system = makeSystem()
+        let system = try await makeSystem()
         let workspace = try await system.useCase.loadWorkspace()
         let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
         let studyZone = try XCTUnwrap(workspace.zones.first { $0.name == "Study" })
@@ -386,7 +390,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testCompletedSessionIsImmutableAndCountsTowardEditedDuration() async throws {
-        let system = makeSystem()
+        let system = try await makeSystem()
         let workspace = try await system.useCase.loadWorkspace()
         let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
         let created = try await system.useCase.addTask(
@@ -443,7 +447,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testBlockingSessionIncreaseExtendsExistingSession() async throws {
-        let system = makeSystem()
+        let system = try await makeSystem()
         let workspace = try await system.useCase.loadWorkspace()
         let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
         let created = try await system.useCase.addTask(
@@ -463,7 +467,11 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
             end: date(day: 20, hour: 11)
         )
         _ = try await system.useCase.moveSession(
-            MoveSessionRequest(sessionID: original.id, newTimeRange: fixedRange)
+            MoveSessionRequest(
+                sessionID: original.id,
+                newTimeRange: fixedRange,
+                selectedDay: fixedRange.start
+            )
         )
 
         let updated = try await system.useCase.updateTask(
@@ -487,7 +495,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testTaskDetailsCanReleaseBlockingSessionBackToEngine() async throws {
-        let system = makeSystem()
+        let system = try await makeSystem()
         let workspace = try await system.useCase.loadWorkspace()
         let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
         let created = try await system.useCase.addTask(
@@ -508,7 +516,8 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                 newTimeRange: try TimeRange(
                     start: date(day: 20, hour: 13),
                     end: date(day: 20, hour: 14)
-                )
+                ),
+                selectedDay: date(day: 20)
             )
         )
 
@@ -532,7 +541,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testFixedSessionReductionRequiresExplicitKeepOrTrim() async throws {
-        let system = makeSystem()
+        let system = try await makeSystem()
         let workspace = try await system.useCase.loadWorkspace()
         let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
         let created = try await system.useCase.addTask(
@@ -548,7 +557,11 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         let task = try XCTUnwrap(created.workspace.tasks.first)
         let original = try XCTUnwrap(created.workspace.sessions.first)
         _ = try await system.useCase.moveSession(
-            MoveSessionRequest(sessionID: original.id, newTimeRange: original.timeRange)
+            MoveSessionRequest(
+                sessionID: original.id,
+                newTimeRange: original.timeRange,
+                selectedDay: date(day: 20)
+            )
         )
 
         let updated = try await system.useCase.updateTask(
@@ -595,7 +608,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     func testFixedSessionZoneEditAdoptsZoneAndSupportsMoveAndUndo() async throws {
-        let moveSystem = makeSystem()
+        let moveSystem = try await makeSystem()
         let workspace = try await moveSystem.useCase.loadWorkspace()
         let workZone = try XCTUnwrap(workspace.zones.first { $0.name == "Work" })
         let studyZone = try XCTUnwrap(workspace.zones.first { $0.name == "Study" })
@@ -612,7 +625,11 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         let task = try XCTUnwrap(created.workspace.tasks.first)
         let original = try XCTUnwrap(created.workspace.sessions.first)
         _ = try await moveSystem.useCase.moveSession(
-            MoveSessionRequest(sessionID: original.id, newTimeRange: original.timeRange)
+            MoveSessionRequest(
+                sessionID: original.id,
+                newTimeRange: original.timeRange,
+                selectedDay: date(day: 20)
+            )
         )
         let changed = try await moveSystem.useCase.updateTask(
             updateRequest(
@@ -652,7 +669,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         XCTAssertEqual(movedSession.timeRange.start, date(day: 20, hour: 18))
         XCTAssertTrue(movedSession.blocking)
 
-        let undoSystem = makeSystem()
+        let undoSystem = try await makeSystem()
         let undoWorkspace = try await undoSystem.useCase.loadWorkspace()
         let undoWorkZone = try XCTUnwrap(undoWorkspace.zones.first { $0.name == "Work" })
         let undoStudyZone = try XCTUnwrap(undoWorkspace.zones.first { $0.name == "Study" })
@@ -669,7 +686,11 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         let undoTask = try XCTUnwrap(undoCreated.workspace.tasks.first)
         let undoSession = try XCTUnwrap(undoCreated.workspace.sessions.first)
         _ = try await undoSystem.useCase.moveSession(
-            MoveSessionRequest(sessionID: undoSession.id, newTimeRange: undoSession.timeRange)
+            MoveSessionRequest(
+                sessionID: undoSession.id,
+                newTimeRange: undoSession.timeRange,
+                selectedDay: date(day: 20)
+            )
         )
         let undoChanged = try await undoSystem.useCase.updateTask(
             updateRequest(
@@ -744,6 +765,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     }
 
     private struct TestScheduleActions {
+        let selectedDay: Date
         let loadUseCase: any LoadScheduleWorkspaceUseCase
         let createTaskUseCase: any CreateTaskUseCase
         let updateTaskUseCase: any UpdateTaskUseCase
@@ -764,7 +786,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         let restoreTaskZoneUseCase: any RestoreTaskZoneUseCase
 
         func loadWorkspace() async throws -> ScheduleWorkspace {
-            try await loadUseCase.execute()
+            try await loadUseCase.execute(for: selectedDay)
         }
 
         func addTask(_ request: CreateTaskRequest) async throws -> ScheduleOperationResult {
@@ -778,7 +800,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         }
 
         func deleteTask(id: UUID) async throws -> ScheduleWorkspace {
-            try await deleteTaskUseCase.execute(taskID: id)
+            try await deleteTaskUseCase.execute(taskID: id, selectedDay: selectedDay)
         }
 
         func createSevenTaskGoal(
@@ -802,38 +824,43 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         func resolve(_ resolution: TestResolution) async throws -> ScheduleOperationResult {
             switch resolution {
             case let .applyCandidate(candidate):
-                try await applyCandidateUseCase.execute(candidate)
+                try await applyCandidateUseCase.execute(candidate, on: selectedDay)
             case let .separateSessions(firstSessionID, secondSessionID):
                 try await separateOverlapUseCase.execute(
                     OverlappingSessionsRequest(
                         firstSessionID: firstSessionID,
                         secondSessionID: secondSessionID
-                    )
+                    ),
+                    on: selectedDay
                 )
             case let .moveSecondSessionAfterFirst(firstSessionID, secondSessionID):
                 try await moveOverlapUseCase.execute(
                     OverlappingSessionsRequest(
                         firstSessionID: firstSessionID,
                         secondSessionID: secondSessionID
-                    )
+                    ),
+                    on: selectedDay
                 )
             case let .shiftDependencyChain(goalID, timeZone):
                 try await shiftGoalChainUseCase.execute(
-                    ShiftGoalDependencyChainRequest(goalID: goalID, timeZone: timeZone)
+                    ShiftGoalDependencyChainRequest(goalID: goalID, timeZone: timeZone),
+                    on: selectedDay
                 )
             case let .stackMissedAndSuccessor(missedTaskID, successorTaskID):
                 try await stackTasksUseCase.execute(
                     StackDependentTasksRequest(
                         missedTaskID: missedTaskID,
                         successorTaskID: successorTaskID
-                    )
+                    ),
+                    on: selectedDay
                 )
             case let .makeTaskIndependent(taskID, dependencyID):
                 try await makeIndependentUseCase.execute(
                     MakeTaskIndependentRequest(
                         taskID: taskID,
                         dependencyID: dependencyID
-                    )
+                    ),
+                    on: selectedDay
                 )
             case let .replanSessionsForZone(zoneID, sessionIDs, timeZone):
                 try await replanZoneUseCase.execute(
@@ -841,10 +868,11 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                         zoneID: zoneID,
                         sessionIDs: sessionIDs,
                         timeZone: timeZone
-                    )
+                    ),
+                    on: selectedDay
                 )
             case let .restoreZone(zone):
-                try await restoreZoneUseCase.execute(zone)
+                try await restoreZoneUseCase.execute(zone, on: selectedDay)
             case let .trimFixedSessions(
                 taskID,
                 pendingZoneChange,
@@ -902,12 +930,32 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         let sessionRepository: DefaultSessionRepository
     }
 
-    private func makeSystem() -> TestSystem {
-        let store = InMemoryScheduleDataSource()
-        let zoneRepository = DefaultZoneRepository(localDataSource: store)
-        let taskRepository = DefaultTaskRepository(store: store)
-        let sessionRepository = DefaultSessionRepository(store: store)
-        let goalRepository = DefaultGoalRepository(store: store)
+    private func makeSystem() async throws -> TestSystem {
+        let schema = SchedulingPersistence.schema
+        let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: schema, configurations: [configuration])
+        let zoneSource = SwiftDataZoneDataSource(modelContainer: container)
+        let templateSource = SwiftDataTemplateDataSource(modelContainer: container)
+        let overrideSource = SwiftDataTemplateOverrideDataSource(modelContainer: container)
+        let taskSource = SwiftDataTaskDataSource(modelContainer: container)
+        let sessionSource = SwiftDataSessionDataSource(modelContainer: container)
+        let goalSource = SwiftDataGoalDataSource(modelContainer: container)
+        try await templateSource.addTemplate(
+            TemplateData(
+                id: UUID(),
+                name: "Every day",
+                weekDays: Set(1...7),
+                zones: try defaultZones()
+            )
+        )
+        let zoneRepository = DefaultZoneRepository(
+            zoneDataSource: zoneSource,
+            templateDataSource: templateSource,
+            templateOverrideDataSource: overrideSource
+        )
+        let taskRepository = DefaultTaskRepository(localDataSource: taskSource)
+        let sessionRepository = DefaultSessionRepository(localDataSource: sessionSource)
+        let goalRepository = DefaultGoalRepository(localDataSource: goalSource)
         let resolver = CalendarZoneWindowResolver()
         let workspaceProvider = DefaultScheduleWorkspaceProvider(
             zoneRepository: zoneRepository,
@@ -931,12 +979,12 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
         )
         let resetSimulation = DefaultResetScheduleSimulationUseCase(
             workspaceProvider: workspaceProvider,
-            zoneRepository: zoneRepository,
             taskRepository: taskRepository,
             goalRepository: goalRepository,
             sessionRepository: sessionRepository
         )
         let useCase = TestScheduleActions(
+            selectedDay: date(day: 20),
             loadUseCase: DefaultLoadScheduleWorkspaceUseCase(
                 workspaceProvider: workspaceProvider
             ),
@@ -1028,6 +1076,39 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
             taskRepository: taskRepository,
             sessionRepository: sessionRepository
         )
+    }
+
+    private func defaultZones() throws -> [Zone] {
+        [
+            try Zone(
+                id: UUID(),
+                name: "Morning",
+                color: ZoneColor(hex: "#F4B942"),
+                startTime: LocalTime(hour: 7, minute: 0),
+                endTime: LocalTime(hour: 9, minute: 0)
+            ),
+            try Zone(
+                id: UUID(),
+                name: "Work",
+                color: ZoneColor(hex: "#4A90E2"),
+                startTime: LocalTime(hour: 9, minute: 0),
+                endTime: LocalTime(hour: 17, minute: 0)
+            ),
+            try Zone(
+                id: UUID(),
+                name: "Study",
+                color: ZoneColor(hex: "#8E5BD9"),
+                startTime: LocalTime(hour: 18, minute: 0),
+                endTime: LocalTime(hour: 21, minute: 0)
+            ),
+            try Zone(
+                id: UUID(),
+                name: "Personal",
+                color: ZoneColor(hex: "#EF6C8F"),
+                startTime: LocalTime(hour: 21, minute: 0),
+                endTime: LocalTime(hour: 0, minute: 0)
+            ),
+        ]
     }
 
     private func updateRequest(

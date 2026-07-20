@@ -261,7 +261,7 @@ private actor ScheduleUseCaseStub:
         self.loadError = loadError
     }
 
-    func execute() async throws -> ScheduleWorkspace {
+    func execute(for date: Date) async throws -> ScheduleWorkspace {
         if let loadDelay { try await Task.sleep(for: loadDelay) }
         if let loadError { throw loadError }
         return workspace
@@ -276,7 +276,9 @@ private actor ScheduleUseCaseStub:
         return updatedResult ?? ScheduleOperationResult(workspace: workspace, nudge: nil)
     }
 
-    func execute(taskID: UUID) async throws -> ScheduleWorkspace { workspace }
+    func execute(taskID: UUID, selectedDay: Date) async throws -> ScheduleWorkspace {
+        workspace
+    }
 
     func execute(
         _ request: CreateSevenTaskGoalRequest
@@ -294,33 +296,49 @@ private actor ScheduleUseCaseStub:
         simulatedResult ?? ScheduleOperationResult(workspace: workspace, nudge: nil)
     }
 
-    func execute(_ candidate: ResolutionCandidate) async throws -> ScheduleOperationResult {
-        ScheduleOperationResult(workspace: workspace, nudge: nil)
-    }
-
-    func execute(_ request: OverlappingSessionsRequest) async throws -> ScheduleOperationResult {
-        ScheduleOperationResult(workspace: workspace, nudge: nil)
-    }
-
     func execute(
-        _ request: ShiftGoalDependencyChainRequest
+        _ candidate: ResolutionCandidate,
+        on selectedDay: Date
     ) async throws -> ScheduleOperationResult {
         ScheduleOperationResult(workspace: workspace, nudge: nil)
     }
 
-    func execute(_ request: StackDependentTasksRequest) async throws -> ScheduleOperationResult {
+    func execute(
+        _ request: OverlappingSessionsRequest,
+        on selectedDay: Date
+    ) async throws -> ScheduleOperationResult {
         ScheduleOperationResult(workspace: workspace, nudge: nil)
     }
 
-    func execute(_ request: MakeTaskIndependentRequest) async throws -> ScheduleOperationResult {
+    func execute(
+        _ request: ShiftGoalDependencyChainRequest,
+        on selectedDay: Date
+    ) async throws -> ScheduleOperationResult {
         ScheduleOperationResult(workspace: workspace, nudge: nil)
     }
 
-    func execute(_ request: ReplanZoneSessionsRequest) async throws -> ScheduleOperationResult {
+    func execute(
+        _ request: StackDependentTasksRequest,
+        on selectedDay: Date
+    ) async throws -> ScheduleOperationResult {
         ScheduleOperationResult(workspace: workspace, nudge: nil)
     }
 
-    func execute(_ zone: Zone) async throws -> ScheduleOperationResult {
+    func execute(
+        _ request: MakeTaskIndependentRequest,
+        on selectedDay: Date
+    ) async throws -> ScheduleOperationResult {
+        ScheduleOperationResult(workspace: workspace, nudge: nil)
+    }
+
+    func execute(
+        _ request: ReplanZoneSessionsRequest,
+        on selectedDay: Date
+    ) async throws -> ScheduleOperationResult {
+        ScheduleOperationResult(workspace: workspace, nudge: nil)
+    }
+
+    func execute(_ zone: Zone, on selectedDay: Date) async throws -> ScheduleOperationResult {
         ScheduleOperationResult(workspace: workspace, nudge: nil)
     }
 
@@ -342,5 +360,9 @@ private actor ScheduleUseCaseStub:
 
     func execute(_ request: RestoreTaskZoneRequest) async throws -> ScheduleOperationResult {
         ScheduleOperationResult(workspace: workspace, nudge: nil)
+    }
+
+    func execute(on selectedDay: Date) async throws -> ScheduleWorkspace {
+        workspace
     }
 }
