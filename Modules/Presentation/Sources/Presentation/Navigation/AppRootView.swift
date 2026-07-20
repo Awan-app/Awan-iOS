@@ -2,7 +2,7 @@
 //  AppRootView.swift
 //  Awan
 //
-//  Created by Manona on 15/07/2026.
+//  Created by Me3bed on 20/07/2026.
 //
 
 import SwiftUI
@@ -23,8 +23,12 @@ struct AppRootView: View {
                 ProgressView()
             case .unauthenticated:
                 authenticationFlow
-            case .authenticated:
-                mainFlow
+            case .authenticated(let user):
+                if user.isNew {
+                    onboardingFlow
+                } else {
+                    mainFlow
+                }
             }
         }
         .task {
@@ -46,6 +50,22 @@ struct AppRootView: View {
                         factory.makeLoginView()
                     case .otpVerification(let context):
                         factory.makeOtpVerificationView(context: context)
+                    }
+                }
+        }
+    }
+
+    private var onboardingFlow: some View {
+        NavigationStack(path: Bindable(coordinator.onboardingCoordinator).path) {
+            factory.makeOnboardingWelcomeView()
+                .navigationDestination(for: OnboardingRoute.self) { route in
+                    switch route {
+                    case .yourName:
+                        factory.makeOnboardingYourNameView()
+                    case .wakeSleep:
+                        factory.makeOnboardingWakeSleepView()
+                    case .suggestedZones:
+                        factory.makeOnboardingSuggestedZonesView()
                     }
                 }
         }
