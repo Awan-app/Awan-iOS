@@ -1,11 +1,11 @@
-import SwiftUI
 import Common
+import SwiftUI
 import UIKit
 
 public struct TaskItem: Identifiable, Equatable, Sendable {
     public let id = UUID()
     public let title: String
-    
+
     public init(title: String) {
         self.title = title
     }
@@ -14,9 +14,9 @@ public struct TaskItem: Identifiable, Equatable, Sendable {
 struct TaskPreviewCard: View {
     let tasks: [TaskItem]
     var onDelete: ((TaskItem) -> Void)?
-    
+
     private let depth: CGFloat = 4
-    
+
     var body: some View {
         ZStack {
             // Bottom Layer — depth shape, slightly larger on all sides so it peeks
@@ -26,43 +26,43 @@ struct TaskPreviewCard: View {
                 .padding(.horizontal, -depth)
                 .padding(.top, -depth)
                 .padding(.bottom, -depth * 2)
-            
+
             // Top Layer — the actual card content
             VStack(alignment: .leading, spacing: 16) {
                 Text("...AND IT LANDS IN YOUR DAY")
                     .font(AppFonts.captionHeavy)
                     .foregroundColor(AppColors.textSecondary)
-                
+
                 HStack(spacing: 8) {
                     Text("Study")
                         .font(AppFonts.captionHeavy)
                         .foregroundColor(AppColors.accentPurple)
-                    
+
                     Text("7:00 – 9:30 AM")
                         .font(AppFonts.caption2Bold)
                         .foregroundColor(AppColors.textSecondary)
                 }
-                
+
                 if !tasks.isEmpty {
                     ForEach(tasks) { task in
                         HStack(spacing: 12) {
                             Circle()
                                 .stroke(AppColors.outline, lineWidth: 2)
                                 .frame(width: 24, height: 24)
-                            
+
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(task.title)
                                     .font(AppFonts.subheadlineBold)
                                     .foregroundColor(AppColors.brandDarkBlue)
                                     .lineLimit(1)
-                                
+
                                 Text("60 min · Study")
                                     .font(AppFonts.captionHeavy)
                                     .foregroundColor(AppColors.textSecondary)
                             }
-                            
+
                             Spacer()
-                            
+
                             if task == tasks.last {
                                 Text("NEW")
                                     .font(AppFonts.caption2Bold)
@@ -74,7 +74,7 @@ struct TaskPreviewCard: View {
                                             .fill(AppColors.accentPurple)
                                     )
                             }
-                            
+
                             Button(action: {
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                                     onDelete?(task)
@@ -86,8 +86,18 @@ struct TaskPreviewCard: View {
                             }
                         }
                         .padding(16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(AppColors.surface)
+                                .shadow(
+                                    color: AppColors.accentPurple.opacity(0.75),
+                                    radius: 0,
+                                    x: 0,
+                                    y: 5
+                                )
+                        )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 16)
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
                                 .stroke(AppColors.accentPurple, lineWidth: 2)
                         )
                         .transition(.scale(scale: 0.9).combined(with: .opacity))
@@ -95,7 +105,7 @@ struct TaskPreviewCard: View {
                 } else {
                     Spacer(minLength: 140)
                 }
-                
+
                 Text("I'll do one happy bounce as it settles in.")
                     .font(AppFonts.captionHeavy)
                     .foregroundColor(AppColors.textSecondary)
