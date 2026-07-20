@@ -35,14 +35,14 @@ struct OtpVerificationView: View {
                     .padding(.bottom, 24)
 
                 // Title
-                Text("You're in! ☀️")
+                Text(L10n.OtpVerification.title)
                     .font(AppFonts.title2Black)
                     .foregroundColor(AppColors.textPrimary)
                     .padding(.bottom, 12)
 
                 // Subtitle
                 VStack(spacing: 4) {
-                    Text("Enter the code we sent to")
+                    Text(L10n.OtpVerification.subtitle)
                         .font(AppFonts.subheadlineSemibold)
                         .foregroundColor(AppColors.textSecondary)
                     
@@ -82,7 +82,7 @@ struct OtpVerificationView: View {
                                                 ? AppColors.destructive : AppColors.accentBlue,
                                             lineWidth: 1.5)
                                 )
-                                .accessibilityLabel("Verification code digit \(index + 1)")
+                                .accessibilityLabel(L10n.OtpVerification.digitAccessibility(index + 1))
                         }
                     }
                     
@@ -97,7 +97,7 @@ struct OtpVerificationView: View {
                                 .shadow(color: AppColors.accentBlue.opacity(0.6), radius: 0, x: 0, y: 2)
     
                             HStack(spacing: 0) {
-                                Text("Verified — drifting you in")
+                                Text(L10n.OtpVerification.verified)
                                     .font(AppFonts.subheadlineBold)
                                     .foregroundColor(AppColors.accentBlue)
     
@@ -113,7 +113,7 @@ struct OtpVerificationView: View {
                             switch errorState {
                             case .network:
                                 NetworkErrorView(
-                                    message: "You're offline — reconnect to verify or resend your code."
+                                    message: L10n.OtpVerification.offlineError
                                 )
                             case .inline(let message):
                                 OtpFailureAlertView(message: message)
@@ -134,11 +134,11 @@ struct OtpVerificationView: View {
                         viewModel.resendCode()
                     }) {
                         if viewModel.resendSecondsRemaining > 0 {
-                            Text("RESEND CODE • \(viewModel.formattedResendTime)")
+                            Text(L10n.OtpVerification.resendTimer(viewModel.formattedResendTime))
                                 .font(AppFonts.captionHeavy)
                         } else {
                             HStack(spacing: 6) {
-                                Text("RESEND CODE")
+                                Text(L10n.OtpVerification.resend)
                                     .font(AppFonts.captionHeavy)
                                 Image(systemName: "arrow.counterclockwise")
                                     .font(AppFonts.captionHeavy)
@@ -152,7 +152,7 @@ struct OtpVerificationView: View {
                     .disabled(viewModel.isResendDisabled)
                     .opacity(viewModel.isResending ? 0.5 : 1)
 
-                    Text("Numeric keypad · auto-submits on the 6th digit")
+                    Text(L10n.OtpVerification.keypadHint)
                         .font(AppFonts.captionHeavy)
                         .foregroundColor(AppColors.textSecondary)
                 }
