@@ -97,6 +97,18 @@ Appropriate responsibilities:
 
 Data must not contain SwiftUI views, presentation state, navigation, or business rules. Repositories coordinate data; use cases decide business behavior.
 
+The production local store uses SwiftData and follows these boundaries:
+
+- The app composition root creates one persistent `ModelContainer` and injects it into Data.
+- Data owns all `@Model` persistence classes; they are not exposed to Domain or Presentation.
+- Focused task, goal, session, zone, template, and override actors query the shared container; there is no combined scheduling store abstraction.
+- Task, goal, session, and zone local-source protocols exchange Domain values. Template and override inputs remain Data-only because they are persistence configuration, not Domain entities.
+- The zone repository resolves a requested local Gregorian date by checking its override first and then its Sunday-based weekday template. Only the resolved Domain zones cross into Domain.
+- Presentation never receives a `ModelContext`, imports SwiftData, uses `@Query`, or reads persistence values directly. Local values must be loaded through Domain use cases and processed by the scheduling engine before Presentation renders them.
+- Template aggregate writes reconcile their owned zones, and aggregate deletion explicitly removes those zones in the same context because ownership uses UUID fields rather than SwiftData relationships.
+- Repository implementations depend on local data-source protocols rather than persistence-framework-specific implementations.
+- Tests exercise the real SwiftData actors with isolated in-memory `ModelContainer` instances; the array-backed in-memory scheduling source has been removed.
+
 ## Presentation
 
 Presentation owns UI rendering, UI state, user events, and navigation.
