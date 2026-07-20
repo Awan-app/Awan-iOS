@@ -2,9 +2,13 @@ import SwiftUI
 import Common
 import UIKit
 
-struct TaskItem: Identifiable, Equatable {
-    let id = UUID()
-    let title: String
+public struct TaskItem: Identifiable, Equatable, Sendable {
+    public let id = UUID()
+    public let title: String
+    
+    public init(title: String) {
+        self.title = title
+    }
 }
 
 struct TaskPreviewCard: View {

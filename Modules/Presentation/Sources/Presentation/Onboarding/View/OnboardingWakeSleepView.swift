@@ -5,8 +5,8 @@
 //  Created by Me3bed on 20/07/2026.
 //
 
-import SwiftUI
 import Common
+import SwiftUI
 
 struct OnboardingWakeSleepView: View {
     @Environment(AppCoordinator.self) private var appCoordinator
@@ -39,7 +39,17 @@ struct OnboardingWakeSleepView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
         }
-        .background(AppColors.skyGradientBottom.ignoresSafeArea())
+        .background(
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.skyGradientTop, location: 0.0),
+                    .init(color: AppColors.skyGradientBottom, location: 0.5),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        )
         .navigationBarBackButtonHidden(true)
     }
 

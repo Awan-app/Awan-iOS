@@ -5,8 +5,8 @@
 //  Created by Me3bed on 20/07/2026.
 //
 
-import SwiftUI
 import Common
+import SwiftUI
 
 struct OnboardingSuggestedZonesView: View {
     @Environment(AppCoordinator.self) private var appCoordinator
@@ -38,7 +38,17 @@ struct OnboardingSuggestedZonesView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
         }
-        .background(AppColors.skyGradientBottom.ignoresSafeArea())
+        .background(
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.skyGradientTop, location: 0.0),
+                    .init(color: AppColors.skyGradientBottom, location: 0.5),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        )
         .navigationBarBackButtonHidden(true)
     }
 
@@ -97,7 +107,7 @@ struct OnboardingSuggestedZonesView: View {
                 shadowColor: .clear,
                 useGradient: false,
                 onTap: {
-                    viewModel.completeOnboarding()
+                    appCoordinator.onboardingCoordinator.push(.taskLength)
                 }
             )
 
@@ -107,7 +117,7 @@ struct OnboardingSuggestedZonesView: View {
                 color: AppColors.accentBlue,
                 foregroundColor: AppColors.onAccent,
                 onTap: {
-                    viewModel.completeOnboarding()
+                    appCoordinator.onboardingCoordinator.push(.taskLength)
                 }
             )
         }

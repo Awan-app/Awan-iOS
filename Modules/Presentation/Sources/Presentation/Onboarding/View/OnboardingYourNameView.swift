@@ -20,32 +20,47 @@ struct OnboardingYourNameView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            OnboardingStepHeader(
-                currentStep: 1,
-                totalSteps: viewModel.totalSteps,
-                onSkip: { viewModel.skipOnboarding() }
+        ZStack {
+            // 1. Background Layer (Fixed, won't shift with keyboard)
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.skyGradientTop, location: 0.0),
+                    .init(color: AppColors.skyGradientBottom, location: 0.5)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
             )
-            .padding(.horizontal, 24)
+            .ignoresSafeArea()
+            
+            // 2. Content Layer
+            VStack(spacing: 0) {
+                OnboardingStepHeader(
+                    currentStep: 1,
+                    totalSteps: viewModel.totalSteps,
+                    onSkip: { viewModel.skipOnboarding() }
+                )
+                .padding(.horizontal, 24)
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    headerSection
-                    ChangeAnytimeTag()
-                    nameFieldsSection
-                    previewSection
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        headerSection
+                        ChangeAnytimeTag()
+                        nameFieldsSection
+                        previewSection
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
+            
+                // Bottom Action Area
+                VStack {
+                    continueButton
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 24)
+                }
             }
-
-            Spacer(minLength: 0)
-
-            continueButton
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
         }
-        .background(AppColors.skyGradientBottom.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .onAppear {
             focusedField = .firstName

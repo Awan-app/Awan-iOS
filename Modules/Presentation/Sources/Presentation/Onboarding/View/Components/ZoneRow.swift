@@ -6,14 +6,13 @@
 //
 
 import Common
-import Domain
 import SwiftUI
 
 struct ZoneRow: View {
-    let zone: Zone
+    let zone: SuggestedZone
 
     private var dotColor: Color {
-        AppColors.runtime(hex: zone.color.hex)
+        Color(red: zone.colorRed, green: zone.colorGreen, blue: zone.colorBlue)
     }
 
     var body: some View {
@@ -30,7 +29,7 @@ struct ZoneRow: View {
 
             Spacer()
 
-            Text(timeRangeString)
+            Text("\(zone.startTime) – \(zone.endTime)")
                 .font(AppFonts.captionHeavy)
                 .foregroundColor(AppColors.textSecondary)
         }
@@ -39,48 +38,26 @@ struct ZoneRow: View {
         .background(dotColor.opacity(0.12))
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
-
-    private var timeRangeString: String {
-        let startIsPM = zone.startTime.hour >= 12
-        let endIsPM = zone.endTime.hour >= 12
-        
-        let startStr = formatTime(zone.startTime, includeAMPM: startIsPM != endIsPM)
-        let endStr = formatTime(zone.endTime, includeAMPM: true)
-        
-        return "\(startStr) – \(endStr)"
-    }
-    
-    private func formatTime(_ time: LocalTime, includeAMPM: Bool) -> String {
-        let isPM = time.hour >= 12
-        let displayHour = time.hour % 12 == 0 ? 12 : time.hour % 12
-        let displayMinute = String(format: "%02d", time.minute)
-        
-        if includeAMPM {
-            return "\(displayHour):\(displayMinute) \(isPM ? "PM" : "AM")"
-        } else {
-            return "\(displayHour):\(displayMinute)"
-        }
-    }
 }
 
 #Preview {
     VStack(spacing: 10) {
         ZoneRow(
-            zone: Zone(
+            zone: SuggestedZone(
                 id: UUID(),
                 name: "Study",
-                color: try! ZoneColor(hex: "#800080"),
-                startTime: try! LocalTime(hour: 7, minute: 0),
-                endTime: try! LocalTime(hour: 9, minute: 30)
+                startTime: "7:00 AM",
+                endTime: "9:30 AM",
+                colorRed: 0.5, colorGreen: 0.0, colorBlue: 0.5
             )
         )
         ZoneRow(
-            zone: Zone(
+            zone: SuggestedZone(
                 id: UUID(),
                 name: "Work",
-                color: try! ZoneColor(hex: "#0000FF"),
-                startTime: try! LocalTime(hour: 9, minute: 30),
-                endTime: try! LocalTime(hour: 13, minute: 0)
+                startTime: "9:30 AM",
+                endTime: "1:00 PM",
+                colorRed: 0.0, colorGreen: 0.0, colorBlue: 1.0
             )
         )
     }

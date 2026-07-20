@@ -16,7 +16,7 @@ public final class OnboardingViewModel {
 
     // MARK: - Step tracking
 
-    public let totalSteps = 6
+    public let totalSteps = 7
 
     // MARK: - Your Name
 
@@ -55,6 +55,19 @@ public final class OnboardingViewModel {
     // MARK: - Suggested Zones
 
     public var suggestedZones: [SuggestedZone]
+
+    // MARK: - Task Length
+
+    public var focusDurationIndex: Int = 2
+
+    // MARK: - Task Simulation
+
+    public var addedTasks: [TaskItem] = []
+    public var taskText: String = ""
+
+    // MARK: - Notification
+
+    public var notificationsEnabled: Bool = false
 
     // MARK: - Callbacks
 

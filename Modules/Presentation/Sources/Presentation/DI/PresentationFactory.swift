@@ -60,19 +60,19 @@ public struct PresentationFactory {
     }
 
     func makeTaskLengthView() -> some View {
-        TaskLength()
+        TaskLength(viewModel: onboardingViewModel)
     }
 
     func makeTaskSimulationView() -> some View {
-        TaskSimulation()
+        TaskSimulation(viewModel: onboardingViewModel)
     }
 
     func makeAddRealTaskView() -> some View {
-        AddRealTask()
+        AddRealTask(viewModel: onboardingViewModel)
     }
 
     func makeNotificationView() -> some View {
-        NotificationView()
+        NotificationView(viewModel: onboardingViewModel)
     }
 }
 

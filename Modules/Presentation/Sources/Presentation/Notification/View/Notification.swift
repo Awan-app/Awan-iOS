@@ -9,7 +9,8 @@ private struct ReasonItem: Identifiable {
 
 
 struct NotificationView: View {
-    @Environment(OnboardingCoordinator.self) private var coordinator
+    @Environment(AppCoordinator.self) private var appCoordinator
+    @Bindable var viewModel: OnboardingViewModel
     private let reasons: [ReasonItem] = [
         ReasonItem(boldPart: "Only when a block starts", mutedPart: "— no buzzing all day."),
         ReasonItem(boldPart: "Stay in flow", mutedPart: "— gentle reminders to keep you on track."),
@@ -22,11 +23,15 @@ struct NotificationView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .center, spacing: 32) {
+                VStack(alignment: .center, spacing: 32) {
+                        OnboardingStepHeader(
+                            currentStep: 7,
+                            totalSteps: viewModel.totalSteps,
+                            onSkip: { viewModel.skipOnboarding() }
+                        )
 
                         AuthCloudLogoView()
-                            .padding(.top, 40)
+                            .padding(.top, 8)
 
                         Text("Want a gentle nudge\nwhen it's time?")
                             .font(.system(size: 28, weight: .black, design: .rounded))
@@ -48,38 +53,48 @@ struct NotificationView: View {
                             }
                         }
                         .padding(.horizontal, 16)
+
+                        VStack(spacing: 16) {
+                            Text("The system will ask next — this is just so you know why.")
+                                .font(AppFonts.caption2Bold)
+                                .foregroundColor(AppColors.textSecondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 16)
+
+                            AppButton(
+                                title: "TURN ON NUDGES",
+                                icon: nil,
+                                color: AppColors.accentBlue,
+                                foregroundColor: AppColors.onAccent,
+                                size: .large,
+                                onTap: {
+                                    viewModel.notificationsEnabled = true
+                                    viewModel.completeOnboarding()
+                                }
+                            )
+
+                            Button(action: {
+                                viewModel.notificationsEnabled = false
+                                viewModel.completeOnboarding()
+                            }) {
+                                HStack(spacing: 4) {
+                                    Text("Not now")
+                                }
+                                .font(AppFonts.subheadlineHeavy)
+                                .foregroundColor(AppColors.accentBlue)
+                            }
+                            .padding(.vertical, 8)
+                        }
+                        .padding(.top, 16)
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 40)
-                }
-
-                VStack(spacing: 16) {
-                    Text("The system will ask next — this is just so you know why.")
-                        .font(AppFonts.caption2Bold)
-                        .foregroundColor(AppColors.textSecondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-
-                    OnboardingContinueButton(
-                        title: "TURN ON NUDGES",
-                        action: {
-                            // Request permission action
-                        }
-                    )
-
-                    SkipForNowLink(title: "Not now") {
-                        // Skip action
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
-                .padding(.top, 16)
             }
         }
     }
 }
 
-#Preview {
-    NotificationView()
-        .environment(OnboardingCoordinator())
-}
+//#Preview {
+//    NotificationView()
+//        .environment(OnboardingCoordinator())
+//}
