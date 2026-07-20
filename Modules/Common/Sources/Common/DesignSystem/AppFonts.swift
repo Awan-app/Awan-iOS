@@ -53,6 +53,11 @@ public enum AppFonts {
         design: .rounded,
         weight: .black
     )
+    public static let body = Font.system(
+        .body,
+        design: .rounded,
+        weight: .regular
+    )
     public static let bodySemibold = Font.system(
         .body,
         design: .rounded,

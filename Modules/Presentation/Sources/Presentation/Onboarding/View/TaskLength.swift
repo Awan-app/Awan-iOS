@@ -11,7 +11,7 @@ import SwiftUI
 struct TaskLength: View {
     @State private var sliderValue: Int = 2
 
-    let labels = ["30m", "45", "60", "90", "120", "3h"]
+    let labels = ["30", "45", "60", "90", "120", "3h"]
 
     var focusDurationText: String {
         switch sliderValue {
@@ -42,16 +42,9 @@ struct TaskLength: View {
             .padding(.horizontal, 24)
             .padding(.top, 20)
 
-            // Progress Bar
-            HStack(spacing: 8) {
-                ForEach(0..<6) { index in
-                    Capsule()
-                        .fill(index < 4 ? AppColors.accentBlue : AppColors.accentBlue.opacity(0.1))
-                        .frame(height: 6)
-                }
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 24)
+            OnboardingProgressBar(currentStep: 4)
+                .padding(.horizontal, 24)
+                .padding(.top, 24)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {

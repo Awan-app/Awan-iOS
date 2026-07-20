@@ -66,7 +66,7 @@ struct PrimaryButtonStyle: ButtonStyle {
     }
 }
 
-#Preview {
+#Preview{
     ZStack {
         AppColors.screenBackground.edgesIgnoringSafeArea(.all)
 
@@ -83,5 +83,6 @@ struct PrimaryButtonStyle: ButtonStyle {
         }
         .padding(.horizontal, 24)
         .padding(.bottom, 32)
+        .background(Color.gray)
     }
 }
