@@ -1,5 +1,7 @@
+import Foundation
+
 public protocol FetchZonesUseCase: Sendable {
-    func execute() async throws -> [Zone]
+    func execute(for date: Date) async throws -> [Zone]
 }
 
 public struct DefaultFetchZonesUseCase: FetchZonesUseCase {
@@ -9,7 +11,7 @@ public struct DefaultFetchZonesUseCase: FetchZonesUseCase {
         self.repository = repository
     }
 
-    public func execute() async throws -> [Zone] {
-        try await repository.fetchZones()
+    public func execute(for date: Date) async throws -> [Zone] {
+        try await repository.fetchZones(for: date)
     }
 }

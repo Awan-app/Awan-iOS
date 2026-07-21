@@ -2,23 +2,25 @@ import Domain
 import Foundation
 
 public struct DefaultGoalRepository: GoalRepository {
-    private let store: InMemoryScheduleDataSource
+    private let localDataSource: any LocalGoalDataSource
 
-    public init(store: InMemoryScheduleDataSource) { self.store = store }
+    public init(localDataSource: any LocalGoalDataSource) {
+        self.localDataSource = localDataSource
+    }
 
     public func fetchGoals() async throws -> [Goal] {
-        try await store.fetchGoals().map { try $0.toDomain() }
+        try await localDataSource.fetchGoals()
     }
     public func addGoal(_ goal: Goal) async throws {
-        try await store.addGoal(GoalRecord(domain: goal))
+        try await localDataSource.addGoal(goal)
     }
     public func updateGoal(_ goal: Goal) async throws {
-        try await store.updateGoal(GoalRecord(domain: goal))
+        try await localDataSource.updateGoal(goal)
     }
     public func deleteGoal(id: UUID) async throws {
-        try await store.deleteGoal(id: id)
+        try await localDataSource.deleteGoal(id: id)
     }
     public func deleteAllGoals() async throws {
-        try await store.deleteAllGoals()
+        try await localDataSource.deleteAllGoals()
     }
 }

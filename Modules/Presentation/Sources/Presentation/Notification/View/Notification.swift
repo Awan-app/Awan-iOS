@@ -62,6 +62,7 @@ struct NotificationView: View {
                             onContinue()
                         }
                     )
+                    .disabled(viewModel.isCompleting)
 
                     Button(action: {
                         onSkipNotifications()
@@ -72,6 +73,7 @@ struct NotificationView: View {
                         .font(AppFonts.subheadlineHeavy)
                         .foregroundColor(AppColors.accentBlue)
                     }
+                    .disabled(viewModel.isCompleting)
                     .padding(.vertical, 4)
                 }
                 .padding(.top, 8)

@@ -219,7 +219,6 @@ struct DomainAssembly: Assembly {
         container.register(ResetScheduleSimulationUseCase.self) { resolver in
             DefaultResetScheduleSimulationUseCase(
                 workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),
-                zoneRepository: Self.resolve(ZoneRepository.self, from: resolver),
                 taskRepository: Self.resolve(TaskRepository.self, from: resolver),
                 goalRepository: Self.resolve(GoalRepository.self, from: resolver),
                 sessionRepository: Self.resolve(SessionRepository.self, from: resolver)

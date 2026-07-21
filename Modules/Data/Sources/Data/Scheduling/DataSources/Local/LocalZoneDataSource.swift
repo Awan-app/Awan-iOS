@@ -1,5 +1,6 @@
+import Domain
+
 public protocol LocalZoneDataSource: Sendable {
-    func fetchZones() async throws -> [ZoneRecord]
-    func updateZone(_ zone: ZoneRecord) async throws
-    func resetZones() async throws
+    func validateOwnership() async throws
+    func updateZone(_ zone: Zone) async throws
 }

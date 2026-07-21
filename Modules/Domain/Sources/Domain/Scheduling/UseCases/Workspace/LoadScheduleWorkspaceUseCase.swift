@@ -1,5 +1,7 @@
+import Foundation
+
 public protocol LoadScheduleWorkspaceUseCase: Sendable {
-    func execute() async throws -> ScheduleWorkspace
+    func execute(for date: Date) async throws -> ScheduleWorkspace
 }
 
 public struct DefaultLoadScheduleWorkspaceUseCase: LoadScheduleWorkspaceUseCase {
@@ -9,7 +11,7 @@ public struct DefaultLoadScheduleWorkspaceUseCase: LoadScheduleWorkspaceUseCase 
         self.workspaceProvider = workspaceProvider
     }
 
-    public func execute() async throws -> ScheduleWorkspace {
-        try await workspaceProvider.load()
+    public func execute(for date: Date) async throws -> ScheduleWorkspace {
+        try await workspaceProvider.load(for: date)
     }
 }

@@ -43,7 +43,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
         on selectedDay: Date,
         in timeZone: TimeZone
     ) async throws -> ScheduleOperationResult {
-        _ = try await resetUseCase.execute()
+        _ = try await resetUseCase.execute(on: selectedDay)
         switch scenario {
         case .overlap:
             return try await simulateOverlap(on: selectedDay, in: timeZone)
@@ -60,7 +60,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
         on day: Date,
         in timeZone: TimeZone
     ) async throws -> ScheduleOperationResult {
-        let workZone = try await requiredWorkZone()
+        let workZone = try await requiredWorkZone(on: day)
         let first = try demoTask(title: "Deep work", zoneID: workZone.id, minutes: 90)
         let second = try demoTask(title: "Team sync", zoneID: workZone.id, minutes: 90)
         try await taskRepository.addTask(first)
@@ -98,7 +98,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
         try await sessionRepository.addSession(secondSession)
 
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: day),
             nudge: .overlap(
                 firstSessionID: firstSession.id,
                 secondSessionID: secondSession.id
@@ -110,7 +110,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
         on day: Date,
         in timeZone: TimeZone
     ) async throws -> ScheduleOperationResult {
-        let workZone = try await requiredWorkZone()
+        let workZone = try await requiredWorkZone(on: day)
         let filler = try demoTask(title: "Launch sprint", zoneID: workZone.id, minutes: 450)
         let overflow = try AwanTask(
             id: idGenerator.makeUUID(),
@@ -140,7 +140,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
             )
         )
 
-        let workspace = try await workspaceProvider.load()
+        let workspace = try await workspaceProvider.load(for: day)
         let result = try engine.makePlan(
             for: SchedulingSnapshot(
                 planningDay: day,
@@ -161,7 +161,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
         on day: Date,
         in timeZone: TimeZone
     ) async throws -> ScheduleOperationResult {
-        let workZone = try await requiredWorkZone()
+        let workZone = try await requiredWorkZone(on: day)
         guard let startDay = date(byAddingDays: -1, to: day, in: timeZone) else {
             throw SchedulingError.invalidTimeRange
         }
@@ -190,7 +190,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
             missedSession.replacing(status: .missed)
         )
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: day),
             nudge: .missedDependencyChain(
                 goalID: goal.id,
                 missedTaskID: first.id,
@@ -203,7 +203,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
         on day: Date,
         in timeZone: TimeZone
     ) async throws -> ScheduleOperationResult {
-        let previous = try await requiredWorkZone()
+        let previous = try await requiredWorkZone(on: day)
         let task = try demoTask(
             title: "Morning planning",
             zoneID: previous.id,
@@ -234,7 +234,7 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
         )
         try await zoneRepository.updateZone(updated)
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: day),
             nudge: .zoneReconfigured(
                 zoneID: updated.id,
                 previousZone: previous,
@@ -243,8 +243,8 @@ public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUs
         )
     }
 
-    private func requiredWorkZone() async throws -> Zone {
-        guard let zone = try await zoneRepository.fetchZones()
+    private func requiredWorkZone(on day: Date) async throws -> Zone {
+        guard let zone = try await zoneRepository.fetchZones(for: day)
             .first(where: { $0.name == "Work" }) else {
             throw SchedulingError.invalidScenarioState
         }

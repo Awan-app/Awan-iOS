@@ -119,7 +119,6 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
     case userNotFound
     case invalidSleepSchedule
     case insufficientPoints
-
     case templateNotFound
     case templateOverrideNotFound
     case dayAlreadyAssigned
@@ -179,6 +178,7 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case .userNotFound:                  return "USER_NOT_FOUND"
         case .invalidSleepSchedule:          return "INVALID_SLEEP_SCHEDULE"
         case .insufficientPoints:            return "INSUFFICIENT_POINTS"
+
         case .templateNotFound:              return "TEMPLATE_NOT_FOUND"
         case .templateOverrideNotFound:      return "TEMPLATE_OVERRIDE_NOT_FOUND"
         case .dayAlreadyAssigned:            return "DAY_ALREADY_ASSIGNED"

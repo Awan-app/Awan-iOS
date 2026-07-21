@@ -160,7 +160,7 @@ public struct DefaultMoveFixedSessionsIntoZoneUseCase: MoveFixedSessionsIntoZone
     public func execute(
         _ request: MoveFixedSessionsIntoZoneRequest
     ) async throws -> ScheduleOperationResult {
-        let workspace = try await workspaceProvider.load()
+        let workspace = try await workspaceProvider.load(for: request.selectedDay)
         guard let zone = workspace.zones.first(where: { $0.id == request.zoneID }) else {
             throw SchedulingError.entityNotFound(id: request.zoneID)
         }

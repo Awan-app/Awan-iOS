@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol ScheduleWorkspaceProviding: Sendable {
-    func load() async throws -> ScheduleWorkspace
+    func load(for date: Date) async throws -> ScheduleWorkspace
 }
 
 public struct DefaultScheduleWorkspaceProvider: ScheduleWorkspaceProviding {
@@ -22,8 +22,8 @@ public struct DefaultScheduleWorkspaceProvider: ScheduleWorkspaceProviding {
         self.sessionRepository = sessionRepository
     }
 
-    public func load() async throws -> ScheduleWorkspace {
-        async let zones = zoneRepository.fetchZones()
+    public func load(for date: Date) async throws -> ScheduleWorkspace {
+        async let zones = zoneRepository.fetchZones(for: date)
         async let goals = goalRepository.fetchGoals()
         async let tasks = taskRepository.fetchTasks()
         async let sessions = sessionRepository.fetchSessions()

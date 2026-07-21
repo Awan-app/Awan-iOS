@@ -4,7 +4,7 @@ import Foundation
 extension ScheduleTimelineViewModel {
     func loadWorkspace() {
         runWorkspaceOperation {
-            try await self.useCases.workspace.execute()
+            try await self.useCases.workspace.execute(for: self.state.selectedDay)
         }
     }
 
@@ -43,7 +43,10 @@ extension ScheduleTimelineViewModel {
 
     func deleteTask(_ taskID: UUID) {
         runWorkspaceOperation {
-            try await self.useCases.tasks.delete.execute(taskID: taskID)
+            try await self.useCases.tasks.delete.execute(
+                taskID: taskID,
+                selectedDay: self.state.selectedDay
+            )
         }
     }
 
@@ -86,7 +89,11 @@ extension ScheduleTimelineViewModel {
         }
         runWorkspaceOperation {
             try await self.useCases.sessions.move.execute(
-                MoveSessionRequest(sessionID: sessionID, newTimeRange: range)
+                MoveSessionRequest(
+                    sessionID: sessionID,
+                    newTimeRange: range,
+                    selectedDay: self.state.selectedDay
+                )
             )
         }
     }

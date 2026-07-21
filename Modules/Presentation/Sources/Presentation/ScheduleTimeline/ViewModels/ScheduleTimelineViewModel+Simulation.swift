@@ -14,8 +14,9 @@ extension ScheduleTimelineViewModel {
 
     func resetSimulation() {
         reduce { $0.activeNudge = nil }
+        let selectedDay = state.selectedDay
         runWorkspaceOperation {
-            try await self.useCases.simulation.reset.execute()
+            try await self.useCases.simulation.reset.execute(on: selectedDay)
         }
     }
 }

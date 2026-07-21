@@ -53,7 +53,7 @@ public struct DefaultTaskScheduleReconciler: TaskScheduleReconciling {
     public func reconcile(
         _ request: TaskReconciliationRequest
     ) async throws -> ScheduleOperationResult {
-        let workspace = try await workspaceProvider.load()
+        let workspace = try await workspaceProvider.load(for: request.selectedDay)
         guard let task = workspace.tasks.first(where: { $0.id == request.taskID }) else {
             throw SchedulingError.entityNotFound(id: request.taskID)
         }
@@ -166,7 +166,7 @@ public struct DefaultTaskScheduleReconciler: TaskScheduleReconciling {
         }
 
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: request.selectedDay),
             nudge: result.issues
                 .first(where: { $0.taskID == request.taskID })
                 .map(ScheduleNudge.schedulingIssue)
