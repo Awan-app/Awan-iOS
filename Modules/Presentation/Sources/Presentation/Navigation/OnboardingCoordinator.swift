@@ -5,14 +5,15 @@
 //  Created by Me3bed on 20/07/2026.
 //
 
-import SwiftUI
 import Common
+import SwiftUI
 
 @Observable
 @MainActor
 public final class OnboardingCoordinator: Coordinating {
 
     public var path: NavigationPath = NavigationPath()
+    public var containerStep: OnboardingRoute = .yourName
     public var presentedSheet: OnboardingRoute?
 
     public init() {}
