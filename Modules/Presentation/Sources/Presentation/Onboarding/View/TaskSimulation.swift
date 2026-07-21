@@ -3,34 +3,13 @@ import SwiftUI
 import UIKit
 
 struct TaskSimulation: View {
-    @Environment(AppCoordinator.self) private var appCoordinator
     @Bindable var viewModel: OnboardingViewModel
+    let onContinue: () -> Void
     @FocusState private var isFocused: Bool
 
     var body: some View {
-        ZStack {
-            // 1. Background Layer
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.skyGradientTop, location: 0.0),
-                    .init(color: AppColors.skyGradientBottom, location: 0.5),
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-
-            // 2. Scrollable Content Layer
-            VStack(spacing: 0) {
-                // Top Bar progress
-                OnboardingStepHeader(
-                    currentStep: 5,
-                    totalSteps: viewModel.totalSteps,
-                    onSkip: { viewModel.skipOnboarding() }
-                )
-                .padding(.horizontal, 24)
-
-                ScrollView(showsIndicators: false) {
+        VStack(spacing: 0) {
+            ScrollView(showsIndicators: false) {
                     VStack(spacing: 24) {
 
                         VStack(spacing: 16) {
@@ -73,7 +52,8 @@ struct TaskSimulation: View {
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 16, style: .continuous)
                                                 .stroke(
-                                                    AppColors.accentBlue, lineWidth: isFocused ? 3 : 1)
+                                                    AppColors.accentBlue,
+                                                    lineWidth: isFocused ? 3 : 1)
                                         )
                                         .focused($isFocused)
                                 }
@@ -85,7 +65,9 @@ struct TaskSimulation: View {
                             TaskPreviewCard(
                                 tasks: viewModel.addedTasks,
                                 onDelete: { taskToDelete in
-                                    viewModel.addedTasks.removeAll(where: { $0.id == taskToDelete.id })
+                                    viewModel.addedTasks.removeAll(where: {
+                                        $0.id == taskToDelete.id
+                                    })
                                 }
                             )
                             .padding(.horizontal, 24)
@@ -116,13 +98,15 @@ struct TaskSimulation: View {
                             }
                         )
                         .disabled(
-                            viewModel.taskText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            viewModel.taskText.trimmingCharacters(in: .whitespacesAndNewlines)
+                                .isEmpty
                         )
                         .opacity(
-                            viewModel.taskText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            viewModel.taskText.trimmingCharacters(in: .whitespacesAndNewlines)
+                                .isEmpty
                                 ? 0.5 : 1.0)
 
-                        Button(action: { appCoordinator.onboardingCoordinator.push(.notification) }) {
+                        Button(action: { onContinue() }) {
                             HStack(spacing: 4) {
                                 Text("Skip for now")
                                 Image(systemName: "arrow.right")
@@ -139,7 +123,7 @@ struct TaskSimulation: View {
                             foregroundColor: AppColors.onAccent,
                             size: .large,
                             onTap: {
-                                appCoordinator.onboardingCoordinator.push(.notification)
+                                onContinue()
                             }
                         )
                     }
@@ -147,11 +131,12 @@ struct TaskSimulation: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
+            .onAppear {
+                isFocused = true
+            }
         }
     }
-}
 
 #Preview {
-    TaskSimulation(viewModel: .preview)
-        .environment(AppCoordinator())
+    TaskSimulation(viewModel: .preview, onContinue: {})
 }

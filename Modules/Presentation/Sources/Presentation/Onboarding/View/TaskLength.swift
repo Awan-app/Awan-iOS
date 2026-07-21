@@ -9,8 +9,8 @@ import Common
 import SwiftUI
 
 struct TaskLength: View {
-    @Environment(AppCoordinator.self) private var appCoordinator
     @Bindable var viewModel: OnboardingViewModel
+    let onContinue: () -> Void
 
     let labels = ["30", "45", "60", "90", "120", "3h"]
 
@@ -27,54 +27,41 @@ struct TaskLength: View {
     }
 
     var body: some View {
-        ZStack {
-            // 1. Background Layer
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.skyGradientTop, location: 0.0),
-                    .init(color: AppColors.skyGradientBottom, location: 0.5),
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-
-            // 2. Scrollable Content Layer
-            VStack(spacing: 0) {
-                OnboardingStepHeader(
-                    currentStep: 4,
-                    totalSteps: viewModel.totalSteps,
-                    onSkip: { viewModel.skipOnboarding() }
-                )
-                .padding(.horizontal, 24)
-
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 24) {
-                        TaskLengthTitleArea()
-                        TaskLengthValueDisplay(focusDurationText: focusDurationText)
-                        TaskLengthSlider(focusDurationIndex: $viewModel.focusDurationIndex, labels: labels)
-                        TaskLengthExplanation()
-                        TaskLengthFeelSection(focusDurationIndex: $viewModel.focusDurationIndex)
-                    }
-                    .padding(.bottom, 140)
+        VStack(spacing: 0) {
+           // ScrollView(showsIndicators: false) {
+                VStack(spacing: 30) {
+                    TaskLengthTitleArea()
+                    TaskLengthValueDisplay(focusDurationText: focusDurationText)
+                    TaskLengthSlider(
+                        focusDurationIndex: $viewModel.focusDurationIndex, labels: labels)
+                    TaskLengthExplanation()
+                    TaskLengthFeelSection(focusDurationIndex: $viewModel.focusDurationIndex)
                 }
-            }
+                .padding(.bottom, 24)
+            //}
 
             // 3. Floating Bottom Action Area Layer
             VStack {
-                Spacer()
-
                 AppButton(
                     title: "CONTINUE",
                     icon: nil,
                     color: AppColors.accentBlue,
                     foregroundColor: AppColors.onAccent,
                     size: .large,
-                    onTap: { appCoordinator.onboardingCoordinator.push(.taskSimulation) }
+                    onTap: { onContinue() }
                 )
                 .padding(.horizontal, 24)
-                .padding(.bottom, 20)
-                .background(Color.clear)
+                .padding(.bottom, 24)
+                
+                Button(action: { onContinue() }) {
+                    HStack(spacing: 4) {
+                        Text("Skip for now")
+                        Image(systemName: "arrow.right")
+                    }
+                    .font(AppFonts.subheadlineHeavy)
+                    .foregroundColor(AppColors.accentBlue)
+                }
+                .padding(.vertical, 8)
             }
         }
     }
@@ -95,6 +82,5 @@ private struct TaskLengthExplanation: View {
 }
 
 #Preview {
-    TaskLength(viewModel: .preview)
-        .environment(AppCoordinator())
+    TaskLength(viewModel: .preview, onContinue: {})
 }

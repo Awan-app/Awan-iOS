@@ -9,18 +9,11 @@ import Common
 import SwiftUI
 
 struct OnboardingWakeSleepView: View {
-    @Environment(AppCoordinator.self) private var appCoordinator
     @Bindable var viewModel: OnboardingViewModel
+    let onContinue: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
-            OnboardingStepHeader(
-                currentStep: 2,
-                totalSteps: viewModel.totalSteps,
-                onSkip: { viewModel.skipOnboarding() }
-            )
-            .padding(.horizontal, 24)
-
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     headerSection
@@ -39,17 +32,6 @@ struct OnboardingWakeSleepView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
         }
-        .background(
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.skyGradientTop, location: 0.0),
-                    .init(color: AppColors.skyGradientBottom, location: 0.5),
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-        )
     }
 
     // MARK: - Sections
@@ -142,13 +124,12 @@ struct OnboardingWakeSleepView: View {
             foregroundColor: AppColors.onAccent,
             size: .large,
             onTap: {
-                appCoordinator.onboardingCoordinator.push(.suggestedZones)
+                onContinue()
             }
         )
     }
 }
 
 #Preview {
-    OnboardingWakeSleepView(viewModel: .preview)
-        .environment(AppCoordinator())
+    OnboardingWakeSleepView(viewModel: .preview, onContinue: {})
 }

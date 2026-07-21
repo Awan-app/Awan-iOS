@@ -64,7 +64,16 @@ struct AddRealTask: View {
                         color: AppColors.accentBlue,
                         foregroundColor: AppColors.onAccent,
                         size: .large,
-                        onTap: { appCoordinator.onboardingCoordinator.push(.notification) }
+                        onTap: {
+                            // Set the hidden container to .notification instantly (no animation),
+                            // then let the native NavigationStack pop be the only visible motion.
+                            var t = Transaction()
+                            t.disablesAnimations = true
+                            withTransaction(t) {
+                                appCoordinator.onboardingCoordinator.containerStep = .notification
+                            }
+                            appCoordinator.onboardingCoordinator.pop()
+                        }
                     )
                     .padding(.horizontal, 24)
                     .padding(.bottom, 24)

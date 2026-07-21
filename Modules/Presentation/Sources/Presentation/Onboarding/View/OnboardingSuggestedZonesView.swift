@@ -9,18 +9,11 @@ import Common
 import SwiftUI
 
 struct OnboardingSuggestedZonesView: View {
-    @Environment(AppCoordinator.self) private var appCoordinator
     @Bindable var viewModel: OnboardingViewModel
+    let onContinue: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
-            OnboardingStepHeader(
-                currentStep: 3,
-                totalSteps: viewModel.totalSteps,
-                onSkip: { viewModel.skipOnboarding() }
-            )
-            .padding(.horizontal, 24)
-
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     headerSection
@@ -38,17 +31,6 @@ struct OnboardingSuggestedZonesView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
         }
-        .background(
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.skyGradientTop, location: 0.0),
-                    .init(color: AppColors.skyGradientBottom, location: 0.5),
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-        )
     }
 
     // MARK: - Sections
@@ -106,7 +88,7 @@ struct OnboardingSuggestedZonesView: View {
                 shadowColor: .clear,
                 useGradient: false,
                 onTap: {
-                    appCoordinator.onboardingCoordinator.push(.taskLength)
+                    onContinue()
                 }
             )
 
@@ -116,7 +98,7 @@ struct OnboardingSuggestedZonesView: View {
                 color: AppColors.accentBlue,
                 foregroundColor: AppColors.onAccent,
                 onTap: {
-                    appCoordinator.onboardingCoordinator.push(.taskLength)
+                    onContinue()
                 }
             )
         }
@@ -124,6 +106,5 @@ struct OnboardingSuggestedZonesView: View {
 }
 
 #Preview {
-    OnboardingSuggestedZonesView(viewModel: .preview)
-        .environment(AppCoordinator())
+    OnboardingSuggestedZonesView(viewModel: .preview, onContinue: {})
 }

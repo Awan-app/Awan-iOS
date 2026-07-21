@@ -57,23 +57,19 @@ struct AppRootView: View {
 
     private var onboardingFlow: some View {
         NavigationStack(path: Bindable(coordinator.onboardingCoordinator).path) {
+            // OnboardingWelcomeView stays as the NavigationStack root.
+            // Its "Let's go" button pushes .yourName — unchanged.
+            // .yourName now resolves to OnboardingContainerView, which
+            // renders OnboardingYourNameView internally as its first step.
             factory.makeOnboardingWelcomeView()
                 .navigationDestination(for: OnboardingRoute.self) { route in
                     switch route {
                     case .yourName:
-                        factory.makeOnboardingYourNameView()
-                    case .wakeSleep:
-                        factory.makeOnboardingWakeSleepView()
-                    case .suggestedZones:
-                        factory.makeOnboardingSuggestedZonesView()
-                    case .taskLength:
-                        factory.makeTaskLengthView()
-                    case .taskSimulation:
-                        factory.makeTaskSimulationView()
-                    case .addRealTask:
-                        factory.makeAddRealTaskView()
-                    case .notification:
-                        factory.makeNotificationView()
+                        factory.makeOnboardingContainerView()
+//                    case .notification:
+//                        factory.makeAddRealTaskView()
+                    default:
+                        EmptyView()
                     }
                 }
         }
@@ -85,3 +81,5 @@ struct AppRootView: View {
         }
     }
 }
+//    }
+//}

@@ -8,7 +8,7 @@
 import SwiftUI
 import Common
 
-private struct TaskLengthSlider: View {
+struct TaskLengthSlider: View {
     @Binding var focusDurationIndex: Int
     let labels: [String]
     

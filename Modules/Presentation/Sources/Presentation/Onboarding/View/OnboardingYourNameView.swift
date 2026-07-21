@@ -5,12 +5,12 @@
 //  Created by Me3bed on 20/07/2026.
 //
 
-import SwiftUI
 import Common
+import SwiftUI
 
 struct OnboardingYourNameView: View {
-    @Environment(AppCoordinator.self) private var appCoordinator
     @Bindable var viewModel: OnboardingViewModel
+    let onContinue: () -> Void
     @FocusState private var focusedField: NameField?
     @State private var animatePreviewLogo = false
 
@@ -20,39 +20,20 @@ struct OnboardingYourNameView: View {
     }
 
     var body: some View {
-        ZStack {
-            // 1. Background Layer (Fixed, won't shift with keyboard)
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.skyGradientTop, location: 0.0),
-                    .init(color: AppColors.skyGradientBottom, location: 0.5)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-            
-            // 2. Content Layer
-            VStack(spacing: 0) {
-                OnboardingStepHeader(
-                    currentStep: 1,
-                    totalSteps: viewModel.totalSteps,
-                    onSkip: { viewModel.skipOnboarding() }
-                )
-                .padding(.horizontal, 24)
-
-                ScrollView(showsIndicators: false) {
+        VStack(spacing: 0) {
+            ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 20) {
                         headerSection
                         ChangeAnytimeTag()
                         nameFieldsSection
                         previewSection
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 24)
                     .padding(.top, 16)
                     .padding(.bottom, 24)
                 }
-            
+
                 // Bottom Action Area
                 VStack {
                     continueButton
@@ -61,10 +42,6 @@ struct OnboardingYourNameView: View {
                 }
             }
         }
-        .onAppear {
-            focusedField = .firstName
-        }
-    }
 
     // MARK: - Sections
 
@@ -184,24 +161,19 @@ struct OnboardingYourNameView: View {
         AppButton(
             title: L10n.Common.continue,
             icon: nil,
-            color: viewModel.isNameValid
-                ? AppColors.accentBlue
-                : AppColors.skyGradientTop.opacity(0.4),
-            foregroundColor: viewModel.isNameValid
-                ? AppColors.onAccent
-                : AppColors.brandDarkBlue.opacity(0.5),
-            shadowColor: viewModel.isNameValid ? nil : .clear,
+            color: AppColors.accentBlue,
+            foregroundColor: AppColors.onAccent,
             size: .large,
             onTap: {
                 guard viewModel.isNameValid else { return }
-                appCoordinator.onboardingCoordinator.push(.wakeSleep)
+                onContinue()
             }
         )
         .disabled(!viewModel.isNameValid)
+        .opacity(viewModel.isNameValid ? 1.0 : 0.5)
     }
 }
 
 #Preview {
-    OnboardingYourNameView(viewModel: .preview)
-        .environment(AppCoordinator())
+    OnboardingYourNameView(viewModel: .preview, onContinue: {})
 }

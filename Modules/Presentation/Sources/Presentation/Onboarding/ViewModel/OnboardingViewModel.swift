@@ -16,7 +16,7 @@ public final class OnboardingViewModel {
 
     // MARK: - Step tracking
 
-    public let totalSteps = 7
+    public let totalSteps = 6
 
     // MARK: - Your Name
 
