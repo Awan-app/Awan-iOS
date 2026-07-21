@@ -8,45 +8,6 @@
 import Foundation
 import AwaNetwork
 
-// MARK: - Request DTOs
-
-public struct CreateTemplateOverrideRequestDTO: Encodable, Sendable {
-    public let name: String?
-    public let dateOfDay: String
-    public let zones: [AddZoneRequestDTO]?
-    
-    public init(name: String?, dateOfDay: String, zones: [AddZoneRequestDTO]?) {
-        self.name = name
-        self.dateOfDay = dateOfDay
-        self.zones = zones
-    }
-}
-
-public struct UpdateTemplateOverrideRequestDTO: Encodable, Sendable {
-    public let name: String?
-    public let dateOfDay: String
-    
-    public init(name: String?, dateOfDay: String) {
-        self.name = name
-        self.dateOfDay = dateOfDay
-    }
-}
-
-// MARK: - Response DTOs
-
-public struct TemplateOverrideResponseDTO: Decodable, Sendable {
-    public let id: UUID
-    public let name: String?
-    public let dateOfDay: String
-    public let zones: [ZoneResponseDTO]
-    
-    public init(id: UUID, name: String?, dateOfDay: String, zones: [ZoneResponseDTO]) {
-        self.id = id
-        self.name = name
-        self.dateOfDay = dateOfDay
-        self.zones = zones
-    }
-}
 
 // MARK: - Endpoint
 
