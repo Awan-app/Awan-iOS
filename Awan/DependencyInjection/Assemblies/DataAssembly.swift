@@ -85,7 +85,8 @@ struct DataAssembly: Assembly {
 
         container.register(OnboardingRepositoryProtocol.self) { resolver in
             OnboardingRepository(
-                remoteDataSource: Self.resolve(OnboardingDataSourceProtocol.self, from: resolver)
+                remoteDataSource: Self.resolve(OnboardingDataSourceProtocol.self, from: resolver),
+                authSessionDataSource: Self.resolve(AuthSessionDataSource.self, from: resolver)
             )
         }
         .inObjectScope(.container)

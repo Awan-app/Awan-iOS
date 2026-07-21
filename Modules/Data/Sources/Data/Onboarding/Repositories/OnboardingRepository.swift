@@ -2,9 +2,14 @@ import Domain
 
 public final class OnboardingRepository: OnboardingRepositoryProtocol {
     private let remoteDataSource: any OnboardingDataSourceProtocol
+    private let authSessionDataSource: any AuthSessionDataSource
 
-    public init(remoteDataSource: any OnboardingDataSourceProtocol) {
+    public init(
+        remoteDataSource: any OnboardingDataSourceProtocol,
+        authSessionDataSource: any AuthSessionDataSource
+    ) {
         self.remoteDataSource = remoteDataSource
+        self.authSessionDataSource = authSessionDataSource
     }
 
     public func completeOnboarding(
@@ -15,9 +20,7 @@ public final class OnboardingRepository: OnboardingRepositoryProtocol {
                 OnboardingMapper.toDTO(request)
             )
             let profile = try OnboardingMapper.toDomain(response)
-
-            // Future auth-session synchronization: persist the current keychain session with `isNew` set to `false` after onboarding succeeds so relaunch routing remains correct.
-            // try authSessionDataSource.markOnboardingCompleted()
+            try authSessionDataSource.markOnboardingCompleted()
 
             return profile
         } catch {

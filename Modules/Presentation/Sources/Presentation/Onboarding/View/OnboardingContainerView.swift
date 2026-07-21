@@ -56,11 +56,11 @@ struct OnboardingContainerView: View {
                         viewModel: viewModel,
                         onContinue: {
                             viewModel.notificationsEnabled = true
-                            viewModel.completeOnboarding()
+                            Task { await viewModel.completeOnboarding() }
                         },
                         onSkipNotifications: {
                             viewModel.notificationsEnabled = false
-                            viewModel.completeOnboarding()
+                            Task { await viewModel.completeOnboarding() }
                         }
                     )
                 default:
@@ -89,6 +89,23 @@ struct OnboardingContainerView: View {
             .impact(weight: .light, intensity: 1.0),
             trigger: coordinator.onboardingCoordinator.containerStep
         )
+        .alert(
+            "Couldn't complete onboarding",
+            isPresented: Binding(
+                get: { viewModel.completionErrorMessage != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        viewModel.dismissCompletionError()
+                    }
+                }
+            )
+        ) {
+            Button("OK", role: .cancel) {
+                viewModel.dismissCompletionError()
+            }
+        } message: {
+            Text(viewModel.completionErrorMessage ?? "Please try again.")
+        }
     }
 
     // Directional transition: flips based on isGoingBack so content always
