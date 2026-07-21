@@ -120,6 +120,9 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
     case invalidSleepSchedule
     case insufficientPoints
 
+    case sessionNotFound
+    case zoneNotFound
+
     public typealias RawValue = String
 
     public init(rawValue: String) {
@@ -143,6 +146,8 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case "USER_NOT_FOUND":                self = .userNotFound
         case "INVALID_SLEEP_SCHEDULE":        self = .invalidSleepSchedule
         case "INSUFFICIENT_POINTS":           self = .insufficientPoints
+        case "SESSION_NOT_FOUND":             self = .sessionNotFound
+        case "ZONE_NOT_FOUND":                self = .zoneNotFound
         default:                              self = .unknown(rawValue)
         }
     }
@@ -168,6 +173,8 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case .userNotFound:                  return "USER_NOT_FOUND"
         case .invalidSleepSchedule:          return "INVALID_SLEEP_SCHEDULE"
         case .insufficientPoints:            return "INSUFFICIENT_POINTS"
+        case .sessionNotFound:               return "SESSION_NOT_FOUND"
+        case .zoneNotFound:                  return "ZONE_NOT_FOUND"
         case .unknown(let code):             return code
         }
     }
