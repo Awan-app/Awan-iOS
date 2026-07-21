@@ -5,22 +5,15 @@
 //  Created by Me3bed on 20/07/2026.
 //
 
-import SwiftUI
 import Common
+import SwiftUI
 
 struct OnboardingWakeSleepView: View {
-    @Environment(AppCoordinator.self) private var appCoordinator
     @Bindable var viewModel: OnboardingViewModel
+    let onContinue: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
-            OnboardingStepHeader(
-                currentStep: 2,
-                totalSteps: viewModel.totalSteps,
-                onSkip: { viewModel.skipOnboarding() }
-            )
-            .padding(.horizontal, 24)
-
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     headerSection
@@ -39,8 +32,6 @@ struct OnboardingWakeSleepView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
         }
-        .background(AppColors.skyGradientBottom.ignoresSafeArea())
-        .navigationBarBackButtonHidden(true)
     }
 
     // MARK: - Sections
@@ -133,8 +124,12 @@ struct OnboardingWakeSleepView: View {
             foregroundColor: AppColors.onAccent,
             size: .large,
             onTap: {
-                appCoordinator.onboardingCoordinator.push(.suggestedZones)
+                onContinue()
             }
         )
     }
+}
+
+#Preview {
+    OnboardingWakeSleepView(viewModel: .preview, onContinue: {})
 }

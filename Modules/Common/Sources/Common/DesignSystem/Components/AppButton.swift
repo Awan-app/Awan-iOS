@@ -57,7 +57,9 @@ public struct AppButton: View {
                         Image(iconAsset)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: size == .regular ? 20 : 16, height: size == .regular ? 20 : 16)
+                            .frame(
+                                width: size == .regular ? 20 : 16,
+                                height: size == .regular ? 20 : 16)
                     }
                 } else {
                     Text(title)
@@ -159,6 +161,6 @@ private struct PressedDepthButtonStyle: ButtonStyle {
         )
     }
     .padding()
-    .background(AppColors.screenBackground)
+    .background(Color(.black))
     .preferredColorScheme(.dark)
 }

@@ -5,12 +5,12 @@
 //  Created by Me3bed on 20/07/2026.
 //
 
-import SwiftUI
 import Common
+import SwiftUI
 
 struct OnboardingYourNameView: View {
-    @Environment(AppCoordinator.self) private var appCoordinator
     @Bindable var viewModel: OnboardingViewModel
+    let onContinue: () -> Void
     @FocusState private var focusedField: NameField?
     @State private var animatePreviewLogo = false
 
@@ -21,36 +21,27 @@ struct OnboardingYourNameView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            OnboardingStepHeader(
-                currentStep: 1,
-                totalSteps: viewModel.totalSteps,
-                onSkip: { viewModel.skipOnboarding() }
-            )
-            .padding(.horizontal, 24)
-
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    headerSection
-                    ChangeAnytimeTag()
-                    nameFieldsSection
-                    previewSection
+            ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        headerSection
+                        ChangeAnytimeTag()
+                        nameFieldsSection
+                        previewSection
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
+
+                // Bottom Action Area
+                VStack {
+                    continueButton
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 24)
+                }
             }
-
-            Spacer(minLength: 0)
-
-            continueButton
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
         }
-        .background(AppColors.skyGradientBottom.ignoresSafeArea())
-        .navigationBarBackButtonHidden(true)
-        .onAppear {
-            focusedField = .firstName
-        }
-    }
 
     // MARK: - Sections
 
@@ -170,19 +161,19 @@ struct OnboardingYourNameView: View {
         AppButton(
             title: L10n.Common.continue,
             icon: nil,
-            color: viewModel.isNameValid
-                ? AppColors.accentBlue
-                : AppColors.skyGradientTop.opacity(0.4),
-            foregroundColor: viewModel.isNameValid
-                ? AppColors.onAccent
-                : AppColors.brandDarkBlue.opacity(0.5),
-            shadowColor: viewModel.isNameValid ? nil : .clear,
+            color: AppColors.accentBlue,
+            foregroundColor: AppColors.onAccent,
             size: .large,
             onTap: {
                 guard viewModel.isNameValid else { return }
-                appCoordinator.onboardingCoordinator.push(.wakeSleep)
+                onContinue()
             }
         )
         .disabled(!viewModel.isNameValid)
+        .opacity(viewModel.isNameValid ? 1.0 : 0.5)
     }
+}
+
+#Preview {
+    OnboardingYourNameView(viewModel: .preview, onContinue: {})
 }

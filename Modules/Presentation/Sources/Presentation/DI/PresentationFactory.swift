@@ -47,16 +47,13 @@ public struct PresentationFactory {
         OnboardingWelcomeView(viewModel: onboardingViewModel)
     }
 
-    func makeOnboardingYourNameView() -> some View {
-        OnboardingYourNameView(viewModel: onboardingViewModel)
+    func makeOnboardingContainerView() -> some View {
+        OnboardingContainerView(
+            viewModel: onboardingViewModel
+        )
     }
 
-    func makeOnboardingWakeSleepView() -> some View {
-        OnboardingWakeSleepView(viewModel: onboardingViewModel)
-    }
-
-    func makeOnboardingSuggestedZonesView() -> some View {
-        OnboardingSuggestedZonesView(viewModel: onboardingViewModel)
-    }
+//    func makeAddRealTaskView() -> some View {
+//        AddRealTask(viewModel: onboardingViewModel)
+//    }
 }
-

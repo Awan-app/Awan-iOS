@@ -41,21 +41,12 @@ struct OnboardingWelcomeView: View {
             )
             .ignoresSafeArea()
         )
-        .navigationBarBackButtonHidden(true)
     }
 
     // MARK: - Sections
 
-    @State private var animateMascot = false
-
     private var mascotSection: some View {
         AuthCloudLogoView()
-            .offset(y: animateMascot ? 0 : -30)
-            .onAppear {
-                withAnimation(.interpolatingSpring(stiffness: 150, damping: 6).delay(0.2)) {
-                    animateMascot = true
-                }
-            }
     }
 
     private var titleSection: some View {
@@ -100,4 +91,9 @@ struct OnboardingWelcomeView: View {
             }
         }
     }
+}
+
+#Preview {
+    OnboardingWelcomeView(viewModel: .preview)
+        .environment(AppCoordinator())
 }
