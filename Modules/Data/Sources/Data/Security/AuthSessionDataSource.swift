@@ -6,6 +6,7 @@ public protocol AuthSessionDataSource: Sendable {
 
     func deviceId() throws -> String
     func save(_ session: AuthSession) throws
+    func markOnboardingCompleted() throws
     func clear() throws
     func observeSessionUser() -> AsyncStream<AuthSessionUser?>
 }
@@ -23,6 +24,25 @@ public final class LocalAuthSessionDataSource: AuthSessionDataSource {
 
     public func save(_ session: AuthSession) throws {
         try AuthSessionStore.save(session)
+    }
+
+    public func markOnboardingCompleted() throws {
+        guard let session = AuthSessionStore.session else {
+            throw AuthSessionDataSourceError.missingSession
+        }
+
+        try save(
+            AuthSession(
+                accessToken: session.accessToken,
+                refreshToken: session.refreshToken,
+                accessTokenExpiresAt: session.accessTokenExpiresAt,
+                user: AuthSessionUser(
+                    id: session.user.id,
+                    email: session.user.email,
+                    isNew: false
+                )
+            )
+        )
     }
 
     public func clear() throws {
@@ -43,4 +63,8 @@ public final class LocalAuthSessionDataSource: AuthSessionDataSource {
             continuation.onTermination = { _ in task.cancel() }
         }
     }
+}
+
+private enum AuthSessionDataSourceError: Error {
+    case missingSession
 }

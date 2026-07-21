@@ -1,7 +1,10 @@
 import Foundation
 
 public protocol ApplyScheduleCandidateUseCase: Sendable {
-    func execute(_ candidate: ResolutionCandidate) async throws -> ScheduleOperationResult
+    func execute(
+        _ candidate: ResolutionCandidate,
+        on selectedDay: Date
+    ) async throws -> ScheduleOperationResult
 }
 
 public struct DefaultApplyScheduleCandidateUseCase: ApplyScheduleCandidateUseCase {
@@ -20,7 +23,8 @@ public struct DefaultApplyScheduleCandidateUseCase: ApplyScheduleCandidateUseCas
     }
 
     public func execute(
-        _ candidate: ResolutionCandidate
+        _ candidate: ResolutionCandidate,
+        on selectedDay: Date
     ) async throws -> ScheduleOperationResult {
         for draft in candidate.sessionDrafts {
             try await sessionRepository.addSession(
@@ -35,14 +39,17 @@ public struct DefaultApplyScheduleCandidateUseCase: ApplyScheduleCandidateUseCas
             )
         }
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: selectedDay),
             nudge: nil
         )
     }
 }
 
 public protocol SeparateOverlappingSessionsUseCase: Sendable {
-    func execute(_ request: OverlappingSessionsRequest) async throws -> ScheduleOperationResult
+    func execute(
+        _ request: OverlappingSessionsRequest,
+        on selectedDay: Date
+    ) async throws -> ScheduleOperationResult
 }
 
 public struct DefaultSeparateOverlappingSessionsUseCase: SeparateOverlappingSessionsUseCase {
@@ -58,7 +65,8 @@ public struct DefaultSeparateOverlappingSessionsUseCase: SeparateOverlappingSess
     }
 
     public func execute(
-        _ request: OverlappingSessionsRequest
+        _ request: OverlappingSessionsRequest,
+        on selectedDay: Date
     ) async throws -> ScheduleOperationResult {
         let sessions = try await sessionRepository.fetchSessions()
         guard let first = sessions.first(where: { $0.id == request.firstSessionID }),
@@ -74,14 +82,17 @@ public struct DefaultSeparateOverlappingSessionsUseCase: SeparateOverlappingSess
             first.replacing(timeRange: range, blocking: true)
         )
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: selectedDay),
             nudge: nil
         )
     }
 }
 
 public protocol MoveOverlappingSessionUseCase: Sendable {
-    func execute(_ request: OverlappingSessionsRequest) async throws -> ScheduleOperationResult
+    func execute(
+        _ request: OverlappingSessionsRequest,
+        on selectedDay: Date
+    ) async throws -> ScheduleOperationResult
 }
 
 public struct DefaultMoveOverlappingSessionUseCase: MoveOverlappingSessionUseCase {
@@ -97,7 +108,8 @@ public struct DefaultMoveOverlappingSessionUseCase: MoveOverlappingSessionUseCas
     }
 
     public func execute(
-        _ request: OverlappingSessionsRequest
+        _ request: OverlappingSessionsRequest,
+        on selectedDay: Date
     ) async throws -> ScheduleOperationResult {
         let sessions = try await sessionRepository.fetchSessions()
         guard let first = sessions.first(where: { $0.id == request.firstSessionID }),
@@ -113,7 +125,7 @@ public struct DefaultMoveOverlappingSessionUseCase: MoveOverlappingSessionUseCas
             second.replacing(timeRange: range, blocking: true)
         )
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: selectedDay),
             nudge: nil
         )
     }
@@ -121,7 +133,8 @@ public struct DefaultMoveOverlappingSessionUseCase: MoveOverlappingSessionUseCas
 
 public protocol ShiftGoalDependencyChainUseCase: Sendable {
     func execute(
-        _ request: ShiftGoalDependencyChainRequest
+        _ request: ShiftGoalDependencyChainRequest,
+        on selectedDay: Date
     ) async throws -> ScheduleOperationResult
 }
 
@@ -144,7 +157,8 @@ public struct DefaultShiftGoalDependencyChainUseCase: ShiftGoalDependencyChainUs
     }
 
     public func execute(
-        _ request: ShiftGoalDependencyChainRequest
+        _ request: ShiftGoalDependencyChainRequest,
+        on selectedDay: Date
     ) async throws -> ScheduleOperationResult {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = request.timeZone
@@ -196,14 +210,17 @@ public struct DefaultShiftGoalDependencyChainUseCase: ShiftGoalDependencyChainUs
             )
         }
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: selectedDay),
             nudge: nil
         )
     }
 }
 
 public protocol StackDependentTasksUseCase: Sendable {
-    func execute(_ request: StackDependentTasksRequest) async throws -> ScheduleOperationResult
+    func execute(
+        _ request: StackDependentTasksRequest,
+        on selectedDay: Date
+    ) async throws -> ScheduleOperationResult
 }
 
 public struct DefaultStackDependentTasksUseCase: StackDependentTasksUseCase {
@@ -219,7 +236,8 @@ public struct DefaultStackDependentTasksUseCase: StackDependentTasksUseCase {
     }
 
     public func execute(
-        _ request: StackDependentTasksRequest
+        _ request: StackDependentTasksRequest,
+        on selectedDay: Date
     ) async throws -> ScheduleOperationResult {
         let sessions = try await sessionRepository.fetchSessions()
         guard let missed = sessions.first(where: { $0.taskID == request.missedTaskID }),
@@ -236,14 +254,17 @@ public struct DefaultStackDependentTasksUseCase: StackDependentTasksUseCase {
             )
         }
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: selectedDay),
             nudge: nil
         )
     }
 }
 
 public protocol MakeTaskIndependentUseCase: Sendable {
-    func execute(_ request: MakeTaskIndependentRequest) async throws -> ScheduleOperationResult
+    func execute(
+        _ request: MakeTaskIndependentRequest,
+        on selectedDay: Date
+    ) async throws -> ScheduleOperationResult
 }
 
 public struct DefaultMakeTaskIndependentUseCase: MakeTaskIndependentUseCase {
@@ -259,7 +280,8 @@ public struct DefaultMakeTaskIndependentUseCase: MakeTaskIndependentUseCase {
     }
 
     public func execute(
-        _ request: MakeTaskIndependentRequest
+        _ request: MakeTaskIndependentRequest,
+        on selectedDay: Date
     ) async throws -> ScheduleOperationResult {
         let tasks = try await taskRepository.fetchTasks()
         guard let task = tasks.first(where: { $0.id == request.taskID }) else {
@@ -281,7 +303,7 @@ public struct DefaultMakeTaskIndependentUseCase: MakeTaskIndependentUseCase {
             )
         )
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: selectedDay),
             nudge: nil
         )
     }

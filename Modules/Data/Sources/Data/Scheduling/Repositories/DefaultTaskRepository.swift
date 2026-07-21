@@ -2,23 +2,37 @@ import Domain
 import Foundation
 
 public struct DefaultTaskRepository: TaskRepository {
-    private let store: InMemoryScheduleDataSource
+    private let localDataSource: any LocalTaskDataSource
 
-    public init(store: InMemoryScheduleDataSource) { self.store = store }
+    public init(localDataSource: any LocalTaskDataSource) {
+        self.localDataSource = localDataSource
+    }
 
     public func fetchTasks() async throws -> [AwanTask] {
-        try await store.fetchTasks().map { try $0.toDomain() }
+        try await localDataSource.fetchTasks()
     }
     public func addTask(_ task: AwanTask) async throws {
-        try await store.addTask(TaskRecord(domain: task))
+        try await localDataSource.addTask(task)
     }
     public func updateTask(_ task: AwanTask) async throws {
-        try await store.updateTask(TaskRecord(domain: task))
+        try await localDataSource.updateTask(task)
     }
     public func deleteTask(id: UUID) async throws {
-        try await store.deleteTask(id: id)
+        try await localDataSource.deleteTask(id: id)
     }
     public func deleteAllTasks() async throws {
-        try await store.deleteAllTasks()
+        try await localDataSource.deleteAllTasks()
+    }
+    public func addDependency(taskID: UUID, dependsOnID: UUID) async throws {
+        try await localDataSource.addDependency(taskID: taskID, dependsOnID: dependsOnID)
+    }
+    public func removeDependency(taskID: UUID, dependsOnID: UUID) async throws {
+        try await localDataSource.removeDependency(taskID: taskID, dependsOnID: dependsOnID)
+    }
+    public func fetchDependencies(taskID: UUID) async throws -> [AwanTask] {
+        try await localDataSource.fetchDependencies(taskID: taskID)
+    }
+    public func fetchDependents(taskID: UUID) async throws -> [AwanTask] {
+        try await localDataSource.fetchDependents(taskID: taskID)
     }
 }

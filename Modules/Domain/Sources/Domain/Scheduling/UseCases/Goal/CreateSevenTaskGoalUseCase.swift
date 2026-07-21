@@ -66,7 +66,7 @@ public struct DefaultCreateSevenTaskGoalUseCase: CreateSevenTaskGoalUseCase {
             try await taskRepository.addTask(task)
         }
 
-        var workspace = try await workspaceProvider.load()
+        var workspace = try await workspaceProvider.load(for: request.startDay)
         var firstIssue: SchedulingIssue?
         for index in tasks.indices {
             guard let planningDay = date(
@@ -90,7 +90,7 @@ public struct DefaultCreateSevenTaskGoalUseCase: CreateSevenTaskGoalUseCase {
                 where: { $0.taskID == tasks[index].id }
             ) {
                 try await sessionRepository.addSession(makeSession(from: draft))
-                workspace = try await workspaceProvider.load()
+                workspace = try await workspaceProvider.load(for: request.startDay)
             } else if firstIssue == nil {
                 firstIssue = result.issues.first(where: { $0.taskID == tasks[index].id })
                 break
@@ -98,7 +98,7 @@ public struct DefaultCreateSevenTaskGoalUseCase: CreateSevenTaskGoalUseCase {
         }
 
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: request.startDay),
             nudge: firstIssue.map(ScheduleNudge.schedulingIssue)
         )
     }

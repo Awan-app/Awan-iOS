@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol DeleteTaskUseCase: Sendable {
-    func execute(taskID: UUID) async throws -> ScheduleWorkspace
+    func execute(taskID: UUID, selectedDay: Date) async throws -> ScheduleWorkspace
 }
 
 public struct DefaultDeleteTaskUseCase: DeleteTaskUseCase {
@@ -19,7 +19,7 @@ public struct DefaultDeleteTaskUseCase: DeleteTaskUseCase {
         self.sessionRepository = sessionRepository
     }
 
-    public func execute(taskID: UUID) async throws -> ScheduleWorkspace {
+    public func execute(taskID: UUID, selectedDay: Date) async throws -> ScheduleWorkspace {
         let tasks = try await taskRepository.fetchTasks()
         for task in tasks where task.dependencyIDs.contains(taskID) {
             try await taskRepository.updateTask(
@@ -40,6 +40,6 @@ public struct DefaultDeleteTaskUseCase: DeleteTaskUseCase {
         }
         try await sessionRepository.deleteSessions(taskID: taskID)
         try await taskRepository.deleteTask(id: taskID)
-        return try await workspaceProvider.load()
+        return try await workspaceProvider.load(for: selectedDay)
     }
 }

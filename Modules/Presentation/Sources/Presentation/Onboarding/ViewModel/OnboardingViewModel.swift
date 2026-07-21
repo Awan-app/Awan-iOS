@@ -69,6 +69,11 @@ public final class OnboardingViewModel {
 
     public var notificationsEnabled: Bool = false
 
+    // MARK: - Completion
+
+    public private(set) var isCompleting: Bool = false
+    public private(set) var completionErrorMessage: String?
+
     // MARK: - Callbacks
 
     public var onComplete: (() -> Void)?
@@ -100,12 +105,49 @@ public final class OnboardingViewModel {
 
     // MARK: - Complete / Skip
 
-    public func completeOnboarding() {
-        onComplete?()
+    public func completeOnboarding() async {
+        guard !isCompleting else { return }
+
+        isCompleting = true
+        completionErrorMessage = nil
+        defer { isCompleting = false }
+
+        do {
+            let request = try makeDraft().makeRequest()
+            _ = try await completeOnboardingUseCase.execute(request)
+            onComplete?()
+        } catch is CancellationError {
+            return
+        } catch {
+            completionErrorMessage = error.localizedDescription
+        }
     }
 
     public func skipOnboarding() {
         onSkip?()
+    }
+
+    public func dismissCompletionError() {
+        completionErrorMessage = nil
+    }
+
+    private func makeDraft(calendar: Calendar = .current) -> OnboardingDraft {
+        let birthDate = calendar.date(
+            from: DateComponents(year: 2000, month: 1, day: 1)
+        ) ?? Date(timeIntervalSince1970: 946_684_800)
+        let sessionDurations = [30, 45, 60, 90, 120, 180]
+        let durationIndex = min(max(focusDurationIndex, 0), sessionDurations.count - 1)
+
+        return OnboardingDraft(
+            firstName: firstName,
+            lastName: lastName,
+            birthDate: birthDate,
+            timezone: TimeZone.current.identifier,
+            preferredSessionDuration: sessionDurations[durationIndex],
+            bufferBetweenSessions: 10,
+            wakeupTime: wakeupTime,
+            sleepTime: sleepTime
+        )
     }
 
     // MARK: - Default zones
@@ -143,4 +185,3 @@ public final class OnboardingViewModel {
         ]
     }
 }
-

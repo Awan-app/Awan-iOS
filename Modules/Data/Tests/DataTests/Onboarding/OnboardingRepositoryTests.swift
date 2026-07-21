@@ -8,7 +8,11 @@ final class OnboardingRepositoryTests: XCTestCase {
     func testRepositoryMapsRequestAndResponse() async throws {
         let response = makeResponse()
         let dataSource = OnboardingDataSourceSpy(result: .success(response))
-        let repository = OnboardingRepository(remoteDataSource: dataSource)
+        let authSessionDataSource = AuthSessionDataSourceSpy()
+        let repository = OnboardingRepository(
+            remoteDataSource: dataSource,
+            authSessionDataSource: authSessionDataSource
+        )
 
         let profile = try await repository.completeOnboarding(makeRequest())
 
@@ -22,6 +26,7 @@ final class OnboardingRepositoryTests: XCTestCase {
         XCTAssertEqual(request.birthDate, "2000-01-02")
         XCTAssertEqual(request.wakeupTime, "07:30:00")
         XCTAssertEqual(request.sleepTime, "23:00:00")
+        XCTAssertEqual(authSessionDataSource.markOnboardingCompletedCallCount, 1)
     }
 
     func testRepositoryMapsValidationErrors() async throws {
@@ -40,7 +45,10 @@ final class OnboardingRepositoryTests: XCTestCase {
                 )
             )
         )
-        let repository = OnboardingRepository(remoteDataSource: dataSource)
+        let repository = OnboardingRepository(
+            remoteDataSource: dataSource,
+            authSessionDataSource: AuthSessionDataSourceSpy()
+        )
 
         await assertOnboardingError(
             .validationFailed([
@@ -62,7 +70,8 @@ final class OnboardingRepositoryTests: XCTestCase {
                         apiError: try makeAPIError(code: "INVALID_TIMEZONE")
                     )
                 )
-            )
+            ),
+            authSessionDataSource: AuthSessionDataSourceSpy()
         )
 
         await assertOnboardingError(.invalidTimezone, from: repository)
@@ -77,7 +86,8 @@ final class OnboardingRepositoryTests: XCTestCase {
                         apiError: try makeAPIError(code: "ONBOARDING_ALREADY_COMPLETED")
                     )
                 )
-            )
+            ),
+            authSessionDataSource: AuthSessionDataSourceSpy()
         )
 
         await assertOnboardingError(.alreadyCompleted, from: repository)
@@ -87,7 +97,8 @@ final class OnboardingRepositoryTests: XCTestCase {
         let transportRepository = OnboardingRepository(
             remoteDataSource: OnboardingDataSourceSpy(
                 result: .failure(NetworkError.underlying(TestFailure()))
-            )
+            ),
+            authSessionDataSource: AuthSessionDataSourceSpy()
         )
         await assertOnboardingError(.networkFailure, from: transportRepository)
 
@@ -103,7 +114,8 @@ final class OnboardingRepositoryTests: XCTestCase {
             preferences: makePreferences()
         )
         let malformedRepository = OnboardingRepository(
-            remoteDataSource: OnboardingDataSourceSpy(result: .success(malformedResponse))
+            remoteDataSource: OnboardingDataSourceSpy(result: .success(malformedResponse)),
+            authSessionDataSource: AuthSessionDataSourceSpy()
         )
         await assertOnboardingError(.invalidResponse, from: malformedRepository)
     }
@@ -191,3 +203,27 @@ private actor OnboardingDataSourceSpy: OnboardingDataSourceProtocol {
 }
 
 private struct TestFailure: Error, Sendable {}
+
+private final class AuthSessionDataSourceSpy: AuthSessionDataSource, @unchecked Sendable {
+    private let lock = NSLock()
+    private var markCallCount = 0
+
+    var hasSession: Bool { true }
+
+    var markOnboardingCompletedCallCount: Int {
+        lock.withLock { markCallCount }
+    }
+
+    func deviceId() throws -> String { "device-id" }
+    func save(_ session: AuthSession) throws {}
+
+    func markOnboardingCompleted() throws {
+        lock.withLock { markCallCount += 1 }
+    }
+
+    func clear() throws {}
+
+    func observeSessionUser() -> AsyncStream<AuthSessionUser?> {
+        AsyncStream { $0.finish() }
+    }
+}

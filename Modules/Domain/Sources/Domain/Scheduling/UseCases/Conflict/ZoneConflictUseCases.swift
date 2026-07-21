@@ -1,7 +1,10 @@
 import Foundation
 
 public protocol ReplanZoneSessionsUseCase: Sendable {
-    func execute(_ request: ReplanZoneSessionsRequest) async throws -> ScheduleOperationResult
+    func execute(
+        _ request: ReplanZoneSessionsRequest,
+        on selectedDay: Date
+    ) async throws -> ScheduleOperationResult
 }
 
 public struct DefaultReplanZoneSessionsUseCase: ReplanZoneSessionsUseCase {
@@ -20,9 +23,10 @@ public struct DefaultReplanZoneSessionsUseCase: ReplanZoneSessionsUseCase {
     }
 
     public func execute(
-        _ request: ReplanZoneSessionsRequest
+        _ request: ReplanZoneSessionsRequest,
+        on selectedDay: Date
     ) async throws -> ScheduleOperationResult {
-        let workspace = try await workspaceProvider.load()
+        let workspace = try await workspaceProvider.load(for: selectedDay)
         guard let zone = workspace.zones.first(where: { $0.id == request.zoneID }),
               let firstSession = workspace.sessions.first(
                 where: { request.sessionIDs.contains($0.id) }
@@ -51,14 +55,14 @@ public struct DefaultReplanZoneSessionsUseCase: ReplanZoneSessionsUseCase {
             cursor = range.end
         }
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: selectedDay),
             nudge: nil
         )
     }
 }
 
 public protocol RestoreZoneUseCase: Sendable {
-    func execute(_ zone: Zone) async throws -> ScheduleOperationResult
+    func execute(_ zone: Zone, on selectedDay: Date) async throws -> ScheduleOperationResult
 }
 
 public struct DefaultRestoreZoneUseCase: RestoreZoneUseCase {
@@ -73,10 +77,10 @@ public struct DefaultRestoreZoneUseCase: RestoreZoneUseCase {
         self.zoneRepository = zoneRepository
     }
 
-    public func execute(_ zone: Zone) async throws -> ScheduleOperationResult {
+    public func execute(_ zone: Zone, on selectedDay: Date) async throws -> ScheduleOperationResult {
         try await zoneRepository.updateZone(zone)
         return ScheduleOperationResult(
-            workspace: try await workspaceProvider.load(),
+            workspace: try await workspaceProvider.load(for: selectedDay),
             nudge: nil
         )
     }

@@ -25,6 +25,6 @@ public struct DefaultMoveSessionUseCase: MoveSessionUseCase {
                 blocking: true
             )
         )
-        return try await workspaceProvider.load()
+        return try await workspaceProvider.load(for: request.selectedDay)
     }
 }

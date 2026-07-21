@@ -7,39 +7,60 @@
 
 import SwiftUI
 import SwiftData
+import Data
 import Presentation
 import Common
 
 @main
 struct AwanApp: App {
     @State private var languageManager = LanguageManager()
+    // Change this to `.swiftData` to use the persistent scheduling implementation.
+    private static let schedulingImplementation: SchedulingDataSourceImplementation =
+        .inMemory(.preview)
+
     private let presentationFactory: PresentationFactory
+    private let sharedModelContainer: ModelContainer?
 
     init() {
-        let dependencies = AppDependencyContainer()
+        sharedModelContainer = switch Self.schedulingImplementation {
+        case .swiftData:
+            Self.makeSchedulingModelContainer()
+        case .inMemory:
+            nil
+        }
+        let dependencies = AppDependencyContainer(
+            modelContainer: sharedModelContainer,
+            schedulingImplementation: Self.schedulingImplementation
+        )
         presentationFactory = dependencies.resolve(PresentationFactory.self)
     }
-
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
 
     var body: some Scene {
         WindowGroup {
             presentationFactory.makeAppRootView()
-                .environment(languageManager)
-                .environment(\.locale, Locale(identifier: languageManager.currentLanguage.rawValue))
-                .environment(\.layoutDirection, languageManager.currentLanguage == .arabic ? .rightToLeft : .leftToRight)
+            .environment(languageManager)
+            .environment(\.locale, Locale(identifier: languageManager.currentLanguage.rawValue))
+            .environment(\.layoutDirection, languageManager.currentLanguage == .arabic ? .rightToLeft : .leftToRight)
         }
-        .modelContainer(sharedModelContainer)
+       
+    }
+
+    private static func makeSchedulingModelContainer() -> ModelContainer {
+        let schema = SchedulingPersistence.schema
+        let configuration = ModelConfiguration(
+            "AwanScheduling",
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            groupContainer: .none,
+            cloudKitDatabase: .none
+        )
+        do {
+            return try ModelContainer(
+                for: schema,
+                configurations: [configuration]
+            )
+        } catch {
+            fatalError("Could not create scheduling ModelContainer: \(error)")
+        }
     }
 }
