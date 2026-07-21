@@ -120,6 +120,12 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
     case invalidSleepSchedule
     case insufficientPoints
 
+    case templateNotFound
+    case templateOverrideNotFound
+    case dayAlreadyAssigned
+    case sessionNotFound
+    case zoneNotFound
+
     public typealias RawValue = String
 
     public init(rawValue: String) {
@@ -143,6 +149,11 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case "USER_NOT_FOUND":                self = .userNotFound
         case "INVALID_SLEEP_SCHEDULE":        self = .invalidSleepSchedule
         case "INSUFFICIENT_POINTS":           self = .insufficientPoints
+        case "TEMPLATE_NOT_FOUND":            self = .templateNotFound
+        case "TEMPLATE_OVERRIDE_NOT_FOUND":   self = .templateOverrideNotFound
+        case "DAY_ALREADY_ASSIGNED":          self = .dayAlreadyAssigned
+        case "SESSION_NOT_FOUND":             self = .sessionNotFound
+        case "ZONE_NOT_FOUND":                self = .zoneNotFound
         default:                              self = .unknown(rawValue)
         }
     }
@@ -168,6 +179,11 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case .userNotFound:                  return "USER_NOT_FOUND"
         case .invalidSleepSchedule:          return "INVALID_SLEEP_SCHEDULE"
         case .insufficientPoints:            return "INSUFFICIENT_POINTS"
+        case .templateNotFound:              return "TEMPLATE_NOT_FOUND"
+        case .templateOverrideNotFound:      return "TEMPLATE_OVERRIDE_NOT_FOUND"
+        case .dayAlreadyAssigned:            return "DAY_ALREADY_ASSIGNED"
+        case .sessionNotFound:               return "SESSION_NOT_FOUND"
+        case .zoneNotFound:                  return "ZONE_NOT_FOUND"
         case .unknown(let code):             return code
         }
     }
