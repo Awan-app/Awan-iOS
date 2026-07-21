@@ -16,7 +16,7 @@ struct OtpVerificationView: View {
         self.viewModel = viewModel
     }
 
-    var body: some View {
+    public var body: some View {
         ZStack {
             // Background Gradient
             LinearGradient(

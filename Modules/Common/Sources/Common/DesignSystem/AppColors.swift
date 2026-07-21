@@ -4,6 +4,9 @@ public enum AppColors {
     public static let accentGreen = asset("AccentGreen")
     public static let accentGreenDepth = asset("AccentGreenDepth")
     public static let accentBlue = asset("AccentBlue")
+    public static let accentBlueDepth = asset("AccentBlueDepth")
+    public static let buttonDisabled = asset("ButtonDisabled")
+    public static let buttonDisabledDepth = asset("ButtonDisabledDepth")
     public static let accentPurple = asset("AccentPurple")
     public static let warning = asset("Warning")
     public static let destructive = asset("Destructive")
@@ -30,6 +33,17 @@ public enum AppColors {
     // delete its OTP-specific color assets and repoint them to use these skyGradient properties instead.
     public static let skyGradientTop = asset("SkyGradientTop")
     public static let skyGradientBottom = asset("SkyGradientBottom")
+
+    public static var skyGradient: LinearGradient {
+        LinearGradient(
+            stops: [
+                .init(color: skyGradientTop, location: 0.0),
+                .init(color: skyGradientBottom, location: 0.5),
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
 
     public static func runtime(hex: String) -> Color {
         let cleaned = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)

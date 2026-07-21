@@ -56,6 +56,19 @@ public final class OnboardingViewModel {
 
     public var suggestedZones: [SuggestedZone]
 
+    // MARK: - Task Length
+
+    public var focusDurationIndex: Int = 2
+
+    // MARK: - Task Simulation
+
+    public var addedTasks: [TaskItem] = []
+    public var taskText: String = ""
+
+    // MARK: - Notification
+
+    public var notificationsEnabled: Bool = false
+
     // MARK: - Callbacks
 
     public var onComplete: (() -> Void)?
@@ -130,3 +143,4 @@ public final class OnboardingViewModel {
         ]
     }
 }
+

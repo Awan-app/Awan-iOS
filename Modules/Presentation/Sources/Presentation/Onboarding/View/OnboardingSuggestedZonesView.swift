@@ -5,22 +5,15 @@
 //  Created by Me3bed on 20/07/2026.
 //
 
-import SwiftUI
 import Common
+import SwiftUI
 
 struct OnboardingSuggestedZonesView: View {
-    @Environment(AppCoordinator.self) private var appCoordinator
     @Bindable var viewModel: OnboardingViewModel
+    let onContinue: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
-            OnboardingStepHeader(
-                currentStep: 3,
-                totalSteps: viewModel.totalSteps,
-                onSkip: { viewModel.skipOnboarding() }
-            )
-            .padding(.horizontal, 24)
-
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     headerSection
@@ -38,8 +31,6 @@ struct OnboardingSuggestedZonesView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
         }
-        .background(AppColors.skyGradientBottom.ignoresSafeArea())
-        .navigationBarBackButtonHidden(true)
     }
 
     // MARK: - Sections
@@ -97,7 +88,7 @@ struct OnboardingSuggestedZonesView: View {
                 shadowColor: .clear,
                 useGradient: false,
                 onTap: {
-                    viewModel.completeOnboarding()
+                    onContinue()
                 }
             )
 
@@ -107,9 +98,13 @@ struct OnboardingSuggestedZonesView: View {
                 color: AppColors.accentBlue,
                 foregroundColor: AppColors.onAccent,
                 onTap: {
-                    viewModel.completeOnboarding()
+                    onContinue()
                 }
             )
         }
     }
+}
+
+#Preview {
+    OnboardingSuggestedZonesView(viewModel: .preview, onContinue: {})
 }
