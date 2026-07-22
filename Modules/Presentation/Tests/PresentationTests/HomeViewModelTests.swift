@@ -13,14 +13,18 @@ final class HomeViewModelTests: XCTestCase {
         let viewModel = makeViewModel(stub: stub)
 
         viewModel.send(.appeared)
-        await waitUntil { viewModel.state.status == .ready }
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
 
-        XCTAssertEqual(viewModel.state.displayName, "Sam")
-        XCTAssertEqual(viewModel.state.streakCount, 4)
-        XCTAssertEqual(viewModel.state.rewardPoints, 100)
-        XCTAssertEqual(viewModel.state.taskCount, 1)
-        XCTAssertEqual(viewModel.state.scheduledMinutes, 60)
-        XCTAssertEqual(viewModel.state.timelineItems.first?.title, "Focus")
+        XCTAssertEqual(viewModel.state.success?.tasks.map(\.id), [fixture.task.id])
+        XCTAssertEqual(viewModel.state.success?.sessions.map(\.id), [fixture.session.id])
+        XCTAssertEqual(viewModel.state.success?.zones.map(\.id), [fixture.zone.id])
+        XCTAssertEqual(viewModel.state.success?.profile.id, fixture.profile.id)
+        XCTAssertEqual(viewModel.state.success?.displayName, "Sam")
+        XCTAssertEqual(viewModel.state.success?.streakCount, 4)
+        XCTAssertEqual(viewModel.state.success?.rewardPoints, 100)
+        XCTAssertEqual(viewModel.state.success?.taskCount, 1)
+        XCTAssertEqual(viewModel.state.success?.scheduledMinutes, 60)
+        XCTAssertEqual(viewModel.state.success?.timelineItems.first?.title, "Focus")
     }
 
     func testDragSnapsToQuarterHourAndLocksSession() async throws {
@@ -28,7 +32,7 @@ final class HomeViewModelTests: XCTestCase {
         let stub = HomeUseCaseStub(fixture: fixture)
         let viewModel = makeViewModel(stub: stub)
         viewModel.send(.appeared)
-        await waitUntil { viewModel.state.status == .ready }
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
 
         viewModel.send(
             .moveSession(
@@ -37,10 +41,10 @@ final class HomeViewModelTests: XCTestCase {
                 hourHeight: HomeDayTimelineView.hourHeight
             )
         )
-        await waitUntil { viewModel.state.timelineItems.first?.blocking == true }
+        await waitUntil { viewModel.state.success?.timelineItems.first?.blocking == true }
 
-        XCTAssertEqual(viewModel.state.timelineItems.first?.start, date(hour: 10, minute: 30))
-        XCTAssertEqual(viewModel.state.timelineItems.first?.durationMinutes, 60)
+        XCTAssertEqual(viewModel.state.success?.timelineItems.first?.start, date(hour: 10, minute: 30))
+        XCTAssertEqual(viewModel.state.success?.timelineItems.first?.durationMinutes, 60)
     }
 
     func testDragUpdatesImmediatelyBeforeRescheduleFinishes() async throws {
@@ -48,7 +52,7 @@ final class HomeViewModelTests: XCTestCase {
         let stub = HomeUseCaseStub(fixture: fixture, mutationDelay: .milliseconds(200))
         let viewModel = makeViewModel(stub: stub)
         viewModel.send(.appeared)
-        await waitUntil { viewModel.state.status == .ready }
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
 
         viewModel.send(
             .moveSession(
@@ -58,8 +62,8 @@ final class HomeViewModelTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(viewModel.state.timelineItems.first?.start, date(hour: 10, minute: 30))
-        XCTAssertTrue(viewModel.state.timelineItems.first?.blocking == true)
+        XCTAssertEqual(viewModel.state.success?.timelineItems.first?.start, date(hour: 10, minute: 30))
+        XCTAssertTrue(viewModel.state.success?.timelineItems.first?.blocking == true)
         XCTAssertTrue(viewModel.state.isMutating)
         await waitUntil { viewModel.state.isMutating == false }
     }
@@ -73,7 +77,7 @@ final class HomeViewModelTests: XCTestCase {
         )
         let viewModel = makeViewModel(stub: stub)
         viewModel.send(.appeared)
-        await waitUntil { viewModel.state.status == .ready }
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
 
         viewModel.send(
             .moveSession(
@@ -82,13 +86,13 @@ final class HomeViewModelTests: XCTestCase {
                 hourHeight: HomeDayTimelineView.hourHeight
             )
         )
-        XCTAssertEqual(viewModel.state.timelineItems.first?.start, date(hour: 11))
+        XCTAssertEqual(viewModel.state.success?.timelineItems.first?.start, date(hour: 11))
 
         await waitUntil { viewModel.state.isMutating == false }
 
-        XCTAssertEqual(viewModel.state.timelineItems.first?.start, date(hour: 10))
-        XCTAssertFalse(viewModel.state.timelineItems.first?.blocking == true)
-        XCTAssertNotNil(viewModel.state.errorMessage)
+        XCTAssertEqual(viewModel.state.success?.timelineItems.first?.start, date(hour: 10))
+        XCTAssertFalse(viewModel.state.success?.timelineItems.first?.blocking == true)
+        XCTAssertNotNil(viewModel.state.failure)
     }
 
     func testDragClampsSessionToAwakeWindow() async throws {
@@ -96,7 +100,7 @@ final class HomeViewModelTests: XCTestCase {
         let stub = HomeUseCaseStub(fixture: fixture)
         let viewModel = makeViewModel(stub: stub)
         viewModel.send(.appeared)
-        await waitUntil { viewModel.state.status == .ready }
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
 
         viewModel.send(
             .moveSession(
@@ -105,10 +109,10 @@ final class HomeViewModelTests: XCTestCase {
                 hourHeight: HomeDayTimelineView.hourHeight
             )
         )
-        await waitUntil { viewModel.state.timelineItems.first?.blocking == true }
+        await waitUntil { viewModel.state.success?.timelineItems.first?.blocking == true }
 
-        XCTAssertEqual(viewModel.state.timelineItems.first?.start, date(day: 23, hour: 0))
-        XCTAssertEqual(viewModel.state.timelineItems.first?.end, date(day: 23, hour: 1))
+        XCTAssertEqual(viewModel.state.success?.timelineItems.first?.start, date(day: 23, hour: 0))
+        XCTAssertEqual(viewModel.state.success?.timelineItems.first?.end, date(day: 23, hour: 1))
     }
 
     func testDeleteRemovesSessionButLeavesTaskInUseCaseStorage() async throws {
@@ -116,10 +120,12 @@ final class HomeViewModelTests: XCTestCase {
         let stub = HomeUseCaseStub(fixture: fixture)
         let viewModel = makeViewModel(stub: stub)
         viewModel.send(.appeared)
-        await waitUntil { viewModel.state.status == .ready }
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
 
         viewModel.send(.deleteSession(fixture.session.id))
-        await waitUntil { viewModel.state.timelineItems.isEmpty && !viewModel.state.isMutating }
+        await waitUntil {
+            viewModel.state.success?.timelineItems.isEmpty == true && !viewModel.state.isMutating
+        }
 
         let taskCount = await stub.taskCount()
         let sessionCount = await stub.sessionCount()
@@ -132,12 +138,12 @@ final class HomeViewModelTests: XCTestCase {
         let stub = HomeUseCaseStub(fixture: fixture)
         let viewModel = makeViewModel(stub: stub)
         viewModel.send(.appeared)
-        await waitUntil { viewModel.state.status == .ready }
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
 
         viewModel.send(.setSessionLock(sessionID: fixture.session.id, isLocked: true))
-        await waitUntil { viewModel.state.timelineItems.first?.blocking == true }
+        await waitUntil { viewModel.state.success?.timelineItems.first?.blocking == true }
 
-        XCTAssertTrue(viewModel.state.timelineItems.first?.blocking == true)
+        XCTAssertTrue(viewModel.state.success?.timelineItems.first?.blocking == true)
     }
 
     func testCompletionButtonUpdatesSessionAndSummaryOptimistically() async throws {
@@ -145,14 +151,14 @@ final class HomeViewModelTests: XCTestCase {
         let stub = HomeUseCaseStub(fixture: fixture)
         let viewModel = makeViewModel(stub: stub)
         viewModel.send(.appeared)
-        await waitUntil { viewModel.state.status == .ready }
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
 
         viewModel.send(
             .setSessionCompletion(sessionID: fixture.session.id, isCompleted: true)
         )
 
-        XCTAssertEqual(viewModel.state.timelineItems.first?.status, .completed)
-        XCTAssertEqual(viewModel.state.completedSessionCount, 1)
+        XCTAssertEqual(viewModel.state.success?.timelineItems.first?.status, .completed)
+        XCTAssertEqual(viewModel.state.success?.completedSessionCount, 1)
         await waitUntil { viewModel.state.isMutating == false }
     }
 
@@ -164,10 +170,10 @@ final class HomeViewModelTests: XCTestCase {
 
         viewModel.send(.appeared)
         viewModel.send(.selectDay(nextDay))
-        await waitUntil { viewModel.state.status == .ready }
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
 
         XCTAssertEqual(viewModel.state.selectedDay, nextDay)
-        XCTAssertTrue(viewModel.state.timelineItems.isEmpty)
+        XCTAssertTrue(viewModel.state.success?.timelineItems.isEmpty == true)
     }
 
     func testLoadFailurePublishesRetryableFailure() async throws {
@@ -175,10 +181,10 @@ final class HomeViewModelTests: XCTestCase {
         let viewModel = makeViewModel(stub: stub)
 
         viewModel.send(.appeared)
-        await waitUntil { viewModel.state.status == .failure }
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.failure != nil }
 
-        XCTAssertNotNil(viewModel.state.errorMessage)
-        XCTAssertNil(viewModel.state.timelineWindow)
+        XCTAssertNotNil(viewModel.state.failure)
+        XCTAssertNil(viewModel.state.success)
     }
 
     private func makeViewModel(stub: HomeUseCaseStub) -> HomeViewModel {
