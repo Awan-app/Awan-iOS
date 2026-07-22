@@ -60,12 +60,44 @@ extension HomeViewModel {
     }
 
     func setSessionLock(id: UUID, isLocked: Bool) {
-        performMutation {
-            let updated = try await self.useCases.sessions.setLock.execute(
-                sessionID: id,
-                isLocked: isLocked
-            )
-            self.replaceSession(updated)
+        guard var success = state.success,
+              !state.isMutating,
+              let index = success.sessions.firstIndex(where: { $0.id == id }) else {
+            return
+        }
+
+        let original = success.sessions[index]
+        guard original.blocking != isLocked else { return }
+        let optimistic = Session(
+            id: original.id,
+            taskID: original.taskID,
+            zoneID: original.zoneID,
+            timeRange: original.timeRange,
+            blocking: isLocked,
+            status: original.status
+        )
+
+        state.isMutating = true
+        state.failure = nil
+        success.sessions[index] = optimistic
+        state.success = success
+        applyContent()
+
+        Task { [weak self] in
+            guard let self else { return }
+            defer { state.isMutating = false }
+            do {
+                let accepted = try await useCases.sessions.setLock.execute(
+                    sessionID: id,
+                    isLocked: isLocked
+                )
+                replaceSession(accepted)
+            } catch is CancellationError {
+                replaceSession(original)
+            } catch {
+                replaceSession(original)
+                state.failure = HomeFailureState(message: error.localizedDescription)
+            }
         }
     }
 
@@ -111,30 +143,28 @@ extension HomeViewModel {
     }
 
     func deleteSession(id: UUID) {
-        performMutation {
-            try await self.useCases.sessions.delete.execute(sessionID: id)
-            guard var success = self.state.success else { return }
-            success.sessions.removeAll { $0.id == id }
-            self.state.success = success
-            self.state.selectedSessionID = nil
-            self.applyContent()
+        guard var success = state.success,
+              let original = success.sessions.first(where: { $0.id == id }),
+              !state.isMutating else {
+            return
         }
-    }
 
-    private func performMutation(
-        _ operation: @escaping @MainActor () async throws -> Void
-    ) {
-        guard !state.isMutating else { return }
         state.isMutating = true
         state.failure = nil
+        success.sessions.removeAll { $0.id == id }
+        state.success = success
+        state.selectedSessionID = nil
+        applyContent()
+
         Task { [weak self] in
             guard let self else { return }
             defer { state.isMutating = false }
             do {
-                try await operation()
+                try await useCases.sessions.delete.execute(sessionID: id)
             } catch is CancellationError {
-                return
+                restoreSession(original)
             } catch {
+                restoreSession(original)
                 state.failure = HomeFailureState(message: error.localizedDescription)
             }
         }
@@ -146,6 +176,14 @@ extension HomeViewModel {
             return
         }
         success.sessions[index] = updated
+        state.success = success
+        applyContent()
+    }
+
+    private func restoreSession(_ session: Session) {
+        guard var success = state.success else { return }
+        success.sessions.removeAll { $0.id == session.id }
+        success.sessions.append(session)
         state.success = success
         applyContent()
     }

@@ -133,6 +133,26 @@ final class HomeViewModelTests: XCTestCase {
         XCTAssertEqual(sessionCount, 0)
     }
 
+    func testFailedOptimisticDeleteRestoresSession() async throws {
+        let fixture = try HomeFixture()
+        let stub = HomeUseCaseStub(
+            fixture: fixture,
+            mutationDelay: .milliseconds(40),
+            shouldFailDelete: true
+        )
+        let viewModel = makeViewModel(stub: stub)
+        viewModel.send(.appeared)
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
+
+        viewModel.send(.deleteSession(fixture.session.id))
+        XCTAssertTrue(viewModel.state.success?.sessions.isEmpty == true)
+
+        await waitUntil { !viewModel.state.isMutating }
+
+        XCTAssertEqual(viewModel.state.success?.sessions, [fixture.session])
+        XCTAssertNotNil(viewModel.state.failure)
+    }
+
     func testExplicitLockActionUpdatesTimelineItem() async throws {
         let fixture = try HomeFixture()
         let stub = HomeUseCaseStub(fixture: fixture)
@@ -309,13 +329,15 @@ private actor HomeUseCaseStub:
     private let readDelay: Duration?
     private let mutationDelay: Duration?
     private let shouldFailReschedule: Bool
+    private let shouldFailDelete: Bool
 
     init(
         fixture: HomeFixture,
         shouldFailReads: Bool = false,
         readDelay: Duration? = nil,
         mutationDelay: Duration? = nil,
-        shouldFailReschedule: Bool = false
+        shouldFailReschedule: Bool = false,
+        shouldFailDelete: Bool = false
     ) {
         tasks = [fixture.task]
         sessions = [fixture.session]
@@ -325,6 +347,7 @@ private actor HomeUseCaseStub:
         self.readDelay = readDelay
         self.mutationDelay = mutationDelay
         self.shouldFailReschedule = shouldFailReschedule
+        self.shouldFailDelete = shouldFailDelete
     }
 
     func execute() async throws -> [AwanTask] {
@@ -409,7 +432,11 @@ private actor HomeUseCaseStub:
         return updated
     }
 
-    func execute(sessionID: UUID) {
+    func execute(sessionID: UUID) async throws {
+        if let mutationDelay {
+            try await Task.sleep(for: mutationDelay)
+        }
+        if shouldFailDelete { throw HomeStubError.failed }
         sessions.removeAll { $0.id == sessionID }
     }
 
