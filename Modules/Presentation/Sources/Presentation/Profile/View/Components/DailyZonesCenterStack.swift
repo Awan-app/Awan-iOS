@@ -7,9 +7,10 @@
 
 import SwiftUI
 import Common
+import Domain
 
 struct DailyZonesCenterStack: View {
-    let zoneColors: [Color]
+    let zones: [Zone]
     let isReady: Bool
 
     var body: some View {
@@ -21,12 +22,12 @@ struct DailyZonesCenterStack: View {
                 .foregroundStyle(AppColors.textSecondary)
                 .lineLimit(1)
 
-            Text("\(zoneColors.count) zones today")
+            Text("\(zones.count) zones today")
                 .font(AppFonts.subheadlineHeavy)
                 .foregroundStyle(AppColors.accentBlue)
 
-            if !zoneColors.isEmpty {
-                DailyZoneBarsView(colors: zoneColors)
+            if !zones.isEmpty {
+                DailyZoneBarsView(zones: zones)
                     .padding(.top, 2)
             }
         }

@@ -45,7 +45,7 @@ struct ProfileMainView: View {
 
                         // Daily Zones
                         DailyZonesCard(
-                            zoneColors: viewModel.dailyZones.map(\.color),
+                            zones: viewModel.dailyZones,
                             isReady: viewModel.isReady,
                             onTap: {}
                         )

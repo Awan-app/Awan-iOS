@@ -1,15 +1,17 @@
 import SwiftUI
 import Common
 
+import Domain
+
 struct DailyZonesCardRow: View {
-    let zoneColors: [Color]
+    let zones: [Zone]
     let isReady: Bool
 
     var body: some View {
         HStack(spacing: 14) {
-            DailyZonesRingIcon(colors: zoneColors)
+            DailyZonesRingIcon(zones: zones)
 
-            DailyZonesCenterStack(zoneColors: zoneColors, isReady: isReady)
+            DailyZonesCenterStack(zones: zones, isReady: isReady)
 
             Spacer(minLength: 4)
 

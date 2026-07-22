@@ -6,14 +6,12 @@
 //
 import SwiftUI
 import Common
+import Domain
 
 // MARK: - DailyZonesCard
 
 struct DailyZonesCard: View {
-    /// Colors for each zone — drives the ring segments, bars, and the
-    /// "N zones today" count. Pass an empty array for a zero-state.
-    let zoneColors: [Color]
-    //if you do not need this attribute delete it and it write it manually
+    let zones: [Zone]
     let isReady: Bool
     let onTap: () -> Void
 
@@ -23,7 +21,7 @@ struct DailyZonesCard: View {
 
             DepthCardContainer {
                 Button(action: onTap) {
-                    DailyZonesCardRow(zoneColors: zoneColors, isReady: isReady)
+                    DailyZonesCardRow(zones: zones, isReady: isReady)
                 }
                 .buttonStyle(.plain)
             }
@@ -33,29 +31,33 @@ struct DailyZonesCard: View {
 
 // MARK: - Previews
 
-private let sampleColors: [Color] = [
-    AppColors.accentPurple,
-    AppColors.accentBlue,
-    Color.orange,
-    Color(red: 0.93, green: 0.26, blue: 0.26)
-]
+private var mockZones: [Zone] {
+    do {
+        return [
+            Zone(id: UUID(), name: "Work", color: try ZoneColor(hex: "#7459D9"), startTime: try LocalTime(hour: 9, minute: 0), endTime: try LocalTime(hour: 12, minute: 0)),
+            Zone(id: UUID(), name: "Lunch", color: try ZoneColor(hex: "#3F8CFA"), startTime: try LocalTime(hour: 12, minute: 0), endTime: try LocalTime(hour: 13, minute: 0))
+        ]
+    } catch {
+        return []
+    }
+}
 
 #Preview("DailyZonesCard – Light") {
-    DailyZonesCard(zoneColors: sampleColors, isReady: true, onTap: {})
+    DailyZonesCard(zones: mockZones, isReady: true, onTap: {})
         .padding()
         .background(AppColors.screenBackground)
         .preferredColorScheme(.light)
 }
 
 #Preview("DailyZonesCard – Dark") {
-    DailyZonesCard(zoneColors: sampleColors, isReady: true, onTap: {})
+    DailyZonesCard(zones: mockZones, isReady: true, onTap: {})
         .padding()
         .background(AppColors.screenBackground)
         .preferredColorScheme(.dark)
 }
 
 #Preview("DailyZonesCard – Empty") {
-    DailyZonesCard(zoneColors: [], isReady: false, onTap: {})
+    DailyZonesCard(zones: [], isReady: false, onTap: {})
         .padding()
         .background(AppColors.screenBackground)
 }

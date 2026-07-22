@@ -64,12 +64,16 @@ struct NotificationView: View {
                     )
                     .disabled(viewModel.isCompleting)
 
-                    // TODO: TEMPORARY – remove before linking real navigation
-                    NavigationLink(destination: ProfileMainView()) {
-                        Text("Not now")
-                            .font(AppFonts.subheadlineHeavy)
-                            .foregroundColor(AppColors.accentBlue)
+                    Button(action: {
+                        onSkipNotifications()
+                    }) {
+                        HStack(spacing: 4) {
+                            Text("Not now")
+                        }
+                        .font(AppFonts.subheadlineHeavy)
+                        .foregroundColor(AppColors.accentBlue)
                     }
+                    .disabled(viewModel.isCompleting)
                     .padding(.vertical, 4)
                 }
                 .padding(.top, 8)

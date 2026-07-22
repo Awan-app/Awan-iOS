@@ -8,19 +8,8 @@
 import SwiftUI
 import Observation
 import Common
+import Domain
 
-/// A model representing a daily zone from the backend.
-struct ZoneItem: Identifiable, Equatable {
-    let id: UUID
-    let name: String
-    let color: Color
-    
-    init(id: UUID = UUID(), name: String, color: Color) {
-        self.id = id
-        self.name = name
-        self.color = color
-    }
-}
 
 @MainActor
 @Observable
@@ -28,8 +17,8 @@ final class ProfileViewModel {
     
     // MARK: - State
     
-    /// The user's zones fetched from the backend
-    var dailyZones: [ZoneItem] = []
+    /// The user's zones fetched from the backend, mapped to the Domain model.
+    var dailyZones: [Zone] = []
     
     /// Indicates if the profile data is fully loaded and ready
     var isReady: Bool = false
@@ -44,23 +33,48 @@ final class ProfileViewModel {
     
     /// Temporary method to simulate loading dynamic zones from a backend
     private func loadMockData() {
-        // Simulate a slight network delay or just load instantly for now
-        self.dailyZones = [
-            ZoneItem(name: "Deep Work", color: AppColors.accentPurple),
-            ZoneItem(name: "Meetings", color: AppColors.accentBlue),
-            ZoneItem(name: "Learning", color: .orange),
-            ZoneItem(name: "Admin", color: Color(red: 0.93, green: 0.26, blue: 0.26))
-        ]
-        
-        // Example of a 6-zone dynamic mock:
-        // self.dailyZones = [
-        //     ZoneItem(name: "Morning Focus", color: AppColors.accentPurple),
-        //     ZoneItem(name: "Team Sync", color: AppColors.accentBlue),
-        //     ZoneItem(name: "Lunch", color: .yellow),
-        //     ZoneItem(name: "Deep Work", color: .orange),
-        //     ZoneItem(name: "Emails", color: Color(red: 0.93, green: 0.26, blue: 0.26)),
-        //     ZoneItem(name: "Wind Down", color: .mint)
-        // ]
+        // Simulate domain entities that would normally be mapped from ZoneResponseDTO in the Data layer
+        do {
+            self.dailyZones = [
+                Zone(
+                    id: UUID(),
+                    name: "Deep Work",
+                    color: try ZoneColor(hex: "#7459D9"), // accentPurple approx
+                    startTime: try LocalTime(hour: 9, minute: 0),
+                    endTime: try LocalTime(hour: 11, minute: 0)
+                ),
+                Zone(
+                    id: UUID(),
+                    name: "Meetings",
+                    color: try ZoneColor(hex: "#3F8CFA"), // accentBlue approx
+                    startTime: try LocalTime(hour: 11, minute: 30),
+                    endTime: try LocalTime(hour: 13, minute: 0)
+                ),
+                Zone(
+                    id: UUID(),
+                    name: "Learning",
+                    color: try ZoneColor(hex: "#FFA500"), // orange
+                    startTime: try LocalTime(hour: 14, minute: 0),
+                    endTime: try LocalTime(hour: 15, minute: 0)
+                ),
+                Zone(
+                    id: UUID(),
+                    name: "Admin",
+                    color: try ZoneColor(hex: "#ED4242"), // red
+                    startTime: try LocalTime(hour: 16, minute: 0),
+                    endTime: try LocalTime(hour: 17, minute: 0)
+                ),
+                Zone(
+                    id: UUID(),
+                    name: "Deep Work",
+                    color: try ZoneColor(hex: "#7459D9"), // accentPurple approx
+                    startTime: try LocalTime(hour: 9, minute: 0),
+                    endTime: try LocalTime(hour: 11, minute: 0)
+                ),
+            ]
+        } catch {
+            print("Error initializing mock zone colors or times: \(error)")
+        }
         
         self.isReady = true
     }
