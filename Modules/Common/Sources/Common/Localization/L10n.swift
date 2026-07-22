@@ -35,6 +35,13 @@ public enum L10n {
         public static func openSkyHours(_ hours: Int) -> String { String(format: String(localized: "onboarding.open_sky_hours", bundle: .module), hours) }
         public static var zonesFillNext: String { String(localized: "onboarding.zones_fill_next", bundle: .module) }
         public static var skip: String { String(localized: "onboarding.skip", bundle: .module) }
+        public static var zoneNameLabel: String { String(localized: "onboarding.zone_name_label", bundle: .module) }
+        public static var zoneNamePlaceholder: String { String(localized: "onboarding.zone_name_placeholder", bundle: .module) }
+        public static var zoneColorLabel: String { String(localized: "onboarding.zone_color_label", bundle: .module) }
+        public static var zoneStartTime: String { String(localized: "onboarding.zone_start_time", bundle: .module) }
+        public static var zoneEndTime: String { String(localized: "onboarding.zone_end_time", bundle: .module) }
+        public static var zoneOverlapError: String { String(localized: "onboarding.zone_overlap_error", bundle: .module) }
+        public static var addZoneTitle: String { String(localized: "onboarding.add_zone_title", bundle: .module) }
     }
     
     public enum Login {

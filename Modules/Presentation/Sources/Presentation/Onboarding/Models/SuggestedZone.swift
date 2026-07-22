@@ -6,14 +6,14 @@
 //
 import Foundation
 
-public struct SuggestedZone: Identifiable, Equatable, Sendable {
+public struct SuggestedZone: Identifiable, Equatable, Hashable, Sendable {
     public let id: UUID
-    public let name: String
-    public let startTime: String
-    public let endTime: String
-    public let colorRed: Double
-    public let colorGreen: Double
-    public let colorBlue: Double
+    public var name: String
+    public var startTime: String
+    public var endTime: String
+    public var colorRed: Double
+    public var colorGreen: Double
+    public var colorBlue: Double
 
     public init(id: UUID, name: String, startTime: String, endTime: String, colorRed: Double, colorGreen: Double, colorBlue: Double) {
         self.id = id

@@ -12,17 +12,23 @@ struct OnboardingSuggestedZonesView: View {
     @Bindable var viewModel: OnboardingViewModel
     let onContinue: () -> Void
 
+    @State private var draggedZone: SuggestedZone?
+
     var body: some View {
         VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 20) {
+                headerSection
+                infoTag
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 16)
+            .padding(.bottom, 10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    headerSection
-                    infoTag
-                    zonesList
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 24)
+                zonesList
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
             }
 
             Spacer(minLength: 0)
@@ -30,6 +36,9 @@ struct OnboardingSuggestedZonesView: View {
             bottomButtons
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
+        }
+        .sheet(isPresented: $viewModel.isAddZoneSheetPresented) {
+            AddZoneSheet(viewModel: viewModel)
         }
     }
 
@@ -59,21 +68,34 @@ struct OnboardingSuggestedZonesView: View {
 
     private var zonesList: some View {
         VStack(spacing: 10) {
-            ForEach(Array(viewModel.suggestedZones.enumerated()), id: \.element.id) { index, zone in
+            ForEach(viewModel.suggestedZones) { zone in
                 ZoneCard(zone: zone) {
                     withAnimation(.snappy(duration: 0.25)) {
                         viewModel.removeZone(zone)
                     }
                 }
-
-                if index == 1 {
-                    AddZoneButton(onTap: {})
+                .onDrag {
+                    self.draggedZone = zone
+                    return NSItemProvider(object: zone.id.uuidString as NSString)
                 }
+                .onDrop(
+                    of: [.text],
+                    delegate: ZoneDropDelegate(
+                        item: zone,
+                        items: viewModel.suggestedZones,
+                        draggedItem: $draggedZone,
+                        swapAction: { sourceIndex, destinationIndex in
+                            withAnimation(.snappy(duration: 0.25)) {
+                                viewModel.swapZones(at: sourceIndex, with: destinationIndex)
+                            }
+                        }
+                    )
+                )
             }
 
-            if viewModel.suggestedZones.count <= 1 {
-                AddZoneButton(onTap: {})
-            }
+            AddZoneButton(onTap: {
+                viewModel.isAddZoneSheetPresented = true
+            })
         }
     }
 
@@ -105,6 +127,40 @@ struct OnboardingSuggestedZonesView: View {
     }
 }
 
+// MARK: - Drop Delegate
+
+struct ZoneDropDelegate: DropDelegate {
+    let item: SuggestedZone
+    let items: [SuggestedZone]
+    @Binding var draggedItem: SuggestedZone?
+    let swapAction: (Int, Int) -> Void
+
+    func dropEntered(info: DropInfo) {
+        // Do not update the array during the drag to prevent glitches
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        return DropProposal(operation: .move)
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        guard let draggedItem = draggedItem, draggedItem != item else { 
+            self.draggedItem = nil
+            return false 
+        }
+        guard let from = items.firstIndex(of: draggedItem),
+              let to = items.firstIndex(of: item) else { 
+            self.draggedItem = nil
+            return false 
+        }
+        
+        swapAction(from, to)
+        self.draggedItem = nil
+        return true
+    }
+}
+
 #Preview {
     OnboardingSuggestedZonesView(viewModel: .preview, onContinue: {})
 }
+

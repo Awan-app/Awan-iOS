@@ -331,6 +331,83 @@
         }
       }
     },
+    "onboarding.zone_name_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zone name"
+          }
+        }
+      }
+    },
+    "onboarding.zone_name_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. Study, Work…"
+          }
+        }
+      }
+    },
+    "onboarding.zone_color_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color"
+          }
+        }
+      }
+    },
+    "onboarding.zone_start_time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start time"
+          }
+        }
+      }
+    },
+    "onboarding.zone_end_time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End time"
+          }
+        }
+      }
+    },
+    "onboarding.zone_overlap_error": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This time overlaps an existing zone"
+          }
+        }
+      }
+    },
+    "onboarding.add_zone_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New Zone"
+          }
+        }
+      }
+    },
     "login.app_title": {
       "extractionState": "manual",
       "localizations": {

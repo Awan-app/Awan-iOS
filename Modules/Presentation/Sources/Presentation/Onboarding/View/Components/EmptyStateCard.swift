@@ -28,7 +28,7 @@ struct EmptyStateCard: View {
             }
             
             OnboardingContinueButton(
-                title: "Add your first task",
+                title: "Add your first task"
                 //icon: "plus"
             ) {
                 onAddFirstTask()
