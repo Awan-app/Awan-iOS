@@ -1,6 +1,11 @@
 import SwiftUI
 
 public enum AppFonts {
+    public static let titleBlack = Font.system(
+        .title,
+        design: .rounded,
+        weight: .black
+    )
     public static let captionBlack = Font.system(
         .caption,
         design: .rounded,
@@ -72,6 +77,9 @@ public enum AppFonts {
     public static let microHeavy = Font.system(size: 9, weight: .heavy, design: .rounded)
     public static let hourLabel = Font.system(size: 10, weight: .bold, design: .rounded)
     public static let progressSymbol = Font.system(size: 20, weight: .black)
+    public static let statSymbol = Font.system(size: 17, weight: .black)
+    public static let tabSymbol = Font.system(size: 22, weight: .bold)
+    public static let taskStatusSymbol = Font.system(size: 18, weight: .black)
     public static let nudgeSymbol = Font.system(size: 26, weight: .black)
     public static let heroSymbol = Font.system(size: 52, weight: .black)
     public static let goalHeroSymbol = Font.system(size: 58, weight: .black)
