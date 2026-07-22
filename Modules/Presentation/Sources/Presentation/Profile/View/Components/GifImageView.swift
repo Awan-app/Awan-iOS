@@ -17,7 +17,7 @@ struct GifImageView: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> UIImageView {
-        let imageView = UIImageView()
+        let imageView = IntrinsicSizeImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
 
@@ -54,3 +54,9 @@ struct GifImageView: UIViewRepresentable {
 
     func updateUIView(_ uiView: UIImageView, context: Context) {}
 }
+
+// UIImageView subclass that yields full layout control to SwiftUI's .frame() modifier.
+private final class IntrinsicSizeImageView: UIImageView {
+    override var intrinsicContentSize: CGSize { .zero }
+}
+

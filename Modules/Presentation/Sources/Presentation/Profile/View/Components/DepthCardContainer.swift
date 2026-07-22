@@ -18,27 +18,27 @@ struct DepthCardContainer<Content: View>: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            // Shelf / depth layer
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(AppColors.accentBlue.opacity(0.20))
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 2)
+        content
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .frame(maxWidth: .infinity)
+            .background {
+                // Surface background
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(AppColors.surface)
 
-            // Surface layer — floats 5 pt above the shelf
-            content
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
-                .frame(maxWidth: .infinity)
-                .background(
-                    AppColors.surface,
-                    in: RoundedRectangle(cornerRadius: 20, style: .continuous)
-                )
-                .overlay {
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .stroke(AppColors.outline.opacity(0.10), lineWidth: 1.5)
-                }
-                .padding(.bottom, 5)
-        }
+                // Depth/shelf layer — same shape as card, shifted down slightly
+                // so it only peeks out at the bottom edge
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(AppColors.accentBlue.opacity(0.18))
+                    .padding(.horizontal, 2)
+                    .offset(y: 5)
+                    .zIndex(-1)
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .stroke(AppColors.outline.opacity(0.10), lineWidth: 1.5)
+            }
+            .padding(.bottom, 5) // Reserve space so the shelf peek-out isn't clipped
     }
 }

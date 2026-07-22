@@ -5,8 +5,8 @@
 //  Created by AndrewMagdy on 21/07/2026.
 //
 
-import SwiftUI
 import Common
+import SwiftUI
 
 // MARK: - Preference Item Model
 
@@ -25,7 +25,7 @@ struct PreferencesCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeaderLabel(title: "PREFERENCES",accentColor: AppColors.brandDarkBlue)
+            SectionHeaderLabel(title: "PREFERENCES", accentColor: AppColors.brandDarkBlue)
 
             DepthCardContainer {
                 VStack(spacing: 0) {
@@ -38,7 +38,9 @@ struct PreferencesCard: View {
                         )
 
                         if index < preferences.count - 1 {
-                            Divider()
+                            Rectangle()
+                                .fill(AppColors.divider)
+                                .frame(height: 1)
                                 .padding(.leading, 38)
                                 .padding(.vertical, 6)
                         }
@@ -53,9 +55,10 @@ struct PreferencesCard: View {
 
 #Preview("PreferencesCard – Light") {
     PreferencesCard(preferences: [
-        PreferenceItem(icon: "clock",        title: "Session time",   value: "60 min",               onTap: {}),
-        PreferenceItem(icon: "globe",        title: "Time zone",      value: "Cairo · GMT+3",        onTap: {}),
-        PreferenceItem(icon: "moon",         title: "Sleep schedule", value: "11:00 PM – 7:00 AM",  onTap: {})
+        PreferenceItem(icon: "clock", title: "Session time", value: "60 min", onTap: {}),
+        PreferenceItem(icon: "globe", title: "Time zone", value: "Cairo · GMT+3", onTap: {}),
+        PreferenceItem(
+            icon: "moon", title: "Sleep schedule", value: "11:00 PM – 7:00 AM", onTap: {}),
     ])
     .padding()
     .background(AppColors.screenBackground)
@@ -64,9 +67,10 @@ struct PreferencesCard: View {
 
 #Preview("PreferencesCard – Dark") {
     PreferencesCard(preferences: [
-        PreferenceItem(icon: "clock",  title: "Session time",   value: "60 min",              onTap: {}),
-        PreferenceItem(icon: "globe",  title: "Time zone",      value: "Cairo · GMT+3",       onTap: {}),
-        PreferenceItem(icon: "moon",   title: "Sleep schedule", value: "11:00 PM – 7:00 AM", onTap: {})
+        PreferenceItem(icon: "clock", title: "Session time", value: "60 min", onTap: {}),
+        PreferenceItem(icon: "globe", title: "Time zone", value: "Cairo · GMT+3", onTap: {}),
+        PreferenceItem(
+            icon: "moon", title: "Sleep schedule", value: "11:00 PM – 7:00 AM", onTap: {}),
     ])
     .padding()
     .background(AppColors.screenBackground)

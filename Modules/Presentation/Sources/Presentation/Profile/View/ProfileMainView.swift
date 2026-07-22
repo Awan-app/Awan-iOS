@@ -24,30 +24,23 @@ struct ProfileMainView: View {
             AppColors.screenBackground
                 .ignoresSafeArea()
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 24) {
-                    
+            VStack(spacing: 0) {
+
                     // Header Area
-                    HStack {
-                        Spacer()
-                        Text("Profile")
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
-                            .foregroundStyle(AppColors.brandDarkBlue)
-                        Spacer()
-                    }
-                    .overlay(
-                        HStack {
-                            Spacer()
+                    Text("Profile")
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .foregroundStyle(AppColors.brandDarkBlue)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, 16)
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 8)
+                        .overlay(alignment: .trailing) {
                             GifImageView("Animated AWAN mascot")
                                 .frame(width: 80, height: 80)
-                                .offset(x: 10, y: -10)
+                                .padding(.trailing, 24)
                         }
-                    )
-                    .padding(.top, 16)
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 8)
 
-                    VStack(spacing: 24) {
+                    VStack(spacing: 10) {
                         // Personal Info
                         PersonalInfoCard(
                             avatarImage: Image("avatar-placeholder"), // Dummy image or nil
@@ -88,7 +81,6 @@ struct ProfileMainView: View {
                     .padding(.horizontal, 24)
                     .padding(.bottom, 40)
                 }
-            }
         }
         .navigationBarHidden(true)
     }
