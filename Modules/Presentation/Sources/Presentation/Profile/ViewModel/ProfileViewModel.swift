@@ -13,7 +13,7 @@ import Domain
 
 @MainActor
 @Observable
-final class ProfileViewModel {
+public final class ProfileViewModel {
     
     // MARK: - State
     
@@ -25,7 +25,7 @@ final class ProfileViewModel {
     
     // MARK: - Init
     
-    init() {
+    public init() {
         loadMockData()
     }
     

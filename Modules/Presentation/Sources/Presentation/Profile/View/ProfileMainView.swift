@@ -10,7 +10,11 @@ import Common
 
 struct ProfileMainView: View {
     @State private var selectedTheme: ThemePreferenceRowView.ThemeSelection = .light
-    @State private var viewModel = ProfileViewModel()
+    @State private var viewModel: ProfileViewModel
+    
+    init(viewModel: ProfileViewModel) {
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         ZStack {
@@ -81,5 +85,5 @@ struct ProfileMainView: View {
 }
 
 #Preview {
-    ProfileMainView()
+    ProfileMainView(viewModel: ProfileViewModel())
 }
