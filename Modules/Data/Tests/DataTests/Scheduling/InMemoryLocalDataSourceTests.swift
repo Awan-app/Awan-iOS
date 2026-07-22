@@ -4,6 +4,18 @@ import XCTest
 @testable import Data
 
 final class InMemoryLocalDataSourceTests: XCTestCase {
+    func testPreviewUserProfileRepositoryReturnsConfiguredPreferences() async throws {
+        let repository = InMemoryUserProfileRepository(profile: UserProfileMockData.preview)
+
+        let profile = await repository.fetchCurrentUser()
+
+        XCTAssertEqual(profile.firstName, "Sam")
+        XCTAssertEqual(profile.streak, 8)
+        XCTAssertEqual(profile.points, 1_285)
+        XCTAssertEqual(profile.preferences.wakeupTime.hour, 7)
+        XCTAssertEqual(profile.preferences.sleepTime.hour, 1)
+    }
+
     func testPreviewSourcesExposeLinkedMockData() async throws {
         let sources = InMemorySchedulingDataSources(data: .preview)
 
@@ -12,14 +24,14 @@ final class InMemoryLocalDataSourceTests: XCTestCase {
         let sessions = await sources.session.fetchSessions()
 
         XCTAssertEqual(goals.count, 1)
-        XCTAssertEqual(tasks.count, 2)
-        XCTAssertEqual(sessions.count, 1)
+        XCTAssertEqual(tasks.count, 3)
+        XCTAssertEqual(sessions.count, 3)
 
         let dependentTask = try XCTUnwrap(tasks.first(where: { !$0.dependencyIDs.isEmpty }))
         let dependencies = try await sources.task.fetchDependencies(taskID: dependentTask.id)
         XCTAssertEqual(dependencies.map(\.id), Array(dependentTask.dependencyIDs))
         XCTAssertEqual(dependentTask.goalID, goals.first?.id)
-        XCTAssertEqual(sessions.first?.taskID, dependentTask.id)
+        XCTAssertTrue(sessions.contains { $0.taskID == dependentTask.id })
     }
 
     func testPreviewOverrideAndWeekdayTemplatesResolveThroughRepository() async throws {

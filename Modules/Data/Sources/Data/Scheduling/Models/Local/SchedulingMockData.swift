@@ -36,6 +36,7 @@ public struct SchedulingMockData: Sendable {
         let goalID = UUID()
         let planningTaskID = UUID()
         let implementationTaskID = UUID()
+        let reviewTaskID = UUID()
 
         let morningZone = try Zone(
             id: UUID(),
@@ -97,7 +98,7 @@ public struct SchedulingMockData: Sendable {
 
         let currentZone = morningZone
         let sessionStart = calendar.date(byAdding: .hour, value: 9, to: today) ?? today
-        let sessionEnd = calendar.date(byAdding: .minute, value: 50, to: sessionStart) ?? today
+        let sessionEnd = calendar.date(byAdding: .minute, value: 180, to: sessionStart) ?? today
         let tomorrow = calendar.date(byAdding: .day, value: 1, to: today) ?? today
 
         let goal = Goal(
@@ -127,25 +128,59 @@ public struct SchedulingMockData: Sendable {
             status: .inProgress,
             goalID: goalID,
             zoneID: currentZone.id,
-            duration: TaskDuration(minutes: 90),
+            duration: TaskDuration(minutes: 180),
             isSplittable: true,
             mandatory: true,
             estimatedPoints: 8,
             dependencyIDs: [planningTaskID]
         )
-        let session = try Session(
-            id: UUID(),
-            taskID: implementationTaskID,
-            zoneID: currentZone.id,
-            timeRange: TimeRange(start: sessionStart, end: sessionEnd),
-            blocking: false,
-            status: .planned
+        let reviewTask = try AwanTask(
+            id: reviewTaskID,
+            title: "Review the day plan",
+            description: "Confirm the important work for today.",
+            status: .pending,
+            goalID: goalID,
+            zoneID: dayZone.id,
+            duration: TaskDuration(minutes: 45),
+            isSplittable: false,
+            mandatory: false,
+            estimatedPoints: 4
         )
+        let completedStart = calendar.date(byAdding: .hour, value: 8, to: today) ?? today
+        let completedEnd = calendar.date(byAdding: .minute, value: 30, to: completedStart) ?? today
+        let reviewStart = calendar.date(byAdding: .hour, value: 11, to: today) ?? today
+        let reviewEnd = calendar.date(byAdding: .minute, value: 45, to: reviewStart) ?? today
+        let sessions = [
+            try Session(
+                id: UUID(),
+                taskID: planningTaskID,
+                zoneID: currentZone.id,
+                timeRange: TimeRange(start: completedStart, end: completedEnd),
+                blocking: true,
+                status: .completed
+            ),
+            try Session(
+                id: UUID(),
+                taskID: implementationTaskID,
+                zoneID: currentZone.id,
+                timeRange: TimeRange(start: sessionStart, end: sessionEnd),
+                blocking: false,
+                status: .planned
+            ),
+            try Session(
+                id: UUID(),
+                taskID: reviewTaskID,
+                zoneID: dayZone.id,
+                timeRange: TimeRange(start: reviewStart, end: reviewEnd),
+                blocking: false,
+                status: .planned
+            ),
+        ]
 
         return SchedulingMockData(
-            tasks: [planningTask, implementationTask],
+            tasks: [planningTask, implementationTask, reviewTask],
             goals: [goal],
-            sessions: [session],
+            sessions: sessions,
             templates: [
                 TemplateData(
                     id: UUID(),

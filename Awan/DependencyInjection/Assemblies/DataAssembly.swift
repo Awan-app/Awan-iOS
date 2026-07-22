@@ -50,6 +50,11 @@ struct DataAssembly: Assembly {
                 localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver)
             )
         }
+
+        container.register(UserProfileRepository.self) { _ in
+            InMemoryUserProfileRepository(profile: UserProfileMockData.preview)
+        }
+        .inObjectScope(.container)
         
         container.register(NetworkServiceProtocol.self) { _ in
             NetworkClient.shared
