@@ -60,6 +60,41 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(ZoneRepository.self, from: resolver)
             )
         }
+        container.register(FetchTasksUseCase.self) { resolver in
+            DefaultFetchTasksUseCase(
+                repository: Self.resolve(TaskRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchSessionsUseCase.self) { resolver in
+            DefaultFetchSessionsUseCase(
+                repository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(GetUserProfileUseCase.self) { resolver in
+            DefaultGetUserProfileUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
+        container.register(RescheduleSessionUseCase.self) { resolver in
+            DefaultRescheduleSessionUseCase(
+                repository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(SetSessionLockUseCase.self) { resolver in
+            DefaultSetSessionLockUseCase(
+                repository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(SetSessionCompletionUseCase.self) { resolver in
+            DefaultSetSessionCompletionUseCase(
+                repository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(DeleteSessionUseCase.self) { resolver in
+            DefaultDeleteSessionUseCase(
+                repository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
         container.register(LoadScheduleWorkspaceUseCase.self) { resolver in
             DefaultLoadScheduleWorkspaceUseCase(
                 workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver)

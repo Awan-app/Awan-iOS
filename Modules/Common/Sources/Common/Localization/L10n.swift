@@ -108,4 +108,60 @@ public enum L10n {
         public static var addTask: String { String(localized: "schedule.add_task", bundle: .module) }
         public static var addGoal: String { String(localized: "schedule.add_goal", bundle: .module) }
     }
+
+    public enum Home {
+        public static var addTask: String { String(localized: "home.add_task", bundle: .module) }
+        public static var addGoal: String { String(localized: "home.add_goal", bundle: .module) }
+        public static var goodMorning: String { String(localized: "home.good_morning", bundle: .module) }
+        public static var goodAfternoon: String { String(localized: "home.good_afternoon", bundle: .module) }
+        public static var goodEvening: String { String(localized: "home.good_evening", bundle: .module) }
+        public static var todaysPlan: String { String(localized: "home.todays_plan", bundle: .module) }
+        public static func taskScheduleSummary(_ tasks: Int, _ duration: String) -> String {
+            String(
+                format: String(
+                    localized: tasks == 1
+                        ? "home.task_schedule_summary_one"
+                        : "home.task_schedule_summary",
+                    bundle: .module
+                ),
+                tasks,
+                duration
+            )
+        }
+        public static func completionSummary(_ completed: Int, _ total: Int) -> String {
+            String(
+                format: String(localized: "home.completion_summary", bundle: .module),
+                completed,
+                total
+            )
+        }
+        public static func minutesShort(_ minutes: Int) -> String {
+            String(format: String(localized: "home.minutes_short", bundle: .module), minutes)
+        }
+        public static func hoursShort(_ hours: Int) -> String {
+            String(format: String(localized: "home.hours_short", bundle: .module), hours)
+        }
+        public static func hoursMinutesShort(_ hours: Int, _ minutes: Int) -> String {
+            String(
+                format: String(localized: "home.hours_minutes_short", bundle: .module),
+                hours,
+                minutes
+            )
+        }
+        public static var fixed: String { String(localized: "home.fixed", bundle: .module) }
+        public static var emptyTimelineSubtitle: String { String(localized: "home.empty_timeline_subtitle", bundle: .module) }
+        public static var errorTitle: String { String(localized: "home.error_title", bundle: .module) }
+        public static var loadFailed: String { String(localized: "home.load_failed", bundle: .module) }
+        public static var retry: String { String(localized: "home.retry", bundle: .module) }
+        public static var startTime: String { String(localized: "home.start_time", bundle: .module) }
+        public static var reschedule: String { String(localized: "home.reschedule", bundle: .module) }
+        public static var lockSession: String { String(localized: "home.lock_session", bundle: .module) }
+        public static var unlockSession: String { String(localized: "home.unlock_session", bundle: .module) }
+        public static var deleteSession: String { String(localized: "home.delete_session", bundle: .module) }
+        public static var deleteSessionConfirmation: String { String(localized: "home.delete_session_confirmation", bundle: .module) }
+        public static var today: String { String(localized: "home.today", bundle: .module) }
+        public static var calendar: String { String(localized: "home.calendar", bundle: .module) }
+        public static var rewards: String { String(localized: "home.rewards", bundle: .module) }
+        public static var you: String { String(localized: "home.you", bundle: .module) }
+    }
 }

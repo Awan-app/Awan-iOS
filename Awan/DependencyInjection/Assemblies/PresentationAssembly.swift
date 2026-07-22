@@ -69,6 +69,31 @@ struct PresentationAssembly: Assembly {
             }
         }
 
+        container.register(HomeUseCases.self) { resolver in
+            HomeUseCases(
+                reads: HomeReadUseCases(
+                    tasks: Self.resolve(FetchTasksUseCase.self, from: resolver),
+                    sessions: Self.resolve(FetchSessionsUseCase.self, from: resolver),
+                    zones: Self.resolve(FetchZonesUseCase.self, from: resolver),
+                    userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver)
+                ),
+                sessions: HomeSessionUseCases(
+                    reschedule: Self.resolve(RescheduleSessionUseCase.self, from: resolver),
+                    setLock: Self.resolve(SetSessionLockUseCase.self, from: resolver),
+                    setCompletion: Self.resolve(SetSessionCompletionUseCase.self, from: resolver),
+                    delete: Self.resolve(DeleteSessionUseCase.self, from: resolver)
+                )
+            )
+        }
+
+        container.register(HomeViewModel.self) { resolver in
+            let useCases = Self.resolve(HomeUseCases.self, from: resolver)
+            return MainActor.assumeIsolated {
+                HomeViewModel(useCases: useCases)
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(OnboardingViewModel.self) { resolver in
             let useCase = Self.resolve(CompleteOnboardingUseCase.self, from: resolver)
             let createTemplateUseCase = Self.resolve(CreateOnboardingTemplateUseCase.self, from: resolver)
@@ -87,6 +112,7 @@ struct PresentationAssembly: Assembly {
             let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
             let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
             let loginViewModel = Self.resolve(LoginViewModel.self, from: resolver)
+            let homeViewModel = Self.resolve(HomeViewModel.self, from: resolver)
             let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
             let onboardingViewModel = Self.resolve(OnboardingViewModel.self, from: resolver)
 
@@ -95,6 +121,7 @@ struct PresentationAssembly: Assembly {
                     appCoordinator: appCoordinator,
                     authenticationState: authenticationState,
                     loginViewModel: loginViewModel,
+                    homeViewModel: homeViewModel,
                     scheduleViewModel: scheduleViewModel,
                     makeOtpViewModel: { context in
                         Self.resolve(
