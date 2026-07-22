@@ -10,10 +10,6 @@ public final class HomeViewModel {
     @ObservationIgnored let useCases: HomeUseCases
     @ObservationIgnored private let mapper: HomeStateMapper
     @ObservationIgnored private var loadTask: Task<Void, Never>?
-    @ObservationIgnored private var tasks: [AwanTask] = []
-    @ObservationIgnored var sessions: [Session] = []
-    @ObservationIgnored private var zones: [Zone] = []
-    @ObservationIgnored private var profile: UserProfile?
 
     public init(
         useCases: HomeUseCases,
@@ -34,7 +30,9 @@ public final class HomeViewModel {
             state.selectedSessionID = nil
             load()
         case let .presentSession(id):
-            guard state.timelineItems.contains(where: { $0.id == id }) else { return }
+            guard state.success?.timelineItems.contains(where: { $0.id == id }) == true else {
+                return
+            }
             state.selectedSessionID = id
         case .dismissSession:
             state.selectedSessionID = nil
@@ -53,15 +51,15 @@ public final class HomeViewModel {
         case let .deleteSession(id):
             deleteSession(id: id)
         case .dismissError:
-            state.errorMessage = nil
+            state.failure = nil
         }
     }
 
     private func load() {
         loadTask?.cancel()
         let selectedDay = state.selectedDay
-        state.status = .loading
-        state.errorMessage = nil
+        state.isLoading = true
+        state.failure = nil
 
         loadTask = Task { [weak self] in
             guard let self else { return }
@@ -74,44 +72,36 @@ public final class HomeViewModel {
                 try Task.checkCancellation()
                 guard state.selectedDay == selectedDay else { return }
 
-                self.tasks = loaded.0
-                self.sessions = loaded.1
-                self.zones = loaded.2
-                self.profile = loaded.3
-                applyContent()
-                state.status = .ready
+                state.success = mapper.map(
+                    tasks: loaded.0,
+                    sessions: loaded.1,
+                    zones: loaded.2,
+                    profile: loaded.3,
+                    selectedDay: selectedDay
+                )
+                state.isLoading = false
             } catch is CancellationError {
                 return
             } catch {
                 guard state.selectedDay == selectedDay else { return }
-                state.status = .failure
-                state.errorMessage = error.localizedDescription
+                state.isLoading = false
+                state.failure = HomeFailureState(message: error.localizedDescription)
             }
         }
     }
 
     func applyContent() {
-        guard let profile else { return }
-        let content = mapper.map(
-            tasks: tasks,
-            sessions: sessions,
-            zones: zones,
-            profile: profile,
+        guard let success = state.success else { return }
+        let updated = mapper.map(
+            tasks: success.tasks,
+            sessions: success.sessions,
+            zones: success.zones,
+            profile: success.profile,
             selectedDay: state.selectedDay
         )
-        state.displayName = content.displayName
-        state.streakCount = content.streakCount
-        state.rewardPoints = content.rewardPoints
-        state.taskCount = content.taskCount
-        state.scheduledMinutes = content.scheduledMinutes
-        state.completedSessionCount = content.completedSessionCount
-        state.totalSessionCount = content.totalSessionCount
-        state.taskAllocations = content.taskAllocations
-        state.timelineWindow = content.timelineWindow
-        state.timelineZones = content.timelineZones
-        state.timelineItems = content.timelineItems
+        state.success = updated
         if let selectedID = state.selectedSessionID,
-           !content.timelineItems.contains(where: { $0.id == selectedID }) {
+           !updated.timelineItems.contains(where: { $0.id == selectedID }) {
             state.selectedSessionID = nil
         }
     }

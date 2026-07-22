@@ -15,7 +15,7 @@ struct HomeStateMapper {
         zones: [Zone],
         profile: UserProfile,
         selectedDay: Date
-    ) -> HomeContent {
+    ) -> HomeSuccessState {
         let calendar = calendar(for: profile)
         let window = makeWindow(
             selectedDay: selectedDay,
@@ -65,7 +65,11 @@ struct HomeStateMapper {
             )
         }
 
-        return HomeContent(
+        return HomeSuccessState(
+            tasks: tasks,
+            sessions: sessions,
+            zones: zones,
+            profile: profile,
             displayName: profile.firstName,
             streakCount: profile.streak,
             rewardPoints: profile.points,

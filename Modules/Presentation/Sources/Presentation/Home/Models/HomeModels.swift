@@ -2,13 +2,6 @@ import Domain
 import Foundation
 import SwiftUI
 
-enum HomeStatus: Equatable {
-    case idle
-    case loading
-    case ready
-    case failure
-}
-
 struct HomeTimelineWindow: Equatable {
     let start: Date
     let end: Date
@@ -56,51 +49,38 @@ struct HomeTaskAllocationItem: Identifiable, Hashable {
 }
 
 struct HomeState {
-    var status: HomeStatus
+    var isLoading: Bool
+    var success: HomeSuccessState?
+    var failure: HomeFailureState?
     var selectedDay: Date
-    var displayName: String?
-    var streakCount: Int
-    var rewardPoints: Int
-    var taskCount: Int
-    var scheduledMinutes: Int
-    var completedSessionCount: Int
-    var totalSessionCount: Int
-    var taskAllocations: [HomeTaskAllocationItem]
-    var timelineWindow: HomeTimelineWindow?
-    var timelineZones: [HomeTimelineZoneItem]
-    var timelineItems: [HomeTimelineItem]
     var selectedSessionID: UUID?
     var isMutating: Bool
-    var errorMessage: String?
 
-    var isLoading: Bool { status == .loading }
     var selectedSession: HomeTimelineItem? {
-        timelineItems.first { $0.id == selectedSessionID }
+        success?.timelineItems.first { $0.id == selectedSessionID }
     }
 
     static func initial(selectedDay: Date) -> HomeState {
         HomeState(
-            status: .idle,
+            isLoading: false,
+            success: nil,
+            failure: nil,
             selectedDay: selectedDay,
-            displayName: nil,
-            streakCount: 0,
-            rewardPoints: 0,
-            taskCount: 0,
-            scheduledMinutes: 0,
-            completedSessionCount: 0,
-            totalSessionCount: 0,
-            taskAllocations: [],
-            timelineWindow: nil,
-            timelineZones: [],
-            timelineItems: [],
             selectedSessionID: nil,
-            isMutating: false,
-            errorMessage: nil
+            isMutating: false
         )
     }
 }
 
-struct HomeContent {
+struct HomeFailureState: Equatable {
+    let message: String
+}
+
+struct HomeSuccessState {
+    let tasks: [AwanTask]
+    var sessions: [Session]
+    let zones: [Zone]
+    let profile: UserProfile
     let displayName: String?
     let streakCount: Int
     let rewardPoints: Int

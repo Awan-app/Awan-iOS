@@ -4,7 +4,7 @@ import Foundation
 extension HomeViewModel {
     func moveSession(id: UUID, verticalPoints: CGFloat, hourHeight: CGFloat) {
         guard hourHeight > 0,
-              let item = state.timelineItems.first(where: { $0.id == id }) else {
+              let item = state.success?.timelineItems.first(where: { $0.id == id }) else {
             return
         }
         let rawMinutes = verticalPoints / hourHeight * 60
@@ -16,15 +16,16 @@ extension HomeViewModel {
     }
 
     func rescheduleSession(id: UUID, proposedStart: Date) {
-        guard let item = state.timelineItems.first(where: { $0.id == id }),
+        guard var success = state.success,
+              let item = success.timelineItems.first(where: { $0.id == id }),
               let range = clampedRange(for: item, proposedStart: proposedStart),
-              let index = sessions.firstIndex(where: { $0.id == id }),
+              let index = success.sessions.firstIndex(where: { $0.id == id }),
               !state.isMutating else {
             return
         }
         guard range.start != item.start else { return }
 
-        let original = sessions[index]
+        let original = success.sessions[index]
         let optimistic = Session(
             id: original.id,
             taskID: original.taskID,
@@ -35,8 +36,9 @@ extension HomeViewModel {
         )
 
         state.isMutating = true
-        state.errorMessage = nil
-        sessions[index] = optimistic
+        state.failure = nil
+        success.sessions[index] = optimistic
+        state.success = success
         applyContent()
 
         Task { [weak self] in
@@ -52,7 +54,7 @@ extension HomeViewModel {
                 replaceSession(original)
             } catch {
                 replaceSession(original)
-                state.errorMessage = error.localizedDescription
+                state.failure = HomeFailureState(message: error.localizedDescription)
             }
         }
     }
@@ -68,12 +70,13 @@ extension HomeViewModel {
     }
 
     func setSessionCompletion(id: UUID, isCompleted: Bool) {
-        guard !state.isMutating,
-              let index = sessions.firstIndex(where: { $0.id == id }) else {
+        guard var success = state.success,
+              !state.isMutating,
+              let index = success.sessions.firstIndex(where: { $0.id == id }) else {
             return
         }
 
-        let original = sessions[index]
+        let original = success.sessions[index]
         let optimistic = Session(
             id: original.id,
             taskID: original.taskID,
@@ -84,8 +87,9 @@ extension HomeViewModel {
         )
 
         state.isMutating = true
-        state.errorMessage = nil
-        sessions[index] = optimistic
+        state.failure = nil
+        success.sessions[index] = optimistic
+        state.success = success
         applyContent()
 
         Task { [weak self] in
@@ -101,7 +105,7 @@ extension HomeViewModel {
                 replaceSession(original)
             } catch {
                 replaceSession(original)
-                state.errorMessage = error.localizedDescription
+                state.failure = HomeFailureState(message: error.localizedDescription)
             }
         }
     }
@@ -109,7 +113,9 @@ extension HomeViewModel {
     func deleteSession(id: UUID) {
         performMutation {
             try await self.useCases.sessions.delete.execute(sessionID: id)
-            self.sessions.removeAll { $0.id == id }
+            guard var success = self.state.success else { return }
+            success.sessions.removeAll { $0.id == id }
+            self.state.success = success
             self.state.selectedSessionID = nil
             self.applyContent()
         }
@@ -120,7 +126,7 @@ extension HomeViewModel {
     ) {
         guard !state.isMutating else { return }
         state.isMutating = true
-        state.errorMessage = nil
+        state.failure = nil
         Task { [weak self] in
             guard let self else { return }
             defer { state.isMutating = false }
@@ -129,14 +135,18 @@ extension HomeViewModel {
             } catch is CancellationError {
                 return
             } catch {
-                state.errorMessage = error.localizedDescription
+                state.failure = HomeFailureState(message: error.localizedDescription)
             }
         }
     }
 
     private func replaceSession(_ updated: Session) {
-        guard let index = sessions.firstIndex(where: { $0.id == updated.id }) else { return }
-        sessions[index] = updated
+        guard var success = state.success,
+              let index = success.sessions.firstIndex(where: { $0.id == updated.id }) else {
+            return
+        }
+        success.sessions[index] = updated
+        state.success = success
         applyContent()
     }
 
@@ -144,7 +154,7 @@ extension HomeViewModel {
         for item: HomeTimelineItem,
         proposedStart: Date
     ) -> TimeRange? {
-        guard let window = state.timelineWindow else { return nil }
+        guard let window = state.success?.timelineWindow else { return nil }
         let duration = item.end.timeIntervalSince(item.start)
         let latestStart = window.end.addingTimeInterval(-duration)
         guard latestStart >= window.start else { return nil }

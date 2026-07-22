@@ -14,10 +14,10 @@ struct HomeView: View {
         ZStack {
             AppColors.screenBackground.ignoresSafeArea()
 
-            if state.status == .failure, state.timelineWindow == nil {
+            if state.failure != nil, state.success == nil {
                 failureView
-            } else {
-                content(state)
+            } else if let success = state.success {
+                content(state, success: success)
             }
 
             if state.isLoading {
@@ -52,7 +52,7 @@ struct HomeView: View {
         .sheet(item: selectedSessionBinding) { item in
             HomeSessionActionSheet(
                 item: item,
-                window: state.timelineWindow,
+                window: state.success?.timelineWindow,
                 isMutating: state.isMutating,
                 onReschedule: { viewModel.send(.rescheduleSession(sessionID: item.id, start: $0)) },
                 onSetLock: { viewModel.send(.setSessionLock(sessionID: item.id, isLocked: $0)) },
@@ -65,18 +65,18 @@ struct HomeView: View {
         .alert(L10n.Home.errorTitle, isPresented: errorBinding) {
             Button(L10n.Common.gotIt) { viewModel.send(.dismissError) }
         } message: {
-            Text(state.errorMessage ?? L10n.Common.pleaseTryAgain)
+            Text(state.failure?.message ?? L10n.Common.pleaseTryAgain)
         }
     }
 
-    private func content(_ state: HomeState) -> some View {
+    private func content(_ state: HomeState, success: HomeSuccessState) -> some View {
         ScrollView {
             LazyVStack(spacing: 18) {
                 HomeHeaderView(
-                    displayName: state.displayName,
+                    displayName: success.displayName,
                     selectedDay: state.selectedDay,
-                    streakCount: state.streakCount,
-                    rewardPoints: state.rewardPoints
+                    streakCount: success.streakCount,
+                    rewardPoints: success.rewardPoints
                 )
 
                 HomeWeekStripView(
@@ -85,40 +85,38 @@ struct HomeView: View {
                 )
 
                 HomePlanSummaryView(
-                    taskCount: state.taskCount,
-                    scheduledMinutes: state.scheduledMinutes,
-                    completedCount: state.completedSessionCount,
-                    totalCount: state.totalSessionCount,
-                    taskAllocations: state.taskAllocations,
+                    taskCount: success.taskCount,
+                    scheduledMinutes: success.scheduledMinutes,
+                    completedCount: success.completedSessionCount,
+                    totalCount: success.totalSessionCount,
+                    taskAllocations: success.taskAllocations,
                     onAddTask: {},
                     onAddGoal: {}
                 )
 
-                if let window = state.timelineWindow {
-                    HomeDayTimelineView(
-                        window: window,
-                        zones: state.timelineZones,
-                        items: state.timelineItems,
-                        onMove: { sessionID, points in
-                            viewModel.send(
-                                .moveSession(
-                                    sessionID: sessionID,
-                                    verticalPoints: points,
-                                    hourHeight: HomeDayTimelineView.hourHeight
-                                )
+                HomeDayTimelineView(
+                    window: success.timelineWindow,
+                    zones: success.timelineZones,
+                    items: success.timelineItems,
+                    onMove: { sessionID, points in
+                        viewModel.send(
+                            .moveSession(
+                                sessionID: sessionID,
+                                verticalPoints: points,
+                                hourHeight: HomeDayTimelineView.hourHeight
                             )
-                        },
-                        onSetCompletion: { sessionID, isCompleted in
-                            viewModel.send(
-                                .setSessionCompletion(
-                                    sessionID: sessionID,
-                                    isCompleted: isCompleted
-                                )
+                        )
+                    },
+                    onSetCompletion: { sessionID, isCompleted in
+                        viewModel.send(
+                            .setSessionCompletion(
+                                sessionID: sessionID,
+                                isCompleted: isCompleted
                             )
-                        },
-                        onTap: { viewModel.send(.presentSession($0)) }
-                    )
-                }
+                        )
+                    },
+                    onTap: { viewModel.send(.presentSession($0)) }
+                )
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
@@ -150,8 +148,8 @@ struct HomeView: View {
     private var errorBinding: Binding<Bool> {
         Binding(
             get: {
-                viewModel.state.errorMessage != nil
-                    && viewModel.state.timelineWindow != nil
+                viewModel.state.failure != nil
+                    && viewModel.state.success != nil
             },
             set: { if !$0 { viewModel.send(.dismissError) } }
         )
