@@ -102,6 +102,13 @@ struct PresentationAssembly: Assembly {
         }
         .inObjectScope(.container)
 
+        container.register(ProfileViewModel.self) { _ in
+            return MainActor.assumeIsolated {
+                ProfileViewModel()
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(PresentationFactory.self) { resolver in
             let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
             let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
@@ -109,6 +116,7 @@ struct PresentationAssembly: Assembly {
             let homeViewModel = Self.resolve(HomeViewModel.self, from: resolver)
             let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
             let onboardingViewModel = Self.resolve(OnboardingViewModel.self, from: resolver)
+            let profileViewModel = Self.resolve(ProfileViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
@@ -124,7 +132,8 @@ struct PresentationAssembly: Assembly {
                             from: resolver
                         )
                     },
-                    onboardingViewModel: onboardingViewModel
+                    onboardingViewModel: onboardingViewModel,
+                    profileViewModel: profileViewModel
                 )
             }
         }
