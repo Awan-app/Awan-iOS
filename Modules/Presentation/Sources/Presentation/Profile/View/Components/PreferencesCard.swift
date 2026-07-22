@@ -23,7 +23,7 @@ struct PreferencesCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeaderLabel(title: "PREFERENCES")
+            SectionHeaderLabel(title: "PREFERENCES",accentColor: AppColors.brandDarkBlue)
 
             DepthCardContainer {
                 VStack(spacing: 0) {
