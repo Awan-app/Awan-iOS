@@ -7,6 +7,13 @@
 
 import Foundation
 
+public enum MainTab: Hashable, Sendable {
+    case home
+    case calendar
+    case rewards
+    case you
+}
+
 public enum MainRoute: Hashable, Identifiable, Sendable {
     case home
 

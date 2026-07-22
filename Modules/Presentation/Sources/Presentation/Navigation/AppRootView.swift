@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Common
 
 struct AppRootView: View {
     @Environment(AppCoordinator.self) private var coordinator
@@ -76,9 +77,40 @@ struct AppRootView: View {
     }
 
     private var mainFlow: some View {
-        NavigationStack(path: Bindable(coordinator.mainCoordinator).path) {
-            factory.makeScheduleTimelineView()
+        TabView(selection: Bindable(coordinator.mainCoordinator).selectedTab) {
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).homePath) {
+                factory.makeHomeView()
+            }
+            .tabItem {
+                Label(L10n.Home.today, systemImage: "sun.max.fill")
+            }
+            .tag(MainTab.home)
+
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).calendarPath) {
+                factory.makeCalendarView()
+            }
+            .tabItem {
+                Label(L10n.Home.calendar, systemImage: "calendar")
+            }
+            .tag(MainTab.calendar)
+
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).rewardsPath) {
+                factory.makeRewardsView()
+            }
+            .tabItem {
+                Label(L10n.Home.rewards, systemImage: "gift.fill")
+            }
+            .tag(MainTab.rewards)
+
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
+                factory.makeYouView()
+            }
+            .tabItem {
+                Label(L10n.Home.you, systemImage: "person.fill")
+            }
+            .tag(MainTab.you)
         }
+        .tint(AppColors.accentBlue)
     }
 }
 //    }
