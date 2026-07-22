@@ -121,7 +121,7 @@ public final class OnboardingViewModel {
         }
     }
 
-    /// Swaps two zones directly, preserving their positional time intervals.
+    /// Swaps two zones directly, preserving their durations and stacking them back-to-back.
     public func swapZones(at sourceIndex: Int, with destinationIndex: Int) {
         guard sourceIndex != destinationIndex,
               suggestedZones.indices.contains(sourceIndex),
@@ -129,21 +129,63 @@ public final class OnboardingViewModel {
             return
         }
         
-        let sourceTime = (start: suggestedZones[sourceIndex].startTime, end: suggestedZones[sourceIndex].endTime)
-        let destTime = (start: suggestedZones[destinationIndex].startTime, end: suggestedZones[destinationIndex].endTime)
+        let firstIdx = min(sourceIndex, destinationIndex)
+        let secondIdx = max(sourceIndex, destinationIndex)
         
-        suggestedZones.swapAt(sourceIndex, destinationIndex)
+        let duration1 = durationInMinutes(start: suggestedZones[firstIdx].startTime, end: suggestedZones[firstIdx].endTime)
+        let duration2 = durationInMinutes(start: suggestedZones[secondIdx].startTime, end: suggestedZones[secondIdx].endTime)
         
-        suggestedZones[sourceIndex].startTime = sourceTime.start
-        suggestedZones[sourceIndex].endTime = sourceTime.end
+        let initialStartTime = suggestedZones[firstIdx].startTime
         
-        suggestedZones[destinationIndex].startTime = destTime.start
-        suggestedZones[destinationIndex].endTime = destTime.end
+        suggestedZones.swapAt(firstIdx, secondIdx)
+        
+        let newFirstEnd = addMinutes(duration2, to: initialStartTime)
+        suggestedZones[firstIdx].startTime = initialStartTime
+        suggestedZones[firstIdx].endTime = newFirstEnd
+        
+        let newSecondEnd = addMinutes(duration1, to: newFirstEnd)
+        suggestedZones[secondIdx].startTime = newFirstEnd
+        suggestedZones[secondIdx].endTime = newSecondEnd
+    }
+
+    private func durationInMinutes(start: String, end: String) -> Int {
+        guard let startMins = Self.minutesSinceMidnight(from: start),
+              var endMins = Self.minutesSinceMidnight(from: end) else { return 0 }
+        if endMins < startMins {
+            endMins += 24 * 60
+        }
+        return endMins - startMins
+    }
+
+    private func addMinutes(_ minutes: Int, to timeString: String) -> String {
+        guard let date = Self.parseTime(timeString) else { return timeString }
+        let newDate = Calendar.current.date(byAdding: .minute, value: minutes, to: date) ?? date
+        return Self.formatTime(newDate)
     }
 
     /// Adds a new zone to the list and sorts it chronologically.
     public func addZone(_ zone: SuggestedZone) {
         suggestedZones.append(zone)
+        sortZonesChronologically()
+    }
+
+    /// Updates the properties of an existing zone.
+    public func updateZone(
+        id: UUID,
+        name: String,
+        colorRed: Double,
+        colorGreen: Double,
+        colorBlue: Double,
+        startTime: String,
+        endTime: String
+    ) {
+        guard let index = suggestedZones.firstIndex(where: { $0.id == id }) else { return }
+        suggestedZones[index].name = name
+        suggestedZones[index].colorRed = colorRed
+        suggestedZones[index].colorGreen = colorGreen
+        suggestedZones[index].colorBlue = colorBlue
+        suggestedZones[index].startTime = startTime
+        suggestedZones[index].endTime = endTime
         sortZonesChronologically()
     }
 
@@ -186,6 +228,40 @@ public final class OnboardingViewModel {
         return false
     }
 
+    /// Checks whether a given time interval falls outside the user's active hours (wakeupTime to sleepTime).
+    public func isTimeIntervalOutsideActiveHours(start: Date, end: Date) -> Bool {
+        let calendar = Calendar.current
+        let wakeMins = calendar.component(.hour, from: wakeupTime) * 60 + calendar.component(.minute, from: wakeupTime)
+        var sleepMins = calendar.component(.hour, from: sleepTime) * 60 + calendar.component(.minute, from: sleepTime)
+        
+        if sleepMins <= wakeMins {
+            sleepMins += 24 * 60
+        }
+        
+        let startMinsRaw = calendar.component(.hour, from: start) * 60 + calendar.component(.minute, from: start)
+        let endMinsRaw = calendar.component(.hour, from: end) * 60 + calendar.component(.minute, from: end)
+        
+        var startMins = startMinsRaw
+        if startMins < wakeMins { startMins += 24 * 60 }
+        
+        var endMins = endMinsRaw
+        if endMins <= startMins { endMins += 24 * 60 }
+        
+        return startMins < wakeMins || endMins > sleepMins || startMins > sleepMins
+    }
+
+    public var hasZoneOutsideActiveHours: Bool {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        
+        return suggestedZones.contains { zone in
+            guard let start = formatter.date(from: zone.startTime),
+                  let end = formatter.date(from: zone.endTime) else { return false }
+            return isTimeIntervalOutsideActiveHours(start: start, end: end)
+        }
+    }
+
     /// Returns the first available non-overlapping time interval (duration 1 hour) starting from wakeupTime.
     public func firstAvailableTimeInterval() -> (start: Date, end: Date) {
         let calendar = Calendar.current
@@ -218,6 +294,14 @@ public final class OnboardingViewModel {
         formatter.dateFormat = "h:mm a"
         formatter.locale = Locale(identifier: "en_US_POSIX")
         return formatter.string(from: date)
+    }
+
+    /// Parses a time string like `"7:00 AM"` into a `Date`.
+    public static func parseTime(_ timeString: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter.date(from: timeString)
     }
 
     /// Parses a time string like `"7:00 AM"` into minutes since midnight.

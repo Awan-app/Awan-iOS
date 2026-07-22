@@ -1,5 +1,5 @@
 //
-//  AddZoneSheet.swift
+//  EditZoneTimeSheet.swift
 //  Presentation
 //
 //  Created by Awan Agent on 22/07/2026.
@@ -7,13 +7,15 @@
 
 import Common
 import SwiftUI
+import Domain
 
-struct AddZoneSheet: View {
+struct EditZoneTimeSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: OnboardingViewModel
+    let zone: SuggestedZone
 
-    @State private var zoneName: String = ""
-    @State private var selectedColorIndex: Int = 0
+    @State private var zoneName: String
+    @State private var selectedColorIndex: Int
     @State private var startTime: Date
     @State private var endTime: Date
     @State private var showOverlapError: Bool = false
@@ -33,14 +35,22 @@ struct AddZoneSheet: View {
         (0.95, 0.75, 0.30, "Yellow")
     ]
 
-    init(viewModel: OnboardingViewModel) {
+    init(viewModel: OnboardingViewModel, zone: SuggestedZone) {
         self.viewModel = viewModel
-        let availableTime = viewModel.firstAvailableTimeInterval()
-        _startTime = State(initialValue: availableTime.start)
-        _endTime = State(initialValue: availableTime.end)
+        self.zone = zone
+        
+        _zoneName = State(initialValue: zone.name)
+        
+        let initialColorIndex = Self.colorPalette.firstIndex(where: {
+            abs($0.red - zone.colorRed) < 0.01 &&
+            abs($0.green - zone.colorGreen) < 0.01 &&
+            abs($0.blue - zone.colorBlue) < 0.01
+        }) ?? 0
+        _selectedColorIndex = State(initialValue: initialColorIndex)
+        
+        _startTime = State(initialValue: OnboardingViewModel.parseTime(zone.startTime) ?? .now)
+        _endTime = State(initialValue: OnboardingViewModel.parseTime(zone.endTime) ?? .now)
     }
-
-    // MARK: - Computed
 
     private var selectedColor: (red: Double, green: Double, blue: Double, label: String) {
         Self.colorPalette[selectedColorIndex]
@@ -56,14 +66,12 @@ struct AddZoneSheet: View {
         guard !startAfterEnd else { return false }
         let start = OnboardingViewModel.formatTime(startTime)
         let end = OnboardingViewModel.formatTime(endTime)
-        return !viewModel.isTimeIntervalOverlapping(start: start, end: end)
+        return !viewModel.isTimeIntervalOverlapping(start: start, end: end, excludingID: zone.id)
     }
 
     private var startAfterEnd: Bool {
         startTime >= endTime
     }
-
-    // MARK: - Body
 
     var body: some View {
         NavigationStack {
@@ -72,7 +80,7 @@ struct AddZoneSheet: View {
                     sheetHeader
                     formCard
                     overlapWarning
-                    addButton
+                    saveButton
                 }
                 .padding(20)
             }
@@ -97,20 +105,16 @@ struct AddZoneSheet: View {
         }
     }
 
-    // MARK: - Header
-
     private var sheetHeader: some View {
         VStack(spacing: 8) {
-            Image(systemName: "square.3.layers.3d.top.filled")
+            Image(systemName: "square.and.pencil")
                 .font(AppFonts.heroSymbol)
                 .foregroundStyle(selectedUIColor)
                 .symbolEffect(.bounce, value: selectedColorIndex)
-            Text(L10n.Onboarding.addZoneTitle)
+            Text("Edit Zone")
                 .font(AppFonts.title2Black)
         }
     }
-
-    // MARK: - Form Card
 
     private var formCard: some View {
         AppCard {
@@ -206,26 +210,28 @@ struct AddZoneSheet: View {
 
     private var timePickers: some View {
         VStack(alignment: .leading, spacing: 14) {
-            labeledField(L10n.Onboarding.zoneStartTime, icon: "clock") {
-                DatePicker(
-                    "",
-                    selection: $startTime,
-                    displayedComponents: .hourAndMinute
-                )
-                .labelsHidden()
-                .onChange(of: startTime) { validateOverlap() }
-                .accessibilityIdentifier("zone-start-picker")
-            }
+            HStack(spacing: 16) {
+                labeledField(L10n.Onboarding.zoneStartTime, icon: "clock") {
+                    DatePicker(
+                        "",
+                        selection: $startTime,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .labelsHidden()
+                    .onChange(of: startTime) { validateOverlap() }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            labeledField(L10n.Onboarding.zoneEndTime, icon: "clock.badge.checkmark") {
-                DatePicker(
-                    "",
-                    selection: $endTime,
-                    displayedComponents: .hourAndMinute
-                )
-                .labelsHidden()
-                .onChange(of: endTime) { validateOverlap() }
-                .accessibilityIdentifier("zone-end-picker")
+                labeledField(L10n.Onboarding.zoneEndTime, icon: "clock.badge.checkmark") {
+                    DatePicker(
+                        "",
+                        selection: $endTime,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .labelsHidden()
+                    .onChange(of: endTime) { validateOverlap() }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             if startAfterEnd {
@@ -275,39 +281,32 @@ struct AddZoneSheet: View {
         }
     }
 
-    // MARK: - Add Button
-
-    private var addButton: some View {
+    private var saveButton: some View {
         AppButton(
-            title: L10n.Onboarding.addZone,
-            icon: "plus.circle.fill",
+            title: "Save Zone",
+            icon: "checkmark.circle.fill",
             color: isFormValid ? AppColors.accentBlue : AppColors.buttonDisabled,
             foregroundColor: AppColors.onAccent,
             shadowColor: isFormValid ? nil : AppColors.buttonDisabledDepth,
             onTap: {
                 guard isFormValid else { return }
-                let color = selectedColor
-                let zone = SuggestedZone(
-                    id: UUID(),
-                    name: zoneName.trimmingCharacters(in: .whitespacesAndNewlines),
-                    startTime: OnboardingViewModel.formatTime(startTime),
-                    endTime: OnboardingViewModel.formatTime(endTime),
-                    colorRed: color.red,
-                    colorGreen: color.green,
-                    colorBlue: color.blue
-                )
                 withAnimation(.snappy(duration: 0.25)) {
-                    viewModel.addZone(zone)
+                    viewModel.updateZone(
+                        id: zone.id,
+                        name: zoneName.trimmingCharacters(in: .whitespacesAndNewlines),
+                        colorRed: selectedColor.red,
+                        colorGreen: selectedColor.green,
+                        colorBlue: selectedColor.blue,
+                        startTime: OnboardingViewModel.formatTime(startTime),
+                        endTime: OnboardingViewModel.formatTime(endTime)
+                    )
                 }
                 dismiss()
             }
         )
         .disabled(!isFormValid)
         .opacity(isFormValid ? 1 : 0.55)
-        .accessibilityIdentifier("save-zone-button")
     }
-
-    // MARK: - Helpers
 
     private func labeledField<Content: View>(
         _ title: String,
@@ -327,7 +326,7 @@ struct AddZoneSheet: View {
         let end = OnboardingViewModel.formatTime(endTime)
         withAnimation(.snappy(duration: 0.2)) {
             showOverlapError = !startAfterEnd
-                && viewModel.isTimeIntervalOverlapping(start: start, end: end)
+                && viewModel.isTimeIntervalOverlapping(start: start, end: end, excludingID: zone.id)
             
             showOutsideHoursWarning = viewModel.isTimeIntervalOutsideActiveHours(start: startTime, end: endTime)
         }
