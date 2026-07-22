@@ -65,15 +65,23 @@ struct ProfileMainView: View {
 
                         // Preferences
                         PreferencesCard(preferences: [
-                            PreferenceItem(icon: "clock", title: "Session time", value: "60 min", onTap: {}),
-                            PreferenceItem(icon: "globe", title: "Time zone", value: "Cairo · GMT+3", onTap: {}),
-                            PreferenceItem(icon: "moon", title: "Sleep schedule", value: "11:00 PM – 7:00 AM", onTap: {})
+                            PreferenceItem(icon: "clock", title: "Session time", value: "60 min", onTap: {
+                                //go to session time view
+                            }),
+                            PreferenceItem(icon: "globe", title: "Time zone", value: "Cairo · GMT+3", onTap: {
+                                //go to time zone view
+                            }),
+                            PreferenceItem(icon: "moon", title: "Sleep schedule", value: "11:00 PM – 7:00 AM", onTap: {
+                                //go to sleep schedule view
+                            })
                         ])
 
                         // Language & Theme
                         LanguageThemeCard(
                             language: "English",
-                            onLanguageTap: {},
+                            onLanguageTap: {
+                                //go to change lan view
+                            },
                             selectedTheme: $selectedTheme
                         )
                     }

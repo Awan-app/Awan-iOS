@@ -2,7 +2,8 @@
 //  PreferenceRowView.swift
 //  Presentation
 //
-
+//  Created by AndrewMagdy on 21/07/2026.
+//
 import SwiftUI
 import Common
 
