@@ -595,6 +595,303 @@
         }
       }
     },
+    "home.good_morning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good morning"
+          }
+        }
+      }
+    },
+    "home.add_goal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add goal"
+          }
+        }
+      }
+    },
+    "home.add_task": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add task"
+          }
+        }
+      }
+    },
+    "home.good_afternoon": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good afternoon"
+          }
+        }
+      }
+    },
+    "home.good_evening": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good evening"
+          }
+        }
+      }
+    },
+    "home.todays_plan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TODAY'S PLAN"
+          }
+        }
+      }
+    },
+    "home.task_schedule_summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld tasks • %@"
+          }
+        }
+      }
+    },
+    "home.task_schedule_summary_one": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld task • %@"
+          }
+        }
+      }
+    },
+    "home.completion_summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of %lld complete"
+          }
+        }
+      }
+    },
+    "home.minutes_short": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min"
+          }
+        }
+      }
+    },
+    "home.hours_short": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld hr"
+          }
+        }
+      }
+    },
+    "home.hours_minutes_short": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld hr %lld min"
+          }
+        }
+      }
+    },
+    "home.fixed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FIXED"
+          }
+        }
+      }
+    },
+    "home.empty_timeline_subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a task or goal to begin your plan."
+          }
+        }
+      }
+    },
+    "home.error_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't update your day"
+          }
+        }
+      }
+    },
+    "home.load_failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We couldn't load your plan."
+          }
+        }
+      }
+    },
+    "home.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        }
+      }
+    },
+    "home.start_time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start time"
+          }
+        }
+      }
+    },
+    "home.reschedule": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reschedule and lock"
+          }
+        }
+      }
+    },
+    "home.lock_session": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock session"
+          }
+        }
+      }
+    },
+    "home.unlock_session": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock session"
+          }
+        }
+      }
+    },
+    "home.delete_session": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete session"
+          }
+        }
+      }
+    },
+    "home.delete_session_confirmation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this scheduled session? The task will remain available."
+          }
+        }
+      }
+    },
+    "home.today": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today"
+          }
+        }
+      }
+    },
+    "home.calendar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendar"
+          }
+        }
+      }
+    },
+    "home.rewards": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rewards"
+          }
+        }
+      }
+    },
+    "home.you": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You"
+          }
+        }
+      }
+    },
     "schedule.quests_title": {
       "extractionState": "manual",
       "localizations": {
