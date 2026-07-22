@@ -64,7 +64,9 @@ struct NotificationView: View {
                     )
                     .disabled(viewModel.isCompleting)
 
-                    NavigationLink(destination: ProfileMainView()) {
+                    Button(action: {
+                        onSkipNotifications()
+                    }) {
                         HStack(spacing: 4) {
                             Text("Not now")
                         }
