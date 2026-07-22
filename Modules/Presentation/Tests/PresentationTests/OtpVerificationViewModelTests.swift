@@ -48,7 +48,11 @@ final class OtpVerificationViewModelTests: XCTestCase {
         repository: AuthRepositoryStub = AuthRepositoryStub()
     ) -> OtpVerificationViewModel {
         OtpVerificationViewModel(
-            email: "person@example.com",
+            context: OtpVerificationContext(
+                email: "person@example.com",
+                initialResendSeconds: 0
+            ),
+            requestOTPUseCase: DefaultRequestOTPUseCase(repository: repository),
             verifyOTPUseCase: VerifyOTPUseCase(repository: repository)
         )
     }
@@ -72,12 +76,19 @@ private actor AuthRepositoryStub: AuthRepository {
 
     func verifyOTP(
         email: String,
-        code: String,
-        deviceId: String
+        code: String
     ) async throws -> VerifyOTPResult {
         lastVerifiedCode = code
         return VerifyOTPResult(
             user: UserEntity(id: "user-id", email: email, isNew: false)
         )
     }
+
+    nonisolated func observeAuthenticatedUser() -> AsyncStream<UserEntity?> {
+        AsyncStream { continuation in
+            continuation.finish()
+        }
+    }
+
+    func logout() async throws {}
 }
