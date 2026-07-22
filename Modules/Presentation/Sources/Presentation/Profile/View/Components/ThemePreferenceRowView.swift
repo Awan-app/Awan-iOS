@@ -24,7 +24,7 @@ struct ThemePreferenceRowView: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(AppColors.textSecondary)
+                .foregroundStyle(AppColors.accentBlue)
                 .frame(width: 26, alignment: .center)
 
             Text(title)

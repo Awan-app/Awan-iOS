@@ -10,13 +10,7 @@ import Common
 
 struct ProfileMainView: View {
     @State private var selectedTheme: ThemePreferenceRowView.ThemeSelection = .light
-
-    private let sampleColors: [Color] = [
-        AppColors.accentPurple,
-        AppColors.accentBlue,
-        Color.orange,
-        Color(red: 0.93, green: 0.26, blue: 0.26)
-    ]
+    @State private var viewModel = ProfileViewModel()
 
     var body: some View {
         ZStack {
@@ -51,8 +45,8 @@ struct ProfileMainView: View {
 
                         // Daily Zones
                         DailyZonesCard(
-                            zoneColors: sampleColors,
-                            isReady: true,
+                            zoneColors: viewModel.dailyZones.map(\.color),
+                            isReady: viewModel.isReady,
                             onTap: {}
                         )
 

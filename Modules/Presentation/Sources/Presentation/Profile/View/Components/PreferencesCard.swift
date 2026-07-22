@@ -36,6 +36,7 @@ struct PreferencesCard: View {
                             value: item.value,
                             onTap: item.onTap
                         )
+                        .padding(.vertical, 6)
 
                         if index < preferences.count - 1 {
                             Rectangle()

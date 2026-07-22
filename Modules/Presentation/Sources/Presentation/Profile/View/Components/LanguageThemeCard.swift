@@ -25,6 +25,7 @@ struct LanguageThemeCard: View {
                         value: language,
                         onTap: onLanguageTap
                     )
+                    .padding(.vertical, 6)
 
                     Divider()
                         .padding(.leading, 38)
@@ -35,6 +36,7 @@ struct LanguageThemeCard: View {
                         title: "Theme",
                         selectedTheme: $selectedTheme
                     )
+                    .padding(.vertical, 6)
                 }
             }
         }
