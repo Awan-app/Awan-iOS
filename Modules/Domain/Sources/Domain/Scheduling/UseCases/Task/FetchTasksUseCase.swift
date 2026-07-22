@@ -1,5 +1,14 @@
+import Combine
+
 public protocol FetchTasksUseCase: Sendable {
     func execute() async throws -> [AwanTask]
+    func observe() -> AnyPublisher<[AwanTask], Error>
+}
+
+public extension FetchTasksUseCase {
+    func observe() -> AnyPublisher<[AwanTask], Error> {
+        AsyncValuePublisher.make { try await execute() }
+    }
 }
 
 public struct DefaultFetchTasksUseCase: FetchTasksUseCase {
@@ -11,5 +20,9 @@ public struct DefaultFetchTasksUseCase: FetchTasksUseCase {
 
     public func execute() async throws -> [AwanTask] {
         try await repository.fetchTasks()
+    }
+
+    public func observe() -> AnyPublisher<[AwanTask], Error> {
+        repository.observeTasks()
     }
 }

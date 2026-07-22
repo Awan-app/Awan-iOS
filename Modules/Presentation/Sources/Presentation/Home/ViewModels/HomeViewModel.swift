@@ -1,3 +1,4 @@
+import Combine
 import Domain
 import Foundation
 import Observation
@@ -9,7 +10,7 @@ public final class HomeViewModel {
 
     @ObservationIgnored let useCases: HomeUseCases
     @ObservationIgnored private let mapper: HomeStateMapper
-    @ObservationIgnored private var loadTask: Task<Void, Never>?
+    @ObservationIgnored private var loadCancellable: AnyCancellable?
 
     public init(
         useCases: HomeUseCases,
@@ -56,38 +57,32 @@ public final class HomeViewModel {
     }
 
     private func load() {
-        loadTask?.cancel()
+        loadCancellable?.cancel()
         let selectedDay = state.selectedDay
         state.isLoading = true
         state.failure = nil
 
-        loadTask = Task { [weak self] in
-            guard let self else { return }
-            do {
-                async let tasks = useCases.reads.tasks.execute()
-                async let sessions = useCases.reads.sessions.execute()
-                async let zones = useCases.reads.zones.execute(for: selectedDay)
-                async let profile = useCases.reads.userProfile.execute()
-                let loaded = try await (tasks, sessions, zones, profile)
-                try Task.checkCancellation()
-                guard state.selectedDay == selectedDay else { return }
-
-                state.success = mapper.map(
-                    tasks: loaded.0,
-                    sessions: loaded.1,
-                    zones: loaded.2,
-                    profile: loaded.3,
-                    selectedDay: selectedDay
-                )
-                state.isLoading = false
-            } catch is CancellationError {
-                return
-            } catch {
-                guard state.selectedDay == selectedDay else { return }
-                state.isLoading = false
-                state.failure = HomeFailureState(message: error.localizedDescription)
-            }
-        }
+        loadCancellable = useCases.reads.observe(for: selectedDay)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    guard let self, state.selectedDay == selectedDay else { return }
+                    state.isLoading = false
+                    if case let .failure(error) = completion {
+                        state.failure = HomeFailureState(message: error.localizedDescription)
+                    }
+                },
+                receiveValue: { [weak self] workspace in
+                    guard let self, state.selectedDay == selectedDay else { return }
+                    state.success = mapper.map(
+                        tasks: workspace.tasks,
+                        sessions: workspace.sessions,
+                        zones: workspace.zones,
+                        profile: workspace.profile,
+                        selectedDay: selectedDay
+                    )
+                }
+            )
     }
 
     func applyContent() {

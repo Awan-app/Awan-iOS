@@ -1,4 +1,6 @@
+import Combine
 import Domain
+import Foundation
 
 public struct HomeReadUseCases: Sendable {
     public let tasks: any FetchTasksUseCase
@@ -16,6 +18,47 @@ public struct HomeReadUseCases: Sendable {
         self.sessions = sessions
         self.zones = zones
         self.userProfile = userProfile
+    }
+
+    func observe(
+        for date: Date
+    ) -> AnyPublisher<(
+        tasks: [AwanTask],
+        sessions: [Session],
+        zones: [Zone],
+        profile: UserProfile
+    ), Error> {
+        let profilePublisher = userProfile.observe()
+            .share()
+            .eraseToAnyPublisher()
+        let schedulingPublisher = profilePublisher
+            .first()
+            .flatMap { _ in
+                tasks.observe()
+                    .flatMap(maxPublishers: .max(1)) { tasks in
+                        sessions.observe(taskIDs: tasks.map(\.id))
+                            .map { (tasks: tasks, sessions: $0) }
+                    }
+                    .combineLatest(zones.observe(for: date))
+                    .map { taskSessions, zones in
+                        (
+                            tasks: taskSessions.tasks,
+                            sessions: taskSessions.sessions,
+                            zones: zones
+                        )
+                    }
+            }
+        return schedulingPublisher
+            .combineLatest(profilePublisher)
+            .map { scheduling, profile in
+                (
+                    tasks: scheduling.tasks,
+                    sessions: scheduling.sessions,
+                    zones: scheduling.zones,
+                    profile: profile
+                )
+            }
+            .eraseToAnyPublisher()
     }
 }
 
