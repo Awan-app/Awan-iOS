@@ -50,6 +50,17 @@ struct DataAssembly: Assembly {
                 localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver)
             )
         }
+        container.register(RemoteTemplateDataSourceProtocol.self) { resolver in
+            RemoteTemplateDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+        container.register(TemplateRepository.self) { resolver in
+            DefaultTemplateRepository(
+                remoteDataSource: Self.resolve(RemoteTemplateDataSourceProtocol.self, from: resolver),
+                localDataSource: Self.resolve(LocalTemplateDataSource.self, from: resolver)
+            )
+        }
         
         container.register(NetworkServiceProtocol.self) { _ in
             NetworkClient.shared

@@ -278,7 +278,7 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
             taskRepository: taskRepository,
             sessionRepository: sessionRepository
         )
-        let reset = DefaultResetScheduleSimulationUseCase(
+        let reset = ResetScheduleSimulationUseCaseImpl(
             workspaceProvider: workspaceProvider,
             taskRepository: taskRepository,
             goalRepository: goalRepository,

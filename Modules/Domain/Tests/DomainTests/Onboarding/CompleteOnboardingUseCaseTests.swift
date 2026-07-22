@@ -70,7 +70,7 @@ final class CompleteOnboardingUseCaseTests: XCTestCase {
         let request = try makeRequest()
         let expectedProfile = try makeProfile()
         let repository = OnboardingRepositorySpy(result: .success(expectedProfile))
-        let useCase = DefaultCompleteOnboardingUseCase(repository: repository)
+        let useCase = CompleteOnboardingUseCaseImpl(repository: repository)
 
         let profile = try await useCase.execute(request)
 
@@ -83,7 +83,7 @@ final class CompleteOnboardingUseCaseTests: XCTestCase {
         let repository = OnboardingRepositorySpy(
             result: .failure(OnboardingError.alreadyCompleted)
         )
-        let useCase = DefaultCompleteOnboardingUseCase(repository: repository)
+        let useCase = CompleteOnboardingUseCaseImpl(repository: repository)
 
         do {
             _ = try await useCase.execute(makeRequest())

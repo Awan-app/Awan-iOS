@@ -122,9 +122,17 @@ struct DomainAssembly: Assembly {
             )
         }
         container.register(CompleteOnboardingUseCase.self) { resolver in
-            DefaultCompleteOnboardingUseCase(
+            CompleteOnboardingUseCaseImpl(
                 repository: Self.resolve(OnboardingRepositoryProtocol.self, from: resolver)
             )
+        }
+        container.register(CreateOnboardingTemplateUseCase.self) { resolver in
+            CreateOnboardingTemplateUseCaseImpl(
+                templateRepository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
+        container.register(ManageZoneScheduleUseCase.self) { _ in
+            ManageZoneScheduleUseCaseImpl()
         }
     }
 
@@ -217,7 +225,7 @@ struct DomainAssembly: Assembly {
 
     private func registerSimulationUseCases(in container: Container) {
         container.register(ResetScheduleSimulationUseCase.self) { resolver in
-            DefaultResetScheduleSimulationUseCase(
+            ResetScheduleSimulationUseCaseImpl(
                 workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),
                 taskRepository: Self.resolve(TaskRepository.self, from: resolver),
                 goalRepository: Self.resolve(GoalRepository.self, from: resolver),
@@ -225,7 +233,7 @@ struct DomainAssembly: Assembly {
             )
         }
         container.register(SimulateScheduleScenarioUseCase.self) { resolver in
-            DefaultSimulateScheduleScenarioUseCase(
+            SimulateScheduleScenarioUseCaseImpl(
                 workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),
                 zoneRepository: Self.resolve(ZoneRepository.self, from: resolver),
                 taskRepository: Self.resolve(TaskRepository.self, from: resolver),
