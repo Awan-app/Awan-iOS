@@ -14,23 +14,14 @@ import Common
 @main
 struct AwanApp: App {
     @State private var languageManager = LanguageManager()
-    // Change this to `.swiftData` to use the persistent scheduling implementation.
-    private static let schedulingImplementation: SchedulingDataSourceImplementation =
-        .inMemory(.preview)
 
     private let presentationFactory: PresentationFactory
-    private let sharedModelContainer: ModelContainer?
+    private let sharedModelContainer: ModelContainer
 
     init() {
-        sharedModelContainer = switch Self.schedulingImplementation {
-        case .swiftData:
-            Self.makeSchedulingModelContainer()
-        case .inMemory:
-            nil
-        }
+        sharedModelContainer = Self.makeSchedulingModelContainer()
         let dependencies = AppDependencyContainer(
-            modelContainer: sharedModelContainer,
-            schedulingImplementation: Self.schedulingImplementation
+            modelContainer: sharedModelContainer
         )
         presentationFactory = dependencies.resolve(PresentationFactory.self)
     }

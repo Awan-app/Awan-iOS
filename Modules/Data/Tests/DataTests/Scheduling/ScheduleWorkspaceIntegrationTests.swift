@@ -948,7 +948,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                 zones: try defaultZones()
             )
         )
-        let zoneRepository = DefaultZoneRepository(
+        let zoneRepository = makeZoneRepository(
             zoneDataSource: zoneSource,
             templateDataSource: templateSource,
             templateOverrideDataSource: overrideSource

@@ -324,7 +324,7 @@ final class TemplateResolutionTests: XCTestCase {
         let overrideSource = SwiftDataTemplateOverrideDataSource(modelContainer: container)
         return System(
             container: container,
-            repository: DefaultZoneRepository(
+            repository: makeZoneRepository(
                 zoneDataSource: zoneSource,
                 templateDataSource: templateSource,
                 templateOverrideDataSource: overrideSource

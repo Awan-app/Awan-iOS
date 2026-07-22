@@ -5,21 +5,11 @@ import Foundation
 import Swinject
 import SwiftData
 
-enum SchedulingDataSourceImplementation {
-    case swiftData
-    case inMemory(SchedulingMockData)
-}
-
 struct DataAssembly: Assembly {
-    private let modelContainer: ModelContainer?
-    private let schedulingImplementation: SchedulingDataSourceImplementation
+    private let modelContainer: ModelContainer
 
-    init(
-        modelContainer: ModelContainer? = nil,
-        schedulingImplementation: SchedulingDataSourceImplementation = .swiftData
-    ) {
+    init(modelContainer: ModelContainer) {
         self.modelContainer = modelContainer
-        self.schedulingImplementation = schedulingImplementation
     }
 
     func assemble(container: Container) {
@@ -32,12 +22,36 @@ struct DataAssembly: Assembly {
                 templateOverrideDataSource: Self.resolve(
                     LocalTemplateOverrideDataSource.self,
                     from: resolver
+                ),
+                profileDataSource: Self.resolve(
+                    LocalUserProfileDataSource.self,
+                    from: resolver
+                ),
+                remoteDataSource: Self.resolve(
+                    RemoteZoneDataSourceProtocol.self,
+                    from: resolver
                 )
             )
         }
         container.register(TaskRepository.self) { resolver in
             DefaultTaskRepository(
-                localDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver)
+                localDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver),
+                localSessionDataSource: Self.resolve(
+                    LocalSessionDataSource.self,
+                    from: resolver
+                ),
+                localProfileDataSource: Self.resolve(
+                    LocalUserProfileDataSource.self,
+                    from: resolver
+                ),
+                remoteTaskDataSource: Self.resolve(
+                    RemoteTaskDataSource.self,
+                    from: resolver
+                ),
+                remoteGoalDataSource: Self.resolve(
+                    RemoteGoalDataSource.self,
+                    from: resolver
+                )
             )
         }
         container.register(GoalRepository.self) { resolver in
@@ -47,12 +61,27 @@ struct DataAssembly: Assembly {
         }
         container.register(SessionRepository.self) { resolver in
             DefaultSessionRepository(
-                localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver)
+                localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver),
+                localTaskDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver),
+                localProfileDataSource: Self.resolve(
+                    LocalUserProfileDataSource.self,
+                    from: resolver
+                ),
+                remoteDataSource: Self.resolve(
+                    RemoteSessionDataSourceProtocol.self,
+                    from: resolver
+                )
             )
         }
 
-        container.register(UserProfileRepository.self) { _ in
-            InMemoryUserProfileRepository(profile: UserProfileMockData.preview)
+        container.register(UserProfileRepository.self) { resolver in
+            DefaultUserProfileRepository(
+                localDataSource: Self.resolve(
+                    LocalUserProfileDataSource.self,
+                    from: resolver
+                ),
+                remoteDataSource: Self.resolve(RemoteProfileDataSource.self, from: resolver)
+            )
         }
         .inObjectScope(.container)
         
@@ -60,6 +89,8 @@ struct DataAssembly: Assembly {
             NetworkClient.shared
         }
         .inObjectScope(.container)
+
+        registerRemoteDataSources(in: container)
 
         container.register(AuthSessionDataSource.self) { _ in
             LocalAuthSessionDataSource()
@@ -98,50 +129,61 @@ struct DataAssembly: Assembly {
     }
 
     private func registerSchedulingDataSources(in container: Container) {
-        switch schedulingImplementation {
-        case .swiftData:
-            guard let modelContainer else {
-                preconditionFailure("SwiftData scheduling requires a ModelContainer")
-            }
-            container.register(LocalTaskDataSource.self) { _ in
-                SwiftDataTaskDataSource(modelContainer: modelContainer)
-            }
-            .inObjectScope(.container)
-            container.register(LocalGoalDataSource.self) { _ in
-                SwiftDataGoalDataSource(modelContainer: modelContainer)
-            }
-            .inObjectScope(.container)
-            container.register(LocalSessionDataSource.self) { _ in
-                SwiftDataSessionDataSource(modelContainer: modelContainer)
-            }
-            .inObjectScope(.container)
-            container.register(LocalZoneDataSource.self) { _ in
-                SwiftDataZoneDataSource(modelContainer: modelContainer)
-            }
-            .inObjectScope(.container)
-            container.register(LocalTemplateDataSource.self) { _ in
-                SwiftDataTemplateDataSource(modelContainer: modelContainer)
-            }
-            .inObjectScope(.container)
-            container.register(LocalTemplateOverrideDataSource.self) { _ in
-                SwiftDataTemplateOverrideDataSource(modelContainer: modelContainer)
-            }
-            .inObjectScope(.container)
+        container.register(LocalTaskDataSource.self) { _ in
+            SwiftDataTaskDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+        container.register(LocalGoalDataSource.self) { _ in
+            SwiftDataGoalDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+        container.register(LocalSessionDataSource.self) { _ in
+            SwiftDataSessionDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+        container.register(LocalZoneDataSource.self) { _ in
+            SwiftDataZoneDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+        container.register(LocalTemplateDataSource.self) { _ in
+            SwiftDataTemplateDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+        container.register(LocalTemplateOverrideDataSource.self) { _ in
+            SwiftDataTemplateOverrideDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+        container.register(LocalUserProfileDataSource.self) { _ in
+            SwiftDataUserProfileDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+    }
 
-        case .inMemory(let data):
-            let sources = InMemorySchedulingDataSources(data: data)
-            container.register(LocalTaskDataSource.self) { _ in sources.task }
-                .inObjectScope(.container)
-            container.register(LocalGoalDataSource.self) { _ in sources.goal }
-                .inObjectScope(.container)
-            container.register(LocalSessionDataSource.self) { _ in sources.session }
-                .inObjectScope(.container)
-            container.register(LocalZoneDataSource.self) { _ in sources.zone }
-                .inObjectScope(.container)
-            container.register(LocalTemplateDataSource.self) { _ in sources.template }
-                .inObjectScope(.container)
-            container.register(LocalTemplateOverrideDataSource.self) { _ in sources.templateOverride }
-                .inObjectScope(.container)
+    private func registerRemoteDataSources(in container: Container) {
+        container.register(RemoteProfileDataSource.self) { resolver in
+            DefaultRemoteProfileDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+        container.register(RemoteGoalDataSource.self) { resolver in
+            DefaultRemoteGoalDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+        container.register(RemoteTaskDataSource.self) { resolver in
+            DefaultRemoteTaskDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+        container.register(RemoteSessionDataSourceProtocol.self) { resolver in
+            RemoteSessionDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+        container.register(RemoteZoneDataSourceProtocol.self) { resolver in
+            RemoteZoneDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
         }
     }
 

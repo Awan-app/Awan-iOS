@@ -264,7 +264,7 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
         let taskRepository = DefaultTaskRepository(localDataSource: taskSource)
         let goalRepository = DefaultGoalRepository(localDataSource: goalSource)
         let sessionRepository = DefaultSessionRepository(localDataSource: sessionSource)
-        let zoneRepository = DefaultZoneRepository(
+        let zoneRepository = makeZoneRepository(
             zoneDataSource: zoneSource,
             templateDataSource: templateSource,
             templateOverrideDataSource: overrideSource
