@@ -6,6 +6,24 @@ import XCTest
 @testable import Data
 
 final class HomeRepositoryWriteTests: XCTestCase {
+    func testTaskObservationEmitsAfterLocalInsertion() async throws {
+        let tasks = SwiftDataTaskDataSource(modelContainer: try makeContainer())
+        var iterator = tasks.observeTasks().values.makeAsyncIterator()
+        let initial = try await iterator.next()
+        let task = try AwanTask(
+            id: UUID(),
+            title: "Locally added",
+            duration: TaskDuration(minutes: 30),
+            isSplittable: false
+        )
+
+        try await tasks.addTask(task)
+        let afterInsertion = try await iterator.next()
+
+        XCTAssertEqual(initial, [])
+        XCTAssertEqual(afterInsertion, [task])
+    }
+
     func testSessionObservationEmitsCachedValueThenRemoteValue() async throws {
         let task = try AwanTask(
             id: UUID(),
@@ -52,9 +70,23 @@ final class HomeRepositoryWriteTests: XCTestCase {
         var iterator = repository.observeSessions(taskIDs: [task.id]).values.makeAsyncIterator()
         let cachedEmission = try await iterator.next()
         let remoteEmission = try await iterator.next()
+        let added = Session(
+            id: UUID(),
+            taskID: task.id,
+            zoneID: nil,
+            timeRange: try TimeRange(start: date(hour: 14), end: date(hour: 15)),
+            blocking: false,
+            status: .planned
+        )
+        try await sessions.addSession(added)
+        let localMutationEmission = try await iterator.next()
 
         XCTAssertEqual(cachedEmission, [cached])
         XCTAssertEqual(remoteEmission?.map(\.id), [remoteID])
+        XCTAssertEqual(
+            Set(localMutationEmission?.map(\.id) ?? []),
+            [remoteID, added.id]
+        )
     }
 
     func testSessionDeleteFailureLeavesLocalCacheUnchanged() async throws {

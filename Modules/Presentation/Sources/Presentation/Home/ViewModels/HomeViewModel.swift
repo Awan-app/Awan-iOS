@@ -74,6 +74,7 @@ public final class HomeViewModel {
                 },
                 receiveValue: { [weak self] workspace in
                     guard let self, state.selectedDay == selectedDay else { return }
+                    state.isLoading = false
                     state.success = mapper.map(
                         tasks: workspace.tasks,
                         sessions: workspace.sessions,

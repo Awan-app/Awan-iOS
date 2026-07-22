@@ -926,8 +926,8 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
     private struct TestSystem {
         let useCase: TestScheduleActions
         let zoneRepository: DefaultZoneRepository
-        let taskRepository: DefaultTaskRepository
-        let sessionRepository: DefaultSessionRepository
+        let taskRepository: LocalTaskRepositoryStub
+        let sessionRepository: LocalSessionRepositoryStub
     }
 
     private func makeSystem() async throws -> TestSystem {
@@ -953,8 +953,11 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
             templateDataSource: templateSource,
             templateOverrideDataSource: overrideSource
         )
-        let taskRepository = DefaultTaskRepository(localDataSource: taskSource)
-        let sessionRepository = DefaultSessionRepository(localDataSource: sessionSource)
+        let taskRepository = LocalTaskRepositoryStub(
+            dataSource: taskSource,
+            sessionDataSource: sessionSource
+        )
+        let sessionRepository = LocalSessionRepositoryStub(dataSource: sessionSource)
         let goalRepository = DefaultGoalRepository(localDataSource: goalSource)
         let resolver = CalendarZoneWindowResolver()
         let workspaceProvider = DefaultScheduleWorkspaceProvider(

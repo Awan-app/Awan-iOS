@@ -1,8 +1,10 @@
+import Combine
 import Domain
 import Foundation
 
 public protocol LocalTaskDataSource: Sendable {
     func fetchTasks() async throws -> [AwanTask]
+    func observeTasks() -> AnyPublisher<[AwanTask], Error>
     func fetchTask(id: UUID) async throws -> AwanTask?
     func replaceTasks(_ tasks: [AwanTask]) async throws
     func addTask(_ task: AwanTask) async throws
@@ -16,6 +18,10 @@ public protocol LocalTaskDataSource: Sendable {
 }
 
 public extension LocalTaskDataSource {
+    func observeTasks() -> AnyPublisher<[AwanTask], Error> {
+        AsyncValuePublisher.make { try await fetchTasks() }
+    }
+
     func replaceTasks(_ tasks: [AwanTask]) async throws {
         let existing = try await fetchTasks()
         let existingIDs = Set(existing.map(\.id))

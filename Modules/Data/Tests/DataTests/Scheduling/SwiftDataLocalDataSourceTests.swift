@@ -41,7 +41,7 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
 
     func testTaskDependencyMutationsAndQueries() async throws {
         let source = SwiftDataTaskDataSource(modelContainer: try makeContainer())
-        let repository = DefaultTaskRepository(localDataSource: source)
+        let repository = source
         let dependency = AwanTask(
             id: UUID(),
             title: "Dependency",
@@ -180,6 +180,22 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
         XCTAssertEqual(sessions, [other])
     }
 
+    func testSessionReplacementForDayLeavesOtherDaysUntouched() async throws {
+        let source = SwiftDataSessionDataSource(modelContainer: try makeContainer())
+        let day = try localDate(year: 2026, month: 7, day: 24)
+        let followingDay = try localDate(year: 2026, month: 7, day: 25)
+        let stale = try session(taskID: UUID(), start: day)
+        let retained = try session(taskID: UUID(), start: followingDay)
+        let replacement = try session(taskID: UUID(), start: day.addingTimeInterval(3_600))
+        try await source.addSession(stale)
+        try await source.addSession(retained)
+
+        try await source.replaceSessions([replacement], forDay: "2026-07-24")
+
+        let sessions = try await source.fetchSessions()
+        XCTAssertEqual(Set(sessions.map(\.id)), [retained.id, replacement.id])
+    }
+
     func testDuplicateSessionAndMissingSessionUpdateFollowMutationRules() async throws {
         let source = SwiftDataSessionDataSource(modelContainer: try makeContainer())
         let persisted = try session(taskID: UUID())
@@ -261,9 +277,12 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
         )
         let goal = Goal(id: UUID(), name: "Goal", deadline: day)
         let session = try session(taskID: task.id)
-        let taskRepository = DefaultTaskRepository(localDataSource: taskSource)
+        let taskRepository = LocalTaskRepositoryStub(
+            dataSource: taskSource,
+            sessionDataSource: sessionSource
+        )
         let goalRepository = DefaultGoalRepository(localDataSource: goalSource)
-        let sessionRepository = DefaultSessionRepository(localDataSource: sessionSource)
+        let sessionRepository = LocalSessionRepositoryStub(dataSource: sessionSource)
         let zoneRepository = makeZoneRepository(
             zoneDataSource: zoneSource,
             templateDataSource: templateSource,
@@ -377,8 +396,7 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
         return try ModelContainer(for: schema, configurations: [configuration])
     }
 
-    private func session(taskID: UUID) throws -> Session {
-        let start = Date()
+    private func session(taskID: UUID, start: Date = Date()) throws -> Session {
         return Session(
             id: UUID(),
             taskID: taskID,

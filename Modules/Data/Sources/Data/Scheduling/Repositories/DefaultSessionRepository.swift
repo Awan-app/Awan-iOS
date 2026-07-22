@@ -4,16 +4,9 @@ import Foundation
 
 public struct DefaultSessionRepository: SessionRepository {
     private let localDataSource: any LocalSessionDataSource
-    private let localTaskDataSource: (any LocalTaskDataSource)?
-    private let localProfileDataSource: (any LocalUserProfileDataSource)?
-    private let remoteDataSource: (any RemoteSessionDataSourceProtocol)?
-
-    public init(localDataSource: any LocalSessionDataSource) {
-        self.localDataSource = localDataSource
-        localTaskDataSource = nil
-        localProfileDataSource = nil
-        remoteDataSource = nil
-    }
+    private let localTaskDataSource: any LocalTaskDataSource
+    private let localProfileDataSource: any LocalUserProfileDataSource
+    private let remoteDataSource: any RemoteSessionDataSourceProtocol
 
     public init(
         localDataSource: any LocalSessionDataSource,
@@ -31,21 +24,24 @@ public struct DefaultSessionRepository: SessionRepository {
         try await localDataSource.fetchSessions()
     }
     public func observeSessions(taskIDs: [UUID]) -> AnyPublisher<[Session], Error> {
-        let cached = AsyncValuePublisher.make {
-            try await fetchSessions().filter { taskIDs.contains($0.taskID) }
-        }
-        guard remoteDataSource != nil else { return cached }
+        let local = localDataSource.observeSessions()
+            .map { sessions in
+                sessions.filter { taskIDs.contains($0.taskID) }
+            }
+            .eraseToAnyPublisher()
         let remote = AsyncValuePublisher.make {
             try await loadRemoteSessions(taskIDs: taskIDs)
         }
-        return cached.append(remote).eraseToAnyPublisher()
+        .catch { _ in Empty<[Session], Error>() }
+        return local
+            .merge(with: remote)
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
 
     private func loadRemoteSessions(taskIDs: [UUID]) async throws -> [Session] {
-        guard let remoteDataSource,
-              let localTaskDataSource,
-              let profile = try await localProfileDataSource?.fetchProfile() else {
-            return try await fetchSessions()
+        guard let profile = try await localProfileDataSource.fetchProfile() else {
+            throw RemoteDomainMappingError.missingField("cachedProfile")
         }
         var sessionsByTaskID: [UUID: [Session]] = [:]
         for start in stride(from: 0, to: taskIDs.count, by: 6) {
@@ -81,7 +77,7 @@ public struct DefaultSessionRepository: SessionRepository {
         }
 
         let sessions = sessionsByTaskID.values.flatMap { $0 }
-        try await localDataSource.replaceSessions(sessions)
+        try await localDataSource.replaceAllSessions(sessions)
         for taskID in taskIDs {
             guard let task = try await localTaskDataSource.fetchTask(id: taskID) else { continue }
             let inferredZoneID = sessionsByTaskID[taskID]?
@@ -99,10 +95,8 @@ public struct DefaultSessionRepository: SessionRepository {
         try await localDataSource.addSession(session)
     }
     public func updateSession(_ session: Session) async throws {
-        guard let remoteDataSource,
-              let profile = try await localProfileDataSource?.fetchProfile() else {
-            try await localDataSource.updateSession(session)
-            return
+        guard let profile = try await localProfileDataSource.fetchProfile() else {
+            throw RemoteDomainMappingError.missingField("cachedProfile")
         }
         guard let original = try await localDataSource.fetchSessions()
             .first(where: { $0.id == session.id }) else {
@@ -156,9 +150,7 @@ public struct DefaultSessionRepository: SessionRepository {
         try await localDataSource.updateSession(accepted)
     }
     public func deleteSession(id: UUID) async throws {
-        if let remoteDataSource {
-            try await remoteDataSource.deleteSession(sessionID: id)
-        }
+        try await remoteDataSource.deleteSession(sessionID: id)
         try await localDataSource.deleteSession(id: id)
     }
     public func deleteSessions(taskID: UUID) async throws {

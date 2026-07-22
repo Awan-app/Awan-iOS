@@ -1,9 +1,21 @@
+import Combine
 import Domain
 import Foundation
 import SwiftData
 
 @ModelActor
 public actor SwiftDataTaskDataSource: LocalTaskDataSource {
+    private let changes = LocalDataObservationHub()
+
+    public nonisolated func observeTasks() -> AnyPublisher<[AwanTask], Error> {
+        changes.publisher()
+            .prepend(())
+            .flatMap(maxPublishers: .max(1)) { [self] _ in
+                AsyncValuePublisher.make { try await self.fetchTasks() }
+            }
+            .eraseToAnyPublisher()
+    }
+
     public func fetchTasks() throws -> [AwanTask] {
         try modelContext.fetch(FetchDescriptor<TaskModel>()).map { try $0.toDomain() }
     }
@@ -12,12 +24,32 @@ public actor SwiftDataTaskDataSource: LocalTaskDataSource {
         try find(id: id)?.toDomain()
     }
 
+    public func replaceTasks(_ tasks: [AwanTask]) throws {
+        let existing = try modelContext.fetch(FetchDescriptor<TaskModel>())
+        let desiredIDs = Set(tasks.map(\.id))
+        let existingByID = Dictionary(uniqueKeysWithValues: existing.map { ($0.id, $0) })
+
+        for model in existing where !desiredIDs.contains(model.id) {
+            modelContext.delete(model)
+        }
+        for task in tasks {
+            if let model = existingByID[task.id] {
+                model.update(from: task)
+            } else {
+                modelContext.insert(TaskModel(domain: task))
+            }
+        }
+        try modelContext.save()
+        changes.send()
+    }
+
     public func addTask(_ task: AwanTask) throws {
         guard try find(id: task.id) == nil else {
             throw SchedulingPersistenceError.duplicateID(task.id)
         }
         modelContext.insert(TaskModel(domain: task))
         try modelContext.save()
+        changes.send()
     }
 
     public func updateTask(_ task: AwanTask) throws {
@@ -26,12 +58,14 @@ public actor SwiftDataTaskDataSource: LocalTaskDataSource {
         }
         model.update(from: task)
         try modelContext.save()
+        changes.send()
     }
 
     public func deleteTask(id: UUID) throws {
         guard let model = try find(id: id) else { return }
         modelContext.delete(model)
         try modelContext.save()
+        changes.send()
     }
 
     public func deleteAllTasks() throws {
@@ -39,6 +73,7 @@ public actor SwiftDataTaskDataSource: LocalTaskDataSource {
             modelContext.delete(model)
         }
         try modelContext.save()
+        changes.send()
     }
 
     public func addDependency(taskID: UUID, dependsOnID: UUID) throws {
@@ -55,6 +90,7 @@ public actor SwiftDataTaskDataSource: LocalTaskDataSource {
         guard dependencyIDs.insert(dependsOnID).inserted else { return }
         task.dependencyIDs = dependencyIDs.sorted()
         try modelContext.save()
+        changes.send()
     }
 
     public func removeDependency(taskID: UUID, dependsOnID: UUID) throws {
@@ -65,6 +101,7 @@ public actor SwiftDataTaskDataSource: LocalTaskDataSource {
         guard dependencyIDs.remove(dependsOnID) != nil else { return }
         task.dependencyIDs = dependencyIDs.sorted()
         try modelContext.save()
+        changes.send()
     }
 
     public func fetchDependencies(taskID: UUID) throws -> [AwanTask] {

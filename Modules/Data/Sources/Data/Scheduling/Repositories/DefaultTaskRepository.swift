@@ -4,18 +4,10 @@ import Foundation
 
 public struct DefaultTaskRepository: TaskRepository {
     private let localDataSource: any LocalTaskDataSource
-    private let localSessionDataSource: (any LocalSessionDataSource)?
-    private let localProfileDataSource: (any LocalUserProfileDataSource)?
-    private let remoteTaskDataSource: (any RemoteTaskDataSource)?
-    private let remoteGoalDataSource: (any RemoteGoalDataSource)?
-
-    public init(localDataSource: any LocalTaskDataSource) {
-        self.localDataSource = localDataSource
-        localSessionDataSource = nil
-        localProfileDataSource = nil
-        remoteTaskDataSource = nil
-        remoteGoalDataSource = nil
-    }
+    private let localSessionDataSource: any LocalSessionDataSource
+    private let localProfileDataSource: any LocalUserProfileDataSource
+    private let remoteTaskDataSource: any RemoteTaskDataSource
+    private let remoteGoalDataSource: any RemoteGoalDataSource
 
     public init(
         localDataSource: any LocalTaskDataSource,
@@ -35,16 +27,18 @@ public struct DefaultTaskRepository: TaskRepository {
         try await localDataSource.fetchTasks()
     }
     public func observeTasks() -> AnyPublisher<[AwanTask], Error> {
-        let cached = AsyncValuePublisher.make { try await fetchTasks() }
-        guard remoteGoalDataSource != nil else { return cached }
+        let local = localDataSource.observeTasks()
         let remote = AsyncValuePublisher.make { try await loadRemoteTasks() }
-        return cached.append(remote).eraseToAnyPublisher()
+            .catch { _ in Empty<[AwanTask], Error>() }
+        return local
+            .merge(with: remote)
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
 
     private func loadRemoteTasks() async throws -> [AwanTask] {
-        guard let remoteGoalDataSource,
-              let profile = try await localProfileDataSource?.fetchProfile() else {
-            return try await fetchTasks()
+        guard let profile = try await localProfileDataSource.fetchProfile() else {
+            throw RemoteDomainMappingError.missingField("cachedProfile")
         }
         let cachedByID = Dictionary(
             uniqueKeysWithValues: try await fetchTasks().map { ($0.id, $0) }
@@ -82,10 +76,6 @@ public struct DefaultTaskRepository: TaskRepository {
         try await localDataSource.addTask(task)
     }
     public func updateTask(_ task: AwanTask) async throws {
-        guard let remoteTaskDataSource else {
-            try await localDataSource.updateTask(task)
-            return
-        }
         let response = try await remoteTaskDataSource.updateTask(
             taskID: task.id,
             request: UpdateTaskRequestDTO(
@@ -106,18 +96,16 @@ public struct DefaultTaskRepository: TaskRepository {
         try await localDataSource.updateTask(accepted)
     }
     public func deleteTask(id: UUID) async throws {
-        if let remoteTaskDataSource {
-            try await remoteTaskDataSource.deleteTask(taskID: id, cascade: true)
-            try await localSessionDataSource?.deleteSessions(taskID: id)
-            let existing = try await localDataSource.fetchTasks()
-            for task in existing where task.dependencyIDs.contains(id) {
-                try await localDataSource.updateTask(
-                    replacingDependencies(
-                        of: task,
-                        with: task.dependencyIDs.subtracting([id])
-                    )
+        try await remoteTaskDataSource.deleteTask(taskID: id, cascade: true)
+        try await localSessionDataSource.deleteSessions(taskID: id)
+        let existing = try await localDataSource.fetchTasks()
+        for task in existing where task.dependencyIDs.contains(id) {
+            try await localDataSource.updateTask(
+                replacingDependencies(
+                    of: task,
+                    with: task.dependencyIDs.subtracting([id])
                 )
-            }
+            )
         }
         try await localDataSource.deleteTask(id: id)
     }

@@ -78,6 +78,10 @@ struct AppRootView: View {
 
     private var mainFlow: some View {
         TabView(selection: Bindable(coordinator.mainCoordinator).selectedTab) {
+            // ----------------------------------------------------------------
+            //today -----------------------------------------------------------
+            // ----------------------------------------------------------------
+            
             NavigationStack(path: Bindable(coordinator.mainCoordinator).homePath) {
                 factory.makeHomeView()
             }
@@ -85,7 +89,11 @@ struct AppRootView: View {
                 Label(L10n.Home.today, systemImage: "sun.max.fill")
             }
             .tag(MainTab.home)
-
+            
+            // ------------------------------------------------------------------
+            //calender -----------------------------------------------------------
+            // ------------------------------------------------------------------
+            
             NavigationStack(path: Bindable(coordinator.mainCoordinator).calendarPath) {
                 factory.makeCalendarView()
             }
@@ -93,6 +101,10 @@ struct AppRootView: View {
                 Label(L10n.Home.calendar, systemImage: "calendar")
             }
             .tag(MainTab.calendar)
+            
+            // ------------------------------------------------------------------
+            //rewards - maybe will be removed -----------------------------------
+            // ------------------------------------------------------------------
 
             NavigationStack(path: Bindable(coordinator.mainCoordinator).rewardsPath) {
                 factory.makeRewardsView()
@@ -101,6 +113,9 @@ struct AppRootView: View {
                 Label(L10n.Home.rewards, systemImage: "gift.fill")
             }
             .tag(MainTab.rewards)
+            // ------------------------------------------------------------------
+            // profile ----------------------------------------------------------
+            // ------------------------------------------------------------------
 
             NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
                 factory.makeYouView()
@@ -113,5 +128,4 @@ struct AppRootView: View {
         .tint(AppColors.accentBlue)
     }
 }
-//    }
-//}
+

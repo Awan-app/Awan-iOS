@@ -35,10 +35,12 @@ public struct HomeReadUseCases: Sendable {
             .first()
             .flatMap { _ in
                 tasks.observe()
-                    .flatMap(maxPublishers: .max(1)) { tasks in
+                    .map { tasks in
                         sessions.observe(taskIDs: tasks.map(\.id))
                             .map { (tasks: tasks, sessions: $0) }
+                            .eraseToAnyPublisher()
                     }
+                    .switchToLatest()
                     .combineLatest(zones.observe(for: date))
                     .map { taskSessions, zones in
                         (
