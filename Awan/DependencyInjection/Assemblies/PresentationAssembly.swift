@@ -96,8 +96,14 @@ struct PresentationAssembly: Assembly {
 
         container.register(OnboardingViewModel.self) { resolver in
             let useCase = Self.resolve(CompleteOnboardingUseCase.self, from: resolver)
+            let createTemplateUseCase = Self.resolve(CreateOnboardingTemplateUseCase.self, from: resolver)
+            let manageZoneScheduleUseCase = Self.resolve(ManageZoneScheduleUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
-                OnboardingViewModel(completeOnboardingUseCase: useCase)
+                OnboardingViewModel(
+                    completeOnboardingUseCase: useCase,
+                    createOnboardingTemplateUseCase: createTemplateUseCase,
+                    manageZoneScheduleUseCase: manageZoneScheduleUseCase
+                )
             }
         }
         .inObjectScope(.container)

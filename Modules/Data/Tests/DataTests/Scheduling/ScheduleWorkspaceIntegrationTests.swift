@@ -980,7 +980,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
             sessionRepository: sessionRepository,
             engine: engine
         )
-        let resetSimulation = DefaultResetScheduleSimulationUseCase(
+        let resetSimulation = ResetScheduleSimulationUseCaseImpl(
             workspaceProvider: workspaceProvider,
             taskRepository: taskRepository,
             goalRepository: goalRepository,
@@ -1011,7 +1011,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                 workspaceProvider: workspaceProvider,
                 sessionRepository: sessionRepository
             ),
-            simulateUseCase: DefaultSimulateScheduleScenarioUseCase(
+            simulateUseCase: SimulateScheduleScenarioUseCaseImpl(
                 workspaceProvider: workspaceProvider,
                 zoneRepository: zoneRepository,
                 taskRepository: taskRepository,

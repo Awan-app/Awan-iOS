@@ -9,9 +9,18 @@ public struct MockCompleteOnboardingUseCase: CompleteOnboardingUseCase {
     }
 }
 
+public struct MockCreateOnboardingTemplateUseCase: CreateOnboardingTemplateUseCase {
+    public init() {}
+    public func execute(zoneDrafts: [Zone]) async throws {}
+}
+
 extension OnboardingViewModel {
     public static var preview: OnboardingViewModel {
-        OnboardingViewModel(completeOnboardingUseCase: MockCompleteOnboardingUseCase())
+        OnboardingViewModel(
+            completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
+            createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
+        )
     }
 }
 #endif

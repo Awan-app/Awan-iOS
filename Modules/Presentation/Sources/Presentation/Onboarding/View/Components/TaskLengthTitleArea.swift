@@ -11,7 +11,7 @@ import Common
  struct TaskLengthTitleArea: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("How long do you like\nto focus in one go?")
+            Text(L10n.Onboarding.howLongToFocus)
                 .font(AppFonts.nudgeSymbol)
                 .foregroundColor(AppColors.brandDarkBlue)
                 .lineSpacing(4)

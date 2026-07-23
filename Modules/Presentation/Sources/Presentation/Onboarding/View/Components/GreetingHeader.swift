@@ -14,11 +14,11 @@ struct GreetingHeader: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Good morning, \(name)")
+            Text(L10n.Onboarding.goodMorningName(name))
                 .font(.system(size: 26, weight: .black, design: .rounded))
                 .foregroundColor(AppColors.brandDarkBlue)
             
-            Text("Your sky is set up — \(zoneCount) zones, ready when you are.")
+            Text(L10n.Onboarding.skySetupZones(zoneCount))
                 .font(AppFonts.captionHeavy)
                 .foregroundColor(AppColors.textSecondary)
         }
