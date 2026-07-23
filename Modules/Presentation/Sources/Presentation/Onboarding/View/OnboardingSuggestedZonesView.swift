@@ -81,7 +81,7 @@ struct OnboardingSuggestedZonesView: View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 14, weight: .bold))
-            Text("Some zones fall outside your active wake/sleep times.")
+            Text(L10n.Onboarding.outOfBoundsWarning)
                 .font(AppFonts.caption2Bold)
         }
         .foregroundStyle(AppColors.warning)
@@ -99,7 +99,7 @@ struct OnboardingSuggestedZonesView: View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 14, weight: .bold))
-            Text("Your day is short (less than 10 hours).")
+            Text(L10n.Onboarding.shortDayWarning)
                 .font(AppFonts.caption2Bold)
         }
         .foregroundStyle(AppColors.warning)

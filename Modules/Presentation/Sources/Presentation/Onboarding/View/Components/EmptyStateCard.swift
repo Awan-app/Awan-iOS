@@ -16,11 +16,11 @@ struct EmptyStateCard: View {
             AuthCloudLogoView()
             
             VStack(spacing: 8) {
-                Text("Clear skies!")
+                Text(L10n.Onboarding.clearSkies)
                     .font(.system(size: 20, weight: .black, design: .rounded))
                     .foregroundColor(AppColors.brandDarkBlue)
                 
-                Text("Nothing scheduled yet. Add your first thing and I'll float it into the right zone.")
+                Text(L10n.Onboarding.nothingScheduled)
                     .font(AppFonts.captionHeavy)
                     .foregroundColor(AppColors.textSecondary)
                     .multilineTextAlignment(.center)
@@ -28,7 +28,7 @@ struct EmptyStateCard: View {
             }
             
             OnboardingContinueButton(
-                title: "Add your first task"
+                title: L10n.Onboarding.addFirstTask
                 //icon: "plus"
             ) {
                 onAddFirstTask()

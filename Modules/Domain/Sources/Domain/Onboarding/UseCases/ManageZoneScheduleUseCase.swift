@@ -9,11 +9,11 @@
 import Foundation
 
 public protocol ManageZoneScheduleUseCase: Sendable {
-    func swapZones(_ zones: [ZoneDraft], at sourceIndex: Int, with destinationIndex: Int) -> [ZoneDraft]
-    func sortedChronologically(_ zones: [ZoneDraft]) -> [ZoneDraft]
-    func isOverlapping(start: String, end: String, in zones: [ZoneDraft], excludingID: UUID?) -> Bool
+    func swapZones(_ zones: [Zone], at sourceIndex: Int, with destinationIndex: Int) -> [Zone]
+    func sortedChronologically(_ zones: [Zone]) -> [Zone]
+    func isOverlapping(start: String, end: String, in zones: [Zone], excludingID: UUID?) -> Bool
     func isOutsideActiveHours(start: Date, end: Date, wakeupTime: Date, sleepTime: Date) -> Bool
-    func firstAvailableInterval(wakeupTime: Date, existingZones: [ZoneDraft]) -> (start: Date, end: Date)
+    func firstAvailableInterval(wakeupTime: Date, existingZones: [Zone]) -> (start: Date, end: Date)
     func formatTime(_ date: Date) -> String
     func parseTime(_ timeString: String) -> Date?
 }
@@ -24,7 +24,7 @@ public final class ManageZoneScheduleUseCaseImpl: ManageZoneScheduleUseCase {
 
     // MARK: - Swap
 
-    public func swapZones(_ zones: [ZoneDraft], at sourceIndex: Int, with destinationIndex: Int) -> [ZoneDraft] {
+    public func swapZones(_ zones: [Zone], at sourceIndex: Int, with destinationIndex: Int) -> [Zone] {
         guard sourceIndex != destinationIndex,
               zones.indices.contains(sourceIndex),
               zones.indices.contains(destinationIndex) else {
@@ -43,23 +43,19 @@ public final class ManageZoneScheduleUseCaseImpl: ManageZoneScheduleUseCase {
         result.swapAt(firstIdx, secondIdx)
 
         let newFirstEnd = addMinutes(duration2, to: initialStartTime)
-        result[firstIdx] = ZoneDraft(
+        result[firstIdx] = Zone(
             id: result[firstIdx].id,
             name: result[firstIdx].name,
-            colorRed: result[firstIdx].colorRed,
-            colorGreen: result[firstIdx].colorGreen,
-            colorBlue: result[firstIdx].colorBlue,
+            color: result[firstIdx].color,
             startTime: initialStartTime,
             endTime: newFirstEnd
         )
 
         let newSecondEnd = addMinutes(duration1, to: newFirstEnd)
-        result[secondIdx] = ZoneDraft(
+        result[secondIdx] = Zone(
             id: result[secondIdx].id,
             name: result[secondIdx].name,
-            colorRed: result[secondIdx].colorRed,
-            colorGreen: result[secondIdx].colorGreen,
-            colorBlue: result[secondIdx].colorBlue,
+            color: result[secondIdx].color,
             startTime: newFirstEnd,
             endTime: newSecondEnd
         )
@@ -69,10 +65,10 @@ public final class ManageZoneScheduleUseCaseImpl: ManageZoneScheduleUseCase {
 
     // MARK: - Sorting
 
-    public func sortedChronologically(_ zones: [ZoneDraft]) -> [ZoneDraft] {
+    public func sortedChronologically(_ zones: [Zone]) -> [Zone] {
         zones.sorted {
-            let start1 = minutesSinceMidnight(from: $0.startTime) ?? 0
-            let start2 = minutesSinceMidnight(from: $1.startTime) ?? 0
+            let start1 = $0.startTime.hour * 60 + $0.startTime.minute
+            let start2 = $1.startTime.hour * 60 + $1.startTime.minute
             return start1 < start2
         }
     }
@@ -82,7 +78,7 @@ public final class ManageZoneScheduleUseCaseImpl: ManageZoneScheduleUseCase {
     public func isOverlapping(
         start: String,
         end: String,
-        in zones: [ZoneDraft],
+        in zones: [Zone],
         excludingID: UUID?
     ) -> Bool {
         guard let newStart = minutesSinceMidnight(from: start),
@@ -92,10 +88,9 @@ public final class ManageZoneScheduleUseCaseImpl: ManageZoneScheduleUseCase {
         }
 
         for zone in zones where zone.id != excludingID {
-            guard let zoneStart = minutesSinceMidnight(from: zone.startTime),
-                  let zoneEnd = minutesSinceMidnight(from: zone.endTime) else {
-                continue
-            }
+            let zoneStart = zone.startTime.hour * 60 + zone.startTime.minute
+            let zoneEnd = zone.endTime.hour * 60 + zone.endTime.minute
+            
             if newStart < zoneEnd && newEnd > zoneStart {
                 return true
             }
@@ -128,7 +123,7 @@ public final class ManageZoneScheduleUseCaseImpl: ManageZoneScheduleUseCase {
 
     // MARK: - First available slot
 
-    public func firstAvailableInterval(wakeupTime: Date, existingZones: [ZoneDraft]) -> (start: Date, end: Date) {
+    public func firstAvailableInterval(wakeupTime: Date, existingZones: [Zone]) -> (start: Date, end: Date) {
         let calendar = Calendar.current
         var currentStart = wakeupTime
 
@@ -176,18 +171,19 @@ public final class ManageZoneScheduleUseCaseImpl: ManageZoneScheduleUseCase {
         return hour * 60 + minute
     }
 
-    private func durationInMinutes(start: String, end: String) -> Int {
-        guard let startMins = minutesSinceMidnight(from: start),
-              var endMins = minutesSinceMidnight(from: end) else { return 0 }
+    private func durationInMinutes(start: LocalTime, end: LocalTime) -> Int {
+        let startMins = start.hour * 60 + start.minute
+        var endMins = end.hour * 60 + end.minute
         if endMins < startMins {
             endMins += 24 * 60
         }
         return endMins - startMins
     }
 
-    private func addMinutes(_ minutes: Int, to timeString: String) -> String {
-        guard let date = parseTime(timeString) else { return timeString }
-        let newDate = Calendar.current.date(byAdding: .minute, value: minutes, to: date) ?? date
-        return formatTime(newDate)
+    private func addMinutes(_ minutes: Int, to time: LocalTime) -> LocalTime {
+        let totalMinutes = time.hour * 60 + time.minute + minutes
+        let newHour = (totalMinutes / 60) % 24
+        let newMinute = totalMinutes % 60
+        return (try? LocalTime(hour: newHour, minute: newMinute)) ?? time
     }
 }

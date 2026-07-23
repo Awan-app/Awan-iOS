@@ -29,16 +29,16 @@ struct TaskPreviewCard: View {
 
             // Top Layer — the actual card content
             VStack(alignment: .leading, spacing: 16) {
-                Text("...AND IT LANDS IN YOUR DAY")
+                Text(L10n.Onboarding.previewLandsInDay)
                     .font(AppFonts.captionHeavy)
                     .foregroundColor(AppColors.textSecondary)
 
                 HStack(spacing: 8) {
-                    Text("Study")
+                    Text(L10n.Onboarding.previewStudy)
                         .font(AppFonts.captionHeavy)
                         .foregroundColor(AppColors.accentPurple)
 
-                    Text("7:00 – 9:30 AM")
+                    Text(L10n.Onboarding.previewStudyTime)
                         .font(AppFonts.caption2Bold)
                         .foregroundColor(AppColors.textSecondary)
                 }
@@ -56,7 +56,7 @@ struct TaskPreviewCard: View {
                                     .foregroundColor(AppColors.brandDarkBlue)
                                     .lineLimit(1)
 
-                                Text("60 min · Study")
+                                Text(L10n.Onboarding.previewStudyDuration)
                                     .font(AppFonts.captionHeavy)
                                     .foregroundColor(AppColors.textSecondary)
                             }
@@ -64,7 +64,7 @@ struct TaskPreviewCard: View {
                             Spacer()
 
                             if task == tasks.last {
-                                Text("NEW")
+                                Text(L10n.Onboarding.previewNew)
                                     .font(AppFonts.caption2Bold)
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 8)
@@ -106,7 +106,7 @@ struct TaskPreviewCard: View {
                     Spacer(minLength: 140)
                 }
 
-                Text("I'll do one happy bounce as it settles in.")
+                Text(L10n.Onboarding.previewBounce)
                     .font(AppFonts.captionHeavy)
                     .foregroundColor(AppColors.textSecondary)
                     .frame(maxWidth: .infinity)

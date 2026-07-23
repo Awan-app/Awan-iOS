@@ -31,6 +31,7 @@ public enum L10n {
         public static var useThis: String { String(localized: "onboarding.use_this", bundle: .module) }
         public static var changeAnytime: String { String(localized: "onboarding.change_anytime", bundle: .module) }
         public static var addZone: String { String(localized: "onboarding.add_zone", bundle: .module) }
+        public static var splitIntoSessions: String { String(localized: "onboarding.split_into_sessions", bundle: .module) }
         public static var yourDayLabel: String { String(localized: "onboarding.your_day_label", bundle: .module) }
         public static func openSkyHours(_ hours: Int) -> String { String(format: String(localized: "onboarding.open_sky_hours", bundle: .module), hours) }
         public static var zonesFillNext: String { String(localized: "onboarding.zones_fill_next", bundle: .module) }
@@ -42,6 +43,42 @@ public enum L10n {
         public static var zoneEndTime: String { String(localized: "onboarding.zone_end_time", bundle: .module) }
         public static var zoneOverlapError: String { String(localized: "onboarding.zone_overlap_error", bundle: .module) }
         public static var addZoneTitle: String { String(localized: "onboarding.add_zone_title", bundle: .module) }
+        public static var taskSimulationTitle: String { String(localized: "onboarding.task_simulation_title", bundle: .module) }
+        public static var taskSimulationSubtitle: String { String(localized: "onboarding.task_simulation_subtitle", bundle: .module) }
+        public static var taskSimulationPlaceholder: String { String(localized: "onboarding.task_simulation_placeholder", bundle: .module) }
+        public static var skipForNow: String { String(localized: "onboarding.skip_for_now", bundle: .module) }
+        public static var addIt: String { String(localized: "onboarding.add_it", bundle: .module) }
+        
+        public static var previewLandsInDay: String { String(localized: "onboarding.preview_lands_in_day", bundle: .module) }
+        public static var previewStudy: String { String(localized: "onboarding.preview_study", bundle: .module) }
+        public static var previewStudyTime: String { String(localized: "onboarding.preview_study_time", bundle: .module) }
+        public static var previewStudyDuration: String { String(localized: "onboarding.preview_study_duration", bundle: .module) }
+        public static var previewNew: String { String(localized: "onboarding.preview_new", bundle: .module) }
+        public static var previewBounce: String { String(localized: "onboarding.preview_bounce", bundle: .module) }
+
+        public static var outOfBoundsWarning: String { String(localized: "onboarding.out_of_bounds_warning", bundle: .module) }
+        public static var shortDayWarning: String { String(localized: "onboarding.short_day_warning", bundle: .module) }
+        public static var editZone: String { String(localized: "onboarding.edit_zone", bundle: .module) }
+        
+        public static var clearSkies: String { String(localized: "onboarding.clear_skies", bundle: .module) }
+        public static var nothingScheduled: String { String(localized: "onboarding.nothing_scheduled", bundle: .module) }
+        public static var preferredFocusBlock: String { String(localized: "onboarding.preferred_focus_block", bundle: .module) }
+        
+        public static func goodMorningName(_ name: String) -> String { String(format: String(localized: "onboarding.good_morning_name", bundle: .module), name) }
+        public static func skySetupZones(_ count: Int) -> String { String(format: String(localized: "onboarding.sky_setup_zones", bundle: .module), count) }
+        
+        public static var howBlocksFeel: String { String(localized: "onboarding.how_blocks_feel", bundle: .module) }
+        public static var howLongToFocus: String { String(localized: "onboarding.how_long_to_focus", bundle: .module) }
+        public static var takeLargerTasks: String { String(localized: "onboarding.take_larger_tasks", bundle: .module) }
+        public static var taskLengthExplanationPrefix: String { String(localized: "onboarding.task_length_explanation_prefix", bundle: .module) }
+        public static func aboutMinutes(_ minutes: Int) -> String { String(format: String(localized: "onboarding.about_minutes", bundle: .module), minutes) }
+        public static func aboutHours(_ hours: Double) -> String { String(format: String(localized: "onboarding.about_hours", bundle: .module), hours) }
+        
+        public static var addFirstTask: String { String(localized: "onboarding.add_first_task", bundle: .module) }
+        public static var saveZone: String { String(localized: "onboarding.save_zone", bundle: .module) }
+        public static var feelShortLight: String { String(localized: "onboarding.feel_short_light", bundle: .module) }
+        public static var feelBalanced: String { String(localized: "onboarding.feel_balanced", bundle: .module) }
+        public static var feelDeepFew: String { String(localized: "onboarding.feel_deep_few", bundle: .module) }
     }
     
     public enum Login {

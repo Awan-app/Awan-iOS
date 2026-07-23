@@ -11,7 +11,7 @@ public struct MockCompleteOnboardingUseCase: CompleteOnboardingUseCase {
 
 public struct MockCreateOnboardingTemplateUseCase: CreateOnboardingTemplateUseCase {
     public init() {}
-    public func execute(zoneDrafts: [ZoneDraft]) async throws {}
+    public func execute(zoneDrafts: [Zone]) async throws {}
 }
 
 extension OnboardingViewModel {
