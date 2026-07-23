@@ -55,6 +55,8 @@ struct HomeState {
     var selectedDay: Date
     var selectedSessionID: UUID?
     var isMutating: Bool
+    var isAddTaskPresented: Bool
+    var activeNudge: ScheduleNudge?
 
     var selectedSession: HomeTimelineItem? {
         success?.timelineItems.first { $0.id == selectedSessionID }
@@ -67,7 +69,9 @@ struct HomeState {
             failure: nil,
             selectedDay: selectedDay,
             selectedSessionID: nil,
-            isMutating: false
+            isMutating: false,
+            isAddTaskPresented: false,
+            activeNudge: nil
         )
     }
 }

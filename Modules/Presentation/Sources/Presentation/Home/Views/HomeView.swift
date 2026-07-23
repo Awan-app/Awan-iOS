@@ -62,6 +62,26 @@ struct HomeView: View {
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
         }
+        .sheet(isPresented: addTaskBinding) {
+            AddTaskSheet(
+                zones: state.success?.zones ?? [],
+                onSubmit: { title, description, duration, zoneID, isSplittable, mandatory, startsAt in
+                    viewModel.send(
+                        .createTask(
+                            title: title,
+                            description: description,
+                            durationMinutes: duration,
+                            zoneID: zoneID,
+                            isSplittable: isSplittable,
+                            mandatory: mandatory,
+                            startsAt: startsAt
+                        )
+                    )
+                }
+            )
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
         .alert(L10n.Home.errorTitle, isPresented: errorBinding) {
             Button(L10n.Common.gotIt) { viewModel.send(.dismissError) }
         } message: {
@@ -90,7 +110,7 @@ struct HomeView: View {
                     completedCount: success.completedSessionCount,
                     totalCount: success.totalSessionCount,
                     taskAllocations: success.taskAllocations,
-                    onAddTask: {},
+                    onAddTask: { viewModel.send(.presentAddTask) },
                     onAddGoal: {}
                 )
 
@@ -115,7 +135,7 @@ struct HomeView: View {
                             )
                         )
                     },
-                    onTap: { viewModel.send(.presentSession($0)) }
+                    onTap: { viewModel.send(.presentSession($0))}
                 )
             }
             .padding(.horizontal, 16)
@@ -159,6 +179,13 @@ struct HomeView: View {
         Binding(
             get: { viewModel.state.selectedSession },
             set: { if $0 == nil { viewModel.send(.dismissSession) } }
+        )
+    }
+
+    private var addTaskBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.state.isAddTaskPresented },
+            set: { if !$0 { viewModel.send(.dismissAddTask) } }
         )
     }
 }

@@ -10,6 +10,7 @@ public final class HomeViewModel {
 
     @ObservationIgnored let useCases: HomeUseCases
     @ObservationIgnored private let mapper: HomeStateMapper
+    @ObservationIgnored private let timeZone: TimeZone
     @ObservationIgnored private var loadCancellable: AnyCancellable?
 
     public init(
@@ -18,6 +19,7 @@ public final class HomeViewModel {
         timeZone: TimeZone = .current
     ) {
         self.useCases = useCases
+        self.timeZone = timeZone
         self.mapper = HomeStateMapper(fallbackTimeZone: timeZone)
         self.state = .initial(selectedDay: selectedDay)
     }
@@ -53,6 +55,22 @@ public final class HomeViewModel {
             deleteSession(id: id)
         case .dismissError:
             state.failure = nil
+        case .presentAddTask:
+            state.isAddTaskPresented = true
+        case .dismissAddTask:
+            state.isAddTaskPresented = false
+        case .dismissNudge:
+            state.activeNudge = nil
+        case let .createTask(title, description, durationMinutes, zoneID, isSplittable, mandatory, startsAt):
+            createTask(
+                title: title,
+                description: description,
+                durationMinutes: durationMinutes,
+                zoneID: zoneID,
+                isSplittable: isSplittable,
+                mandatory: mandatory,
+                startsAt: startsAt
+            )
         }
     }
 
@@ -99,6 +117,45 @@ public final class HomeViewModel {
         if let selectedID = state.selectedSessionID,
            !updated.timelineItems.contains(where: { $0.id == selectedID }) {
             state.selectedSessionID = nil
+        }
+    }
+
+    private func createTask(
+        title: String,
+        description: String?,
+        durationMinutes: Int,
+        zoneID: UUID?,
+        isSplittable: Bool,
+        mandatory: Bool,
+        startsAt: Date?
+    ) {
+        state.isMutating = true
+        state.failure = nil
+
+        Task { [weak self] in
+            guard let self else { return }
+            defer { state.isMutating = false }
+            do {
+                let request = CreateManualTaskRequest(
+                    title: title,
+                    description: description,
+                    durationMinutes: durationMinutes,
+                    zoneID: zoneID,
+                    isSplittable: isSplittable,
+                    mandatory: mandatory,
+                    startsAt: startsAt,
+                    selectedDay: state.selectedDay,
+                    timeZone: timeZone
+                )
+                let result = try await useCases.createManualTask.execute(request)
+                if let nudge = result.nudge {
+                    state.activeNudge = nudge
+                }
+                state.isAddTaskPresented = false
+            } catch is CancellationError {
+            } catch {
+                state.failure = HomeFailureState(message: error.localizedDescription)
+            }
         }
     }
 }
