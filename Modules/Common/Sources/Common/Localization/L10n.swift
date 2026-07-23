@@ -96,6 +96,63 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "onboarding.zones_fill_next", value: nil, table: "Localizable")
         }
         public static var skip: String { L10n.currentBundle.localizedString(forKey: "onboarding.skip", value: nil, table: "Localizable") }
+        public static var addZoneTitle: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.add_zone_title", value: nil, table: "Localizable")
+        }
+        public static var editZone: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.edit_zone", value: nil, table: "Localizable")
+        }
+        public static var saveZone: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.save_zone", value: nil, table: "Localizable")
+        }
+        public static var clearSkies: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.clear_skies", value: nil, table: "Localizable")
+        }
+        public static var nothingScheduled: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.nothing_scheduled", value: nil, table: "Localizable")
+        }
+        public static var addFirstTask: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.add_first_task", value: nil, table: "Localizable")
+        }
+        public static func goodMorningName(_ name: String) -> String {
+            String(format: L10n.currentBundle.localizedString(forKey: "onboarding.good_morning_name", value: nil, table: "Localizable"), name)
+        }
+        public static func skySetupZones(_ count: Int) -> String {
+            String(format: L10n.currentBundle.localizedString(forKey: "onboarding.sky_setup_zones", value: nil, table: "Localizable"), count)
+        }
+        public static var outOfBoundsWarning: String { L10n.currentBundle.localizedString(forKey: "onboarding.out_of_bounds_warning", value: nil, table: "Localizable") }
+        public static var shortDayWarning: String { L10n.currentBundle.localizedString(forKey: "onboarding.short_day_warning", value: nil, table: "Localizable") }
+        public static var zoneStartTime: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_start_time", value: nil, table: "Localizable") }
+        public static var zoneEndTime: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_end_time", value: nil, table: "Localizable") }
+        public static var taskSimulationTitle: String { L10n.currentBundle.localizedString(forKey: "onboarding.task_simulation_title", value: nil, table: "Localizable") }
+        public static var taskSimulationSubtitle: String { L10n.currentBundle.localizedString(forKey: "onboarding.task_simulation_subtitle", value: nil, table: "Localizable") }
+        public static var taskSimulationPlaceholder: String { L10n.currentBundle.localizedString(forKey: "onboarding.task_simulation_placeholder", value: nil, table: "Localizable") }
+        public static var addIt: String { L10n.currentBundle.localizedString(forKey: "onboarding.add_it", value: nil, table: "Localizable") }
+        public static var skipForNow: String { L10n.currentBundle.localizedString(forKey: "onboarding.skip_for_now", value: nil, table: "Localizable") }
+        public static var zoneNameLabel: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_name_label", value: nil, table: "Localizable") }
+        public static var zoneNamePlaceholder: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_name_placeholder", value: nil, table: "Localizable") }
+        public static func aboutMinutes(_ minutes: Int) -> String {
+            String(format: L10n.currentBundle.localizedString(forKey: "onboarding.about_minutes", value: nil, table: "Localizable"), minutes)
+        }
+        public static func aboutHours(_ hours: Double) -> String {
+            String(format: L10n.currentBundle.localizedString(forKey: "onboarding.about_hours", value: nil, table: "Localizable"), hours)
+        }
+        public static var taskLengthExplanationPrefix: String { L10n.currentBundle.localizedString(forKey: "onboarding.task_length_explanation_prefix", value: nil, table: "Localizable") }
+        public static var splitIntoSessions: String { L10n.currentBundle.localizedString(forKey: "onboarding.split_into_sessions", value: nil, table: "Localizable") }
+        public static var zoneOverlapError: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_overlap_error", value: nil, table: "Localizable") }
+        public static var howBlocksFeel: String { L10n.currentBundle.localizedString(forKey: "onboarding.how_blocks_feel", value: nil, table: "Localizable") }
+        public static var howLongToFocus: String { L10n.currentBundle.localizedString(forKey: "onboarding.how_long_to_focus", value: nil, table: "Localizable") }
+        public static var feelBalanced: String { L10n.currentBundle.localizedString(forKey: "onboarding.feel_balanced", value: nil, table: "Localizable") }
+        public static var feelDeepFew: String { L10n.currentBundle.localizedString(forKey: "onboarding.feel_deep_few", value: nil, table: "Localizable") }
+        public static var feelShortLight: String { L10n.currentBundle.localizedString(forKey: "onboarding.feel_short_light", value: nil, table: "Localizable") }
+        public static var preferredFocusBlock: String { L10n.currentBundle.localizedString(forKey: "onboarding.preferred_focus_block", value: nil, table: "Localizable") }
+        public static var previewBounce: String { L10n.currentBundle.localizedString(forKey: "onboarding.preview_bounce", value: nil, table: "Localizable") }
+        public static var previewLandsInDay: String { L10n.currentBundle.localizedString(forKey: "onboarding.preview_lands_in_day", value: nil, table: "Localizable") }
+        public static var previewNew: String { L10n.currentBundle.localizedString(forKey: "onboarding.preview_new", value: nil, table: "Localizable") }
+        public static var previewStudy: String { L10n.currentBundle.localizedString(forKey: "onboarding.preview_study", value: nil, table: "Localizable") }
+        public static var previewStudyDuration: String { L10n.currentBundle.localizedString(forKey: "onboarding.preview_study_duration", value: nil, table: "Localizable") }
+        public static var previewStudyTime: String { L10n.currentBundle.localizedString(forKey: "onboarding.preview_study_time", value: nil, table: "Localizable") }
+        public static var zoneColorLabel: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_color_label", value: nil, table: "Localizable") }
     }
 
     public enum Login {

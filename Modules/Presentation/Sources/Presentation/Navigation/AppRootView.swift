@@ -11,6 +11,7 @@ import Common
 struct AppRootView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthenticationState.self) private var authenticationState
+    @Environment(LanguageManager.self) private var languageManager
     private let factory: PresentationFactory
 
     init(factory: PresentationFactory) {
@@ -125,6 +126,7 @@ struct AppRootView: View {
             }
             .tag(MainTab.you)
         }
+        .id(languageManager.currentLanguage)
         .tint(AppColors.accentBlue)
         .sheet(item: Bindable(coordinator.mainCoordinator).presentedProfileSheet) { route in
             switch route {
