@@ -23,9 +23,16 @@ public final class ProfileViewModel {
     /// Indicates if the profile data is fully loaded and ready
     var isReady: Bool = false
     
+    /// User's real name and email
+    var userName: String = ""
+    var userEmail: String = ""
+    
     // MARK: - Init
     
-    public init() {
+    private let getUserProfileUseCase: GetUserProfileUseCase
+    
+    public init(getUserProfileUseCase: GetUserProfileUseCase) {
+        self.getUserProfileUseCase = getUserProfileUseCase
         loadMockData()
     }
     
@@ -38,7 +45,7 @@ public final class ProfileViewModel {
             self.dailyZones = [
                 Zone(
                     id: UUID(),
-                    name: "Deep Work",
+                    name: "eat",
                     color: try ZoneColor(hex: "#7459D9"), // accentPurple approx
                     startTime: try LocalTime(hour: 9, minute: 0),
                     endTime: try LocalTime(hour: 11, minute: 0)
@@ -77,5 +84,16 @@ public final class ProfileViewModel {
         }
         
         self.isReady = true
+    }
+    
+    /// Fetch real user profile from backend via domain use case
+    public func fetchUserProfile() async {
+        do {
+            let profile = try await getUserProfileUseCase.execute()
+            self.userName = profile.firstName + " " + profile.lastName
+            self.userEmail = profile.email
+        } catch {
+            print("Failed to fetch user profile: \(error)")
+        }
     }
 }

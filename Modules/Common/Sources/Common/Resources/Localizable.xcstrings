@@ -9,6 +9,12 @@
             "state": "translated",
             "value": "Save"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حفظ"
+          }
         }
       }
     },
@@ -19,6 +25,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cancel"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إلغاء"
           }
         }
       }
@@ -31,6 +43,12 @@
             "state": "translated",
             "value": "Continue"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "متابعة"
+          }
         }
       }
     },
@@ -41,6 +59,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Got it"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حسنًا"
           }
         }
       }
@@ -53,6 +77,12 @@
             "state": "translated",
             "value": "Please try again."
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الرجاء المحاولة مرة أخرى."
+          }
         }
       }
     },
@@ -63,6 +93,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Close"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إغلاق"
           }
         }
       }
@@ -75,6 +111,12 @@
             "state": "translated",
             "value": "Hi, I'm Awan.\nThe sky is yours today."
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مرحباً، أنا أوان.\nالسماء ملكك اليوم."
+          }
         }
       }
     },
@@ -85,6 +127,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tell me a little about your day and I'll\nbuild a schedule that quietly heals itself\nwhen life happens."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أخبرني قليلاً عن يومك وسأقوم\nببناء جدول يتعافى بهدوء\nعندما تتغير ظروف الحياة."
           }
         }
       }
@@ -97,6 +145,12 @@
             "state": "translated",
             "value": "LET'S GO"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لننطلق"
+          }
         }
       }
     },
@@ -107,6 +161,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Skip setup"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تخطي الإعداد"
           }
         }
       }
@@ -119,6 +179,12 @@
             "state": "translated",
             "value": "What should I call you?"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ماذا تحب أن أناديك؟"
+          }
         }
       }
     },
@@ -129,6 +195,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Just your name — I'll use it to greet you each morning."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فقط اسمك — سأستخدمه لتحيتك كل صباح."
           }
         }
       }
@@ -141,6 +213,12 @@
             "state": "translated",
             "value": "FIRST NAME"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الاسم الأول"
+          }
         }
       }
     },
@@ -151,6 +229,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sam"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سام"
           }
         }
       }
@@ -163,6 +247,12 @@
             "state": "translated",
             "value": "LAST NAME"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الاسم الأخير"
+          }
         }
       }
     },
@@ -173,6 +263,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rivera"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ريفيرا"
           }
         }
       }
@@ -185,6 +281,12 @@
             "state": "translated",
             "value": "PREVIEW"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "معاينة"
+          }
         }
       }
     },
@@ -195,6 +297,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "When does your day begin and end?"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "متى يبدأ يومك وينتهي؟"
           }
         }
       }
@@ -207,6 +315,12 @@
             "state": "translated",
             "value": "I usually wake up at"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أستيقظ عادة في"
+          }
         }
       }
     },
@@ -217,6 +331,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "I usually sleep at"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أنام عادة في"
           }
         }
       }
@@ -229,6 +349,12 @@
             "state": "translated",
             "value": "Sleeps past midnight? I'll wrap the night for you."
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تنام بعد منتصف الليل؟ سأرتب الليل لك."
+          }
         }
       }
     },
@@ -239,6 +365,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Here's a day I sketched for you"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إليك يوماً رسمته لك"
           }
         }
       }
@@ -251,6 +383,12 @@
             "state": "translated",
             "value": "SET MANUALLY"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعداد يدوي"
+          }
         }
       }
     },
@@ -261,6 +399,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "USE THIS"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "استخدم هذا"
           }
         }
       }
@@ -273,6 +417,12 @@
             "state": "translated",
             "value": "You can change this anytime"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يمكنك تغيير هذا في أي وقت"
+          }
         }
       }
     },
@@ -283,6 +433,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Add a zone"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إضافة فترة"
           }
         }
       }
@@ -295,6 +451,12 @@
             "state": "translated",
             "value": "YOUR DAY"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يومك"
+          }
         }
       }
     },
@@ -305,6 +467,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld h of open sky"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ساعات من السماء الصافية"
           }
         }
       }
@@ -317,6 +485,12 @@
             "state": "translated",
             "value": "Zones will fill this in next"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ستملأ الفترات هذا لاحقاً"
+          }
         }
       }
     },
@@ -327,6 +501,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Skip"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تخطي"
           }
         }
       }
@@ -339,6 +519,12 @@
             "state": "translated",
             "value": "Awan"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أوان"
+          }
         }
       }
     },
@@ -349,6 +535,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Your day, drawn as a sky.\nSign in — we'll float you a code."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يومك، مرسوم كسماء.\nسجل الدخول — وسنرسل لك رمزاً."
           }
         }
       }
@@ -361,6 +553,12 @@
             "state": "translated",
             "value": "SENDING..."
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جاري الإرسال..."
+          }
         }
       }
     },
@@ -371,6 +569,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "SEND CODE • 0:%@"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إرسال الرمز • 0:%@"
           }
         }
       }
@@ -383,6 +587,12 @@
             "state": "translated",
             "value": "SEND CODE"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إرسال الرمز"
+          }
         }
       }
     },
@@ -393,6 +603,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "OR"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أو"
           }
         }
       }
@@ -405,6 +621,12 @@
             "state": "translated",
             "value": "Sign in with Apple"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تسجيل الدخول باستخدام Apple"
+          }
         }
       }
     },
@@ -415,6 +637,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Continue with Google"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المتابعة باستخدام Google"
           }
         }
       }
@@ -427,6 +655,12 @@
             "state": "translated",
             "value": "No passwords, ever. By continuing you agree to Awan's "
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا كلمات مرور أبدًا. بمتابعتك، أنت توافق على "
+          }
         }
       }
     },
@@ -437,6 +671,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Terms"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شروط أوان"
           }
         }
       }
@@ -449,6 +689,12 @@
             "state": "translated",
             "value": " & "
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " و "
+          }
         }
       }
     },
@@ -460,6 +706,12 @@
             "state": "translated",
             "value": "Privacy"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الخصوصية"
+          }
         }
       }
     },
@@ -467,6 +719,12 @@
       "extractionState": "manual",
       "localizations": {
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "."
+          }
+        },
+        "ar": {
           "stringUnit": {
             "state": "translated",
             "value": "."
@@ -482,6 +740,12 @@
             "state": "translated",
             "value": "EMAIL"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "البريد الإلكتروني"
+          }
         }
       }
     },
@@ -492,6 +756,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enter your email"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أدخل بريدك الإلكتروني"
           }
         }
       }
@@ -504,6 +774,12 @@
             "state": "translated",
             "value": "You're offline — we'll send the code when you reconnect."
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أنت غير متصل بالإنترنت — سنرسل الرمز عندما تعاود الاتصال."
+          }
         }
       }
     },
@@ -514,6 +790,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "You're in! ☀️"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أنت في الداخل! ☀️"
           }
         }
       }
@@ -526,6 +808,12 @@
             "state": "translated",
             "value": "Enter the code we sent to"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أدخل الرمز الذي أرسلناه إلى"
+          }
         }
       }
     },
@@ -536,6 +824,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Verified — drifting you in"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم التحقق — جاري دخولك"
           }
         }
       }
@@ -548,6 +842,12 @@
             "state": "translated",
             "value": "You're offline — reconnect to verify or resend your code."
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أنت غير متصل بالإنترنت — عاود الاتصال للتحقق أو أعد إرسال رمزك."
+          }
         }
       }
     },
@@ -558,6 +858,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "RESEND CODE • %@"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة إرسال الرمز • %@"
           }
         }
       }
@@ -570,6 +876,12 @@
             "state": "translated",
             "value": "RESEND CODE"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة إرسال الرمز"
+          }
         }
       }
     },
@@ -580,6 +892,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Numeric keypad · auto-submits on the 6th digit"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لوحة مفاتيح رقمية · يتم الإرسال التلقائي عند الرقم السادس"
           }
         }
       }
@@ -592,6 +910,12 @@
             "state": "translated",
             "value": "Verification code digit %lld"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الرقم %lld من رمز التحقق"
+          }
         }
       }
     },
@@ -602,6 +926,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Good morning"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "صباح الخير"
           }
         }
       }
@@ -614,6 +944,12 @@
             "state": "translated",
             "value": "Add goal"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إضافة هدف"
+          }
         }
       }
     },
@@ -624,6 +960,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Add task"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إضافة مهمة"
           }
         }
       }
@@ -636,6 +978,12 @@
             "state": "translated",
             "value": "Good afternoon"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مساء الخير"
+          }
         }
       }
     },
@@ -646,6 +994,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Good evening"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "طاب مساؤك"
           }
         }
       }
@@ -658,6 +1012,12 @@
             "state": "translated",
             "value": "TODAY'S PLAN"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خطة اليوم"
+          }
         }
       }
     },
@@ -668,6 +1028,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld tasks • %@"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld مهام • %@"
           }
         }
       }
@@ -680,6 +1046,12 @@
             "state": "translated",
             "value": "%lld task • %@"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld مهمة • %@"
+          }
         }
       }
     },
@@ -690,6 +1062,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld of %lld complete"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld من %lld مكتملة"
           }
         }
       }
@@ -702,6 +1080,12 @@
             "state": "translated",
             "value": "%lld min"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld دقيقة"
+          }
         }
       }
     },
@@ -712,6 +1096,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld hr"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ساعة"
           }
         }
       }
@@ -724,6 +1114,12 @@
             "state": "translated",
             "value": "%lld hr %lld min"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ساعة %lld دقيقة"
+          }
         }
       }
     },
@@ -734,6 +1130,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "FIXED"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ثابت"
           }
         }
       }
@@ -746,6 +1148,12 @@
             "state": "translated",
             "value": "Add a task or goal to begin your plan."
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أضف مهمة أو هدفاً لتبدأ خطتك."
+          }
         }
       }
     },
@@ -756,6 +1164,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couldn't update your day"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذر تحديث يومك"
           }
         }
       }
@@ -768,6 +1182,12 @@
             "state": "translated",
             "value": "We couldn't load your plan."
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم نتمكن من تحميل خطتك."
+          }
         }
       }
     },
@@ -778,6 +1198,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Try again"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حاول مرة أخرى"
           }
         }
       }
@@ -790,6 +1216,12 @@
             "state": "translated",
             "value": "Start time"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وقت البدء"
+          }
         }
       }
     },
@@ -800,6 +1232,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reschedule and lock"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة الجدولة والتثبيت"
           }
         }
       }
@@ -812,6 +1250,12 @@
             "state": "translated",
             "value": "Lock session"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تثبيت الجلسة"
+          }
         }
       }
     },
@@ -822,6 +1266,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Unlock session"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إلغاء تثبيت الجلسة"
           }
         }
       }
@@ -834,6 +1284,12 @@
             "state": "translated",
             "value": "Delete session"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف الجلسة"
+          }
         }
       }
     },
@@ -844,6 +1300,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete this scheduled session? The task will remain available."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هل تريد حذف هذه الجلسة المجدولة؟ ستبقى المهمة متاحة."
           }
         }
       }
@@ -856,6 +1318,12 @@
             "state": "translated",
             "value": "Today"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اليوم"
+          }
         }
       }
     },
@@ -866,6 +1334,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Calendar"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التقويم"
           }
         }
       }
@@ -878,6 +1352,12 @@
             "state": "translated",
             "value": "Rewards"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المكافآت"
+          }
         }
       }
     },
@@ -888,6 +1368,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "You"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أنت"
           }
         }
       }
@@ -900,6 +1386,12 @@
             "state": "translated",
             "value": "AWAN QUESTS"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مهام أوان"
+          }
         }
       }
     },
@@ -910,6 +1402,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Seven day streak"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سلسلة من سبعة أيام"
           }
         }
       }
@@ -922,6 +1420,12 @@
             "state": "translated",
             "value": "Quest chain"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سلسلة المهام"
+          }
         }
       }
     },
@@ -932,6 +1436,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Today's adventure"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مغامرة اليوم"
           }
         }
       }
@@ -944,6 +1454,12 @@
             "state": "translated",
             "value": "%lld min"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld دقيقة"
+          }
         }
       }
     },
@@ -954,6 +1470,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "THIS WEEK"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هذا الأسبوع"
           }
         }
       }
@@ -966,6 +1488,12 @@
             "state": "translated",
             "value": "Your day is ready for adventure"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يومك جاهز للمغامرة"
+          }
         }
       }
     },
@@ -976,6 +1504,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Create a quest or try the conflict lab above."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أنشئ مهمة أو جرب مختبر التعارض أعلاه."
           }
         }
       }
@@ -988,6 +1522,12 @@
             "state": "translated",
             "value": "Your time"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وقتك"
+          }
         }
       }
     },
@@ -998,6 +1538,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Drag vertically to change time in fifteen minute steps"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اسحب عمودياً لتغيير الوقت بخطوات من ١٥ دقيقة"
           }
         }
       }
@@ -1010,6 +1556,12 @@
             "state": "translated",
             "value": "Quest name"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اسم المهمة"
+          }
         }
       }
     },
@@ -1020,6 +1572,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "What will you conquer?"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ماذا ستقهر؟"
           }
         }
       }
@@ -1032,6 +1590,12 @@
             "state": "translated",
             "value": "Duration"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المدة"
+          }
         }
       }
     },
@@ -1042,6 +1606,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld minutes"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld دقيقة"
           }
         }
       }
@@ -1054,6 +1624,12 @@
             "state": "translated",
             "value": "Zone"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الفترة"
+          }
         }
       }
     },
@@ -1064,6 +1640,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Standalone"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مستقل"
           }
         }
       }
@@ -1076,6 +1658,12 @@
             "state": "translated",
             "value": "Choose zone"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختر الفترة"
+          }
         }
       }
     },
@@ -1086,6 +1674,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Can split into sessions"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يمكن تقسيمه إلى جلسات"
           }
         }
       }
@@ -1098,6 +1692,12 @@
             "state": "translated",
             "value": "Keep scheduled time fixed"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إبقاء الوقت المجدول ثابتاً"
+          }
         }
       }
     },
@@ -1108,6 +1708,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Create quest"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إنشاء مهمة"
           }
         }
       }
@@ -1120,6 +1726,12 @@
             "state": "translated",
             "value": "Save changes"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حفظ التغييرات"
+          }
         }
       }
     },
@@ -1130,6 +1742,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete quest"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف المهمة"
           }
         }
       }
@@ -1142,6 +1760,12 @@
             "state": "translated",
             "value": "New daily quest"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مهمة يومية جديدة"
+          }
         }
       }
     },
@@ -1152,6 +1776,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tune your quest"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعديل مهمتك"
           }
         }
       }
@@ -1164,6 +1794,12 @@
             "state": "translated",
             "value": "Build a 7-day quest"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بناء مهمة لـ ٧ أيام"
+          }
         }
       }
     },
@@ -1174,6 +1810,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "One focused step every day"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خطوة واحدة مركزة كل يوم"
           }
         }
       }
@@ -1186,6 +1828,12 @@
             "state": "translated",
             "value": "Goal name"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اسم الهدف"
+          }
         }
       }
     },
@@ -1196,6 +1844,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Each step"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كل خطوة"
           }
         }
       }
@@ -1208,6 +1862,12 @@
             "state": "translated",
             "value": "Start 7-day quest"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ابدأ مهمة ٧ أيام"
+          }
         }
       }
     },
@@ -1218,6 +1878,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Something got in the way"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اعترض شيء طريقنا"
           }
         }
       }
@@ -1230,6 +1896,12 @@
             "state": "translated",
             "value": "Add task"
           }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إضافة مهمة"
+          }
         }
       }
     },
@@ -1240,6 +1912,404 @@
           "stringUnit": {
             "state": "translated",
             "value": "7-task goal"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هدف من ٧ مهام"
+          }
+        }
+      }
+    },
+    "profile.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الملف الشخصي"
+          }
+        }
+      }
+    },
+    "profile.personal_info": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PERSONAL INFO"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المعلومات الشخصية"
+          }
+        }
+      }
+    },
+    "profile.daily_zones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DAILY ZONES"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المناطق اليومية"
+          }
+        }
+      }
+    },
+    "profile.set_rhythm": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set the rhythm for each day"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حدد إيقاع كل يوم"
+          }
+        }
+      }
+    },
+    "profile.zones_today": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d zones today"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d مناطق اليوم"
+          }
+        }
+      }
+    },
+    "profile.preferences": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PREFERENCES"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التفضيلات"
+          }
+        }
+      }
+    },
+    "profile.session_time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session time"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وقت الجلسة"
+          }
+        }
+      }
+    },
+    "profile.time_zone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time zone"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المنطقة الزمنية"
+          }
+        }
+      }
+    },
+    "profile.sleep_schedule": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep schedule"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جدول النوم"
+          }
+        }
+      }
+    },
+    "profile.language_and_appearance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LANGUAGE & APPEARANCE"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اللغة والمظهر"
+          }
+        }
+      }
+    },
+    "profile.language": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اللغة"
+          }
+        }
+      }
+    },
+    "profile.language_selection_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select Language"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختر اللغة"
+          }
+        }
+      }
+    },
+    "profile.theme": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theme"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المظهر"
+          }
+        }
+      }
+    },
+    "profile.light": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فاتح"
+          }
+        }
+      }
+    },
+    "profile.dark": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "داكن"
+          }
+        }
+      }
+    },
+    "profile.system": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "النظام"
+          }
+        }
+      }
+    },
+    "profile.language.english": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الإنجليزية"
+          }
+        }
+      }
+    },
+    "profile.language.arabic": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arabic"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العربية"
+          }
+        }
+      }
+    },
+    "common.edit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعديل"
+          }
+        }
+      }
+    },
+
+    "profile.dummy_session_time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "60 min"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "٦٠ دقيقة"
+          }
+        }
+      }
+    },
+    "profile.dummy_time_zone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cairo · GMT+3"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "القاهرة · GMT+3"
+          }
+        }
+      }
+    },
+    "profile.dummy_sleep_schedule": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "11:00 PM – 7:00 AM"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "١١:٠٠ م – ٧:٠٠ ص"
+          }
+        }
+      }
+    },
+    "profile.ready": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "READY"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جاهز"
           }
         }
       }

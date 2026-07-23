@@ -102,9 +102,10 @@ struct PresentationAssembly: Assembly {
         }
         .inObjectScope(.container)
 
-        container.register(ProfileViewModel.self) { _ in
+        container.register(ProfileViewModel.self) { resolver in
+            let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
-                ProfileViewModel()
+                ProfileViewModel(getUserProfileUseCase: useCase)
             }
         }
         .inObjectScope(.container)

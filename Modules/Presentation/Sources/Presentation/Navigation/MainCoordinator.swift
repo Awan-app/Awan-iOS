@@ -17,6 +17,7 @@ public final class MainCoordinator: Coordinating {
     public var rewardsPath = NavigationPath()
     public var youPath = NavigationPath()
     public var presentedSheet: MainRoute?
+    public var presentedProfileSheet: ProfileRoute?
 
     public init() {}
 
@@ -36,11 +37,16 @@ public final class MainCoordinator: Coordinating {
     }
 
     public func present(sheet route: AnyHashable) {
-        presentedSheet = route.base as? MainRoute
+        if let mainRoute = route.base as? MainRoute {
+            presentedSheet = mainRoute
+        } else if let profileRoute = route.base as? ProfileRoute {
+            presentedProfileSheet = profileRoute
+        }
     }
 
     public func dismissSheet() {
         presentedSheet = nil
+        presentedProfileSheet = nil
     }
 
     public func push(_ route: MainRoute) {

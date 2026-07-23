@@ -118,7 +118,7 @@ struct AppRootView: View {
             // ------------------------------------------------------------------
 
             NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
-                factory.makeYouView()
+                factory.makeProfileMainView()
             }
             .tabItem {
                 Label(L10n.Home.you, systemImage: "person.fill")
@@ -126,6 +126,14 @@ struct AppRootView: View {
             .tag(MainTab.you)
         }
         .tint(AppColors.accentBlue)
+        .sheet(item: Bindable(coordinator.mainCoordinator).presentedProfileSheet) { route in
+            switch route {
+            case .languageSelection:
+                factory.makeLanguageSelectionView()
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+            }
+        }
     }
 }
 
