@@ -8,9 +8,9 @@
 import Common
 import SwiftUI
 
-struct AddZoneSheet: View {
+struct AddZoneSheet<VM: ZoneManaging & Observable>: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable var viewModel: OnboardingViewModel
+    @Bindable var viewModel: VM
 
     @State private var zoneName: String = ""
     @State private var selectedColorIndex: Int = 0
@@ -20,7 +20,7 @@ struct AddZoneSheet: View {
     @State private var showOutsideHoursWarning: Bool = false
     @FocusState private var isNameFocused: Bool
 
-    init(viewModel: OnboardingViewModel) {
+    init(viewModel: VM) {
         self.viewModel = viewModel
         let availableTime = viewModel.firstAvailableTimeInterval()
         _startTime = State(initialValue: availableTime.start)
@@ -43,7 +43,7 @@ struct AddZoneSheet: View {
         guard !startAfterEnd else { return false }
         let start = OnboardingViewModel.formatTime(startTime)
         let end = OnboardingViewModel.formatTime(endTime)
-        return !viewModel.isTimeIntervalOverlapping(start: start, end: end)
+        return !viewModel.isTimeIntervalOverlapping(start: start, end: end, excludingID: nil)
     }
 
     private var startAfterEnd: Bool {
@@ -161,7 +161,7 @@ struct AddZoneSheet: View {
         let end = OnboardingViewModel.formatTime(endTime)
         withAnimation(.snappy(duration: 0.2)) {
             showOverlapError = !startAfterEnd
-                && viewModel.isTimeIntervalOverlapping(start: start, end: end)
+                && viewModel.isTimeIntervalOverlapping(start: start, end: end, excludingID: nil)
             
             showOutsideHoursWarning = viewModel.isTimeIntervalOutsideActiveHours(start: startTime, end: endTime)
         }

@@ -53,4 +53,22 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
 
         try await localDataSource.addTemplate(localTemplate)
     }
+
+    public func listTemplates() async throws -> [Template] {
+        let responses = try await remoteDataSource.listTemplates()
+        return try responses.map(HomeRemoteMapper.template)
+    }
+
+    public func updateTemplate(id: UUID, zones: [Zone]) async throws -> Template {
+        // Since UpdateTemplateRequestDTO does not support updating zones directly yet,
+        // we might just update the template itself, or we would delete/recreate. 
+        // For now, this is a placeholder for when the API supports zone updates.
+        let request = UpdateTemplateRequestDTO(
+            name: "Updated Template",
+            daysOfWeek: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
+        )
+
+        let response = try await remoteDataSource.updateTemplate(templateID: id, request: request)
+        return try HomeRemoteMapper.template(response)
+    }
 }

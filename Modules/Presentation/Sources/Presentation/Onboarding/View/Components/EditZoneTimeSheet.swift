@@ -9,9 +9,9 @@ import Common
 import SwiftUI
 import Domain
 
-struct EditZoneTimeSheet: View {
+struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable var viewModel: OnboardingViewModel
+    @Bindable var viewModel: VM
     let zone: SuggestedZone
 
     @State private var zoneName: String
@@ -22,7 +22,7 @@ struct EditZoneTimeSheet: View {
     @State private var showOutsideHoursWarning: Bool = false
     @FocusState private var isNameFocused: Bool
 
-    init(viewModel: OnboardingViewModel, zone: SuggestedZone) {
+    init(viewModel: VM, zone: SuggestedZone) {
         self.viewModel = viewModel
         self.zone = zone
         

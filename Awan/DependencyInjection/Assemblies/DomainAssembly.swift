@@ -166,6 +166,16 @@ struct DomainAssembly: Assembly {
                 templateRepository: Self.resolve(TemplateRepository.self, from: resolver)
             )
         }
+        container.register(FetchTemplatesUseCase.self) { resolver in
+            DefaultFetchTemplatesUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTemplateUseCase.self) { resolver in
+            DefaultUpdateTemplateUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
         container.register(ManageZoneScheduleUseCase.self) { _ in
             ManageZoneScheduleUseCaseImpl()
         }

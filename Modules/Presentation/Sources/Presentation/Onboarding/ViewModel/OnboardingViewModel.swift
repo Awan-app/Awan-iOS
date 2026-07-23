@@ -12,7 +12,7 @@ import Domain
 
 @Observable
 @MainActor
-public final class OnboardingViewModel {
+public final class OnboardingViewModel: ZoneManaging {
 
     // MARK: - Step tracking
 

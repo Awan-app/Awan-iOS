@@ -115,6 +115,23 @@ struct PresentationAssembly: Assembly {
         }
         .inObjectScope(.container)
 
+        container.register(DailyZonesViewModel.self) { resolver in
+            let fetchTemplatesUseCase = Self.resolve(FetchTemplatesUseCase.self, from: resolver)
+            let updateTemplateUseCase = Self.resolve(UpdateTemplateUseCase.self, from: resolver)
+            let getUserProfileUseCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
+            let manageZoneScheduleUseCase = Self.resolve(ManageZoneScheduleUseCase.self, from: resolver)
+            
+            return MainActor.assumeIsolated {
+                DailyZonesViewModel(
+                    fetchTemplatesUseCase: fetchTemplatesUseCase,
+                    updateTemplateUseCase: updateTemplateUseCase,
+                    getUserProfileUseCase: getUserProfileUseCase,
+                    manageZoneScheduleUseCase: manageZoneScheduleUseCase
+                )
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(PresentationFactory.self) { resolver in
             let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
             let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
@@ -123,6 +140,7 @@ struct PresentationAssembly: Assembly {
             let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
             let onboardingViewModel = Self.resolve(OnboardingViewModel.self, from: resolver)
             let profileViewModel = Self.resolve(ProfileViewModel.self, from: resolver)
+            let dailyZonesViewModel = Self.resolve(DailyZonesViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
@@ -139,7 +157,8 @@ struct PresentationAssembly: Assembly {
                         )
                     },
                     onboardingViewModel: onboardingViewModel,
-                    profileViewModel: profileViewModel
+                    profileViewModel: profileViewModel,
+                    dailyZonesViewModel: dailyZonesViewModel
                 )
             }
         }

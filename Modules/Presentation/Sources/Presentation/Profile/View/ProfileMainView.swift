@@ -11,9 +11,13 @@ import Common
 struct ProfileMainView: View {
     @State private var selectedTheme: ThemePreferenceRowView.ThemeSelection = .light
     @State private var viewModel: ProfileViewModel
+    var dailyZonesViewModel: DailyZonesViewModel
     
-    init(viewModel: ProfileViewModel) {
+    @State private var showDailyZones = false
+    
+    init(viewModel: ProfileViewModel, dailyZonesViewModel: DailyZonesViewModel) {
         self.viewModel = viewModel
+        self.dailyZonesViewModel = dailyZonesViewModel
     }
 
     var body: some View {
@@ -51,7 +55,9 @@ struct ProfileMainView: View {
                         DailyZonesCard(
                             zones: viewModel.dailyZones,
                             isReady: viewModel.isReady,
-                            onTap: {}
+                            onTap: {
+                                showDailyZones = true
+                            }
                         )
 
                         // Preferences
@@ -75,15 +81,32 @@ struct ProfileMainView: View {
                             },
                             selectedTheme: $selectedTheme
                         )
+
+                        // TEST BUTTON
+                        Button(action: {
+                            showDailyZones = true
+                        }) {
+                            Text("TEST DAILY ZONES SCREEN")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
+                        .padding(.top, 10)
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 40)
                 }
         }
         .navigationBarHidden(true)
+        .sheet(isPresented: $showDailyZones) {
+            DailyZonesView(viewModel: dailyZonesViewModel)
+        }
     }
 }
 
-#Preview {
-    ProfileMainView(viewModel: ProfileViewModel())
-}
+//#Preview {
+//    ProfileMainView(viewModel: ProfileViewModel())
+//}
