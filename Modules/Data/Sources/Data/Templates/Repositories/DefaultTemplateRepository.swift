@@ -40,14 +40,15 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
 
         // 1. Create Remotely
         let response = try await remoteDataSource.createTemplate(request: request)
-        
-        // 2. If remote succeeds, map and save locally
+
+        // 2. Cache the server-created aggregate so remote identifiers remain authoritative.
+        let remoteZones = try response.zones.map(HomeRemoteMapper.zone)
         let localTemplate = TemplateData(
             id: response.id,
-            name: "Weekly Zones",
+            name: response.name,
             createdAt: Date(),
-            weekDays: Set([0,1,2,3,4,5,6]),
-            zones: zones
+            weekDays: Set([1,2,3,4,5,6,7]),
+            zones: remoteZones
         )
 
         try await localDataSource.addTemplate(localTemplate)
