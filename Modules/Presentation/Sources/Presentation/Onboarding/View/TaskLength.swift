@@ -16,13 +16,13 @@ struct TaskLength: View {
 
     var focusDurationText: String {
         switch viewModel.focusDurationIndex {
-        case 0: return "About 30 minutes"
-        case 1: return "About 45 minutes"
-        case 2: return "About 1 hour"
-        case 3: return "About 1.5 hours"
-        case 4: return "About 2 hours"
-        case 5: return "About 3 hours"
-        default: return "About 1 hour"
+        case 0: return L10n.Onboarding.aboutMinutes(30)
+        case 1: return L10n.Onboarding.aboutMinutes(45)
+        case 2: return L10n.Onboarding.aboutHours(1)
+        case 3: return L10n.Onboarding.aboutHours(1.5)
+        case 4: return L10n.Onboarding.aboutHours(2)
+        case 5: return L10n.Onboarding.aboutHours(3)
+        default: return L10n.Onboarding.aboutHours(1)
         }
     }
 
@@ -43,7 +43,7 @@ struct TaskLength: View {
             // 3. Floating Bottom Action Area Layer
             VStack {
                 AppButton(
-                    title: "CONTINUE",
+                    title: L10n.Common.continue,
                     icon: nil,
                     color: AppColors.accentBlue,
                     foregroundColor: AppColors.onAccent,
@@ -55,7 +55,7 @@ struct TaskLength: View {
                 
                 Button(action: { onContinue() }) {
                     HStack(spacing: 4) {
-                        Text("Skip for now")
+                        Text(L10n.Onboarding.skipForNow)
                         Image(systemName: "arrow.right")
                     }
                     .font(AppFonts.subheadlineHeavy)
@@ -69,12 +69,10 @@ struct TaskLength: View {
 
 private struct TaskLengthExplanation: View {
     var body: some View {
-        (Text(
-            "Longer means fewer, deeper blocks; shorter means\nmore, lighter ones. Anything longer gets "
-        )
+        (Text(L10n.Onboarding.taskLengthExplanationPrefix)
         .font(AppFonts.captionHeavy)
         .foregroundColor(AppColors.textSecondary)
-            + Text("split into\nlinked sessions.")
+            + Text(L10n.Onboarding.splitIntoSessions)
             .font(AppFonts.captionHeavy)
             .foregroundColor(AppColors.brandDarkBlue))
             .lineSpacing(4)

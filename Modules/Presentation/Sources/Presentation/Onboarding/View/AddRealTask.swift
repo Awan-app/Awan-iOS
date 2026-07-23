@@ -59,7 +59,7 @@ struct AddRealTask: View {
                 // 3. Bottom Action Area
                 VStack {
                     AppButton(
-                        title: "CONTINUE",
+                        title: L10n.Common.continue,
                         icon: nil,
                         color: AppColors.accentBlue,
                         foregroundColor: AppColors.onAccent,

@@ -73,11 +73,11 @@ struct PrimaryButtonStyle: ButtonStyle {
         VStack(spacing: 32) {
             Spacer()
             
-            OnboardingContinueButton(title: "CONTINUE") {
+            OnboardingContinueButton(title: L10n.Common.continue) {
                 print("Enabled pressed")
             }
 
-            OnboardingContinueButton(title: "CONTINUE", isEnabled: false) {
+            OnboardingContinueButton(title: L10n.Common.continue, isEnabled: false) {
                 print("Disabled pressed")
             }
         }

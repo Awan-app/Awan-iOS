@@ -8,7 +8,7 @@ public protocol SimulateScheduleScenarioUseCase: Sendable {
     ) async throws -> ScheduleOperationResult
 }
 
-public struct DefaultSimulateScheduleScenarioUseCase: SimulateScheduleScenarioUseCase {
+public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCase {
     private let workspaceProvider: any ScheduleWorkspaceProviding
     private let zoneRepository: any ZoneRepository
     private let taskRepository: any TaskRepository

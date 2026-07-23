@@ -1,13 +1,13 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "common.save": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "common.cancel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
           }
         },
         "ar": {
@@ -18,13 +18,13 @@
         }
       }
     },
-    "common.cancel": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancel"
+    "common.close" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
           }
         },
         "ar": {
@@ -35,13 +35,13 @@
         }
       }
     },
-    "common.continue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continue"
+    "common.continue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
           }
         },
         "ar": {
@@ -52,13 +52,13 @@
         }
       }
     },
-    "common.got_it": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Got it"
+    "common.got_it" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Got it"
           }
         },
         "ar": {
@@ -69,13 +69,13 @@
         }
       }
     },
-    "common.please_try_again": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Please try again."
+    "common.please_try_again" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please try again."
           }
         },
         "ar": {
@@ -86,13 +86,13 @@
         }
       }
     },
-    "common.close": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Close"
+    "common.save" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
           }
         },
         "ar": {
@@ -103,13 +103,13 @@
         }
       }
     },
-    "onboarding.welcome_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hi, I'm Awan.\nThe sky is yours today."
+    "home.add_goal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add goal"
           }
         },
         "ar": {
@@ -120,13 +120,13 @@
         }
       }
     },
-    "onboarding.welcome_subtitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tell me a little about your day and I'll\nbuild a schedule that quietly heals itself\nwhen life happens."
+    "home.add_task" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add task"
           }
         },
         "ar": {
@@ -137,13 +137,13 @@
         }
       }
     },
-    "onboarding.lets_go": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LET'S GO"
+    "home.calendar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar"
           }
         },
         "ar": {
@@ -154,13 +154,13 @@
         }
       }
     },
-    "onboarding.skip_setup": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Skip setup"
+    "home.completion_summary" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld complete"
           }
         },
         "ar": {
@@ -171,13 +171,13 @@
         }
       }
     },
-    "onboarding.name_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "What should I call you?"
+    "home.delete_session" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete session"
           }
         },
         "ar": {
@@ -188,13 +188,13 @@
         }
       }
     },
-    "onboarding.name_subtitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Just your name — I'll use it to greet you each morning."
+    "home.delete_session_confirmation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this scheduled session? The task will remain available."
           }
         },
         "ar": {
@@ -205,13 +205,13 @@
         }
       }
     },
-    "onboarding.first_name_label": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FIRST NAME"
+    "home.empty_timeline_subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a task or goal to begin your plan."
           }
         },
         "ar": {
@@ -222,13 +222,13 @@
         }
       }
     },
-    "onboarding.first_name_placeholder": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sam"
+    "home.error_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't update your day"
           }
         },
         "ar": {
@@ -239,13 +239,13 @@
         }
       }
     },
-    "onboarding.last_name_label": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LAST NAME"
+    "home.fixed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FIXED"
           }
         },
         "ar": {
@@ -256,13 +256,13 @@
         }
       }
     },
-    "onboarding.last_name_placeholder": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rivera"
+    "home.good_afternoon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Good afternoon"
           }
         },
         "ar": {
@@ -273,13 +273,13 @@
         }
       }
     },
-    "onboarding.preview_label": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PREVIEW"
+    "home.good_evening" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Good evening"
           }
         },
         "ar": {
@@ -290,13 +290,13 @@
         }
       }
     },
-    "onboarding.wake_sleep_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When does your day begin and end?"
+    "home.good_morning" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Good morning"
           }
         },
         "ar": {
@@ -307,13 +307,13 @@
         }
       }
     },
-    "onboarding.wake_label": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "I usually wake up at"
+    "home.hours_minutes_short" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld hr %lld min"
           }
         },
         "ar": {
@@ -324,13 +324,13 @@
         }
       }
     },
-    "onboarding.sleep_label": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "I usually sleep at"
+    "home.hours_short" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld hr"
           }
         },
         "ar": {
@@ -341,13 +341,13 @@
         }
       }
     },
-    "onboarding.midnight_note": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sleeps past midnight? I'll wrap the night for you."
+    "home.load_failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't load your plan."
           }
         },
         "ar": {
@@ -358,13 +358,13 @@
         }
       }
     },
-    "onboarding.zones_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Here's a day I sketched for you"
+    "home.lock_session" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock session"
           }
         },
         "ar": {
@@ -375,13 +375,13 @@
         }
       }
     },
-    "onboarding.set_manually": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SET MANUALLY"
+    "home.minutes_short" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min"
           }
         },
         "ar": {
@@ -392,13 +392,13 @@
         }
       }
     },
-    "onboarding.use_this": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "USE THIS"
+    "home.reschedule" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reschedule and lock"
           }
         },
         "ar": {
@@ -409,13 +409,13 @@
         }
       }
     },
-    "onboarding.change_anytime": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You can change this anytime"
+    "home.retry" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
           }
         },
         "ar": {
@@ -426,13 +426,13 @@
         }
       }
     },
-    "onboarding.add_zone": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add a zone"
+    "home.rewards" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rewards"
           }
         },
         "ar": {
@@ -443,13 +443,13 @@
         }
       }
     },
-    "onboarding.your_day_label": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "YOUR DAY"
+    "home.start_time" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start time"
           }
         },
         "ar": {
@@ -460,13 +460,13 @@
         }
       }
     },
-    "onboarding.open_sky_hours": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld h of open sky"
+    "home.task_schedule_summary" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld tasks • %@"
           }
         },
         "ar": {
@@ -477,13 +477,13 @@
         }
       }
     },
-    "onboarding.zones_fill_next": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zones will fill this in next"
+    "home.task_schedule_summary_one" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld task • %@"
           }
         },
         "ar": {
@@ -494,13 +494,13 @@
         }
       }
     },
-    "onboarding.skip": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Skip"
+    "home.today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
           }
         },
         "ar": {
@@ -511,13 +511,13 @@
         }
       }
     },
-    "login.app_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Awan"
+    "home.todays_plan" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TODAY'S PLAN"
           }
         },
         "ar": {
@@ -528,13 +528,13 @@
         }
       }
     },
-    "login.subtitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your day, drawn as a sky.\nSign in — we'll float you a code."
+    "home.unlock_session" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock session"
           }
         },
         "ar": {
@@ -545,13 +545,13 @@
         }
       }
     },
-    "login.sending": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SENDING..."
+    "home.you" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You"
           }
         },
         "ar": {
@@ -562,13 +562,13 @@
         }
       }
     },
-    "login.send_code_timer": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SEND CODE • 0:%@"
+    "login.app_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Awan"
           }
         },
         "ar": {
@@ -579,13 +579,13 @@
         }
       }
     },
-    "login.send_code": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SEND CODE"
+    "login.continue_google" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue with Google"
           }
         },
         "ar": {
@@ -596,13 +596,13 @@
         }
       }
     },
-    "login.or": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OR"
+    "login.email_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EMAIL"
           }
         },
         "ar": {
@@ -613,13 +613,13 @@
         }
       }
     },
-    "login.sign_in_apple": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sign in with Apple"
+    "login.email_prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter your email"
           }
         },
         "ar": {
@@ -630,13 +630,13 @@
         }
       }
     },
-    "login.continue_google": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continue with Google"
+    "login.error.offline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're offline — we'll send the code when you reconnect."
           }
         },
         "ar": {
@@ -647,13 +647,13 @@
         }
       }
     },
-    "login.footer.terms_prefix": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No passwords, ever. By continuing you agree to Awan's "
+    "login.footer.and" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " & "
           }
         },
         "ar": {
@@ -664,13 +664,13 @@
         }
       }
     },
-    "login.footer.terms": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Terms"
+    "login.footer.dot" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "."
           }
         },
         "ar": {
@@ -681,13 +681,13 @@
         }
       }
     },
-    "login.footer.and": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " & "
+    "login.footer.privacy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy"
           }
         },
         "ar": {
@@ -698,13 +698,13 @@
         }
       }
     },
-    "login.footer.privacy": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Privacy"
+    "login.footer.terms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terms"
           }
         },
         "ar": {
@@ -715,13 +715,13 @@
         }
       }
     },
-    "login.footer.dot": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "."
+    "login.footer.terms_prefix" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No passwords, ever. By continuing you agree to Awan's "
           }
         },
         "ar": {
@@ -732,13 +732,13 @@
         }
       }
     },
-    "login.email_label": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "EMAIL"
+    "login.or" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OR"
           }
         },
         "ar": {
@@ -749,13 +749,13 @@
         }
       }
     },
-    "login.email_prompt": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enter your email"
+    "login.send_code" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SEND CODE"
           }
         },
         "ar": {
@@ -766,13 +766,13 @@
         }
       }
     },
-    "login.error.offline": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You're offline — we'll send the code when you reconnect."
+    "login.send_code_timer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SEND CODE • 0:%@"
           }
         },
         "ar": {
@@ -783,13 +783,13 @@
         }
       }
     },
-    "otp.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You're in! ☀️"
+    "login.sending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SENDING..."
           }
         },
         "ar": {
@@ -800,13 +800,13 @@
         }
       }
     },
-    "otp.subtitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enter the code we sent to"
+    "login.sign_in_apple" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in with Apple"
           }
         },
         "ar": {
@@ -817,13 +817,13 @@
         }
       }
     },
-    "otp.verified": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verified — drifting you in"
+    "login.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your day, drawn as a sky.\nSign in — we'll float you a code."
           }
         },
         "ar": {
@@ -834,13 +834,13 @@
         }
       }
     },
-    "otp.error.offline": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You're offline — reconnect to verify or resend your code."
+    "onboarding.about_hours" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About %g hours"
           }
         },
         "ar": {
@@ -851,13 +851,13 @@
         }
       }
     },
-    "otp.resend_timer": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RESEND CODE • %@"
+    "onboarding.about_minutes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About %lld minutes"
           }
         },
         "ar": {
@@ -868,13 +868,13 @@
         }
       }
     },
-    "otp.resend": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RESEND CODE"
+    "onboarding.add_zone" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a zone"
           }
         },
         "ar": {
@@ -885,13 +885,13 @@
         }
       }
     },
-    "otp.keypad_hint": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Numeric keypad · auto-submits on the 6th digit"
+    "onboarding.add_zone_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Zone"
           }
         },
         "ar": {
@@ -902,13 +902,13 @@
         }
       }
     },
-    "otp.digit_accessibility": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verification code digit %lld"
+    "onboarding.change_anytime" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can change this anytime"
           }
         },
         "ar": {
@@ -919,13 +919,13 @@
         }
       }
     },
-    "home.good_morning": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Good morning"
+    "onboarding.first_name_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FIRST NAME"
           }
         },
         "ar": {
@@ -936,13 +936,13 @@
         }
       }
     },
-    "home.add_goal": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add goal"
+    "onboarding.first_name_placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sam"
           }
         },
         "ar": {
@@ -953,13 +953,13 @@
         }
       }
     },
-    "home.add_task": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add task"
+    "onboarding.last_name_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LAST NAME"
           }
         },
         "ar": {
@@ -970,13 +970,13 @@
         }
       }
     },
-    "home.good_afternoon": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Good afternoon"
+    "onboarding.last_name_placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rivera"
           }
         },
         "ar": {
@@ -987,13 +987,13 @@
         }
       }
     },
-    "home.good_evening": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Good evening"
+    "onboarding.lets_go" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LET'S GO"
           }
         },
         "ar": {
@@ -1004,13 +1004,13 @@
         }
       }
     },
-    "home.todays_plan": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TODAY'S PLAN"
+    "onboarding.midnight_note" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sleeps past midnight? I'll wrap the night for you."
           }
         },
         "ar": {
@@ -1021,13 +1021,13 @@
         }
       }
     },
-    "home.task_schedule_summary": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld tasks • %@"
+    "onboarding.name_subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Just your name — I'll use it to greet you each morning."
           }
         },
         "ar": {
@@ -1038,13 +1038,13 @@
         }
       }
     },
-    "home.task_schedule_summary_one": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld task • %@"
+    "onboarding.name_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What should I call you?"
           }
         },
         "ar": {
@@ -1055,13 +1055,13 @@
         }
       }
     },
-    "home.completion_summary": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld of %lld complete"
+    "onboarding.open_sky_hours" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld h of open sky"
           }
         },
         "ar": {
@@ -1072,13 +1072,13 @@
         }
       }
     },
-    "home.minutes_short": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld min"
+    "onboarding.preview_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PREVIEW"
           }
         },
         "ar": {
@@ -1089,13 +1089,13 @@
         }
       }
     },
-    "home.hours_short": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld hr"
+    "onboarding.set_manually" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SET MANUALLY"
           }
         },
         "ar": {
@@ -1106,13 +1106,13 @@
         }
       }
     },
-    "home.hours_minutes_short": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld hr %lld min"
+    "onboarding.skip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip"
           }
         },
         "ar": {
@@ -1123,13 +1123,13 @@
         }
       }
     },
-    "home.fixed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FIXED"
+    "onboarding.skip_for_now" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip for now"
           }
         },
         "ar": {
@@ -1140,13 +1140,13 @@
         }
       }
     },
-    "home.empty_timeline_subtitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add a task or goal to begin your plan."
+    "onboarding.skip_setup" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip setup"
           }
         },
         "ar": {
@@ -1157,13 +1157,13 @@
         }
       }
     },
-    "home.error_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Couldn't update your day"
+    "onboarding.sleep_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I usually sleep at"
           }
         },
         "ar": {
@@ -1174,13 +1174,13 @@
         }
       }
     },
-    "home.load_failed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "We couldn't load your plan."
+    "onboarding.split_into_sessions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We'll split longer tasks into 2 hour sessions."
           }
         },
         "ar": {
@@ -1191,13 +1191,13 @@
         }
       }
     },
-    "home.retry": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Try again"
+    "onboarding.task_length_explanation_prefix" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long tasks can be draining. "
           }
         },
         "ar": {
@@ -1208,13 +1208,13 @@
         }
       }
     },
-    "home.start_time": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Start time"
+    "onboarding.use_this" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USE THIS"
           }
         },
         "ar": {
@@ -1225,13 +1225,13 @@
         }
       }
     },
-    "home.reschedule": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reschedule and lock"
+    "onboarding.wake_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I usually wake up at"
           }
         },
         "ar": {
@@ -1242,13 +1242,13 @@
         }
       }
     },
-    "home.lock_session": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lock session"
+    "onboarding.wake_sleep_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When does your day begin and end?"
           }
         },
         "ar": {
@@ -1259,13 +1259,13 @@
         }
       }
     },
-    "home.unlock_session": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unlock session"
+    "onboarding.welcome_subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tell me a little about your day and I'll\nbuild a schedule that quietly heals itself\nwhen life happens."
           }
         },
         "ar": {
@@ -1276,13 +1276,13 @@
         }
       }
     },
-    "home.delete_session": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete session"
+    "onboarding.welcome_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hi, I'm Awan.\nThe sky is yours today."
           }
         },
         "ar": {
@@ -1293,13 +1293,13 @@
         }
       }
     },
-    "home.delete_session_confirmation": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete this scheduled session? The task will remain available."
+    "onboarding.your_day_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "YOUR DAY"
           }
         },
         "ar": {
@@ -1310,13 +1310,13 @@
         }
       }
     },
-    "home.today": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Today"
+    "onboarding.zone_color_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
           }
         },
         "ar": {
@@ -1327,13 +1327,13 @@
         }
       }
     },
-    "home.calendar": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Calendar"
+    "onboarding.zone_end_time" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End time"
           }
         },
         "ar": {
@@ -1344,13 +1344,13 @@
         }
       }
     },
-    "home.rewards": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rewards"
+    "onboarding.zone_name_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zone name"
           }
         },
         "ar": {
@@ -1361,13 +1361,13 @@
         }
       }
     },
-    "home.you": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You"
+    "onboarding.zone_name_placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. Study, Work…"
           }
         },
         "ar": {
@@ -1378,13 +1378,13 @@
         }
       }
     },
-    "schedule.quests_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AWAN QUESTS"
+    "onboarding.zone_overlap_error" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This time overlaps an existing zone"
           }
         },
         "ar": {
@@ -1395,13 +1395,13 @@
         }
       }
     },
-    "schedule.streak_accessibility": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seven day streak"
+    "onboarding.zone_start_time" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start time"
           }
         },
         "ar": {
@@ -1412,13 +1412,13 @@
         }
       }
     },
-    "schedule.quest_chain": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quest chain"
+    "onboarding.zones_fill_next" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zones will fill this in next"
           }
         },
         "ar": {
@@ -1429,13 +1429,13 @@
         }
       }
     },
-    "schedule.todays_adventure": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Today's adventure"
+    "onboarding.zones_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Here's a day I sketched for you"
           }
         },
         "ar": {
@@ -1446,13 +1446,13 @@
         }
       }
     },
-    "schedule.minutes_scheduled": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld min"
+    "otp.digit_accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verification code digit %lld"
           }
         },
         "ar": {
@@ -1463,13 +1463,13 @@
         }
       }
     },
-    "schedule.this_week": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "THIS WEEK"
+    "otp.error.offline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're offline — reconnect to verify or resend your code."
           }
         },
         "ar": {
@@ -1480,13 +1480,13 @@
         }
       }
     },
-    "schedule.empty_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your day is ready for adventure"
+    "otp.keypad_hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Numeric keypad · auto-submits on the 6th digit"
           }
         },
         "ar": {
@@ -1497,13 +1497,13 @@
         }
       }
     },
-    "schedule.empty_subtitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create a quest or try the conflict lab above."
+    "otp.resend" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RESEND CODE"
           }
         },
         "ar": {
@@ -1514,13 +1514,13 @@
         }
       }
     },
-    "schedule.your_time": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your time"
+    "otp.resend_timer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RESEND CODE • %@"
           }
         },
         "ar": {
@@ -1531,13 +1531,13 @@
         }
       }
     },
-    "schedule.drag_hint_accessibility": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Drag vertically to change time in fifteen minute steps"
+    "otp.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter the code we sent to"
           }
         },
         "ar": {
@@ -1548,13 +1548,13 @@
         }
       }
     },
-    "schedule.quest_name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quest name"
+    "otp.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're in! ☀️"
           }
         },
         "ar": {
@@ -1565,13 +1565,13 @@
         }
       }
     },
-    "schedule.quest_name_placeholder": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "What will you conquer?"
+    "otp.verified" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verified — drifting you in"
           }
         },
         "ar": {
@@ -1582,13 +1582,13 @@
         }
       }
     },
-    "schedule.duration": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Duration"
+    "schedule.add_goal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7-task goal"
           }
         },
         "ar": {
@@ -1599,13 +1599,13 @@
         }
       }
     },
-    "schedule.duration_minutes": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld minutes"
+    "schedule.add_task" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add task"
           }
         },
         "ar": {
@@ -1616,13 +1616,13 @@
         }
       }
     },
-    "schedule.zone": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zone"
+    "schedule.build_quest_subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One focused step every day"
           }
         },
         "ar": {
@@ -1633,13 +1633,13 @@
         }
       }
     },
-    "schedule.standalone": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Standalone"
+    "schedule.build_quest_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build a 7-day quest"
           }
         },
         "ar": {
@@ -1650,13 +1650,13 @@
         }
       }
     },
-    "schedule.choose_zone": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choose zone"
+    "schedule.can_split" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can split into sessions"
           }
         },
         "ar": {
@@ -1667,13 +1667,13 @@
         }
       }
     },
-    "schedule.can_split": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Can split into sessions"
+    "schedule.choose_zone" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose zone"
           }
         },
         "ar": {
@@ -1684,13 +1684,13 @@
         }
       }
     },
-    "schedule.keep_fixed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keep scheduled time fixed"
+    "schedule.create_quest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create quest"
           }
         },
         "ar": {
@@ -1701,13 +1701,13 @@
         }
       }
     },
-    "schedule.create_quest": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create quest"
+    "schedule.delete_quest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete quest"
           }
         },
         "ar": {
@@ -1718,13 +1718,13 @@
         }
       }
     },
-    "schedule.save_changes": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save changes"
+    "schedule.drag_hint_accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag vertically to change time in fifteen minute steps"
           }
         },
         "ar": {
@@ -1735,13 +1735,13 @@
         }
       }
     },
-    "schedule.delete_quest": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete quest"
+    "schedule.duration" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duration"
           }
         },
         "ar": {
@@ -1752,13 +1752,13 @@
         }
       }
     },
-    "schedule.new_quest": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "New daily quest"
+    "schedule.duration_minutes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld minutes"
           }
         },
         "ar": {
@@ -1769,13 +1769,13 @@
         }
       }
     },
-    "schedule.tune_quest": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tune your quest"
+    "schedule.each_step" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each step"
           }
         },
         "ar": {
@@ -1786,13 +1786,13 @@
         }
       }
     },
-    "schedule.build_quest_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Build a 7-day quest"
+    "schedule.empty_subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a quest or try the conflict lab above."
           }
         },
         "ar": {
@@ -1803,13 +1803,13 @@
         }
       }
     },
-    "schedule.build_quest_subtitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "One focused step every day"
+    "schedule.empty_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your day is ready for adventure"
           }
         },
         "ar": {
@@ -1820,13 +1820,13 @@
         }
       }
     },
-    "schedule.goal_name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Goal name"
+    "schedule.error_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something got in the way"
           }
         },
         "ar": {
@@ -1837,13 +1837,13 @@
         }
       }
     },
-    "schedule.each_step": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Each step"
+    "schedule.goal_name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal name"
           }
         },
         "ar": {
@@ -1854,13 +1854,13 @@
         }
       }
     },
-    "schedule.start_quest": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Start 7-day quest"
+    "schedule.keep_fixed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep scheduled time fixed"
           }
         },
         "ar": {
@@ -1871,13 +1871,13 @@
         }
       }
     },
-    "schedule.error_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Something got in the way"
+    "schedule.minutes_scheduled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min"
           }
         },
         "ar": {
@@ -1888,13 +1888,13 @@
         }
       }
     },
-    "schedule.add_task": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add task"
+    "schedule.new_quest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New daily quest"
           }
         },
         "ar": {
@@ -1905,13 +1905,145 @@
         }
       }
     },
-    "schedule.add_goal": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "7-task goal"
+    "schedule.quest_chain" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quest chain"
+          }
+        }
+      }
+    },
+    "schedule.quest_name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quest name"
+          }
+        }
+      }
+    },
+    "schedule.quest_name_placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What will you conquer?"
+          }
+        }
+      }
+    },
+    "schedule.quests_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AWAN QUESTS"
+          }
+        }
+      }
+    },
+    "schedule.save_changes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save changes"
+          }
+        }
+      }
+    },
+    "schedule.standalone" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standalone"
+          }
+        }
+      }
+    },
+    "schedule.start_quest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start 7-day quest"
+          }
+        }
+      }
+    },
+    "schedule.streak_accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seven day streak"
+          }
+        }
+      }
+    },
+    "schedule.this_week" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "THIS WEEK"
+          }
+        }
+      }
+    },
+    "schedule.todays_adventure" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today's adventure"
+          }
+        }
+      }
+    },
+    "schedule.tune_quest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tune your quest"
+          }
+        }
+      }
+    },
+    "schedule.your_time" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your time"
+          }
+        }
+      }
+    },
+    "schedule.zone" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zone"
           }
         },
         "ar": {
