@@ -5,16 +5,17 @@ struct HomeWeekStripView: View {
     let selectedDay: Date
     let onSelect: (Date) -> Void
     @Namespace private var selection
+    @Environment(LanguageManager.self) private var languageManager
 
     var body: some View {
         HStack(spacing: 6) {
             ForEach(days, id: \.self) { day in
-                let isSelected = Calendar.current.isDate(day, inSameDayAs: selectedDay)
+                let isSelected = languageManager.calendar.isDate(day, inSameDayAs: selectedDay)
                 Button { onSelect(day) } label: {
                     VStack(spacing: 6) {
-                        Text(day.formatted(.dateTime.weekday(.abbreviated)))
+                        Text(day.formatted(.dateTime.weekday(.abbreviated).locale(languageManager.locale)))
                             .font(AppFonts.captionHeavy)
-                        Text(day.formatted(.dateTime.day()))
+                        Text(day.formatted(.dateTime.day().locale(languageManager.locale)))
                             .font(AppFonts.title3Black)
                     }
                     .foregroundStyle(isSelected ? AppColors.onAccent : AppColors.textSecondary)
@@ -30,7 +31,7 @@ struct HomeWeekStripView: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(day.formatted(date: .complete, time: .omitted))
+                .accessibilityLabel(day.formatted(Date.FormatStyle(date: .complete, time: .omitted, locale: languageManager.locale)))
                 .accessibilityAddTraits(isSelected ? .isSelected : [])
             }
         }
@@ -38,8 +39,7 @@ struct HomeWeekStripView: View {
     }
 
     private var days: [Date] {
-        var calendar = Calendar(identifier: .iso8601)
-        calendar.timeZone = .current
+        var calendar = languageManager.calendar
         let start = calendar.dateInterval(of: .weekOfYear, for: selectedDay)?.start
             ?? calendar.startOfDay(for: selectedDay)
         return (0..<7).compactMap {

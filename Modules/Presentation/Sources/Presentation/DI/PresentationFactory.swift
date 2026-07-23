@@ -75,11 +75,8 @@ public struct PresentationFactory {
         )
     }
 
-    public func makeProfileMainView() -> some View {
+    func makeProfileMainView() -> some View {
         ProfileMainView(viewModel: profileViewModel)
     }
 
-//    func makeAddRealTaskView() -> some View {
-//        AddRealTask(viewModel: onboardingViewModel)
-//    }
 }

@@ -17,12 +17,12 @@ struct DailyZonesCenterStack: View {
         VStack(alignment: .leading, spacing: 4) {
             DailyZonesTitleRow(isReady: isReady)
 
-            Text("Set the rhythm for each day")
+            Text(L10n.Profile.setRhythm)
                 .font(AppFonts.subheadlineSemibold)
                 .foregroundStyle(AppColors.textSecondary)
                 .lineLimit(1)
 
-            Text("\(zones.count) zones today")
+            Text(L10n.Profile.zonesToday(zones.count))
                 .font(AppFonts.subheadlineHeavy)
                 .foregroundStyle(AppColors.accentBlue)
 

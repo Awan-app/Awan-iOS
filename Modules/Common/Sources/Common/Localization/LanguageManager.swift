@@ -9,6 +9,16 @@ public final class LanguageManager {
             UserDefaults.standard.set(currentLanguage.rawValue, forKey: "app_language")
         }
     }
+    
+    public var locale: Locale {
+        Locale(identifier: currentLanguage.rawValue)
+    }
+    
+    public var calendar: Calendar {
+        var cal = Calendar.current
+        cal.locale = locale
+        return cal
+    }
 
     public init() {
         if let savedValue = UserDefaults.standard.string(forKey: "app_language"),

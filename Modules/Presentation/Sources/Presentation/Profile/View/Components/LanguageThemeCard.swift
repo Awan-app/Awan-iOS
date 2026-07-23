@@ -15,13 +15,13 @@ struct LanguageThemeCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeaderLabel(title: "LANGUAGE & APPEARANCE", accentColor: AppColors.warning)
+            SectionHeaderLabel(title: L10n.Profile.languageAndAppearance, accentColor: AppColors.warning)
 
             DepthCardContainer {
                 VStack(spacing: 0) {
                     PreferenceRowView(
                         icon: "globe",
-                        title: "Language",
+                        title: L10n.Profile.language,
                         value: language,
                         onTap: onLanguageTap
                     )
@@ -33,7 +33,7 @@ struct LanguageThemeCard: View {
 
                     ThemePreferenceRowView(
                         icon: "circle.lefthalf.filled",
-                        title: "Theme",
+                        title: L10n.Profile.theme,
                         selectedTheme: $selectedTheme
                     )
                     .padding(.vertical, 6)

@@ -18,6 +18,14 @@ struct ThemePreferenceRowView: View {
         case light = "Light"
         case system = "System"
         case dark = "Dark"
+
+        var localizedTitle: String {
+            switch self {
+            case .light: return L10n.Profile.light
+            case .dark: return L10n.Profile.dark
+            case .system: return L10n.Profile.system
+            }
+        }
     }
 
     var body: some View {
@@ -63,7 +71,7 @@ struct ThemePreferenceRowView: View {
                 selectedTheme = theme
             }
         } label: {
-            Text(theme.rawValue)
+            Text(theme.localizedTitle)
                 .font(isSelected ? AppFonts.captionHeavy : AppFonts.subheadlineSemibold)
                 .foregroundStyle(isSelected ? AppColors.accentBlue : AppColors.textSecondary)
                 .padding(.vertical, 6)
