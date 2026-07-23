@@ -324,11 +324,10 @@ public enum L10n {
         }
         public static func taskScheduleSummary(_ tasks: Int, _ duration: String) -> String {
             String(
-                format: String(
-                    localized: tasks == 1
-                        ? "home.task_schedule_summary_one"
-                        : "home.task_schedule_summary",
-                    bundle: .module
+                format: L10n.currentBundle.localizedString(
+                    forKey: tasks == 1 ? "home.task_schedule_summary_one" : "home.task_schedule_summary",
+                    value: nil,
+                    table: "Localizable"
                 ),
                 tasks,
                 duration
