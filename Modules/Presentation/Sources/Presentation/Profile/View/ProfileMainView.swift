@@ -97,31 +97,6 @@ struct ProfileMainView: View {
 import Domain
 import Combine
 
-struct MockGetUserProfileUseCase: GetUserProfileUseCase {
-    func execute() async throws -> UserProfile {
-        UserProfile(
-            id: UUID(),
-            email: "mock@awan.app",
-            firstName: "Mock",
-            lastName: "User",
-            birthDate: try! BirthDate(year: 1990, month: 1, day: 1),
-            points: 100,
-            streak: 5,
-            maxStreak: 10,
-            preferences: UserPreferences(
-                timezone: "UTC",
-                preferredSessionDuration: 60,
-                bufferBetweenSessions: 10,
-                wakeupTime: try! LocalTime(hour: 7, minute: 0),
-                sleepTime: try! LocalTime(hour: 23, minute: 0)
-            )
-        )
-    }
-    func observe() -> AnyPublisher<UserProfile, Error> {
-        Empty().eraseToAnyPublisher()
-    }
-}
-
 #Preview {
     ProfileMainView(viewModel: ProfileViewModel(getUserProfileUseCase: MockGetUserProfileUseCase()))
 }
