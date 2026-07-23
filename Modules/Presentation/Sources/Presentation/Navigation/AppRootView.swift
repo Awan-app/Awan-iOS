@@ -128,12 +128,6 @@ struct AppRootView: View {
         }
         .id(languageManager.currentLanguage)
         .tint(AppColors.accentBlue)
-        .sheet(item: Bindable(coordinator.mainCoordinator).presentedProfileSheet) { route in
-            switch route {
-            case .languageSelection:
-                factory.makeLanguageSelectionView()
-            }
-        }
     }
 }
 

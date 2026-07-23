@@ -2,6 +2,7 @@ import Common
 import SwiftUI
 
 struct DayTimelineView: View {
+    @Environment(LanguageManager.self) private var languageManager
     static let startHour = 7
     static let endHour = 24
     static let hourHeight: CGFloat = 76
@@ -125,13 +126,16 @@ struct DayTimelineView: View {
     }
 
     private func timeLabel(_ hour: Int) -> String {
-        if hour == 24 { return "12 AM" }
-        if hour == 12 { return "12 PM" }
-        return hour < 12 ? "\(hour) AM" : "\(hour - 12) PM"
+        var components = DateComponents()
+        components.hour = hour == 24 ? 0 : hour
+        components.minute = 0
+        let date = languageManager.calendar.date(from: components) ?? Date()
+        return date.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: languageManager.locale))
     }
 }
 
 private struct TimelineSessionCard: View {
+    @Environment(LanguageManager.self) private var languageManager
     let item: TimelineSessionItem
     let onMove: (CGFloat) -> Void
     let onTap: () -> Void
@@ -200,8 +204,9 @@ private struct TimelineSessionCard: View {
     }
 
     private var timeText: String {
-        let start = item.start.formatted(date: .omitted, time: .shortened)
-        let end = item.end.formatted(date: .omitted, time: .shortened)
+        let style = Date.FormatStyle(date: .omitted, time: .shortened, locale: languageManager.locale)
+        let start = item.start.formatted(style)
+        let end = item.end.formatted(style)
         return "\(start)–\(end)"
     }
 }

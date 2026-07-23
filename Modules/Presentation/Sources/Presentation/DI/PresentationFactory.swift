@@ -79,7 +79,4 @@ public struct PresentationFactory {
         ProfileMainView(viewModel: profileViewModel)
     }
 
-    func makeLanguageSelectionView() -> some View {
-        LanguageSelectionView()
-    }
 }

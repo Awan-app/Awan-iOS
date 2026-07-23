@@ -13,6 +13,7 @@ struct ProfileMainView: View {
     @Environment(LanguageManager.self) private var languageManager
     @State private var selectedTheme: ThemePreferenceRowView.ThemeSelection = .light
     @State private var viewModel: ProfileViewModel
+    @State private var isLanguageSheetPresented = false
     
     init(viewModel: ProfileViewModel) {
         self.viewModel = viewModel
@@ -73,7 +74,7 @@ struct ProfileMainView: View {
                         LanguageThemeCard(
                             language: languageManager.currentLanguage == .arabic ? L10n.Profile.languageArabic : L10n.Profile.languageEnglish,
                             onLanguageTap: {
-                                coordinator.mainCoordinator.present(sheet: ProfileRoute.languageSelection)
+                                isLanguageSheetPresented = true
                             },
                             selectedTheme: $selectedTheme
                         )
@@ -83,6 +84,9 @@ struct ProfileMainView: View {
                 }
         }
         .navigationBarHidden(true)
+        .sheet(isPresented: $isLanguageSheetPresented) {
+            LanguageSelectionView()
+        }
         .task {
             await viewModel.fetchUserProfile()
         }
