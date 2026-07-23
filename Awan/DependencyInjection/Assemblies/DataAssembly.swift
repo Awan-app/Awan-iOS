@@ -51,6 +51,10 @@ struct DataAssembly: Assembly {
                 remoteGoalDataSource: Self.resolve(
                     RemoteGoalDataSource.self,
                     from: resolver
+                ),
+                remoteSessionDataSource: Self.resolve(
+                    RemoteSessionDataSourceProtocol.self,
+                    from: resolver
                 )
             )
         }

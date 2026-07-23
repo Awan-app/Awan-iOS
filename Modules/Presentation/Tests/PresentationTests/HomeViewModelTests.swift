@@ -207,6 +207,32 @@ final class HomeViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.state.success)
     }
 
+    func testCreateTaskWithNudgeSetsActiveNudge() async throws {
+        let fixture = try HomeFixture()
+        let stub = HomeUseCaseStub(fixture: fixture, shouldReturnNudgeOnCreate: true)
+        let viewModel = makeViewModel(stub: stub)
+        viewModel.send(.appeared)
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
+
+        viewModel.send(
+            .createTask(
+                title: "Test",
+                description: nil,
+                durationMinutes: 60,
+                zoneID: nil,
+                isSplittable: true,
+                mandatory: true,
+                startsAt: nil
+            )
+        )
+
+        await waitUntil { viewModel.state.activeNudge != nil }
+        XCTAssertNotNil(viewModel.state.activeNudge)
+
+        viewModel.send(.dismissNudge)
+        XCTAssertNil(viewModel.state.activeNudge)
+    }
+
     private func makeViewModel(stub: HomeUseCaseStub) -> HomeViewModel {
         HomeViewModel(
             useCases: HomeUseCases(
@@ -221,7 +247,8 @@ final class HomeViewModelTests: XCTestCase {
                     setLock: stub,
                     setCompletion: stub,
                     delete: stub
-                )
+                ),
+                createManualTask: stub
             ),
             selectedDay: date(),
             timeZone: timeZone
@@ -320,7 +347,8 @@ private actor HomeUseCaseStub:
     RescheduleSessionUseCase,
     SetSessionLockUseCase,
     SetSessionCompletionUseCase,
-    DeleteSessionUseCase {
+    DeleteSessionUseCase,
+    CreateManualTaskUseCase {
     private var tasks: [AwanTask]
     private var sessions: [Session]
     private let zones: [Zone]
@@ -330,6 +358,7 @@ private actor HomeUseCaseStub:
     private let mutationDelay: Duration?
     private let shouldFailReschedule: Bool
     private let shouldFailDelete: Bool
+    private let shouldReturnNudgeOnCreate: Bool
 
     init(
         fixture: HomeFixture,
@@ -337,7 +366,8 @@ private actor HomeUseCaseStub:
         readDelay: Duration? = nil,
         mutationDelay: Duration? = nil,
         shouldFailReschedule: Bool = false,
-        shouldFailDelete: Bool = false
+        shouldFailDelete: Bool = false,
+        shouldReturnNudgeOnCreate: Bool = false
     ) {
         tasks = [fixture.task]
         sessions = [fixture.session]
@@ -348,6 +378,7 @@ private actor HomeUseCaseStub:
         self.mutationDelay = mutationDelay
         self.shouldFailReschedule = shouldFailReschedule
         self.shouldFailDelete = shouldFailDelete
+        self.shouldReturnNudgeOnCreate = shouldReturnNudgeOnCreate
     }
 
     func execute() async throws -> [AwanTask] {
@@ -438,6 +469,38 @@ private actor HomeUseCaseStub:
         }
         if shouldFailDelete { throw HomeStubError.failed }
         sessions.removeAll { $0.id == sessionID }
+    }
+
+    func execute(_ request: CreateManualTaskRequest) async throws -> ScheduleOperationResult {
+        if let mutationDelay {
+            try await Task.sleep(for: mutationDelay)
+        }
+        let task = try AwanTask(
+            id: UUID(),
+            title: request.title,
+            description: request.description,
+            zoneID: request.zoneID,
+            duration: TaskDuration(minutes: request.durationMinutes),
+            isSplittable: request.isSplittable,
+            mandatory: request.mandatory
+        )
+        tasks.append(task)
+        let workspace = ScheduleWorkspace(
+            zones: zones,
+            goals: [],
+            tasks: tasks,
+            sessions: sessions
+        )
+        let nudge = shouldReturnNudgeOnCreate ? ScheduleNudge.schedulingIssue(
+            SchedulingIssue(
+                taskID: task.id,
+                reason: .insufficientZoneTime,
+                requiredMinutes: request.durationMinutes,
+                availableMinutes: 0,
+                resolutionCandidates: []
+            )
+        ) : nil
+        return ScheduleOperationResult(workspace: workspace, nudge: nudge)
     }
 
     func taskCount() -> Int { tasks.count }
