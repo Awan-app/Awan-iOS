@@ -130,8 +130,6 @@ struct AppRootView: View {
             switch route {
             case .languageSelection:
                 factory.makeLanguageSelectionView()
-                    .presentationDetents([.medium, .large])
-                    .presentationDragIndicator(.visible)
             }
         }
     }

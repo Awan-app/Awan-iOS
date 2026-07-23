@@ -31,13 +31,14 @@ struct ProfileMainView: View {
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(AppColors.brandDarkBlue)
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top, 16)
+                        .padding(.top, 40)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 8)
                         .overlay(alignment: .trailing) {
                             GifImageView("Animated AWAN mascot")
                                 .frame(width: 80, height: 80)
                                 .padding(.trailing, 24)
+                                .padding(.top, 40)
                         }
 
                     VStack(spacing: 10) {
@@ -46,7 +47,7 @@ struct ProfileMainView: View {
                             name: viewModel.userName,
                             email: viewModel.userEmail,
                             onEdit: {}
-                        )
+                        ).id(languageManager.currentLanguage)
 
                         // Daily Zones
                         DailyZonesCard(

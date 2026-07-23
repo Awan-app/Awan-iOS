@@ -21,10 +21,10 @@ public struct LanguageSelectionView: View {
 
             VStack(alignment: .leading, spacing: 20) {
                 Text(L10n.Profile.languageSelectionTitle)
-                    .font(AppFonts.caption2Bold)
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
                     .foregroundStyle(AppColors.textPrimary)
                     .padding(.horizontal, 24)
-                    .padding(.top, 24)
+                    .padding(.top, 32)
 
                 VStack(spacing: 0) {
                     ForEach(AppLanguage.allCases, id: \.self) { language in
@@ -39,11 +39,11 @@ public struct LanguageSelectionView: View {
                 .background(AppColors.skyGradient)
                 .cornerRadius(16)
                 .padding(.horizontal, 24)
-
-                Spacer()
+                .padding(.bottom, 32)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
+        .presentationDetents([.height(260)])
+        .presentationDragIndicator(.visible)
     }
 
     private func languageRow(for language: AppLanguage) -> some View {
