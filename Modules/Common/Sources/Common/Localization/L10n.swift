@@ -144,6 +144,8 @@ public enum L10n {
         public static var fixed: String { String(localized: "home.fixed", bundle: .module) }
         public static var emptyTimelineSubtitle: String { String(localized: "home.empty_timeline_subtitle", bundle: .module) }
         public static var errorTitle: String { String(localized: "home.error_title", bundle: .module) }
+        public static var schedulingNudgeTitle: String { String(localized: "home.scheduling_nudge_title", bundle: .module) }
+        public static var schedulingNudgeMessage: String { String(localized: "home.scheduling_nudge_message", bundle: .module) }
         public static var loadFailed: String { String(localized: "home.load_failed", bundle: .module) }
         public static var retry: String { String(localized: "home.retry", bundle: .module) }
         public static var startTime: String { String(localized: "home.start_time", bundle: .module) }
@@ -156,5 +158,30 @@ public enum L10n {
         public static var calendar: String { String(localized: "home.calendar", bundle: .module) }
         public static var rewards: String { String(localized: "home.rewards", bundle: .module) }
         public static var you: String { String(localized: "home.you", bundle: .module) }
+                public static var addTaskTitle: String { String(localized: "home.add_task_title", bundle: .module) }
+        public static var tabWithAwan: String { String(localized: "home.tab_with_awan", bundle: .module) }
+        public static var tabManual: String { String(localized: "home.tab_manual", bundle: .module) }
+        public static var quickAddHeader: String { String(localized: "home.quick_add_header", bundle: .module) }
+        public static var quickAddHeadline: String { String(localized: "home.quick_add_headline", bundle: .module) }
+        public static var quickAddCaption: String { String(localized: "home.quick_add_caption", bundle: .module) }
+        public static var fieldTask: String { String(localized: "home.field_task", bundle: .module) }
+        public static var orSeparator: String { String(localized: "home.or_separator", bundle: .module) }
+        public static var tellAwan: String { String(localized: "home.tell_awan", bundle: .module) }
+        public static var tapToSpeak: String { String(localized: "home.tap_to_speak", bundle: .module) }
+        public static var listeningState: String { String(localized: "home.listening_state", bundle: .module) }
+        public static var chipSmartDuration: String { String(localized: "home.chip_smart_duration", bundle: .module) }
+        public static var chipBestZone: String { String(localized: "home.chip_best_zone", bundle: .module) }
+        public static var chipAutoScheduled: String { String(localized: "home.chip_auto_scheduled", bundle: .module) }
+        public static var btnPlanItForMe: String { String(localized: "home.btn_plan_it_for_me", bundle: .module) }
+        public static var fieldDescription: String { String(localized: "home.field_description", bundle: .module) }
+        public static var fieldDescriptionPlaceholder: String { String(localized: "home.field_description_placeholder", bundle: .module) }
+        public static var fieldStartsAt: String { String(localized: "home.field_starts_at", bundle: .module) }
+        public static var fieldStartsAtHint: String { String(localized: "home.field_starts_at_hint", bundle: .module) }
+        public static func stepperHours(_ hours: Int) -> String { String(format: String(localized: "home.stepper_hours", bundle: .module), hours) }
+        public static var toggleMandatory: String { String(localized: "home.toggle_mandatory", bundle: .module) }
+        public static var toggleAllowSplitting: String { String(localized: "home.toggle_allow_splitting", bundle: .module) }
+        public static var btnAddManualTask: String { String(localized: "home.btn_add_manual_task", bundle: .module) }
+        public static var buildItYourWay: String { String(localized: "home.build_it_your_way", bundle: .module) }
+        public static var estimatedDuration: String { String(localized: "home.estimated_duration", bundle: .module) }
     }
 }

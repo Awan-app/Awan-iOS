@@ -749,6 +749,28 @@
         }
       }
     },
+    "home.scheduling_nudge_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your task was saved, but we couldn't find enough free time today."
+          }
+        }
+      }
+    },
+    "home.scheduling_nudge_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't Auto-Schedule"
+          }
+        }
+      }
+    },
     "home.error_title": {
       "extractionState": "manual",
       "localizations": {
@@ -1240,6 +1262,281 @@
           "stringUnit": {
             "state": "translated",
             "value": "7-task goal"
+          }
+        }
+      }
+    },
+    "home.add_task_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a task"
+          }
+        }
+      }
+    },
+    "home.tab_with_awan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With AWAN"
+          }
+        }
+      }
+    },
+    "home.tab_manual": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual"
+          }
+        }
+      }
+    },
+    "home.quick_add_header": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AWAN'S QUICK ADD"
+          }
+        }
+      }
+    },
+    "home.quick_add_headline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What do you want to get done?"
+          }
+        }
+      }
+    },
+    "home.quick_add_caption": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type it or tell me. I'll handle the planning."
+          }
+        }
+      }
+    },
+    "home.field_task": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TASK"
+          }
+        }
+      }
+    },
+    "home.or_separator": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OR"
+          }
+        }
+      }
+    },
+    "home.tell_awan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TELL AWAN"
+          }
+        }
+      }
+    },
+    "home.tap_to_speak": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to speak"
+          }
+        }
+      }
+    },
+    "home.listening_state": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listening..."
+          }
+        }
+      }
+    },
+    "home.chip_smart_duration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart duration"
+          }
+        }
+      }
+    },
+    "home.chip_best_zone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best zone"
+          }
+        }
+      }
+    },
+    "home.chip_auto_scheduled": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-scheduled"
+          }
+        }
+      }
+    },
+    "home.btn_plan_it_for_me": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PLAN IT FOR ME"
+          }
+        }
+      }
+    },
+    "home.field_description": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DESCRIPTION"
+          }
+        }
+      }
+    },
+    "home.field_description_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create slides and rehearse"
+          }
+        }
+      }
+    },
+    "home.field_starts_at": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STARTS AT"
+          }
+        }
+      }
+    },
+    "home.field_starts_at_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select time (optional)"
+          }
+        }
+      }
+    },
+    "home.stepper_hours": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d hours"
+          }
+        }
+      }
+    },
+    "home.toggle_mandatory": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mandatory"
+          }
+        }
+      }
+    },
+    "home.toggle_allow_splitting": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow task splitting"
+          }
+        }
+      }
+    },
+    "home.btn_add_manual_task": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ADD TASK"
+          }
+        }
+      }
+    },
+    "home.build_it_your_way": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BUILD IT YOUR WAY"
+          }
+        }
+      }
+    },
+    "home.estimated_duration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ESTIMATED DURATION"
           }
         }
       }
