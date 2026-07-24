@@ -9,6 +9,7 @@ import SwiftUI
 import Observation
 import Common
 import Domain
+import Combine
 
 
 @MainActor
@@ -27,64 +28,28 @@ public final class ProfileViewModel {
     var userName: String = ""
     var userEmail: String = ""
     
+    // MARK: - Profile Preferences
+    var sessionTime: Int = 0
+    var timeZone: String = ""
+    var wakeupTime: LocalTime? = nil
+    var sleepTime: LocalTime? = nil
+    
+    @ObservationIgnored private var fetchZonesCancellable: AnyCancellable?
+    
     // MARK: - Init
     
     private let getUserProfileUseCase: GetUserProfileUseCase
+    private let fetchZonesUseCase: FetchZonesUseCase
     
-    public init(getUserProfileUseCase: GetUserProfileUseCase) {
+    public init(
+        getUserProfileUseCase: GetUserProfileUseCase,
+        fetchZonesUseCase: FetchZonesUseCase
+    ) {
         self.getUserProfileUseCase = getUserProfileUseCase
-        loadMockData()
+        self.fetchZonesUseCase = fetchZonesUseCase
     }
     
     // MARK: - Actions
-    
-    /// Temporary method to simulate loading dynamic zones from a backend
-    private func loadMockData() {
-        // Simulate domain entities that would normally be mapped from ZoneResponseDTO in the Data layer
-        do {
-            self.dailyZones = [
-                Zone(
-                    id: UUID(),
-                    name: "eat",
-                    color: try ZoneColor(hex: "#7459D9"), // accentPurple approx
-                    startTime: try LocalTime(hour: 9, minute: 0),
-                    endTime: try LocalTime(hour: 11, minute: 0)
-                ),
-                Zone(
-                    id: UUID(),
-                    name: "Meetings",
-                    color: try ZoneColor(hex: "#3F8CFA"), // accentBlue approx
-                    startTime: try LocalTime(hour: 11, minute: 30),
-                    endTime: try LocalTime(hour: 13, minute: 0)
-                ),
-                Zone(
-                    id: UUID(),
-                    name: "Learning",
-                    color: try ZoneColor(hex: "#FFA500"), // orange
-                    startTime: try LocalTime(hour: 14, minute: 0),
-                    endTime: try LocalTime(hour: 15, minute: 0)
-                ),
-                Zone(
-                    id: UUID(),
-                    name: "Admin",
-                    color: try ZoneColor(hex: "#ED4242"), // red
-                    startTime: try LocalTime(hour: 16, minute: 0),
-                    endTime: try LocalTime(hour: 17, minute: 0)
-                ),
-                Zone(
-                    id: UUID(),
-                    name: "Deep Work",
-                    color: try ZoneColor(hex: "#7459D9"), // accentPurple approx
-                    startTime: try LocalTime(hour: 9, minute: 0),
-                    endTime: try LocalTime(hour: 11, minute: 0)
-                ),
-            ]
-        } catch {
-            print("Error initializing mock zone colors or times: \(error)")
-        }
-        
-        self.isReady = true
-    }
     
     /// Fetch real user profile from backend via domain use case
     public func fetchUserProfile() async {
@@ -92,8 +57,28 @@ public final class ProfileViewModel {
             let profile = try await getUserProfileUseCase.execute()
             self.userName = profile.firstName + " " + profile.lastName
             self.userEmail = profile.email
+            self.sessionTime = profile.preferences.preferredSessionDuration
+            self.timeZone = profile.preferences.timezone
+            self.wakeupTime = profile.preferences.wakeupTime
+            self.sleepTime = profile.preferences.sleepTime
+            
+            // Fetch daily zones AFTER profile is cached locally
+            fetchDailyZones()
         } catch {
             print("Failed to fetch user profile: \(error)")
         }
+    }
+
+    private func fetchDailyZones() {
+        fetchZonesCancellable?.cancel()
+        fetchZonesCancellable = fetchZonesUseCase.observe(for: Date())
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { [weak self] zones in
+                    self?.dailyZones = zones
+                    self?.isReady = true
+                }
+            )
     }
 }

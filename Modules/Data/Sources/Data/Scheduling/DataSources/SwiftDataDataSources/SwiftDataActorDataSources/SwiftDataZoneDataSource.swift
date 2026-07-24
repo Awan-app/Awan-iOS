@@ -23,6 +23,28 @@ public actor SwiftDataZoneDataSource: LocalZoneDataSource {
         try modelContext.save()
     }
 
+    public func upsertZone(_ zone: Zone, templateID: UUID?, templateOverrideID: UUID?) throws {
+        if let model = try find(id: zone.id) {
+            model.update(from: zone)
+            if let templateID { model.templateID = templateID }
+            if let templateOverrideID { model.templateOverrideID = templateOverrideID }
+            guard model.hasValidOwner else {
+                throw SchedulingPersistenceError.invalidZoneOwnership(zone.id)
+            }
+        } else {
+            let newModel = ZoneModel(
+                domain: zone,
+                templateID: templateID,
+                templateOverrideID: templateOverrideID
+            )
+            guard newModel.hasValidOwner else {
+                throw SchedulingPersistenceError.invalidZoneOwnership(zone.id)
+            }
+            modelContext.insert(newModel)
+        }
+        try modelContext.save()
+    }
+
     private func find(id: UUID) throws -> ZoneModel? {
         let targetID = id
         var descriptor = FetchDescriptor<ZoneModel>(
