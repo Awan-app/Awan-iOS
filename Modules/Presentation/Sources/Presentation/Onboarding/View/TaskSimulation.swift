@@ -16,7 +16,7 @@ struct TaskSimulation: View {
                             AuthCloudLogoView()
 
                             VStack(spacing: 8) {
-                                Text("Let's add your first thing for today")
+                                Text(L10n.Onboarding.taskSimulationTitle)
                                     .font(.system(size: 28, weight: .black, design: .rounded))
                                     .foregroundStyle(AppColors.brandDarkBlue)
                                     .multilineTextAlignment(.center)
@@ -29,7 +29,7 @@ struct TaskSimulation: View {
                             // Input Section
                             VStack(alignment: .leading, spacing: 8) {
 
-                                Text("Try \"Go for a run\", \"Call Mum\", or \"Reading book\".")
+                                Text(L10n.Onboarding.taskSimulationSubtitle)
                                     .font(AppFonts.captionHeavy)
                                     .foregroundColor(AppColors.textSecondary)
                                     .padding(.horizontal, 16)
@@ -41,7 +41,7 @@ struct TaskSimulation: View {
                                         .padding(.top, -4)
                                         .padding(.bottom, -8)
 
-                                    TextField("e.g. Go for a run", text: $viewModel.taskText)
+                                    TextField(L10n.Onboarding.taskSimulationPlaceholder, text: $viewModel.taskText)
                                         .font(AppFonts.bodyBold)
                                         .foregroundColor(AppColors.brandDarkBlue)
                                         .padding(16)
@@ -81,7 +81,7 @@ struct TaskSimulation: View {
                 VStack(spacing: 8) {
                     if viewModel.addedTasks.isEmpty {
                         AppButton(
-                            title: "ADD IT",
+                            title: L10n.Onboarding.addIt,
                             icon: nil,
                             color: AppColors.accentBlue,
                             foregroundColor: AppColors.onAccent,
@@ -108,7 +108,7 @@ struct TaskSimulation: View {
 
                         Button(action: { onContinue() }) {
                             HStack(spacing: 4) {
-                                Text("Skip for now")
+                                Text(L10n.Onboarding.skipForNow)
                                 Image(systemName: "arrow.right")
                             }
                             .font(AppFonts.subheadlineHeavy)
@@ -117,7 +117,7 @@ struct TaskSimulation: View {
                         .padding(.vertical, 8)
                     } else {
                         AppButton(
-                            title: "CONTINUE",
+                            title: L10n.Common.continue,
                             icon: nil,
                             color: AppColors.accentBlue,
                             foregroundColor: AppColors.onAccent,

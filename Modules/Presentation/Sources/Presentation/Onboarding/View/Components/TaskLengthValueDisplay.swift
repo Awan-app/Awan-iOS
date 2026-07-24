@@ -17,7 +17,7 @@ struct TaskLengthValueDisplay: View {
                 .font(AppFonts.nudgeSymbol)
                 .foregroundColor(AppColors.brandDarkBlue)
 
-            Text("preferred focus block")
+            Text(L10n.Onboarding.preferredFocusBlock)
                 .font(AppFonts.subheadlineBold)
                 .foregroundColor(AppColors.textSecondary)
         }
