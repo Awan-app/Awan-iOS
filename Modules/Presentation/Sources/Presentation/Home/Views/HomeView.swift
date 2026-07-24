@@ -65,6 +65,7 @@ struct HomeView: View {
         .sheet(isPresented: addTaskBinding) {
             AddTaskSheet(
                 zones: state.success?.zones ?? [],
+                selectedDay: state.selectedDay,
                 onSubmit: { title, description, duration, zoneID, isSplittable, mandatory, startsAt in
                     viewModel.send(
                         .createTask(

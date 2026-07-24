@@ -6,6 +6,7 @@ struct AddTaskSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     let zones: [Zone]
+    let selectedDay: Date
     let onSubmit: (
         _ title: String,
         _ description: String?,
@@ -13,7 +14,7 @@ struct AddTaskSheet: View {
         _ zoneID: UUID?,
         _ isSplittable: Bool,
         _ mandatory: Bool,
-        _ startsAt: Date?
+        _ startsAt: Date
     ) -> Void
 
     @State private var selectedTab: TabSwitcher.Tab = .quickAdd
@@ -27,13 +28,14 @@ struct AddTaskSheet: View {
     @State private var selectedZoneID: UUID?
     @State private var isMandatory: Bool = true
     @State private var allowTaskSplitting: Bool = true
-    @State private var manualStartsAt: Date = Date()
 
     init(
         zones: [Zone],
-        onSubmit: @escaping (String, String?, Int, UUID?, Bool, Bool, Date?) -> Void
+        selectedDay: Date,
+        onSubmit: @escaping (String, String?, Int, UUID?, Bool, Bool, Date) -> Void
     ) {
         self.zones = zones
+        self.selectedDay = selectedDay
         self.onSubmit = onSubmit
         _selectedZoneID = State(initialValue: zones.first?.id)
     }
@@ -63,14 +65,14 @@ struct AddTaskSheet: View {
                     case .manual:
                         ManualTab(
                             zones: zones,
+                            selectedDay: selectedDay,
                             onSubmit: handleManualAdd,
                             title: $manualTitle,
                             description: $manualDescription,
                             durationMinutes: $manualDurationMinutes,
                             selectedZoneID: $selectedZoneID,
                             isMandatory: $isMandatory,
-                            allowTaskSplitting: $allowTaskSplitting,
-                            startsAt: $manualStartsAt
+                            allowTaskSplitting: $allowTaskSplitting
                         )
                     }
                 }
@@ -112,7 +114,16 @@ struct AddTaskSheet: View {
     }
 
     private func handleQuickAdd(title: String, duration: Int, zoneID: UUID?, autoSchedule: Bool) {
-        onSubmit(title, nil, duration, zoneID, true, true, nil)
+        let now = Date()
+        let calendar = Calendar.current
+        let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: now)
+        let startsAt = calendar.date(
+            bySettingHour: timeComponents.hour ?? 0,
+            minute: timeComponents.minute ?? 0,
+            second: timeComponents.second ?? 0,
+            of: selectedDay
+        ) ?? selectedDay
+        onSubmit(title, nil, duration, zoneID, true, true, startsAt)
         dismiss()
     }
 
@@ -123,7 +134,7 @@ struct AddTaskSheet: View {
         zoneID: UUID?,
         isSplittable: Bool,
         mandatory: Bool,
-        startsAt: Date?
+        startsAt: Date
     ) {
         onSubmit(title, description, duration, zoneID, isSplittable, mandatory, startsAt)
         dismiss()

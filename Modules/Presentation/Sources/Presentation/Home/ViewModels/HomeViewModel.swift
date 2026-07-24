@@ -127,7 +127,7 @@ public final class HomeViewModel {
         zoneID: UUID?,
         isSplittable: Bool,
         mandatory: Bool,
-        startsAt: Date?
+        startsAt: Date
     ) {
         state.isMutating = true
         state.failure = nil

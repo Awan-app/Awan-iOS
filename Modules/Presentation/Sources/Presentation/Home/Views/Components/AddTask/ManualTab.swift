@@ -4,7 +4,8 @@ import SwiftUI
 
 struct ManualTab: View {
     let zones: [Zone]
-    let onSubmit: (String, String?, Int, UUID?, Bool, Bool, Date?) -> Void
+    let selectedDay: Date
+    let onSubmit: (String, String?, Int, UUID?, Bool, Bool, Date) -> Void
 
     @Binding var title: String
     @Binding var description: String
@@ -12,9 +13,8 @@ struct ManualTab: View {
     @Binding var selectedZoneID: UUID?
     @Binding var isMandatory: Bool
     @Binding var allowTaskSplitting: Bool
-    @Binding var startsAt: Date
 
-    @State private var useSpecificTime: Bool = false
+    @State private var startTime: Date = Date()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -105,34 +105,21 @@ struct ManualTab: View {
             }
 
             fieldCard(title: L10n.Home.fieldStartsAt.uppercased()) {
-                VStack(spacing: 12) {
-                    Toggle(isOn: $useSpecificTime.animation()) {
-                        Text("Set specific time")
-                            .font(AppFonts.bodyBold)
-                            .foregroundStyle(AppColors.brandDarkBlue)
-                    }
+                HStack {
+                    Text("Starts at")
+                        .font(AppFonts.bodyBold)
+                        .foregroundStyle(AppColors.brandDarkBlue)
+                    Spacer()
+                    DatePicker(
+                        "",
+                        selection: $startTime,
+                        displayedComponents: [.hourAndMinute]
+                    )
+                    .labelsHidden()
                     .tint(AppColors.accentBlue)
-
-                    if useSpecificTime {
-                        Divider()
-                        HStack {
-                            Text("Time")
-                                .font(AppFonts.bodyBold)
-                                .foregroundStyle(AppColors.brandDarkBlue)
-                            
-                            Spacer()
-                            
-                            DatePicker(
-                                "",
-                                selection: $startsAt,
-                                displayedComponents: [.hourAndMinute]
-                            )
-                            .labelsHidden()
-                            .tint(AppColors.accentBlue)
-                        }
-                    }
                 }
             }
+
 
             VStack(spacing: 14) {
                 Toggle(isOn: $isMandatory) {
@@ -220,6 +207,14 @@ struct ManualTab: View {
         let cleanTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanTitle.isEmpty else { return }
         let cleanDesc = description.trimmingCharacters(in: .whitespacesAndNewlines)
+        let calendar = Calendar.current
+        let timeComponents = calendar.dateComponents([.hour, .minute], from: startTime)
+        let startsAt = calendar.date(
+            bySettingHour: timeComponents.hour ?? 0,
+            minute: timeComponents.minute ?? 0,
+            second: 0,
+            of: selectedDay
+        ) ?? selectedDay
         onSubmit(
             cleanTitle,
             cleanDesc.isEmpty ? nil : cleanDesc,
@@ -227,7 +222,7 @@ struct ManualTab: View {
             selectedZoneID,
             allowTaskSplitting,
             isMandatory,
-            useSpecificTime ? startsAt : nil
+            startsAt
         )
     }
 }

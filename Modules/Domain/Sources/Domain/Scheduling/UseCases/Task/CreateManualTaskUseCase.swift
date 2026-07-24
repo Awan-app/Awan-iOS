@@ -71,7 +71,7 @@ public struct DefaultCreateManualTaskUseCase: CreateManualTaskUseCase {
             dependencyIDs: []
         )
 
-        let (confirmedTask, _) = try await taskRepository.addManualTask(
+        let (confirmedTask, _) = try await taskRepository.addTask(
             draftTask,
             startsAt: request.startsAt,
             durationMinutes: request.durationMinutes,

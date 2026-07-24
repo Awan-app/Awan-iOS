@@ -79,7 +79,7 @@ public struct DefaultTaskRepository: TaskRepository {
         try await localDataSource.addTask(task)
     }
 
-    public func addManualTask(_ task: AwanTask, startsAt: Date?, durationMinutes: Int, timeZoneID: String) async throws -> (task: AwanTask, sessions: [Session]) {
+    public func addTask(_ task: AwanTask, startsAt: Date?, durationMinutes: Int, timeZoneID: String) async throws -> (task: AwanTask, sessions: [Session]) {
         let sessionPayloads: [CreateTaskWithSessionsRequestDTO.SessionPayload]?
         if let start = startsAt {
             let end = start.addingTimeInterval(TimeInterval(durationMinutes * 60))
@@ -114,8 +114,6 @@ public struct DefaultTaskRepository: TaskRepository {
             zoneID: task.zoneID,
             defaultDuration: durationMinutes
         )
-        try await localDataSource.addTask(acceptedTask)
-
         let acceptedSessions = try response.sessions.map {
             try HomeRemoteMapper.session(
                 $0,
@@ -123,12 +121,15 @@ public struct DefaultTaskRepository: TaskRepository {
                 timeZoneID: timeZoneID
             )
         }
+
+        try await localDataSource.addTask(acceptedTask)
         for session in acceptedSessions {
             try await localSessionDataSource.addSession(session)
         }
 
         return (acceptedTask, acceptedSessions)
     }
+    
     public func updateTask(_ task: AwanTask) async throws {
         let response = try await remoteTaskDataSource.updateTask(
             taskID: task.id,

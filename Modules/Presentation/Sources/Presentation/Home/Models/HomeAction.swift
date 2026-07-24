@@ -22,6 +22,6 @@ enum HomeAction {
         zoneID: UUID?,
         isSplittable: Bool,
         mandatory: Bool,
-        startsAt: Date?
+        startsAt: Date
     )
 }
