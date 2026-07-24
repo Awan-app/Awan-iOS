@@ -179,6 +179,9 @@ struct DomainAssembly: Assembly {
         container.register(ManageZoneScheduleUseCase.self) { _ in
             ManageZoneScheduleUseCaseImpl()
         }
+        container.register(ManageDailyZoneScheduleUseCase.self) { _ in
+            DefaultManageDailyZoneScheduleUseCase()
+        }
     }
 
     private func registerConflictUseCases(in container: Container) {

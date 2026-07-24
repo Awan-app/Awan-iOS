@@ -201,4 +201,10 @@ public enum L10n {
         public static var rewards: String { String(localized: "home.rewards", bundle: .module) }
         public static var you: String { String(localized: "home.you", bundle: .module) }
     }
+
+    public enum Templates {
+        public static var dailyZonesTitle: String { String(localized: "templates.daily_zones_title", bundle: .module) }
+        public static func saveDay(_ day: String) -> String { String(format: String(localized: "templates.save_day", bundle: .module), day) }
+        public static var day: String { String(localized: "templates.day", bundle: .module) }
+    }
 }

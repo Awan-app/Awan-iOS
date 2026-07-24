@@ -18,26 +18,21 @@ public struct DailyZonesView: View {
             headerSection
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
-                .padding(.bottom, 16)
+                .padding(.bottom, 32)
 
-            // Weekly Strip
-            WeeklyCalendarHeader(
-                availableDays: viewModel.availableDays,
-                selectedDay: viewModel.selectedDay,
-                onSelectDay: { viewModel.selectDay($0) }
-            )
-            .padding(.horizontal, 24)
-            .padding(.bottom, 24)
 
             if viewModel.state == .loading {
                 Spacer()
                 ProgressView()
                 Spacer()
             } else {
-                ScrollView {
-                    zonesListWithTimeline
-                        .padding(.horizontal, 24)
-                        .padding(.bottom, 24)
+                GeometryReader { proxy in
+                    ScrollView {
+                        zonesListWithTimeline
+                            .padding(.horizontal, 24)
+                            .padding(.bottom, 24)
+                            .frame(minHeight: proxy.size.height)
+                    }
                 }
             }
             
@@ -60,40 +55,35 @@ public struct DailyZonesView: View {
     }
 
     private var headerSection: some View {
-        HStack {
-            Button(action: {
-                // Handle back navigation if needed
-            }) {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(AppColors.accentBlue)
-                    .frame(width: 44, height: 44)
-                    .background(Color.white, in: Circle())
-                    .shadow(color: AppColors.shadow, radius: 4, y: 2)
-            }
-            Spacer()
-            VStack(alignment: .center, spacing: 4) {
-                Text("Daily zones")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundStyle(AppColors.brandDarkBlue)
-                
-                if let day = viewModel.selectedDay {
-                    Text("Shape \(day.capitalized) your way.")
-                        .font(.caption)
-                        .foregroundStyle(AppColors.textSecondary)
+        ZStack {
+            HStack {
+                Button(action: {
+                    // Handle back navigation if needed
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(AppColors.accentBlue)
                 }
+                Spacer()
             }
-            Spacer()
-            Image(systemName: "cloud.fill") // Placeholder for cloud character
-                .font(.system(size: 30))
-                .foregroundStyle(AppColors.accentBlue.opacity(0.3))
+            
+            // Header Area
+            Text(L10n.Templates.dailyZonesTitle)
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundStyle(AppColors.brandDarkBlue)
+                
+            HStack {
+                Spacer()
+                GifImageView("awan-mascot-clock")
+                    .frame(width: 80, height: 80)
+            }
         }
     }
 
     private var zonesListWithTimeline: some View {
         VStack(spacing: 16) {
             ForEach(viewModel.suggestedZones) { zone in
-                HStack(alignment: .top, spacing: 16) {
+                HStack(alignment: .top, spacing: 10) {
                     // Timeline indicator
                     timelineIndicator(for: zone)
                     
@@ -148,7 +138,7 @@ public struct DailyZonesView: View {
             }
 
             // Add zone button with timeline
-            HStack(alignment: .center, spacing: 16) {
+            HStack(alignment: .center, spacing: 10) {
                 // Empty timeline spacer
                 VStack {
                     Text("").font(AppFonts.caption2Bold).frame(width: 45, alignment: .trailing)
@@ -159,61 +149,38 @@ public struct DailyZonesView: View {
                 })
             }
         }
+        .background(alignment: .topLeading) {
+            // Continuous Timeline Line
+            Rectangle()
+                .fill(AppColors.accentBlue.opacity(0.3))
+                .frame(width: 2)
+                .padding(.leading, 40)
+                .padding(.top, 22)
+                .padding(.bottom, 30)
+        }
     }
 
     private func timelineIndicator(for zone: SuggestedZone) -> some View {
-        let isOutside = isZoneOutsideHours(zone)
+        let isOutside = viewModel.isZoneOutsideActiveHours(zone)
         let color = isOutside ? AppColors.warning : AppColors.accentBlue
 
         return VStack(spacing: 0) {
-            Text(formattedTimelineTime(zone.startTime))
+            Text(zone.startTime)
                 .font(AppFonts.caption2Bold)
                 .foregroundStyle(color)
                 .frame(width: 45, alignment: .trailing)
             
-            HStack(spacing: 8) {
-                Circle()
-                    .fill(color)
-                    .frame(width: 8, height: 8)
-                
-                Rectangle()
-                    .fill(color.opacity(0.3))
-                    .frame(width: 2)
-            }
-            .padding(.leading, 37) // Align with the end of the text
-            .padding(.top, 4)
+            Circle()
+                .fill(color)
+                .frame(width: 8, height: 8)
+                .padding(.leading, 37) // Align with the end of the text
+                .padding(.top, 4)
         }
-    }
-
-    private func isZoneOutsideHours(_ zone: SuggestedZone) -> Bool {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        
-        guard let start = formatter.date(from: zone.startTime),
-              let end = formatter.date(from: zone.endTime) else {
-            return false
-        }
-        
-        return viewModel.isTimeIntervalOutsideActiveHours(start: start, end: end)
-    }
-
-    private func formattedTimelineTime(_ timeString: String) -> String {
-        // Just extract the hour and AM/PM part for the timeline UI if needed, or return as is
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        if let date = formatter.date(from: timeString) {
-            let outputFormatter = DateFormatter()
-            outputFormatter.dateFormat = "h a"
-            return outputFormatter.string(from: date)
-        }
-        return timeString
     }
 
     private var bottomButton: some View {
         AppButton(
-            title: "Save \(viewModel.selectedDay?.capitalized ?? "Day")",
+            title: L10n.Schedule.saveChanges,
             icon: "checkmark.circle.fill",
             color: AppColors.accentBlue,
             foregroundColor: AppColors.onAccent,

@@ -119,14 +119,14 @@ struct PresentationAssembly: Assembly {
             let fetchTemplatesUseCase = Self.resolve(FetchTemplatesUseCase.self, from: resolver)
             let updateTemplateUseCase = Self.resolve(UpdateTemplateUseCase.self, from: resolver)
             let getUserProfileUseCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
-            let manageZoneScheduleUseCase = Self.resolve(ManageZoneScheduleUseCase.self, from: resolver)
+            let manageDailyZoneScheduleUseCase = Self.resolve(ManageDailyZoneScheduleUseCase.self, from: resolver)
             
             return MainActor.assumeIsolated {
                 DailyZonesViewModel(
                     fetchTemplatesUseCase: fetchTemplatesUseCase,
                     updateTemplateUseCase: updateTemplateUseCase,
                     getUserProfileUseCase: getUserProfileUseCase,
-                    manageZoneScheduleUseCase: manageZoneScheduleUseCase
+                    manageDailyZoneScheduleUseCase: manageDailyZoneScheduleUseCase
                 )
             }
         }
