@@ -454,6 +454,18 @@ public enum L10n {
         public static var preferences: String {
             L10n.currentBundle.localizedString(forKey: "profile.preferences", value: nil, table: "Localizable")
         }
+        public static var appearanceTitle: String {
+            L10n.currentBundle.localizedString(forKey: "profile.appearance", value: "Appearance", table: "Localizable")
+        }
+        public static var appearanceLight: String {
+            L10n.currentBundle.localizedString(forKey: "profile.appearance_light", value: "Light", table: "Localizable")
+        }
+        public static var appearanceDark: String {
+            L10n.currentBundle.localizedString(forKey: "profile.appearance_dark", value: "Dark", table: "Localizable")
+        }
+        public static var appearanceSystem: String {
+            L10n.currentBundle.localizedString(forKey: "profile.appearance_system", value: "System", table: "Localizable")
+        }
         public static var sessionTime: String {
             L10n.currentBundle.localizedString(forKey: "profile.session_time", value: nil, table: "Localizable")
         }

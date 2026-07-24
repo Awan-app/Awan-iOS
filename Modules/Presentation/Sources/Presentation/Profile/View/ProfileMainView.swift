@@ -7,16 +7,44 @@
 
 import SwiftUI
 import Common
+import Domain
 
 struct ProfileMainView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(LanguageManager.self) private var languageManager
-    @State private var selectedTheme: ThemePreferenceRowView.ThemeSelection = .light
     @State private var viewModel: ProfileViewModel
     @State private var isLanguageSheetPresented = false
     
     init(viewModel: ProfileViewModel) {
         self.viewModel = viewModel
+    }
+
+    private var formattedSessionTime: String {
+        guard viewModel.sessionTime > 0 else { return "" }
+        return "\(viewModel.sessionTime) min"
+    }
+
+    private var formattedSleepSchedule: String {
+        guard let wake = viewModel.sleepTime, let sleep = viewModel.wakeupTime else { return "" }
+        
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        formatter.locale = languageManager.locale
+        
+        var wakeComponents = DateComponents()
+        wakeComponents.hour = wake.hour
+        wakeComponents.minute = wake.minute
+        
+        var sleepComponents = DateComponents()
+        sleepComponents.hour = sleep.hour
+        sleepComponents.minute = sleep.minute
+        
+        guard let wakeDate = Calendar.current.date(from: wakeComponents),
+              let sleepDate = Calendar.current.date(from: sleepComponents) else {
+            return ""
+        }
+        
+        return "\(formatter.string(from: sleepDate)) - \(formatter.string(from: wakeDate))"
     }
 
     var body: some View {
@@ -59,13 +87,13 @@ struct ProfileMainView: View {
 
                         // Preferences
                         PreferencesCard(preferences: [
-                            PreferenceItem(icon: "clock", title: L10n.Profile.sessionTime, value: L10n.Profile.dummySessionTime, onTap: {
+                            PreferenceItem(icon: "clock", title: L10n.Profile.sessionTime, value: formattedSessionTime, onTap: {
                                 //go to session time view
                             }),
-                            PreferenceItem(icon: "globe", title: L10n.Profile.timeZone, value: L10n.Profile.dummyTimeZone, onTap: {
+                            PreferenceItem(icon: "globe", title: L10n.Profile.timeZone, value: viewModel.timeZone, onTap: {
                                 //go to time zone view
                             }),
-                            PreferenceItem(icon: "moon", title: L10n.Profile.sleepSchedule, value: L10n.Profile.dummySleepSchedule, onTap: {
+                            PreferenceItem(icon: "moon", title: L10n.Profile.sleepSchedule, value: formattedSleepSchedule, onTap: {
                                 //go to sleep schedule view
                             })
                         ])
@@ -75,8 +103,7 @@ struct ProfileMainView: View {
                             language: languageManager.currentLanguage == .arabic ? L10n.Profile.languageArabic : L10n.Profile.languageEnglish,
                             onLanguageTap: {
                                 isLanguageSheetPresented = true
-                            },
-                            selectedTheme: $selectedTheme
+                            }
                         )
                     }
                     .padding(.horizontal, 24)
@@ -93,11 +120,11 @@ struct ProfileMainView: View {
     }
 }
 
-#if DEBUG
-import Domain
-import Combine
 
 #Preview {
-    ProfileMainView(viewModel: ProfileViewModel(getUserProfileUseCase: MockGetUserProfileUseCase()))
+    ProfileMainView(viewModel: ProfileViewModel(
+        getUserProfileUseCase: MockGetUserProfileUseCase(),
+        fetchZonesUseCase: MockFetchZonesUseCase()
+    ))
 }
-#endif
+

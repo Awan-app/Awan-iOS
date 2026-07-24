@@ -47,10 +47,16 @@ public struct DefaultZoneRepository: ZoneRepository {
             for: date,
             timeZoneID: profile.preferences.timezone
         )
-        let zones = try await remoteDataSource.getZonesByDate(date: dateKey)
-            .map(HomeRemoteMapper.zone)
-        for zone in zones {
-            try await zoneDataSource.updateZone(zone)
+        let dtos = try await remoteDataSource.getZonesByDate(date: dateKey)
+        var zones: [Zone] = []
+        for dto in dtos {
+            let zone = try HomeRemoteMapper.zone(dto)
+            zones.append(zone)
+            try await zoneDataSource.upsertZone(
+                zone,
+                templateID: dto.templateId,
+                templateOverrideID: dto.templateOverrideId
+            )
         }
         return zones
     }

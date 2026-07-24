@@ -46,6 +46,16 @@ public struct MockGetUserProfileUseCase: GetUserProfileUseCase {
     }
 }
 
+public struct MockFetchZonesUseCase: FetchZonesUseCase {
+    public init() {}
+    public func execute(for date: Date) async throws -> [Zone] {
+        return Zone.mockDailyZones
+    }
+    public func observe(for date: Date) -> AnyPublisher<[Zone], Error> {
+        Just(Zone.mockDailyZones).setFailureType(to: Error.self).eraseToAnyPublisher()
+    }
+}
+
 public extension Zone {
     static var mockDailyZones: [Zone] {
         do {

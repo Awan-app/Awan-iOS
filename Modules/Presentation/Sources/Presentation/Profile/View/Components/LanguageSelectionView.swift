@@ -16,7 +16,7 @@ public struct LanguageSelectionView: View {
 
     public var body: some View {
         ZStack {
-            AppColors.screenBackground
+            AppColors.sheetBackground
                 .ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 20) {
@@ -31,12 +31,13 @@ public struct LanguageSelectionView: View {
                         languageRow(for: language)
 
                         if language != AppLanguage.allCases.last {
-                            Divider()
+                            AppColors.divider
+                                .frame(height: 1)
                                 .padding(.leading, 16)
                         }
                     }
                 }
-                .background(AppColors.skyGradient)
+                .background(AppColors.surface)
                 .cornerRadius(16)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 32)
