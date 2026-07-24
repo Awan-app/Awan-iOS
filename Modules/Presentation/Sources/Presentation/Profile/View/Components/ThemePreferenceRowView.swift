@@ -12,21 +12,7 @@ import Common
 struct ThemePreferenceRowView: View {
     let icon: String
     let title: String
-    @Binding var selectedTheme: ThemeSelection
-
-    enum ThemeSelection: String, CaseIterable {
-        case light = "Light"
-        case system = "System"
-        case dark = "Dark"
-
-        var localizedTitle: String {
-            switch self {
-            case .light: return L10n.Profile.light
-            case .dark: return L10n.Profile.dark
-            case .system: return L10n.Profile.system
-            }
-        }
-    }
+    @Environment(AppearanceManager.self) private var appearanceManager
 
     var body: some View {
         HStack(spacing: 12) {
@@ -47,7 +33,7 @@ struct ThemePreferenceRowView: View {
 
     private var themePicker: some View {
         HStack(spacing: 0) {
-            ForEach(ThemeSelection.allCases, id: \.self) { theme in
+            ForEach(AppAppearance.allCases, id: \.self) { theme in
                 themeButton(for: theme)
 
                 if theme != .dark {
@@ -63,15 +49,23 @@ struct ThemePreferenceRowView: View {
         }
     }
 
-    private func themeButton(for theme: ThemeSelection) -> some View {
-        let isSelected = selectedTheme == theme
+    private func localizedTitle(for theme: AppAppearance) -> String {
+        switch theme {
+        case .light: return L10n.Profile.light
+        case .dark: return L10n.Profile.dark
+        case .system: return L10n.Profile.system
+        }
+    }
+
+    private func themeButton(for theme: AppAppearance) -> some View {
+        let isSelected = appearanceManager.currentAppearance == theme
 
         return Button {
             withAnimation(.snappy(duration: 0.2)) {
-                selectedTheme = theme
+                appearanceManager.currentAppearance = theme
             }
         } label: {
-            Text(theme.localizedTitle)
+            Text(localizedTitle(for: theme))
                 .font(isSelected ? AppFonts.captionHeavy : AppFonts.subheadlineSemibold)
                 .foregroundStyle(isSelected ? AppColors.accentBlue : AppColors.textSecondary)
                 .padding(.vertical, 6)

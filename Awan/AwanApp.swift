@@ -14,6 +14,7 @@ import Common
 @main
 struct AwanApp: App {
     @State private var languageManager = LanguageManager()
+    @State private var appearanceManager = AppearanceManager()
 
     private let presentationFactory: PresentationFactory
     private let sharedModelContainer: ModelContainer
@@ -30,8 +31,10 @@ struct AwanApp: App {
         WindowGroup {
             presentationFactory.makeAppRootView()
             .environment(languageManager)
+            .environment(appearanceManager)
             .environment(\.locale, Locale(identifier: languageManager.currentLanguage.rawValue))
             .environment(\.layoutDirection, languageManager.currentLanguage == .arabic ? .rightToLeft : .leftToRight)
+            .preferredColorScheme(appearanceManager.currentAppearance.colorScheme)
         }
        
     }

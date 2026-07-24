@@ -12,7 +12,6 @@ import Domain
 struct ProfileMainView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(LanguageManager.self) private var languageManager
-    @State private var selectedTheme: ThemePreferenceRowView.ThemeSelection = .light
     @State private var viewModel: ProfileViewModel
     @State private var isLanguageSheetPresented = false
     
@@ -104,8 +103,7 @@ struct ProfileMainView: View {
                             language: languageManager.currentLanguage == .arabic ? L10n.Profile.languageArabic : L10n.Profile.languageEnglish,
                             onLanguageTap: {
                                 isLanguageSheetPresented = true
-                            },
-                            selectedTheme: $selectedTheme
+                            }
                         )
                     }
                     .padding(.horizontal, 24)
