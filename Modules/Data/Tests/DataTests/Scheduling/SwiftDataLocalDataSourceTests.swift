@@ -288,7 +288,12 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
             templateDataSource: templateSource,
             templateOverrideDataSource: overrideSource
         )
-        try await taskRepository.addTask(task)
+        _ = try await taskRepository.addTask(
+            task,
+            startsAt: nil,
+            durationMinutes: task.duration.minutes,
+            timeZoneID: TimeZone.current.identifier
+        )
         try await goalRepository.addGoal(goal)
         try await sessionRepository.addSession(session)
         let workspaceProvider = DefaultScheduleWorkspaceProvider(

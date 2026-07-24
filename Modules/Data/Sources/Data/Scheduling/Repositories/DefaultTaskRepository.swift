@@ -75,10 +75,6 @@ public struct DefaultTaskRepository: TaskRepository {
         try await localDataSource.replaceTasks(tasks)
         return tasks
     }
-    public func addTask(_ task: AwanTask) async throws {
-        try await localDataSource.addTask(task)
-    }
-
     public func addTask(_ task: AwanTask, startsAt: Date?, durationMinutes: Int, timeZoneID: String) async throws -> (task: AwanTask, sessions: [Session]) {
         let sessionPayloads: [CreateTaskWithSessionsRequestDTO.SessionPayload]?
         if let start = startsAt {

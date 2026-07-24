@@ -27,10 +27,15 @@ public struct DefaultCreateTaskUseCase: CreateTaskUseCase {
             isSplittable: request.isSplittable,
             dependencyIDs: []
         )
-        try await taskRepository.addTask(task)
+        let (confirmedTask, _) = try await taskRepository.addTask(
+            task,
+            startsAt: nil,
+            durationMinutes: request.durationMinutes,
+            timeZoneID: request.timeZone.identifier
+        )
         return try await reconciler.reconcile(
             TaskReconciliationRequest(
-                taskID: task.id,
+                taskID: confirmedTask.id,
                 pendingZoneChange: nil,
                 selectedDay: request.selectedDay,
                 timeZone: request.timeZone

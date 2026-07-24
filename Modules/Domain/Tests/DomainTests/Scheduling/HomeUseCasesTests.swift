@@ -159,7 +159,15 @@ private actor TaskRepositoryStub: TaskRepository {
 
     init(tasks: [AwanTask]) { self.tasks = tasks }
     func fetchTasks() -> [AwanTask] { tasks }
-    func addTask(_ task: AwanTask) { tasks.append(task) }
+    func addTask(
+        _ task: AwanTask,
+        startsAt: Date?,
+        durationMinutes: Int,
+        timeZoneID: String
+    ) -> (task: AwanTask, sessions: [Session]) {
+        tasks.append(task)
+        return (task, [])
+    }
     func updateTask(_ task: AwanTask) {}
     func deleteTask(id: UUID) { tasks.removeAll { $0.id == id } }
     func deleteAllTasks() { tasks.removeAll() }

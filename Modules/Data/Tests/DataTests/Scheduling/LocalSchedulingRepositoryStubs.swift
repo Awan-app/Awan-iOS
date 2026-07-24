@@ -9,7 +9,15 @@ struct LocalTaskRepositoryStub: TaskRepository {
 
     func fetchTasks() async throws -> [AwanTask] { try await dataSource.fetchTasks() }
     func observeTasks() -> AnyPublisher<[AwanTask], Error> { dataSource.observeTasks() }
-    func addTask(_ task: AwanTask) async throws { try await dataSource.addTask(task) }
+    func addTask(
+        _ task: AwanTask,
+        startsAt: Date?,
+        durationMinutes: Int,
+        timeZoneID: String
+    ) async throws -> (task: AwanTask, sessions: [Session]) {
+        try await dataSource.addTask(task)
+        return (task, [])
+    }
     func updateTask(_ task: AwanTask) async throws { try await dataSource.updateTask(task) }
     func deleteTask(id: UUID) async throws {
         try await sessionDataSource.deleteSessions(taskID: id)
