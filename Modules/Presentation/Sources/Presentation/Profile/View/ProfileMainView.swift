@@ -82,19 +82,6 @@ struct ProfileMainView: View {
                             selectedTheme: $selectedTheme
                         )
 
-                        // TEST BUTTON
-                        Button(action: {
-                            showDailyZones = true
-                        }) {
-                            Text("TEST DAILY ZONES SCREEN")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                        }
-                        .padding(.top, 10)
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 40)
