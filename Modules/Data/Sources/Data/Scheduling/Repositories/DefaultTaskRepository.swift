@@ -7,21 +7,31 @@ public struct DefaultTaskRepository: TaskRepository {
     private let localSessionDataSource: any LocalSessionDataSource
     private let localProfileDataSource: any LocalUserProfileDataSource
     private let remoteTaskDataSource: any RemoteTaskDataSource
+    private let remoteGoalDataSource: any RemoteGoalDataSource
+    private let remoteSessionDataSource: any RemoteSessionDataSourceProtocol
 
     public init(
         localDataSource: any LocalTaskDataSource,
         localSessionDataSource: any LocalSessionDataSource,
         localProfileDataSource: any LocalUserProfileDataSource,
-        remoteTaskDataSource: any RemoteTaskDataSource
+        remoteTaskDataSource: any RemoteTaskDataSource,
+        remoteGoalDataSource: any RemoteGoalDataSource,
+        remoteSessionDataSource: any RemoteSessionDataSourceProtocol
     ) {
         self.localDataSource = localDataSource
         self.localSessionDataSource = localSessionDataSource
         self.localProfileDataSource = localProfileDataSource
         self.remoteTaskDataSource = remoteTaskDataSource
+        self.remoteGoalDataSource = remoteGoalDataSource
+        self.remoteSessionDataSource = remoteSessionDataSource
     }
 
     public func fetchTasks() async throws -> [AwanTask] {
         try await localDataSource.fetchTasks()
+    }
+
+    public func observeTasks() -> AnyPublisher<[AwanTask], Error> {
+        localDataSource.observeTasks()
     }
     public func fetchTasks(for date: Date) async throws -> [AwanTask] {
         let profile = try await requireProfile()
@@ -128,9 +138,57 @@ public struct DefaultTaskRepository: TaskRepository {
         }
         return profile
     }
-    public func addTask(_ task: AwanTask) async throws {
-        try await localDataSource.addTask(task)
+
+    public func addTask(_ task: AwanTask, startsAt: Date?, durationMinutes: Int, timeZoneID: String) async throws -> (task: AwanTask, sessions: [Session]) {
+        let sessionPayloads: [CreateTaskWithSessionsRequestDTO.SessionPayload]?
+        if let start = startsAt {
+            let end = start.addingTimeInterval(TimeInterval(durationMinutes * 60))
+            sessionPayloads = [
+                CreateTaskWithSessionsRequestDTO.SessionPayload(
+                    zoneId: task.zoneID,
+                    start: HomeRemoteMapper.formatDateTime(start, timeZoneID: timeZoneID),
+                    end: HomeRemoteMapper.formatDateTime(end, timeZoneID: timeZoneID),
+                    status: "SCHEDULED"
+                )
+            ]
+        } else {
+            sessionPayloads = nil
+        }
+
+        let request = CreateTaskWithSessionsRequestDTO(
+            task: CreateTaskWithSessionsRequestDTO.TaskPayload(
+                title: task.title,
+                description: task.description,
+                estimatedDuration: durationMinutes,
+                mandatory: task.mandatory,
+                estimatedPoints: task.estimatedPoints,
+                allowTaskSplitting: task.isSplittable,
+                goalId: task.goalID
+            ),
+            sessions: sessionPayloads
+        )
+
+        let response = try await remoteSessionDataSource.createTaskWithSessions(request: request)
+        let acceptedTask = try HomeRemoteMapper.task(
+            response.task,
+            zoneID: task.zoneID,
+            defaultDuration: durationMinutes
+        )
+        let acceptedSessions = try response.sessions.map {
+            try HomeRemoteMapper.session(
+                $0,
+                timeZoneID: timeZoneID
+            )
+        }
+
+        try await localDataSource.addTask(acceptedTask)
+        for session in acceptedSessions {
+            try await localSessionDataSource.addSession(session)
+        }
+
+        return (acceptedTask, acceptedSessions)
     }
+
     public func updateTask(_ task: AwanTask) async throws {
         let response = try await remoteTaskDataSource.updateTask(
             taskID: task.id,

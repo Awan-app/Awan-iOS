@@ -2,24 +2,36 @@ import Foundation
 
 public struct CreateTaskRequest: Hashable, Sendable {
     public let title: String
+    public let description: String?
     public let durationMinutes: Int
     public let zoneID: UUID?
     public let isSplittable: Bool
+    public let mandatory: Bool
+    public let estimatedPoints: Int
+    public let startsAt: Date?
     public let selectedDay: Date
     public let timeZone: TimeZone
 
     public init(
         title: String,
+        description: String? = nil,
         durationMinutes: Int,
         zoneID: UUID?,
         isSplittable: Bool,
+        mandatory: Bool = true,
+        estimatedPoints: Int = 0,
+        startsAt: Date? = nil,
         selectedDay: Date,
         timeZone: TimeZone
     ) {
         self.title = title
+        self.description = description
         self.durationMinutes = durationMinutes
         self.zoneID = zoneID
         self.isSplittable = isSplittable
+        self.mandatory = mandatory
+        self.estimatedPoints = estimatedPoints
+        self.startsAt = startsAt
         self.selectedDay = selectedDay
         self.timeZone = timeZone
     }

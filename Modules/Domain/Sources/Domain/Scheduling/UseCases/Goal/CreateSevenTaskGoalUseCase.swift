@@ -63,7 +63,12 @@ public struct DefaultCreateSevenTaskGoalUseCase: CreateSevenTaskGoalUseCase {
 
         try await goalRepository.addGoal(goal)
         for task in tasks {
-            try await taskRepository.addTask(task)
+            _ = try await taskRepository.addTask(
+                task,
+                startsAt: nil,
+                durationMinutes: request.taskDurationMinutes,
+                timeZoneID: request.timeZone.identifier
+            )
         }
 
         var workspace = try await workspaceProvider.load(for: request.startDay)

@@ -31,7 +31,7 @@ public final class DefaultRemoteTaskDataSource: RemoteTaskDataSource {
     }
 
     public func getTasks(date: String) async throws -> [TaskWithSessionsResponseDTO] {
-        try await networkService.request(TaskEndpoint.getTasksByDate(date))
+        try await networkService.request(TaskEndpoint.getTasksByDate(date: date))
     }
 
     public func getTasks(
@@ -50,6 +50,8 @@ public final class DefaultRemoteTaskDataSource: RemoteTaskDataSource {
     public func getTask(taskID: UUID) async throws -> TaskInfoResponseDTO {
         try await networkService.request(TaskEndpoint.getTask(taskID: taskID))
     }
+
+
 
     public func updateTask(taskID: UUID, request: UpdateTaskRequestDTO) async throws -> TaskInfoResponseDTO {
         try await networkService.request(TaskEndpoint.updateTask(taskID: taskID, request))

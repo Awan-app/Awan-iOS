@@ -1,6 +1,23 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "app_language": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App language"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App language (ar)"
+          }
+        }
+      }
+    },
     "common.cancel": {
       "extractionState": "manual",
       "localizations": {
@@ -154,6 +171,50 @@
         }
       }
     },
+    "home.add_task_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a task"
+          }
+        }
+      }
+    },
+    "home.btn_add_manual_task": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ADD TASK"
+          }
+        }
+      }
+    },
+    "home.btn_plan_it_for_me": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PLAN IT FOR ME"
+          }
+        }
+      }
+    },
+    "home.build_it_your_way": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BUILD IT YOUR WAY"
+          }
+        }
+      }
+    },
     "home.calendar": {
       "extractionState": "manual",
       "localizations": {
@@ -167,6 +228,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Calendar"
+          }
+        }
+      }
+    },
+    "home.chip_auto_scheduled": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-scheduled"
+          }
+        }
+      }
+    },
+    "home.chip_best_zone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best zone"
+          }
+        }
+      }
+    },
+    "home.chip_smart_duration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart duration"
           }
         }
       }
@@ -252,6 +346,72 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couldn't update your day"
+          }
+        }
+      }
+    },
+    "home.estimated_duration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DURATION"
+          }
+        }
+      }
+    },
+    "home.field_description": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DESCRIPTION"
+          }
+        }
+      }
+    },
+    "home.field_description_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create slides and rehearse"
+          }
+        }
+      }
+    },
+    "home.field_starts_at": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STARTS AT"
+          }
+        }
+      }
+    },
+    "home.field_starts_at_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select time (optional)"
+          }
+        }
+      }
+    },
+    "home.field_task": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TASK"
           }
         }
       }
@@ -358,6 +518,17 @@
         }
       }
     },
+    "home.listening_state": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listening..."
+          }
+        }
+      }
+    },
     "home.load_failed": {
       "extractionState": "manual",
       "localizations": {
@@ -405,6 +576,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld min"
+          }
+        }
+      }
+    },
+    "home.or_separator": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OR"
+          }
+        }
+      }
+    },
+    "home.quick_add_caption": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type it or tell me. I'll handle the planning."
+          }
+        }
+      }
+    },
+    "home.quick_add_header": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AWAN'S QUICK ADD"
+          }
+        }
+      }
+    },
+    "home.quick_add_headline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What do you want to get done?"
           }
         }
       }
@@ -460,6 +675,28 @@
         }
       }
     },
+    "home.scheduling_nudge_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your task was saved, but we couldn't find enough free time today."
+          }
+        }
+      }
+    },
+    "home.scheduling_nudge_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't Auto-Schedule"
+          }
+        }
+      }
+    },
     "home.start_time": {
       "extractionState": "manual",
       "localizations": {
@@ -473,6 +710,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "Start time"
+          }
+        }
+      }
+    },
+    "home.stepper_hours": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d hours"
+          }
+        }
+      }
+    },
+    "home.tab_manual": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual"
+          }
+        }
+      }
+    },
+    "home.tab_with_awan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With AWAN"
+          }
+        }
+      }
+    },
+    "home.tap_to_speak": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to speak"
           }
         }
       }
@@ -511,6 +792,17 @@
         }
       }
     },
+    "home.tell_awan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TELL AWAN"
+          }
+        }
+      }
+    },
     "home.today": {
       "extractionState": "manual",
       "localizations": {
@@ -541,6 +833,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "TODAY'S PLAN"
+          }
+        }
+      }
+    },
+    "home.toggle_allow_splitting": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow task splitting"
+          }
+        }
+      }
+    },
+    "home.toggle_mandatory": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mandatory"
           }
         }
       }
@@ -885,6 +1199,40 @@
         }
       }
     },
+    "onboarding.add_first_task": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add first task"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add first task (ar)"
+          }
+        }
+      }
+    },
+    "onboarding.add_it": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add it"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أضفها"
+          }
+        }
+      }
+    },
     "onboarding.add_zone": {
       "extractionState": "manual",
       "localizations": {
@@ -936,6 +1284,91 @@
         }
       }
     },
+    "onboarding.clear_skies": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear skies"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear skies (ar)"
+          }
+        }
+      }
+    },
+    "onboarding.edit_zone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit zone"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit zone (ar)"
+          }
+        }
+      }
+    },
+    "onboarding.feel_balanced": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Balanced"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "متوازنة"
+          }
+        }
+      }
+    },
+    "onboarding.feel_deep_few": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deep & few"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عميقة وقليلة"
+          }
+        }
+      }
+    },
+    "onboarding.feel_short_light": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Short & light"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قصيرة وخفيفة"
+          }
+        }
+      }
+    },
     "onboarding.first_name_label": {
       "extractionState": "manual",
       "localizations": {
@@ -966,6 +1399,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sam"
+          }
+        }
+      }
+    },
+    "onboarding.good_morning_name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good morning name"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good morning name (ar)"
+          }
+        }
+      }
+    },
+    "onboarding.how_blocks_feel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How blocks feel"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كيف تبدو كتل التركيز"
+          }
+        }
+      }
+    },
+    "onboarding.how_long_to_focus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How long to focus"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كم من الوقت ستركّز؟"
           }
         }
       }
@@ -1024,12 +1508,6 @@
     "onboarding.midnight_note": {
       "extractionState": "manual",
       "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "خطة اليوم"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1072,6 +1550,23 @@
         }
       }
     },
+    "onboarding.nothing_scheduled": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing scheduled"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing scheduled (ar)"
+          }
+        }
+      }
+    },
     "onboarding.open_sky_hours": {
       "extractionState": "manual",
       "localizations": {
@@ -1085,6 +1580,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld h of open sky"
+          }
+        }
+      }
+    },
+    "onboarding.out_of_bounds_warning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Out of bounds warning"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Out of bounds warning (ar)"
+          }
+        }
+      }
+    },
+    "onboarding.preferred_focus_block": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preferred focus block"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كتلة التركيز المفضلة"
+          }
+        }
+      }
+    },
+    "onboarding.preview_bounce": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bounce"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ستُضاف بسلاسة"
           }
         }
       }
@@ -1106,6 +1652,108 @@
         }
       }
     },
+    "onboarding.preview_lands_in_day": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lands in your day"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ستضاف إلى يومك"
+          }
+        }
+      }
+    },
+    "onboarding.preview_new": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جديدة"
+          }
+        }
+      }
+    },
+    "onboarding.preview_study": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Study"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مذاكرة"
+          }
+        }
+      }
+    },
+    "onboarding.preview_study_duration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 hr"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ساعة واحدة"
+          }
+        }
+      }
+    },
+    "onboarding.preview_study_time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "9:00 AM - 10:00 AM"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "٩:٠٠ ص - ١٠:٠٠ ص"
+          }
+        }
+      }
+    },
+    "onboarding.save_zone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save zone"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save zone (ar)"
+          }
+        }
+      }
+    },
     "onboarding.set_manually": {
       "extractionState": "manual",
       "localizations": {
@@ -1119,6 +1767,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "SET MANUALLY"
+          }
+        }
+      }
+    },
+    "onboarding.short_day_warning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Short day warning"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Short day warning (ar)"
           }
         }
       }
@@ -1174,6 +1839,23 @@
         }
       }
     },
+    "onboarding.sky_setup_zones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sky setup zones"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sky setup zones (ar)"
+          }
+        }
+      }
+    },
     "onboarding.sleep_label": {
       "extractionState": "manual",
       "localizations": {
@@ -1225,15 +1907,60 @@
         }
       }
     },
-    "onboarding.use_this": {
+    "onboarding.task_simulation_placeholder": {
       "extractionState": "manual",
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E.g. Read a book"
+          }
+        },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "وقت البدء"
+            "value": "مثال: قراءة كتاب"
+          }
+        }
+      }
+    },
+    "onboarding.task_simulation_subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What is a task you want to do?"
           }
         },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ما هي المهمة التي تريد إنجازها؟"
+          }
+        }
+      }
+    },
+    "onboarding.task_simulation_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Let's simulate a task"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لنجرّب مهمة معًا"
+          }
+        }
+      }
+    },
+    "onboarding.use_this": {
+      "extractionState": "manual",
+      "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1483,12 +2210,6 @@
     "otp.error.offline": {
       "extractionState": "manual",
       "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "هذا الأسبوع"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1701,40 +2422,6 @@
         }
       }
     },
-    "profile.language_and_appearance": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "اللغة والمظهر"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LANGUAGE & APPEARANCE"
-          }
-        }
-      }
-    },
-    "profile.language_selection_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "اختر اللغة"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Select Language"
-          }
-        }
-      }
-    },
     "profile.language.arabic": {
       "extractionState": "manual",
       "localizations": {
@@ -1765,6 +2452,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "English"
+          }
+        }
+      }
+    },
+    "profile.language_and_appearance": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اللغة والمظهر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LANGUAGE & APPEARANCE"
+          }
+        }
+      }
+    },
+    "profile.language_selection_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختر اللغة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select Language"
           }
         }
       }
@@ -1993,12 +2714,6 @@
     "schedule.add_task": {
       "extractionState": "manual",
       "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld دقيقة"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",

@@ -63,8 +63,18 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
         let workZone = try await requiredWorkZone(on: day)
         let first = try demoTask(title: "Deep work", zoneID: workZone.id, minutes: 90)
         let second = try demoTask(title: "Team sync", zoneID: workZone.id, minutes: 90)
-        try await taskRepository.addTask(first)
-        try await taskRepository.addTask(second)
+        _ = try await taskRepository.addTask(
+            first,
+            startsAt: nil,
+            durationMinutes: 90,
+            timeZoneID: timeZone.identifier
+        )
+        _ = try await taskRepository.addTask(
+            second,
+            startsAt: nil,
+            durationMinutes: 90,
+            timeZoneID: timeZone.identifier
+        )
 
         let firstSession = Session(
             id: idGenerator.makeUUID(),
@@ -121,8 +131,18 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
             isSplittable: true,
             dependencyIDs: []
         )
-        try await taskRepository.addTask(filler)
-        try await taskRepository.addTask(overflow)
+        _ = try await taskRepository.addTask(
+            filler,
+            startsAt: nil,
+            durationMinutes: 450,
+            timeZoneID: timeZone.identifier
+        )
+        _ = try await taskRepository.addTask(
+            overflow,
+            startsAt: nil,
+            durationMinutes: 60,
+            timeZoneID: timeZone.identifier
+        )
         try await sessionRepository.addSession(
             Session(
                 id: idGenerator.makeUUID(),
@@ -223,7 +243,12 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
             blocking: false,
             status: .planned
         )
-        try await taskRepository.addTask(task)
+        _ = try await taskRepository.addTask(
+            task,
+            startsAt: nil,
+            durationMinutes: 60,
+            timeZoneID: timeZone.identifier
+        )
         try await sessionRepository.addSession(session)
         let updated = Zone(
             id: previous.id,

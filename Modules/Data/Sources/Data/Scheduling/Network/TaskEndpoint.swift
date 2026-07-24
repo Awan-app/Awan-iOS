@@ -8,10 +8,10 @@ import AwaNetwork
 
 enum TaskEndpoint: APIEndpoint {
 
-    case getTasksByDate(String)
-    case getTasksByDateRange(startDate: String, endDate: String)
     case createTask(CreateTaskRequestDTO)
     case getTask(taskID: UUID)
+    case getTasksByDate(date: String)
+    case getTasksByDateRange(startDate: String, endDate: String)
     case updateTask(taskID: UUID, UpdateTaskRequestDTO)
     case moveTask(taskID: UUID, MoveTaskRequestDTO)
     case deleteTask(taskID: UUID, cascade: Bool)
@@ -26,14 +26,14 @@ enum TaskEndpoint: APIEndpoint {
 
     var path: String {
         switch self {
-        case .getTasksByDate(let date):
-            return "/tasks/date/\(date)"
-        case .getTasksByDateRange:
-            return "/tasks/range"
         case .createTask:
             return "/tasks"
         case .getTask(let taskID):
             return "/tasks/\(taskID.uuidString)"
+        case .getTasksByDate(let date):
+            return "/tasks/date/\(date)"
+        case .getTasksByDateRange:
+            return "/tasks/range"
         case .updateTask(let taskID, _):
             return "/tasks/\(taskID.uuidString)"
         case .moveTask(let taskID, _):
@@ -55,8 +55,7 @@ enum TaskEndpoint: APIEndpoint {
         switch self {
         case .createTask, .addDependency:
             return .post
-        case .getTasksByDate, .getTasksByDateRange,
-             .getTask, .listDependencies, .listDependents:
+        case .getTask, .getTasksByDate, .getTasksByDateRange, .listDependencies, .listDependents:
             return .get
         case .updateTask, .moveTask:
             return .patch
@@ -67,7 +66,7 @@ enum TaskEndpoint: APIEndpoint {
 
     var queryParameters: [String: String]? {
         switch self {
-        case let .getTasksByDateRange(startDate, endDate):
+        case .getTasksByDateRange(let startDate, let endDate):
             return [
                 "startDate": startDate,
                 "endDate": endDate,

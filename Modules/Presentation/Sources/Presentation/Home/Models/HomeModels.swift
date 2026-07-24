@@ -62,6 +62,8 @@ struct HomeState {
     var selectedDay: Date
     var selectedSessionID: UUID?
     var isMutating: Bool
+    var isAddTaskPresented: Bool
+    var activeNudge: ScheduleNudge?
 
     var selectedSession: HomeSessionDetail? {
         guard let success,
@@ -79,7 +81,9 @@ struct HomeState {
             failure: nil,
             selectedDay: selectedDay,
             selectedSessionID: nil,
-            isMutating: false
+            isMutating: false,
+            isAddTaskPresented: false,
+            activeNudge: nil
         )
     }
 }
