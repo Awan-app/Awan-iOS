@@ -13,26 +13,26 @@ struct TaskLengthFeelSection: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("HOW BLOCKS FEEL")
+            Text(L10n.Onboarding.howBlocksFeel)
                 .font(AppFonts.hourLabel)
                 .foregroundColor(AppColors.textSecondary)
                 .kerning(1.5)
 
             HStack(spacing: 12) {
                 BlockFeelOptionView(
-                    title: "30m", subtitle: "short & light", numberOfBlocks: 3,
+                    title: "30m", subtitle: L10n.Onboarding.feelShortLight, numberOfBlocks: 3,
                     isSelected: focusDurationIndex == 0
                 )
                 .onTapGesture { withAnimation { focusDurationIndex = 0 } }
                 
                 BlockFeelOptionView(
-                    title: "1h", subtitle: "balanced", numberOfBlocks: 2,
+                    title: "1h", subtitle: L10n.Onboarding.feelBalanced, numberOfBlocks: 2,
                     isSelected: focusDurationIndex == 2
                 )
                 .onTapGesture { withAnimation { focusDurationIndex = 2 } }
                 
                 BlockFeelOptionView(
-                    title: "3h", subtitle: "deep & few", numberOfBlocks: 1,
+                    title: "3h", subtitle: L10n.Onboarding.feelDeepFew, numberOfBlocks: 1,
                     isSelected: focusDurationIndex == 5
                 )
                 .onTapGesture { withAnimation { focusDurationIndex = 5 } }

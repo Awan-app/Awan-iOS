@@ -12,17 +12,31 @@ struct OnboardingSuggestedZonesView: View {
     @Bindable var viewModel: OnboardingViewModel
     let onContinue: () -> Void
 
+    @State private var draggedZone: SuggestedZone?
+    @State private var dragOffset: CGSize = .zero
+    @State private var cumulativeOffset: CGFloat = 0
+    @State private var editingZone: SuggestedZone?
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    headerSection
-                    infoTag
-                    zonesList
+            VStack(alignment: .leading, spacing: 20) {
+                headerSection
+                infoTag
+                if viewModel.hasZoneOutsideActiveHours {
+                    outOfBoundsWarning
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 24)
+                if viewModel.availableHours < 10 {
+                    shortDayWarning
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 16)
+            .padding(.bottom, 10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            ScrollView {
+                zonesList
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
             }
 
             Spacer(minLength: 0)
@@ -30,6 +44,12 @@ struct OnboardingSuggestedZonesView: View {
             bottomButtons
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
+        }
+        .sheet(isPresented: $viewModel.isAddZoneSheetPresented) {
+            AddZoneSheet(viewModel: viewModel)
+        }
+        .sheet(item: $editingZone) { zone in
+            EditZoneTimeSheet(viewModel: viewModel, zone: zone)
         }
     }
 
@@ -57,23 +77,96 @@ struct OnboardingSuggestedZonesView: View {
         )
     }
 
+    private var outOfBoundsWarning: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 14, weight: .bold))
+            Text(L10n.Onboarding.outOfBoundsWarning)
+                .font(AppFonts.caption2Bold)
+        }
+        .foregroundStyle(AppColors.warning)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            AppColors.warning.opacity(0.1),
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
+        .transition(.move(edge: .top).combined(with: .opacity))
+    }
+
+    private var shortDayWarning: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 14, weight: .bold))
+            Text(L10n.Onboarding.shortDayWarning)
+                .font(AppFonts.caption2Bold)
+        }
+        .foregroundStyle(AppColors.warning)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            AppColors.warning.opacity(0.1),
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
+        .transition(.move(edge: .top).combined(with: .opacity))
+    }
+
     private var zonesList: some View {
         VStack(spacing: 10) {
-            ForEach(Array(viewModel.suggestedZones.enumerated()), id: \.element.id) { index, zone in
+            ForEach(viewModel.suggestedZones) { zone in
                 ZoneCard(zone: zone) {
                     withAnimation(.snappy(duration: 0.25)) {
                         viewModel.removeZone(zone)
                     }
                 }
-
-                if index == 1 {
-                    AddZoneButton(onTap: {})
+                .onTapGesture {
+                    editingZone = zone
                 }
+                .offset(y: draggedZone == zone ? dragOffset.height : 0)
+                .zIndex(draggedZone == zone ? 1 : 0)
+                .gesture(
+                    DragGesture(coordinateSpace: .global)
+                        .onChanged { value in
+                            if draggedZone == nil {
+                                draggedZone = zone
+                                cumulativeOffset = 0
+                            }
+                            
+                            dragOffset = CGSize(width: 0, height: value.translation.height - cumulativeOffset)
+                            
+                            if let currentIndex = viewModel.suggestedZones.firstIndex(of: zone) {
+                                let itemHeight: CGFloat = 74
+                                
+                                if dragOffset.height > itemHeight && currentIndex < viewModel.suggestedZones.count - 1 {
+                                    cumulativeOffset += itemHeight
+                                    dragOffset.height -= itemHeight
+                                    withAnimation(.snappy(duration: 0.25)) {
+                                        viewModel.swapZones(at: currentIndex, with: currentIndex + 1)
+                                    }
+                                } else if dragOffset.height < -itemHeight && currentIndex > 0 {
+                                    cumulativeOffset -= itemHeight
+                                    dragOffset.height += itemHeight
+                                    withAnimation(.snappy(duration: 0.25)) {
+                                        viewModel.swapZones(at: currentIndex, with: currentIndex - 1)
+                                    }
+                                }
+                            }
+                        }
+                        .onEnded { _ in
+                            withAnimation(.snappy(duration: 0.25)) {
+                                draggedZone = nil
+                                dragOffset = .zero
+                                cumulativeOffset = 0
+                            }
+                        }
+                )
             }
 
-            if viewModel.suggestedZones.count <= 1 {
-                AddZoneButton(onTap: {})
-            }
+            AddZoneButton(onTap: {
+                viewModel.isAddZoneSheetPresented = true
+            })
         }
     }
 
@@ -105,6 +198,8 @@ struct OnboardingSuggestedZonesView: View {
     }
 }
 
+
 #Preview {
     OnboardingSuggestedZonesView(viewModel: .preview, onContinue: {})
 }
+
