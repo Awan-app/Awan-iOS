@@ -25,7 +25,7 @@ struct ProfileMainView: View {
     }
 
     private var formattedSleepSchedule: String {
-        guard let wake = viewModel.wakeupTime, let sleep = viewModel.sleepTime else { return "" }
+        guard let wake = viewModel.sleepTime, let sleep = viewModel.wakeupTime else { return "" }
         
         let formatter = DateFormatter()
         formatter.timeStyle = .short

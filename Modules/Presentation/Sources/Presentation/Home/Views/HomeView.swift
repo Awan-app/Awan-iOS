@@ -30,24 +30,9 @@ struct HomeView: View {
                     )
             }
         }
-        .safeAreaInset(edge: .top, spacing: 0) {
-            Color.clear
-                .frame(height: 10)
-                .frame(maxWidth: .infinity)
-                .background {
-                    LinearGradient(
-                        colors: [
-                            AppColors.skyGradientTop,
-                            AppColors.screenBackground,
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .ignoresSafeArea(edges: .top)
-                }
-                .allowsHitTesting(false)
-        }
         .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .task { viewModel.send(.appeared) }
         .sheet(item: selectedSessionBinding) { item in
             HomeSessionActionSheet(
