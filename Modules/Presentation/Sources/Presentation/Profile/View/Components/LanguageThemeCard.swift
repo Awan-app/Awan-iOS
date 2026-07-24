@@ -11,7 +11,6 @@ import Common
 struct LanguageThemeCard: View {
     let language: String
     let onLanguageTap: () -> Void
-    @Binding var selectedTheme: ThemePreferenceRowView.ThemeSelection
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -33,8 +32,7 @@ struct LanguageThemeCard: View {
 
                     ThemePreferenceRowView(
                         icon: "circle.lefthalf.filled",
-                        title: L10n.Profile.theme,
-                        selectedTheme: $selectedTheme
+                        title: L10n.Profile.theme
                     )
                     .padding(.vertical, 6)
                 }
@@ -46,27 +44,27 @@ struct LanguageThemeCard: View {
 // MARK: - Previews
 
 #Preview("LanguageThemeCard – Light") {
-    @Previewable @State var theme: ThemePreferenceRowView.ThemeSelection = .light
+    @Previewable @State var appearanceManager = AppearanceManager()
 
     LanguageThemeCard(
         language: "English",
-        onLanguageTap: {},
-        selectedTheme: $theme
+        onLanguageTap: {}
     )
     .padding()
     .background(AppColors.screenBackground)
     .preferredColorScheme(.light)
+    .environment(appearanceManager)
 }
 
 #Preview("LanguageThemeCard – Dark") {
-    @Previewable @State var theme: ThemePreferenceRowView.ThemeSelection = .dark
+    @Previewable @State var appearanceManager = AppearanceManager()
 
     LanguageThemeCard(
         language: "English",
-        onLanguageTap: {},
-        selectedTheme: $theme
+        onLanguageTap: {}
     )
     .padding()
     .background(AppColors.screenBackground)
     .preferredColorScheme(.dark)
+    .environment(appearanceManager)
 }

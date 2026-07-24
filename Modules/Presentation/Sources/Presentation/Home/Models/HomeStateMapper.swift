@@ -43,7 +43,9 @@ struct HomeStateMapper {
                 }
                 return $0.id.uuidString < $1.id.uuidString
             }
-        let displayedSessions = visibleSessions.filter { tasksByID[$0.taskID] != nil }
+        let displayedSessions = visibleSessions.filter { session in
+            tasksByID[session.taskID] != nil
+        }
         let displayedTasks = Set(displayedSessions.map(\.taskID)).compactMap { tasksByID[$0] }
         let taskAllocations = makeTaskAllocations(tasks: displayedTasks, zones: zones)
         let placements = lanePlacements(for: displayedSessions)

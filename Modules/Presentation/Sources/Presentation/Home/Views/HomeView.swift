@@ -30,24 +30,9 @@ struct HomeView: View {
                     )
             }
         }
-        .safeAreaInset(edge: .top, spacing: 0) {
-            Color.clear
-                .frame(height: 10)
-                .frame(maxWidth: .infinity)
-                .background {
-                    LinearGradient(
-                        colors: [
-                            AppColors.skyGradientTop,
-                            AppColors.screenBackground,
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .ignoresSafeArea(edges: .top)
-                }
-                .allowsHitTesting(false)
-        }
         .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .task { viewModel.send(.appeared) }
         .sheet(item: selectedSessionBinding) { detail in
             HomeSessionActionSheet(
@@ -65,6 +50,27 @@ struct HomeView: View {
                 onDismiss: { viewModel.send(.dismissSession) }
             )
             .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: addTaskBinding) {
+            AddTaskSheet(
+                zones: state.success?.zones ?? [],
+                selectedDay: state.selectedDay,
+                onSubmit: { title, description, duration, zoneID, isSplittable, mandatory, startsAt in
+                    viewModel.send(
+                        .createTask(
+                            title: title,
+                            description: description,
+                            durationMinutes: duration,
+                            zoneID: zoneID,
+                            isSplittable: isSplittable,
+                            mandatory: mandatory,
+                            startsAt: startsAt
+                        )
+                    )
+                }
+            )
+            .presentationDetents([.large])
             .presentationDragIndicator(.visible)
         }
         .alert(L10n.Home.errorTitle, isPresented: errorBinding) {
@@ -95,7 +101,7 @@ struct HomeView: View {
                     completedCount: success.completedSessionCount,
                     totalCount: success.totalSessionCount,
                     taskAllocations: success.taskAllocations,
-                    onAddTask: {},
+                    onAddTask: { viewModel.send(.presentAddTask) },
                     onAddGoal: {}
                 )
 
@@ -120,7 +126,7 @@ struct HomeView: View {
                             )
                         )
                     },
-                    onTap: { viewModel.send(.presentSession($0)) }
+                    onTap: { viewModel.send(.presentSession($0))}
                 )
             }
             .padding(.horizontal, 16)
@@ -164,6 +170,13 @@ struct HomeView: View {
         Binding(
             get: { viewModel.state.selectedSession },
             set: { if $0 == nil { viewModel.send(.dismissSession) } }
+        )
+    }
+
+    private var addTaskBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.state.isAddTaskPresented },
+            set: { if !$0 { viewModel.send(.dismissAddTask) } }
         )
     }
 }
