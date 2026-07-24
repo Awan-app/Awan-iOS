@@ -21,15 +21,19 @@ public struct DefaultCreateTaskUseCase: CreateTaskUseCase {
         let task = try AwanTask(
             id: idGenerator.makeUUID(),
             title: request.title,
+            description: request.description,
+            status: .pending,
             goalID: nil,
             zoneID: request.zoneID,
             duration: TaskDuration(minutes: request.durationMinutes),
             isSplittable: request.isSplittable,
+            mandatory: request.mandatory,
+            estimatedPoints: request.estimatedPoints,
             dependencyIDs: []
         )
         let (confirmedTask, _) = try await taskRepository.addTask(
             task,
-            startsAt: nil,
+            startsAt: request.startsAt,
             durationMinutes: request.durationMinutes,
             timeZoneID: request.timeZone.identifier
         )

@@ -83,7 +83,7 @@ struct PresentationAssembly: Assembly {
                     setCompletion: Self.resolve(SetSessionCompletionUseCase.self, from: resolver),
                     delete: Self.resolve(DeleteSessionUseCase.self, from: resolver)
                 ),
-                createManualTask: Self.resolve(CreateManualTaskUseCase.self, from: resolver)
+                createTask: Self.resolve(CreateTaskUseCase.self, from: resolver)
             )
         }
 

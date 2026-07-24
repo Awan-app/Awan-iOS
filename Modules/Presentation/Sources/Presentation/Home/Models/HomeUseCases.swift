@@ -86,15 +86,15 @@ public struct HomeSessionUseCases: Sendable {
 public struct HomeUseCases: Sendable {
     public let reads: HomeReadUseCases
     public let sessions: HomeSessionUseCases
-    public let createManualTask: any CreateManualTaskUseCase
+    public let createTask: any CreateTaskUseCase
 
     public init(
         reads: HomeReadUseCases,
         sessions: HomeSessionUseCases,
-        createManualTask: any CreateManualTaskUseCase
+        createTask: any CreateTaskUseCase
     ) {
         self.reads = reads
         self.sessions = sessions
-        self.createManualTask = createManualTask
+        self.createTask = createTask
     }
 }

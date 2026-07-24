@@ -248,7 +248,7 @@ final class HomeViewModelTests: XCTestCase {
                     setCompletion: stub,
                     delete: stub
                 ),
-                createManualTask: stub
+                createTask: stub
             ),
             selectedDay: date(),
             timeZone: timeZone
@@ -348,7 +348,7 @@ private actor HomeUseCaseStub:
     SetSessionLockUseCase,
     SetSessionCompletionUseCase,
     DeleteSessionUseCase,
-    CreateManualTaskUseCase {
+    CreateTaskUseCase {
     private var tasks: [AwanTask]
     private var sessions: [Session]
     private let zones: [Zone]
@@ -471,7 +471,7 @@ private actor HomeUseCaseStub:
         sessions.removeAll { $0.id == sessionID }
     }
 
-    func execute(_ request: CreateManualTaskRequest) async throws -> ScheduleOperationResult {
+    func execute(_ request: CreateTaskRequest) async throws -> ScheduleOperationResult {
         if let mutationDelay {
             try await Task.sleep(for: mutationDelay)
         }

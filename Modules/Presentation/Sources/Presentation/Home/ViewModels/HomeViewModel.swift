@@ -136,18 +136,19 @@ public final class HomeViewModel {
             guard let self else { return }
             defer { state.isMutating = false }
             do {
-                let request = CreateManualTaskRequest(
+                let request = CreateTaskRequest(
                     title: title,
                     description: description,
                     durationMinutes: durationMinutes,
                     zoneID: zoneID,
                     isSplittable: isSplittable,
                     mandatory: mandatory,
+                    estimatedPoints: 10,
                     startsAt: startsAt,
                     selectedDay: state.selectedDay,
                     timeZone: timeZone
                 )
-                let result = try await useCases.createManualTask.execute(request)
+                let result = try await useCases.createTask.execute(request)
                 if let nudge = result.nudge {
                     state.activeNudge = nudge
                 }
