@@ -43,11 +43,8 @@ struct HomeStateMapper {
                 }
                 return $0.id.uuidString < $1.id.uuidString
             }
-        let nilGoalUUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")
         let displayedSessions = visibleSessions.filter { session in
-            guard let task = tasksByID[session.taskID] else { return false }
-            guard let goalID = task.goalID, goalID != nilGoalUUID else { return false }
-            return true
+            tasksByID[session.taskID] != nil
         }
         let displayedTasks = Set(displayedSessions.map(\.taskID)).compactMap { tasksByID[$0] }
         let taskAllocations = makeTaskAllocations(tasks: displayedTasks, zones: zones)
