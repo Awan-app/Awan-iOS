@@ -43,6 +43,20 @@ public actor SwiftDataTaskDataSource: LocalTaskDataSource {
         changes.send()
     }
 
+    public func upsertTasks(_ tasks: [AwanTask]) throws {
+        let existing = try modelContext.fetch(FetchDescriptor<TaskModel>())
+        let existingByID = Dictionary(uniqueKeysWithValues: existing.map { ($0.id, $0) })
+        for task in tasks {
+            if let model = existingByID[task.id] {
+                model.update(from: task)
+            } else {
+                modelContext.insert(TaskModel(domain: task))
+            }
+        }
+        try modelContext.save()
+        changes.send()
+    }
+
     public func addTask(_ task: AwanTask) throws {
         guard try find(id: task.id) == nil else {
             throw SchedulingPersistenceError.duplicateID(task.id)

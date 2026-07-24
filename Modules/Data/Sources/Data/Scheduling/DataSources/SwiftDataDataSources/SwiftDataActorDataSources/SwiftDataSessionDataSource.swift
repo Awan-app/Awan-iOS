@@ -25,9 +25,18 @@ public actor SwiftDataSessionDataSource: LocalSessionDataSource {
         try reconcile(sessions, replacing: existing)
     }
 
-    public func replaceSessions(_ sessions: [Session], forDay dayKey: String) throws {
+    public func replaceSessions(
+        _ sessions: [Session],
+        forDay dayKey: String,
+        timeZoneID: String
+    ) throws {
         let existing = try modelContext.fetch(FetchDescriptor<SessionModel>())
-        let scoped = existing.filter { LocalDateKey.value(for: $0.startDate) == dayKey }
+        let scoped = existing.filter {
+            LocalDateKey.value(
+                for: $0.startDate,
+                timeZoneID: timeZoneID
+            ) == dayKey
+        }
         try reconcile(sessions, replacing: scoped, existing: existing)
     }
 
