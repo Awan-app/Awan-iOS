@@ -34,14 +34,19 @@ struct HomeView: View {
         .toolbar(.hidden, for: .navigationBar)
         .toolbarBackground(.hidden, for: .navigationBar)
         .task { viewModel.send(.appeared) }
-        .sheet(item: selectedSessionBinding) { item in
+        .sheet(item: selectedSessionBinding) { detail in
             HomeSessionActionSheet(
-                item: item,
+                item: detail.item,
+                task: detail.task,
                 window: state.success?.timelineWindow,
                 isMutating: state.isMutating,
-                onReschedule: { viewModel.send(.rescheduleSession(sessionID: item.id, start: $0)) },
-                onSetLock: { viewModel.send(.setSessionLock(sessionID: item.id, isLocked: $0)) },
-                onDelete: { viewModel.send(.deleteSession(item.id)) },
+                onReschedule: {
+                    viewModel.send(.rescheduleSession(sessionID: detail.id, start: $0))
+                },
+                onSetLock: {
+                    viewModel.send(.setSessionLock(sessionID: detail.id, isLocked: $0))
+                },
+                onDelete: { viewModel.send(.deleteSession(detail.id)) },
                 onDismiss: { viewModel.send(.dismissSession) }
             )
             .presentationDetents([.medium])
@@ -140,7 +145,7 @@ struct HomeView: View {
         )
     }
 
-    private var selectedSessionBinding: Binding<HomeTimelineItem?> {
+    private var selectedSessionBinding: Binding<HomeSessionDetail?> {
         Binding(
             get: { viewModel.state.selectedSession },
             set: { if $0 == nil { viewModel.send(.dismissSession) } }
