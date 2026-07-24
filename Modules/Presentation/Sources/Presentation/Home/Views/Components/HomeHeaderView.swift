@@ -35,12 +35,9 @@ struct HomeHeaderView: View {
 
                 Spacer(minLength: 4)
 
-                Image("login-logo")
-                    .resizable()
-                    .scaledToFit()
+                AwanMascotView()
                     .frame(width: 76, height: 76)
                     .shadow(color: AppColors.shadow.opacity(0.12), radius: 10, y: 5)
-                    .accessibilityHidden(true)
             }
 
             Text(selectedDay.formatted(.dateTime.weekday(.wide).month(.wide).day().locale(languageManager.locale)))
