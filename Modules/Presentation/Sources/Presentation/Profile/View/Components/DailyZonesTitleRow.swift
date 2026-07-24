@@ -13,12 +13,12 @@ struct DailyZonesTitleRow: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Text("Daily zones")
+            Text(L10n.Profile.dailyZones)
                 .font(AppFonts.headlineBlack)
                 .foregroundStyle(AppColors.textPrimary)
 
             if isReady {
-                DailyZonesStatusBadge(title: "READY")
+                DailyZonesStatusBadge(title: L10n.Profile.ready)
             }
         }
     }

@@ -11,6 +11,7 @@ import Common
 struct AppRootView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthenticationState.self) private var authenticationState
+    @Environment(LanguageManager.self) private var languageManager
     private let factory: PresentationFactory
 
     init(factory: PresentationFactory) {
@@ -118,13 +119,14 @@ struct AppRootView: View {
             // ------------------------------------------------------------------
 
             NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
-                factory.makeYouView()
+                factory.makeProfileMainView()
             }
             .tabItem {
                 Label(L10n.Home.you, systemImage: "person.fill")
             }
             .tag(MainTab.you)
         }
+        .id(languageManager.currentLanguage)
         .tint(AppColors.accentBlue)
     }
 }

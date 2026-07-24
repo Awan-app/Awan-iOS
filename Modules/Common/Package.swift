@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "Common",
+    defaultLocalization: "en",
     platforms: [.iOS(.v18), .macOS(.v15)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -12,11 +13,17 @@ let package = Package(
             name: "Common",
             targets: ["Common"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.6.0"),
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "Common",
+            dependencies: [
+                .product(name: "Lottie", package: "lottie-spm"),
+            ],
             resources: [.process("Resources")]
         ),
         .testTarget(

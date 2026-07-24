@@ -9,9 +9,12 @@ import SwiftUI
 import Common
 
 struct ProfileMainView: View {
+    @Environment(AppCoordinator.self) private var coordinator
+    @Environment(LanguageManager.self) private var languageManager
     @State private var selectedTheme: ThemePreferenceRowView.ThemeSelection = .light
     @State private var viewModel: ProfileViewModel
     var dailyZonesViewModel: DailyZonesViewModel
+    @State private var isLanguageSheetPresented = false
     
     @State private var showDailyZones = false
     
@@ -29,27 +32,27 @@ struct ProfileMainView: View {
             VStack(spacing: 0) {
 
                     // Header Area
-                    Text("Profile")
+                    Text(L10n.Profile.title)
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(AppColors.brandDarkBlue)
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top, 16)
+                        .padding(.top, 40)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 8)
                         .overlay(alignment: .trailing) {
                             GifImageView("Animated AWAN mascot")
                                 .frame(width: 80, height: 80)
                                 .padding(.trailing, 24)
+                                .padding(.top, 40)
                         }
 
                     VStack(spacing: 10) {
-                        // Personal Info
                         PersonalInfoCard(
-                            avatarImage: Image("avatar-placeholder"), // Dummy image or nil
-                            name: "Sam Rivera",
-                            email: "sam@awan.app",
+                            avatarImage: Image("user-avatar"), // Using actual asset
+                            name: viewModel.userName,
+                            email: viewModel.userEmail,
                             onEdit: {}
-                        )
+                        ).id(languageManager.currentLanguage)
 
                         // Daily Zones
                         DailyZonesCard(
@@ -62,22 +65,22 @@ struct ProfileMainView: View {
 
                         // Preferences
                         PreferencesCard(preferences: [
-                            PreferenceItem(icon: "clock", title: "Session time", value: "60 min", onTap: {
+                            PreferenceItem(icon: "clock", title: L10n.Profile.sessionTime, value: L10n.Profile.dummySessionTime, onTap: {
                                 //go to session time view
                             }),
-                            PreferenceItem(icon: "globe", title: "Time zone", value: "Cairo · GMT+3", onTap: {
+                            PreferenceItem(icon: "globe", title: L10n.Profile.timeZone, value: L10n.Profile.dummyTimeZone, onTap: {
                                 //go to time zone view
                             }),
-                            PreferenceItem(icon: "moon", title: "Sleep schedule", value: "11:00 PM – 7:00 AM", onTap: {
+                            PreferenceItem(icon: "moon", title: L10n.Profile.sleepSchedule, value: L10n.Profile.dummySleepSchedule, onTap: {
                                 //go to sleep schedule view
                             })
                         ])
 
                         // Language & Theme
                         LanguageThemeCard(
-                            language: "English",
+                            language: languageManager.currentLanguage == .arabic ? L10n.Profile.languageArabic : L10n.Profile.languageEnglish,
                             onLanguageTap: {
-                                //go to change lan view
+                                isLanguageSheetPresented = true
                             },
                             selectedTheme: $selectedTheme
                         )
@@ -88,8 +91,11 @@ struct ProfileMainView: View {
                 }
         }
         .navigationBarHidden(true)
-        .sheet(isPresented: $showDailyZones) {
-            DailyZonesView(viewModel: dailyZonesViewModel)
+        .sheet(isPresented: $isLanguageSheetPresented) {
+            LanguageSelectionView()
+        }
+        .task {
+            await viewModel.fetchUserProfile()
         }
     }
 }

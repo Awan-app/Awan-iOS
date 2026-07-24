@@ -13,7 +13,7 @@ struct ProfileEditButton: View {
 
     var body: some View {
         Button(action: onTap) {
-            Label("Edit", systemImage: "pencil")
+            Label(L10n.Common.edit, systemImage: "pencil")
                 .font(AppFonts.subheadlineHeavy)
                 .foregroundStyle(AppColors.accentBlue)
                 .padding(.horizontal, 14)

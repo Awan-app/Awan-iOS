@@ -7,6 +7,7 @@ public protocol LocalTaskDataSource: Sendable {
     func observeTasks() -> AnyPublisher<[AwanTask], Error>
     func fetchTask(id: UUID) async throws -> AwanTask?
     func replaceTasks(_ tasks: [AwanTask]) async throws
+    func upsertTasks(_ tasks: [AwanTask]) async throws
     func addTask(_ task: AwanTask) async throws
     func updateTask(_ task: AwanTask) async throws
     func deleteTask(id: UUID) async throws
@@ -29,6 +30,17 @@ public extension LocalTaskDataSource {
         for task in existing where !desiredIDs.contains(task.id) {
             try await deleteTask(id: task.id)
         }
+        for task in tasks {
+            if existingIDs.contains(task.id) {
+                try await updateTask(task)
+            } else {
+                try await addTask(task)
+            }
+        }
+    }
+
+    func upsertTasks(_ tasks: [AwanTask]) async throws {
+        let existingIDs = Set(try await fetchTasks().map(\.id))
         for task in tasks {
             if existingIDs.contains(task.id) {
                 try await updateTask(task)

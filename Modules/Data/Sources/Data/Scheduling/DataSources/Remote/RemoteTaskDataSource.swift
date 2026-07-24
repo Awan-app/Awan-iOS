@@ -7,6 +7,11 @@ import Foundation
 import AwaNetwork
 
 public protocol RemoteTaskDataSource: Sendable {
+    func getTasks(date: String) async throws -> [TaskWithSessionsResponseDTO]
+    func getTasks(
+        startDate: String,
+        endDate: String
+    ) async throws -> [String: [TaskWithSessionsResponseDTO]]
     func createTask(_ request: CreateTaskRequestDTO) async throws -> TaskInfoResponseDTO
     func getTask(taskID: UUID) async throws -> TaskInfoResponseDTO
     func updateTask(taskID: UUID, request: UpdateTaskRequestDTO) async throws -> TaskInfoResponseDTO
@@ -23,6 +28,19 @@ public final class DefaultRemoteTaskDataSource: RemoteTaskDataSource {
 
     public init(networkService: any NetworkServiceProtocol) {
         self.networkService = networkService
+    }
+
+    public func getTasks(date: String) async throws -> [TaskWithSessionsResponseDTO] {
+        try await networkService.request(TaskEndpoint.getTasksByDate(date))
+    }
+
+    public func getTasks(
+        startDate: String,
+        endDate: String
+    ) async throws -> [String: [TaskWithSessionsResponseDTO]] {
+        try await networkService.request(
+            TaskEndpoint.getTasksByDateRange(startDate: startDate, endDate: endDate)
+        )
     }
 
     public func createTask(_ request: CreateTaskRequestDTO) async throws -> TaskInfoResponseDTO {

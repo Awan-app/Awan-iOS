@@ -11,6 +11,8 @@ struct HomeTimelineSessionCard: View {
     @State private var dragOffset: CGFloat = 0
     @State private var isDragging = false
     @State private var completionScale: CGFloat = 1
+    
+    @Environment(LanguageManager.self) private var languageManager
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -160,7 +162,8 @@ struct HomeTimelineSessionCard: View {
     }
 
     private var timeText: String {
-        "\(item.start.formatted(date: .omitted, time: .shortened))–\(item.end.formatted(date: .omitted, time: .shortened))"
+        let style = Date.FormatStyle(date: .omitted, time: .shortened, locale: languageManager.locale)
+        return "\(item.start.formatted(style))–\(item.end.formatted(style))"
     }
 
     private func animateCompletion(wasCompleted: Bool, completed: Bool) {

@@ -9,6 +9,11 @@ import Foundation
 import AwaNetwork
 
 public protocol RemoteSessionDataSourceProtocol: Sendable {
+    func getSessions(date: String) async throws -> [SessionResponseDTO]
+    func getSessions(
+        startDate: String,
+        endDate: String
+    ) async throws -> [String: [SessionResponseDTO]]
     func getSession(sessionID: UUID) async throws -> SessionResponseDTO
     func updateSession(sessionID: UUID, request: UpdateSessionRequestDTO) async throws -> SessionResponseDTO
     func updateSessionStatus(sessionID: UUID, status: String) async throws -> SessionResponseDTO
@@ -24,6 +29,22 @@ public final class RemoteSessionDataSource: RemoteSessionDataSourceProtocol {
 
     public init(networkService: any NetworkServiceProtocol) {
         self.networkService = networkService
+    }
+
+    public func getSessions(date: String) async throws -> [SessionResponseDTO] {
+        try await networkService.request(SessionEndpoint.getSessionsByDate(date))
+    }
+
+    public func getSessions(
+        startDate: String,
+        endDate: String
+    ) async throws -> [String: [SessionResponseDTO]] {
+        try await networkService.request(
+            SessionEndpoint.getSessionsByDateRange(
+                startDate: startDate,
+                endDate: endDate
+            )
+        )
     }
 
     public func getSession(sessionID: UUID) async throws -> SessionResponseDTO {

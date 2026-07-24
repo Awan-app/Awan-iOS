@@ -25,7 +25,7 @@ struct PreferencesCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeaderLabel(title: "PREFERENCES", accentColor: AppColors.brandDarkBlue)
+            SectionHeaderLabel(title: L10n.Profile.preferences, accentColor: AppColors.brandDarkBlue)
 
             DepthCardContainer {
                 VStack(spacing: 0) {

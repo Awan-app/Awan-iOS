@@ -18,7 +18,7 @@ struct PersonalInfoCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeaderLabel(title: "PERSONAL INFO")
+            SectionHeaderLabel(title: L10n.Profile.personalInfo)
 
             DepthCardContainer {
                 HStack(spacing: 14) {

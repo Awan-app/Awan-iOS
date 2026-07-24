@@ -55,7 +55,8 @@ final class HomeRepositoryWriteTests: XCTestCase {
                     end: "2026-07-22T13:00:00",
                     status: "SCHEDULED",
                     locked: false,
-                    zoneId: nil
+                    zoneId: nil,
+                    taskID: task.id
                 )
             ],
             deleteFails: false
@@ -67,7 +68,7 @@ final class HomeRepositoryWriteTests: XCTestCase {
             remoteDataSource: remote
         )
 
-        var iterator = repository.observeSessions(taskIDs: [task.id]).values.makeAsyncIterator()
+        var iterator = repository.observeSessions(for: date(hour: 0)).values.makeAsyncIterator()
         let cachedEmission = try await iterator.next()
         let remoteEmission = try await iterator.next()
         let added = Session(
@@ -87,6 +88,66 @@ final class HomeRepositoryWriteTests: XCTestCase {
             Set(localMutationEmission?.map(\.id) ?? []),
             [remoteID, added.id]
         )
+        let requestedDates = await remote.requestedSessionDates()
+        XCTAssertEqual(requestedDates, ["2026-07-22"])
+    }
+
+    func testTaskFetchForDateUsesCachedSessionsAndExcludesOtherDays() async throws {
+        let selectedTask = try AwanTask(
+            id: UUID(),
+            title: "Selected day",
+            duration: TaskDuration(minutes: 30),
+            isSplittable: false
+        )
+        let otherTask = try AwanTask(
+            id: UUID(),
+            title: "Other day",
+            duration: TaskDuration(minutes: 30),
+            isSplittable: false
+        )
+        let container = try makeContainer()
+        let sessions = SwiftDataSessionDataSource(modelContainer: container)
+        let tasks = SwiftDataTaskDataSource(modelContainer: container)
+        let profiles = SwiftDataUserProfileDataSource(modelContainer: container)
+        try await tasks.addTask(selectedTask)
+        try await tasks.addTask(otherTask)
+        try await sessions.addSession(
+            Session(
+                id: UUID(),
+                taskID: selectedTask.id,
+                zoneID: nil,
+                timeRange: try TimeRange(
+                    start: date(day: 22, hour: 9),
+                    end: date(day: 22, hour: 10)
+                ),
+                blocking: false,
+                status: .planned
+            )
+        )
+        try await sessions.addSession(
+            Session(
+                id: UUID(),
+                taskID: otherTask.id,
+                zoneID: nil,
+                timeRange: try TimeRange(
+                    start: date(day: 23, hour: 9),
+                    end: date(day: 23, hour: 10)
+                ),
+                blocking: false,
+                status: .planned
+            )
+        )
+        try await profiles.replaceProfile(profile())
+        let repository = DefaultTaskRepository(
+            localDataSource: tasks,
+            localSessionDataSource: sessions,
+            localProfileDataSource: profiles,
+            remoteTaskDataSource: UnavailableRemoteTaskDataSource()
+        )
+
+        let selected = try await repository.fetchTasks(for: date(day: 22, hour: 0))
+
+        XCTAssertEqual(selected, [selectedTask])
     }
 
     func testSessionDeleteFailureLeavesLocalCacheUnchanged() async throws {
@@ -152,11 +213,11 @@ final class HomeRepositoryWriteTests: XCTestCase {
         )
     }
 
-    private func date(hour: Int) -> Date {
+    private func date(day: Int = 22, hour: Int) -> Date {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = .gmt
         return calendar.date(
-            from: DateComponents(year: 2026, month: 7, day: 22, hour: hour)
+            from: DateComponents(year: 2026, month: 7, day: day, hour: hour)
         ) ?? .distantPast
     }
 
@@ -173,6 +234,7 @@ private enum RepositoryWriteTestError: Error {
 
 private actor TestRemoteSessionDataSource: RemoteSessionDataSourceProtocol {
     private var deletedIDs: [UUID] = []
+    private var requestedDates: [String] = []
     private let sessions: [SessionResponseDTO]
     private let deleteFails: Bool
 
@@ -182,6 +244,19 @@ private actor TestRemoteSessionDataSource: RemoteSessionDataSourceProtocol {
     }
 
     func deletedSessionIDs() -> [UUID] { deletedIDs }
+
+    func requestedSessionDates() -> [String] { requestedDates }
+
+    func getSessions(date: String) -> [SessionResponseDTO] {
+        requestedDates.append(date)
+        return sessions
+    }
+    func getSessions(
+        startDate: String,
+        endDate: String
+    ) -> [String: [SessionResponseDTO]] {
+        [startDate: sessions]
+    }
 
     func deleteSession(sessionID: UUID) throws {
         deletedIDs.append(sessionID)
@@ -212,4 +287,59 @@ private actor TestRemoteSessionDataSource: RemoteSessionDataSourceProtocol {
         throw RepositoryWriteTestError.remoteFailure
     }
     func getTaskSessions(taskID: UUID) -> [SessionResponseDTO] { sessions }
+}
+
+private struct UnavailableRemoteTaskDataSource: RemoteTaskDataSource {
+    func getTasks(date: String) async throws -> [TaskWithSessionsResponseDTO] {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func getTasks(
+        startDate: String,
+        endDate: String
+    ) async throws -> [String: [TaskWithSessionsResponseDTO]] {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func createTask(_ request: CreateTaskRequestDTO) async throws -> TaskInfoResponseDTO {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func getTask(taskID: UUID) async throws -> TaskInfoResponseDTO {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func updateTask(
+        taskID: UUID,
+        request: UpdateTaskRequestDTO
+    ) async throws -> TaskInfoResponseDTO {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func moveTask(
+        taskID: UUID,
+        request: MoveTaskRequestDTO
+    ) async throws -> TaskInfoResponseDTO {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func deleteTask(taskID: UUID, cascade: Bool) async throws {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func addDependency(taskID: UUID, request: AddDependencyRequestDTO) async throws {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func removeDependency(taskID: UUID, dependsOnTaskID: UUID) async throws {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func listDependencies(taskID: UUID) async throws -> [TaskInfoResponseDTO] {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func listDependents(taskID: UUID) async throws -> [TaskInfoResponseDTO] {
+        throw RepositoryWriteTestError.remoteFailure
+    }
 }

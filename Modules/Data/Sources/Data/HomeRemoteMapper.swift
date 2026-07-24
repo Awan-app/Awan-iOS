@@ -58,12 +58,11 @@ enum HomeRemoteMapper {
 
     static func session(
         _ dto: SessionResponseDTO,
-        taskID: UUID,
         timeZoneID: String
     ) throws -> Session {
         Session(
             id: dto.id,
-            taskID: taskID,
+            taskID: dto.taskID,
             zoneID: dto.zoneId,
             timeRange: try TimeRange(
                 start: parseDateTime(dto.start, timeZoneID: timeZoneID),

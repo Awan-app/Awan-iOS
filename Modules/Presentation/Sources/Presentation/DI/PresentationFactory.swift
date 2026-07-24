@@ -85,7 +85,4 @@ public struct PresentationFactory {
         )
     }
 
-//    func makeAddRealTaskView() -> some View {
-//        AddRealTask(viewModel: onboardingViewModel)
-//    }
 }

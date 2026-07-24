@@ -23,62 +23,77 @@ public struct DefaultSessionRepository: SessionRepository {
     public func fetchSessions() async throws -> [Session] {
         try await localDataSource.fetchSessions()
     }
-    public func observeSessions(taskIDs: [UUID]) -> AnyPublisher<[Session], Error> {
-        let local = localDataSource.observeSessions()
-            .map { sessions in
-                sessions.filter { taskIDs.contains($0.taskID) }
+
+    public func fetchSessions(for date: Date) async throws -> [Session] {
+        let profile = try await requireProfile()
+        let dayKey = LocalDateKey.value(
+            for: date,
+            timeZoneID: profile.preferences.timezone
+        )
+        return try await localDataSource.fetchSessions()
+            .filter {
+                LocalDateKey.value(
+                    for: $0.timeRange.start,
+                    timeZoneID: profile.preferences.timezone
+                ) == dayKey
             }
-            .eraseToAnyPublisher()
-        let remote = AsyncValuePublisher.make {
-            try await loadRemoteSessions(taskIDs: taskIDs)
-        }
-        .catch { _ in Empty<[Session], Error>() }
-        return local
-            .merge(with: remote)
-            .removeDuplicates()
+            .sorted(by: sessionOrder)
+    }
+
+    public func observeSessions(for date: Date) -> AnyPublisher<[Session], Error> {
+        AsyncValuePublisher.make { try await requireProfile() }
+            .flatMap { profile -> AnyPublisher<[Session], Error> in
+                let dayKey = LocalDateKey.value(
+                    for: date,
+                    timeZoneID: profile.preferences.timezone
+                )
+                let local = localDataSource.observeSessions()
+                    .map { sessions in
+                        sessions
+                            .filter {
+                                LocalDateKey.value(
+                                    for: $0.timeRange.start,
+                                    timeZoneID: profile.preferences.timezone
+                                ) == dayKey
+                            }
+                            .sorted(by: sessionOrder)
+                    }
+                    .eraseToAnyPublisher()
+                let remote = AsyncValuePublisher.make {
+                    try await loadRemoteSessions(
+                        dayKey: dayKey,
+                        profile: profile
+                    )
+                }
+                .catch { _ in Empty<[Session], Error>() }
+                .eraseToAnyPublisher()
+                return local
+                    .merge(with: remote)
+                    .removeDuplicates()
+                    .eraseToAnyPublisher()
+            }
             .eraseToAnyPublisher()
     }
 
-    private func loadRemoteSessions(taskIDs: [UUID]) async throws -> [Session] {
-        guard let profile = try await localProfileDataSource.fetchProfile() else {
-            throw RemoteDomainMappingError.missingField("cachedProfile")
-        }
-        var sessionsByTaskID: [UUID: [Session]] = [:]
-        for start in stride(from: 0, to: taskIDs.count, by: 6) {
-            let end = min(start + 6, taskIDs.count)
-            let batch = Array(taskIDs[start..<end])
-            let values = try await withThrowingTaskGroup(
-                of: (UUID, [Session]).self
-            ) { group in
-                for taskID in batch {
-                    group.addTask {
-                        let dtos = try await remoteDataSource.getTaskSessions(taskID: taskID)
-                        return (
-                            taskID,
-                            try dtos.map {
-                                try HomeRemoteMapper.session(
-                                    $0,
-                                    taskID: taskID,
-                                    timeZoneID: profile.preferences.timezone
-                                )
-                            }
-                        )
-                    }
-                }
-                var loaded: [(UUID, [Session])] = []
-                for try await value in group {
-                    loaded.append(value)
-                }
-                return loaded
+    private func loadRemoteSessions(
+        dayKey: String,
+        profile: UserProfile
+    ) async throws -> [Session] {
+        let sessions = try await remoteDataSource.getSessions(date: dayKey)
+            .map {
+                try HomeRemoteMapper.session(
+                    $0,
+                    timeZoneID: profile.preferences.timezone
+                )
             }
-            for (taskID, sessions) in values {
-                sessionsByTaskID[taskID] = sessions
-            }
-        }
-
-        let sessions = sessionsByTaskID.values.flatMap { $0 }
-        try await localDataSource.replaceAllSessions(sessions)
-        for taskID in taskIDs {
+            .sorted(by: sessionOrder)
+        try await localDataSource.replaceSessions(
+            sessions,
+            forDay: dayKey,
+            timeZoneID: profile.preferences.timezone
+        )
+        let sessionsByTaskID = Dictionary(grouping: sessions, by: \.taskID)
+        for taskID in sessionsByTaskID.keys {
             guard let task = try await localTaskDataSource.fetchTask(id: taskID) else { continue }
             let inferredZoneID = sessionsByTaskID[taskID]?
                 .sorted { $0.timeRange.start < $1.timeRange.start }
@@ -90,6 +105,20 @@ public struct DefaultSessionRepository: SessionRepository {
             )
         }
         return sessions
+    }
+
+    private func requireProfile() async throws -> UserProfile {
+        guard let profile = try await localProfileDataSource.fetchProfile() else {
+            throw RemoteDomainMappingError.missingField("cachedProfile")
+        }
+        return profile
+    }
+
+    private func sessionOrder(_ lhs: Session, _ rhs: Session) -> Bool {
+        if lhs.timeRange.start != rhs.timeRange.start {
+            return lhs.timeRange.start < rhs.timeRange.start
+        }
+        return lhs.id.uuidString < rhs.id.uuidString
     }
     public func addSession(_ session: Session) async throws {
         try await localDataSource.addSession(session)
@@ -144,7 +173,6 @@ public struct DefaultSessionRepository: SessionRepository {
         }
         let accepted = try HomeRemoteMapper.session(
             response,
-            taskID: original.taskID,
             timeZoneID: timeZoneID
         )
         try await localDataSource.updateSession(accepted)

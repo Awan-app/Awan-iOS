@@ -39,6 +39,45 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
         XCTAssertTrue(remainingTasks.isEmpty)
     }
 
+    func testTaskUpsertUpdatesMatchingTasksAndPreservesOtherDays() async throws {
+        let source = SwiftDataTaskDataSource(modelContainer: try makeContainer())
+        let retained = try AwanTask(
+            id: UUID(),
+            title: "Retained from another day",
+            duration: TaskDuration(minutes: 30),
+            isSplittable: false
+        )
+        let current = try AwanTask(
+            id: UUID(),
+            title: "Old title",
+            duration: TaskDuration(minutes: 45),
+            isSplittable: false
+        )
+        let updated = try AwanTask(
+            id: current.id,
+            title: "Updated title",
+            duration: TaskDuration(minutes: 60),
+            isSplittable: true
+        )
+        let inserted = try AwanTask(
+            id: UUID(),
+            title: "New current-day task",
+            duration: TaskDuration(minutes: 20),
+            isSplittable: false
+        )
+        try await source.addTask(retained)
+        try await source.addTask(current)
+
+        try await source.upsertTasks([updated, inserted])
+
+        let tasksByID = Dictionary(
+            uniqueKeysWithValues: try await source.fetchTasks().map { ($0.id, $0) }
+        )
+        XCTAssertEqual(tasksByID[retained.id], retained)
+        XCTAssertEqual(tasksByID[current.id], updated)
+        XCTAssertEqual(tasksByID[inserted.id], inserted)
+    }
+
     func testTaskDependencyMutationsAndQueries() async throws {
         let source = SwiftDataTaskDataSource(modelContainer: try makeContainer())
         let repository = source
@@ -190,7 +229,11 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
         try await source.addSession(stale)
         try await source.addSession(retained)
 
-        try await source.replaceSessions([replacement], forDay: "2026-07-24")
+        try await source.replaceSessions(
+            [replacement],
+            forDay: "2026-07-24",
+            timeZoneID: TimeZone.current.identifier
+        )
 
         let sessions = try await source.fetchSessions()
         XCTAssertEqual(Set(sessions.map(\.id)), [retained.id, replacement.id])

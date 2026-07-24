@@ -8,7 +8,6 @@ struct LocalTaskRepositoryStub: TaskRepository {
     let sessionDataSource: any LocalSessionDataSource
 
     func fetchTasks() async throws -> [AwanTask] { try await dataSource.fetchTasks() }
-    func observeTasks() -> AnyPublisher<[AwanTask], Error> { dataSource.observeTasks() }
     func addTask(_ task: AwanTask) async throws { try await dataSource.addTask(task) }
     func updateTask(_ task: AwanTask) async throws { try await dataSource.updateTask(task) }
     func deleteTask(id: UUID) async throws {
@@ -34,11 +33,6 @@ struct LocalSessionRepositoryStub: SessionRepository {
     let dataSource: any LocalSessionDataSource
 
     func fetchSessions() async throws -> [Session] { try await dataSource.fetchSessions() }
-    func observeSessions(taskIDs: [UUID]) -> AnyPublisher<[Session], Error> {
-        dataSource.observeSessions()
-            .map { sessions in sessions.filter { taskIDs.contains($0.taskID) } }
-            .eraseToAnyPublisher()
-    }
     func addSession(_ session: Session) async throws { try await dataSource.addSession(session) }
     func updateSession(_ session: Session) async throws {
         try await dataSource.updateSession(session)

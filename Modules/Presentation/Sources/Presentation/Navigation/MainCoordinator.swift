@@ -36,7 +36,9 @@ public final class MainCoordinator: Coordinating {
     }
 
     public func present(sheet route: AnyHashable) {
-        presentedSheet = route.base as? MainRoute
+        if let mainRoute = route.base as? MainRoute {
+            presentedSheet = mainRoute
+        }
     }
 
     public func dismissSheet() {

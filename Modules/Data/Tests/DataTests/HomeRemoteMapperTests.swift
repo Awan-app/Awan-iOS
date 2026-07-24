@@ -34,9 +34,9 @@ final class HomeRemoteMapperTests: XCTestCase {
                 end: "2026-07-22T11:30:00",
                 status: "IN_PROGRESS",
                 locked: true,
-                zoneId: UUID()
+                zoneId: UUID(),
+                taskID: taskID
             ),
-            taskID: taskID,
             timeZoneID: "Africa/Cairo"
         )
         var calendar = Calendar(identifier: .gregorian)

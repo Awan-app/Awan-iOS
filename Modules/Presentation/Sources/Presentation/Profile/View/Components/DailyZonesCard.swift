@@ -17,7 +17,7 @@ struct DailyZonesCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeaderLabel(title: "DAILY ZONES", accentColor: AppColors.accentPurple)
+            SectionHeaderLabel(title: L10n.Profile.dailyZones, accentColor: AppColors.accentPurple)
 
             DepthCardContainer {
                 Button(action: onTap) {
