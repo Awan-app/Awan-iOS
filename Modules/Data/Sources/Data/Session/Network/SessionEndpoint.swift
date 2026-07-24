@@ -10,12 +10,11 @@ import AwaNetwork
 
 enum SessionEndpoint: APIEndpoint {
 
-    case getSessionsByDate(String)
-    case getSessionsByDateRange(startDate: String, endDate: String)
-
     // MARK: - Session CRUD
 
     case getSession(sessionID: UUID)
+    case getSessionsByDate(date: String)
+    case getSessionsByDateRange(startDate: String, endDate: String)
     case updateSession(sessionID: UUID, UpdateSessionRequestDTO)
     case updateSessionStatus(sessionID: UUID, status: String)
     case lockSession(sessionID: UUID)
@@ -35,12 +34,12 @@ enum SessionEndpoint: APIEndpoint {
 
     var path: String {
         switch self {
+        case .getSession(let sessionID):
+            return "/sessions/\(sessionID.uuidString)"
         case .getSessionsByDate(let date):
             return "/sessions/date/\(date)"
         case .getSessionsByDateRange:
             return "/sessions/range"
-        case .getSession(let sessionID):
-            return "/sessions/\(sessionID.uuidString)"
         case .updateSession(let sessionID, _):
             return "/sessions/\(sessionID.uuidString)"
         case .updateSessionStatus(let sessionID, _):
@@ -60,8 +59,7 @@ enum SessionEndpoint: APIEndpoint {
 
     var method: HTTPMethod {
         switch self {
-        case .getSessionsByDate, .getSessionsByDateRange,
-             .getSession, .getTaskSessions:
+        case .getSession, .getTaskSessions, .getSessionsByDate, .getSessionsByDateRange:
             return .get
         case .createTaskWithSessions:
             return .post

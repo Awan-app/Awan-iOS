@@ -4,8 +4,8 @@ import Foundation
 public protocol TaskRepository: Sendable {
     func fetchTasks() async throws -> [AwanTask]
     func fetchTasks(for date: Date) async throws -> [AwanTask]
+    func observeTasks() -> AnyPublisher<[AwanTask], Error>
     func observeTasks(for date: Date) -> AnyPublisher<[AwanTask], Error>
-    func addTask(_ task: AwanTask) async throws
     func updateTask(_ task: AwanTask) async throws
     func deleteTask(id: UUID) async throws
     func deleteAllTasks() async throws
@@ -13,6 +13,7 @@ public protocol TaskRepository: Sendable {
     func removeDependency(taskID: UUID, dependsOnID: UUID) async throws
     func fetchDependencies(taskID: UUID) async throws -> [AwanTask]
     func fetchDependents(taskID: UUID) async throws -> [AwanTask]
+    func addTask(_ task: AwanTask, startsAt: Date?, durationMinutes: Int, timeZoneID: String) async throws -> (task: AwanTask, sessions: [Session])
 }
 
 public extension TaskRepository {

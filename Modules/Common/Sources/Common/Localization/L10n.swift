@@ -353,6 +353,112 @@ public enum L10n {
                 minutes
             )
         }
+        public static var addTaskTitle: String {
+            L10n.currentBundle.localizedString(forKey: "home.add_task_title", value: nil, table: "Localizable")
+        }
+
+        public static var tabWithAwan: String {
+            L10n.currentBundle.localizedString(forKey: "home.tab_with_awan", value: nil, table: "Localizable")
+        }
+
+        public static var tabManual: String {
+            L10n.currentBundle.localizedString(forKey: "home.tab_manual", value: nil, table: "Localizable")
+        }
+
+        public static var quickAddHeader: String {
+            L10n.currentBundle.localizedString(forKey: "home.quick_add_header", value: nil, table: "Localizable")
+        }
+
+        public static var quickAddHeadline: String {
+            L10n.currentBundle.localizedString(forKey: "home.quick_add_headline", value: nil, table: "Localizable")
+        }
+
+        public static var quickAddCaption: String {
+            L10n.currentBundle.localizedString(forKey: "home.quick_add_caption", value: nil, table: "Localizable")
+        }
+
+        public static var fieldTask: String {
+            L10n.currentBundle.localizedString(forKey: "home.field_task", value: nil, table: "Localizable")
+        }
+
+        public static var orSeparator: String {
+            L10n.currentBundle.localizedString(forKey: "home.or_separator", value: nil, table: "Localizable")
+        }
+
+        public static var tellAwan: String {
+            L10n.currentBundle.localizedString(forKey: "home.tell_awan", value: nil, table: "Localizable")
+        }
+
+        public static var tapToSpeak: String {
+            L10n.currentBundle.localizedString(forKey: "home.tap_to_speak", value: nil, table: "Localizable")
+        }
+
+        public static var listeningState: String {
+            L10n.currentBundle.localizedString(forKey: "home.listening_state", value: nil, table: "Localizable")
+        }
+
+        public static var chipSmartDuration: String {
+            L10n.currentBundle.localizedString(forKey: "home.chip_smart_duration", value: nil, table: "Localizable")
+        }
+
+        public static var chipBestZone: String {
+            L10n.currentBundle.localizedString(forKey: "home.chip_best_zone", value: nil, table: "Localizable")
+        }
+
+        public static var chipAutoScheduled: String {
+            L10n.currentBundle.localizedString(forKey: "home.chip_auto_scheduled", value: nil, table: "Localizable")
+        }
+
+        public static var btnPlanItForMe: String {
+            L10n.currentBundle.localizedString(forKey: "home.btn_plan_it_for_me", value: nil, table: "Localizable")
+        }
+
+        public static var fieldDescription: String {
+            L10n.currentBundle.localizedString(forKey: "home.field_description", value: nil, table: "Localizable")
+        }
+
+        public static var fieldDescriptionPlaceholder: String {
+            L10n.currentBundle.localizedString(forKey: "home.field_description_placeholder", value: nil, table: "Localizable")
+        }
+
+        public static var fieldStartsAt: String {
+            L10n.currentBundle.localizedString(forKey: "home.field_starts_at", value: nil, table: "Localizable")
+        }
+
+        public static var fieldStartsAtHint: String {
+            L10n.currentBundle.localizedString(forKey: "home.field_starts_at_hint", value: nil, table: "Localizable")
+        }
+
+        public static func stepperHours(_ hours: Int) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: "home.stepper_hours",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                hours
+            )
+        }
+
+        public static var toggleMandatory: String {
+            L10n.currentBundle.localizedString(forKey: "home.toggle_mandatory", value: nil, table: "Localizable")
+        }
+
+        public static var toggleAllowSplitting: String {
+            L10n.currentBundle.localizedString(forKey: "home.toggle_allow_splitting", value: nil, table: "Localizable")
+        }
+
+        public static var btnAddManualTask: String {
+            L10n.currentBundle.localizedString(forKey: "home.btn_add_manual_task", value: nil, table: "Localizable")
+        }
+
+        public static var buildItYourWay: String {
+            L10n.currentBundle.localizedString(forKey: "home.build_it_your_way", value: nil, table: "Localizable")
+        }
+
+        public static var estimatedDuration: String {
+            L10n.currentBundle.localizedString(forKey: "home.estimated_duration", value: nil, table: "Localizable")
+        }
         public static var fixed: String { L10n.currentBundle.localizedString(forKey: "home.fixed", value: nil, table: "Localizable") }
         public static var emptyTimelineSubtitle: String {
             L10n.currentBundle.localizedString(forKey: "home.empty_timeline_subtitle", value: nil, table: "Localizable")
