@@ -22,7 +22,8 @@ public final class NetworkClient: NetworkServiceProtocol, @unchecked Sendable {
         configuration.timeoutIntervalForRequest = 30
         configuration.timeoutIntervalForResource = 60
 
-        session = Session(configuration: configuration)
+        session = Session(configuration: configuration,
+        eventMonitors: [NetworkLogger()])
         authenticationInterceptor = AuthenticationInterceptor(
             authenticator: AuthSessionAuthenticator(),
             credential: AuthSessionStore.session,

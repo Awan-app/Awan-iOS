@@ -7,6 +7,8 @@ struct HomeHeaderView: View {
     let streakCount: Int
     let rewardPoints: Int
 
+    @Environment(LanguageManager.self) private var languageManager
+
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top, spacing: 12) {
@@ -20,12 +22,12 @@ struct HomeHeaderView: View {
                     HStack(spacing: 10) {
                         HomeStatChip(
                             icon: "flame.fill",
-                            value: streakCount.formatted(),
+                            value: streakCount.formatted(.number.locale(languageManager.locale)),
                             color: AppColors.warning
                         )
                         HomeStatChip(
                             icon: "star.fill",
-                            value: rewardPoints.formatted(),
+                            value: rewardPoints.formatted(.number.locale(languageManager.locale)),
                             color: AppColors.reward
                         )
                     }
@@ -41,14 +43,14 @@ struct HomeHeaderView: View {
                     .accessibilityHidden(true)
             }
 
-            Text(selectedDay.formatted(.dateTime.weekday(.wide).month(.wide).day()))
+            Text(selectedDay.formatted(.dateTime.weekday(.wide).month(.wide).day().locale(languageManager.locale)))
                 .font(AppFonts.title3Black)
                 .foregroundStyle(AppColors.textPrimary)
         }
     }
 
     private var greeting: String {
-        let hour = Calendar.current.component(.hour, from: Date())
+        let hour = languageManager.calendar.component(.hour, from: Date())
         let base: String
         switch hour {
         case 5..<12:

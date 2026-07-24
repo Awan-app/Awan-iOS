@@ -4,7 +4,7 @@ public protocol ResetScheduleSimulationUseCase: Sendable {
     func execute(on selectedDay: Date) async throws -> ScheduleWorkspace
 }
 
-public struct DefaultResetScheduleSimulationUseCase: ResetScheduleSimulationUseCase {
+public struct ResetScheduleSimulationUseCaseImpl: ResetScheduleSimulationUseCase {
     private let workspaceProvider: any ScheduleWorkspaceProviding
     private let taskRepository: any TaskRepository
     private let goalRepository: any GoalRepository

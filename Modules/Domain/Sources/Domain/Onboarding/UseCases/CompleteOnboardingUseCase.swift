@@ -2,7 +2,7 @@ public protocol CompleteOnboardingUseCase: Sendable {
     func execute(_ request: CompleteOnboardingRequest) async throws -> UserProfile
 }
 
-public struct DefaultCompleteOnboardingUseCase: CompleteOnboardingUseCase {
+public struct CompleteOnboardingUseCaseImpl: CompleteOnboardingUseCase {
     private let repository: any OnboardingRepositoryProtocol
 
     public init(repository: any OnboardingRepositoryProtocol) {
