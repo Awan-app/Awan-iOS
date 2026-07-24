@@ -2886,6 +2886,104 @@
           }
         }
       }
+    },
+    "home.task_details": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Task details" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "تفاصيل المهمة" } }
+      }
+    },
+    "home.description": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Description" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "الوصف" } }
+      }
+    },
+    "home.status": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Status" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "الحالة" } }
+      }
+    },
+    "home.duration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Duration" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "المدة" } }
+      }
+    },
+    "home.points": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Points" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "النقاط" } }
+      }
+    },
+    "home.points_value": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%lld points" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "%lld نقطة" } }
+      }
+    },
+    "home.mandatory": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Mandatory" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "إلزامية" } }
+      }
+    },
+    "home.can_split": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Can split into sessions" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "يمكن تقسيمها إلى جلسات" } }
+      }
+    },
+    "home.yes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Yes" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "نعم" } }
+      }
+    },
+    "home.no": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "No" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "لا" } }
+      }
+    },
+    "home.status_pending": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Pending" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "قيد الانتظار" } }
+      }
+    },
+    "home.status_in_progress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "In progress" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "قيد التنفيذ" } }
+      }
+    },
+    "home.status_completed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Completed" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "مكتملة" } }
+      }
+    },
+    "home.status_cancelled": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Cancelled" } },
+        "ar": { "stringUnit": { "state": "translated", "value": "ملغاة" } }
+      }
     }
   },
   "version": "1.0"

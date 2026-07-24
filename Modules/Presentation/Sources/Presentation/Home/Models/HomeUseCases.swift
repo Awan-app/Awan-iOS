@@ -34,18 +34,15 @@ public struct HomeReadUseCases: Sendable {
         let schedulingPublisher = profilePublisher
             .first()
             .flatMap { _ in
-                tasks.observe()
-                    .map { tasks in
-                        sessions.observe(taskIDs: tasks.map(\.id))
-                            .map { (tasks: tasks, sessions: $0) }
-                            .eraseToAnyPublisher()
-                    }
-                    .switchToLatest()
-                    .combineLatest(zones.observe(for: date))
-                    .map { taskSessions, zones in
+                Publishers.CombineLatest3(
+                    tasks.observe(for: date),
+                    sessions.observe(for: date),
+                    zones.observe(for: date)
+                )
+                    .map { tasks, sessions, zones in
                         (
-                            tasks: taskSessions.tasks,
-                            sessions: taskSessions.sessions,
+                            tasks: tasks,
+                            sessions: sessions,
                             zones: zones
                         )
                     }

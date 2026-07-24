@@ -1,13 +1,14 @@
 import Combine
+import Foundation
 
 public protocol FetchTasksUseCase: Sendable {
-    func execute() async throws -> [AwanTask]
-    func observe() -> AnyPublisher<[AwanTask], Error>
+    func execute(for date: Date) async throws -> [AwanTask]
+    func observe(for date: Date) -> AnyPublisher<[AwanTask], Error>
 }
 
 public extension FetchTasksUseCase {
-    func observe() -> AnyPublisher<[AwanTask], Error> {
-        AsyncValuePublisher.make { try await execute() }
+    func observe(for date: Date) -> AnyPublisher<[AwanTask], Error> {
+        AsyncValuePublisher.make { try await execute(for: date) }
     }
 }
 
@@ -18,11 +19,11 @@ public struct DefaultFetchTasksUseCase: FetchTasksUseCase {
         self.repository = repository
     }
 
-    public func execute() async throws -> [AwanTask] {
-        try await repository.fetchTasks()
+    public func execute(for date: Date) async throws -> [AwanTask] {
+        try await repository.fetchTasks(for: date)
     }
 
-    public func observe() -> AnyPublisher<[AwanTask], Error> {
-        repository.observeTasks()
+    public func observe(for date: Date) -> AnyPublisher<[AwanTask], Error> {
+        repository.observeTasks(for: date)
     }
 }
