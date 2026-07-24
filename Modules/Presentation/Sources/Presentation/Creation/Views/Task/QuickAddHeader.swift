@@ -2,22 +2,24 @@ import Common
 import SwiftUI
 
 struct QuickAddHeader: View {
-    @State private var isMascotFloating: Bool = false
+    let isAwanSchedulingEnabled: Bool
+
+    @State private var isMascotFloating = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(L10n.Home.quickAddHeader.uppercased())
+            Text(header.uppercased())
                 .font(AppFonts.captionHeavy)
                 .foregroundStyle(AppColors.accentBlue)
 
             HStack(alignment: .center, spacing: 8) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(L10n.Home.quickAddHeadline)
+                    Text(headline)
                         .font(.system(size: 24, weight: .black, design: .rounded))
                         .foregroundStyle(AppColors.brandDarkBlue)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Text(L10n.Home.quickAddCaption)
+                    Text(caption)
                         .font(AppFonts.subheadlineSemibold)
                         .foregroundStyle(AppColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -33,12 +35,34 @@ struct QuickAddHeader: View {
                     .offset(y: isMascotFloating ? -6 : 6)
                     .onAppear {
                         withAnimation(
-                            .easeInOut(duration: 2.0).repeatForever(autoreverses: true)
+                            .easeInOut(duration: 2).repeatForever(autoreverses: true)
                         ) {
                             isMascotFloating = true
                         }
                     }
             }
         }
+        .animation(
+            .easeInOut(duration: 0.2),
+            value: isAwanSchedulingEnabled
+        )
+    }
+
+    private var header: String {
+        isAwanSchedulingEnabled
+            ? L10n.Home.quickAddHeader
+            : L10n.Home.manualAddHeader
+    }
+
+    private var headline: String {
+        isAwanSchedulingEnabled
+            ? L10n.Home.quickAddHeadline
+            : L10n.Home.manualAddHeadline
+    }
+
+    private var caption: String {
+        isAwanSchedulingEnabled
+            ? L10n.Home.quickAddCaption
+            : L10n.Home.manualAddCaption
     }
 }

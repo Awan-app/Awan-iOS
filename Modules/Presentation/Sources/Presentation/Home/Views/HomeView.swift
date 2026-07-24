@@ -67,27 +67,6 @@ struct HomeView: View {
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
         }
-        .sheet(isPresented: addTaskBinding) {
-            AddTaskSheet(
-                zones: state.success?.zones ?? [],
-                selectedDay: state.selectedDay,
-                onSubmit: { title, description, duration, zoneID, isSplittable, mandatory, startsAt in
-                    viewModel.send(
-                        .createTask(
-                            title: title,
-                            description: description,
-                            durationMinutes: duration,
-                            zoneID: zoneID,
-                            isSplittable: isSplittable,
-                            mandatory: mandatory,
-                            startsAt: startsAt
-                        )
-                    )
-                }
-            )
-            .presentationDetents([.large])
-            .presentationDragIndicator(.visible)
-        }
         .alert(L10n.Home.errorTitle, isPresented: errorBinding) {
             Button(L10n.Common.gotIt) { viewModel.send(.dismissError) }
         } message: {
@@ -115,9 +94,7 @@ struct HomeView: View {
                     scheduledMinutes: success.scheduledMinutes,
                     completedCount: success.completedSessionCount,
                     totalCount: success.totalSessionCount,
-                    taskAllocations: success.taskAllocations,
-                    onAddTask: { viewModel.send(.presentAddTask) },
-                    onAddGoal: {}
+                    taskAllocations: success.taskAllocations
                 )
 
                 HomeDayTimelineView(
@@ -188,10 +165,4 @@ struct HomeView: View {
         )
     }
 
-    private var addTaskBinding: Binding<Bool> {
-        Binding(
-            get: { viewModel.state.isAddTaskPresented },
-            set: { if !$0 { viewModel.send(.dismissAddTask) } }
-        )
-    }
 }

@@ -377,6 +377,18 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "home.quick_add_caption", value: nil, table: "Localizable")
         }
 
+        public static var manualAddHeader: String {
+            L10n.currentBundle.localizedString(forKey: "home.manual_add_header", value: nil, table: "Localizable")
+        }
+
+        public static var manualAddHeadline: String {
+            L10n.currentBundle.localizedString(forKey: "home.manual_add_headline", value: nil, table: "Localizable")
+        }
+
+        public static var manualAddCaption: String {
+            L10n.currentBundle.localizedString(forKey: "home.manual_add_caption", value: nil, table: "Localizable")
+        }
+
         public static var fieldTask: String {
             L10n.currentBundle.localizedString(forKey: "home.field_task", value: nil, table: "Localizable")
         }
