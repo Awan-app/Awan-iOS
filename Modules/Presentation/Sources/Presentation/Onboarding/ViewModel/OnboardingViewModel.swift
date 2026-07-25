@@ -271,29 +271,29 @@ public final class OnboardingViewModel: ZoneManaging {
         [
             SuggestedZone(
                 id: UUID(),
-                name: "Study",
+                name: "Morning",
                 startTime: "7:00 AM",
-                endTime: "9:30 AM",
+                endTime: "9:00 AM",
                 colorRed: 0.3, colorGreen: 0.7, colorBlue: 0.7
             ),
             SuggestedZone(
                 id: UUID(),
                 name: "Work",
                 startTime: "9:30 AM",
-                endTime: "1:00 PM",
+                endTime: "5:30 PM",
                 colorRed: 0.3, colorGreen: 0.5, colorBlue: 0.8
             ),
             SuggestedZone(
                 id: UUID(),
                 name: "Personal",
-                startTime: "1:00 PM",
-                endTime: "6:00 PM",
+                startTime: "6:00 PM",
+                endTime: "9:00 PM",
                 colorRed: 0.9, colorGreen: 0.6, colorBlue: 0.3
             ),
             SuggestedZone(
                 id: UUID(),
                 name: "Play",
-                startTime: "6:00 PM",
+                startTime: "9:30 PM",
                 endTime: "11:00 PM",
                 colorRed: 0.85, colorGreen: 0.4, colorBlue: 0.5
             )

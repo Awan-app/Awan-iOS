@@ -9,6 +9,7 @@ import SwiftUI
 import Common
 
 struct OnboardingWelcomeView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(AppCoordinator.self) private var appCoordinator
     @State private var viewModel: OnboardingViewModel
 
@@ -31,14 +32,20 @@ struct OnboardingWelcomeView: View {
         .padding(.horizontal, 24)
         .padding(.bottom, 24)
         .background(
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.skyGradientTop, location: 0.0),
-                    .init(color: AppColors.skyGradientBottom, location: 0.5)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            Group {
+                if colorScheme == .dark {
+                    AppColors.screenBackground
+                } else {
+                    LinearGradient(
+                        stops: [
+                            .init(color: AppColors.skyGradientTop, location: 0.0),
+                            .init(color: AppColors.skyGradientBottom, location: 0.5)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+            }
             .ignoresSafeArea()
         )
     }
@@ -77,18 +84,6 @@ struct OnboardingWelcomeView: View {
                     appCoordinator.onboardingCoordinator.push(.yourName)
                 }
             )
-
-            Button {
-                viewModel.skipOnboarding()
-            } label: {
-                HStack(spacing: 4) {
-                    Text(L10n.Onboarding.skipSetup)
-                        .font(AppFonts.subheadlineHeavy)
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 12, weight: .bold))
-                }
-                .foregroundStyle(AppColors.brandDarkBlue)
-            }
         }
     }
 }

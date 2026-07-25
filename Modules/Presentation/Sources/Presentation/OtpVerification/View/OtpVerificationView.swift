@@ -11,6 +11,7 @@ import SwiftUI
 struct OtpVerificationView: View {
     @State private var viewModel: OtpVerificationViewModel
     @FocusState private var focusedDigitIndex: Int?
+    @Environment(\.colorScheme) private var colorScheme
 
     init(viewModel: OtpVerificationViewModel) {
         self.viewModel = viewModel
@@ -19,11 +20,17 @@ struct OtpVerificationView: View {
     public var body: some View {
         ZStack {
             // Background Gradient
-            LinearGradient(
-                colors: [AppColors.otpTopColor, AppColors.otpWhite],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            Group {
+                if colorScheme == .dark {
+                    AppColors.screenBackground
+                } else {
+                    LinearGradient(
+                        colors: [AppColors.otpTopColor, AppColors.otpWhite],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+            }
             .ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -73,7 +80,7 @@ struct OtpVerificationView: View {
                                 .focused($focusedDigitIndex, equals: index)
                                 .disabled(viewModel.isInputDisabled)
                                 .frame(width: 44, height: 52)
-                                .background(AppColors.otpWhite)
+                                .background(colorScheme == .dark ? AppColors.surface : AppColors.otpWhite)
                                 .cornerRadius(12)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
