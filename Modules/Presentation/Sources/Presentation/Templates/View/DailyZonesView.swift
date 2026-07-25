@@ -3,6 +3,7 @@ import Common
 
 public struct DailyZonesView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppearanceManager.self) private var appearanceManager
     @Bindable var viewModel: DailyZonesViewModel
     
     @State private var draggedZone: SuggestedZone?
@@ -59,9 +60,11 @@ public struct DailyZonesView: View {
         }
         .sheet(isPresented: $viewModel.isAddZoneSheetPresented) {
             AddZoneSheet(viewModel: viewModel)
+                .preferredColorScheme(appearanceManager.currentAppearance.colorScheme)
         }
         .sheet(item: $viewModel.editingZone) { zone in
             EditZoneTimeSheet(viewModel: viewModel, zone: zone)
+                .preferredColorScheme(appearanceManager.currentAppearance.colorScheme)
         }
         .background(AppColors.screenBackground.ignoresSafeArea())
     }

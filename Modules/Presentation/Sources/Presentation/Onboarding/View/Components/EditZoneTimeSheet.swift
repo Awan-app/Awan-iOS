@@ -11,6 +11,7 @@ import Domain
 
 struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) var colorScheme
     @Bindable var viewModel: VM
     let zone: SuggestedZone
 
@@ -73,15 +74,22 @@ struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
             }
             .onAppear { validateOverlap() }
             .background(
-                LinearGradient(
-                    stops: [
-                        .init(color: AppColors.skyGradientTop, location: 0.0),
-                        .init(color: AppColors.skyGradientBottom, location: 0.5),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                Group {
+                    if colorScheme == .dark {
+                        AppColors.screenBackground
+                            .ignoresSafeArea()
+                    } else {
+                        LinearGradient(
+                            stops: [
+                                .init(color: AppColors.skyGradientTop, location: 0.0),
+                                .init(color: AppColors.skyGradientBottom, location: 0.5),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .ignoresSafeArea()
+                    }
+                }
             )
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
