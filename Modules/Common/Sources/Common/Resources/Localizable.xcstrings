@@ -1,13 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     "app_language" : {
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App language (ar)"
+            "value" : "لغة التطبيق"
           }
         },
         "en" : {
@@ -24,7 +27,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حفظ"
+            "value" : "إلغاء"
           }
         },
         "en" : {
@@ -41,7 +44,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إلغاء"
+            "value" : "إغلاق"
           }
         },
         "en" : {
@@ -126,7 +129,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إغلاق"
+            "value" : "حفظ"
           }
         },
         "en" : {
@@ -412,6 +415,12 @@
     "home.btn_plan_it_for_me" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خطط لي"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -423,6 +432,12 @@
     "home.build_it_your_way" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خططها بطريقتك"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -468,6 +483,12 @@
     "home.chip_auto_scheduled" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مجدولة تلقائياً"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -479,6 +500,12 @@
     "home.chip_best_zone" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أفضل فترة"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -490,6 +517,12 @@
     "home.chip_smart_duration" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مدة ذكية"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -504,7 +537,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تخطي الإعداد"
+            "value" : "%lld من %lld مكتملة"
           }
         },
         "en" : {
@@ -521,7 +554,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ماذا تحب أن أناديك؟"
+            "value" : "حذف الجلسة"
           }
         },
         "en" : {
@@ -538,7 +571,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "فقط اسمك — سأستخدمه لتحيتك كل صباح."
+            "value" : "هل تريد حذف هذه الجلسة المجدولة؟ ستبقى المهمة متاحة."
           }
         },
         "en" : {
@@ -589,7 +622,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "الاسم الأول"
+            "value" : "أضف مهمة أو هدفاً لتبدأ خطتك."
           }
         },
         "en" : {
@@ -606,7 +639,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سام"
+            "value" : "تعذر تحديث يومك"
           }
         },
         "en" : {
@@ -620,6 +653,12 @@
     "home.estimated_duration" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المدة"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -631,6 +670,12 @@
     "home.field_description" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الوصف"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -642,6 +687,12 @@
     "home.field_description_placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إنشاء شرائح والتدرب عليها"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -653,6 +704,12 @@
     "home.field_starts_at" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تبدأ في"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -664,6 +721,12 @@
     "home.field_starts_at_hint" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اختر الوقت (اختياري)"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -675,6 +738,12 @@
     "home.field_task" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المهمة"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -689,7 +758,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "الاسم الأخير"
+            "value" : "ثابت"
           }
         },
         "en" : {
@@ -757,7 +826,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أستيقظ عادة في"
+            "value" : "%lld ساعة %lld دقيقة"
           }
         },
         "en" : {
@@ -774,7 +843,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أنام عادة في"
+            "value" : "%lld ساعة"
           }
         },
         "en" : {
@@ -788,6 +857,12 @@
     "home.listening_state" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جارٍ الاستماع..."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -802,7 +877,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تنام بعد منتصف الليل؟ سأرتب الليل لك."
+            "value" : "لم نتمكن من تحميل خطتك."
           }
         },
         "en" : {
@@ -819,7 +894,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إليك يوماً رسمته لك"
+            "value" : "تثبيت الجلسة"
           }
         },
         "en" : {
@@ -904,7 +979,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إعداد يدوي"
+            "value" : "%lld دقيقة"
           }
         },
         "en" : {
@@ -935,6 +1010,12 @@
     "home.or_separator" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أو"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -980,6 +1061,12 @@
     "home.quick_add_caption" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اكتبها أو أخبرني. سأتولى التخطيط."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -991,6 +1078,12 @@
     "home.quick_add_header" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الإضافة السريعة من أوان"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1002,6 +1095,12 @@
     "home.quick_add_headline" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ماذا تريد أن تنجز؟"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1016,7 +1115,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "استخدم هذا"
+            "value" : "إعادة الجدولة والتثبيت"
           }
         },
         "en" : {
@@ -1033,7 +1132,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "يمكنك تغيير هذا في أي وقت"
+            "value" : "حاول مرة أخرى"
           }
         },
         "en" : {
@@ -1064,6 +1163,12 @@
     "home.scheduling_nudge_message" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تم حفظ مهمتك، لكن لم نجد وقتاً كافياً اليوم."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1075,6 +1180,12 @@
     "home.scheduling_nudge_title" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعذرت الجدولة التلقائية"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1089,7 +1200,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "يومك"
+            "value" : "وقت البدء"
           }
         },
         "en" : {
@@ -1188,6 +1299,12 @@
     "home.stepper_hours" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d ساعات"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1199,6 +1316,12 @@
     "home.tab_manual" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يدوي"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1210,6 +1333,12 @@
     "home.tab_with_awan" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مع أوان"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1221,6 +1350,12 @@
     "home.tap_to_speak" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اضغط للتحدث"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1283,6 +1418,12 @@
     "home.tell_awan" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أخبر أوان"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1314,7 +1455,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أوان"
+            "value" : "خطة اليوم"
           }
         },
         "en" : {
@@ -1328,6 +1469,12 @@
     "home.toggle_allow_splitting" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "السماح بتقسيم المهمة"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1339,6 +1486,12 @@
     "home.toggle_mandatory" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إلزامية"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1353,7 +1506,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "يومك، مرسوم كسماء.\nسجل الدخول — وسنرسل لك رمزاً."
+            "value" : "إلغاء تثبيت الجلسة"
           }
         },
         "en" : {
@@ -1404,7 +1557,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إرسال الرمز • 0:%@"
+            "value" : "أوان"
           }
         },
         "en" : {
@@ -1421,7 +1574,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إرسال الرمز"
+            "value" : "المتابعة باستخدام Google"
           }
         },
         "en" : {
@@ -1438,7 +1591,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أو"
+            "value" : "البريد الإلكتروني"
           }
         },
         "en" : {
@@ -1455,7 +1608,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تسجيل الدخول باستخدام Apple"
+            "value" : "أدخل بريدك الإلكتروني"
           }
         },
         "en" : {
@@ -1472,7 +1625,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "المتابعة باستخدام Google"
+            "value" : "أنت غير متصل بالإنترنت — سنرسل الرمز عندما تعاود الاتصال."
           }
         },
         "en" : {
@@ -1489,7 +1642,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "لا كلمات مرور أبدًا. بمتابعتك، أنت توافق على "
+            "value" : " و "
           }
         },
         "en" : {
@@ -1506,7 +1659,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "شروط أوان"
+            "value" : "."
           }
         },
         "en" : {
@@ -1523,7 +1676,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " و "
+            "value" : "الخصوصية"
           }
         },
         "en" : {
@@ -1540,7 +1693,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "الخصوصية"
+            "value" : "شروط أوان"
           }
         },
         "en" : {
@@ -1557,7 +1710,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "."
+            "value" : "لا كلمات مرور أبدًا. بمتابعتك، أنت توافق على "
           }
         },
         "en" : {
@@ -1574,7 +1727,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "البريد الإلكتروني"
+            "value" : "أو"
           }
         },
         "en" : {
@@ -1591,7 +1744,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أدخل بريدك الإلكتروني"
+            "value" : "إرسال الرمز"
           }
         },
         "en" : {
@@ -1608,7 +1761,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أنت غير متصل بالإنترنت — سنرسل الرمز عندما تعاود الاتصال."
+            "value" : "إرسال الرمز • 0:%@"
           }
         },
         "en" : {
@@ -1625,7 +1778,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أنت في الداخل! ☀️"
+            "value" : "جارٍ الإرسال..."
           }
         },
         "en" : {
@@ -1642,7 +1795,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أدخل الرمز الذي أرسلناه إلى"
+            "value" : "تسجيل الدخول باستخدام Apple"
           }
         },
         "en" : {
@@ -1659,7 +1812,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تم التحقق — جاري دخولك"
+            "value" : "يومك، مرسوم كسماء.\nسجل الدخول — وسنرسل لك رمزاً."
           }
         },
         "en" : {
@@ -1676,7 +1829,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أنت غير متصل بالإنترنت — عاود الاتصال للتحقق أو أعد إرسال رمزك."
+            "value" : "حوالي %g ساعات"
           }
         },
         "en" : {
@@ -1693,7 +1846,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إعادة إرسال الرمز • %@"
+            "value" : "حوالي %lld دقيقة"
           }
         },
         "en" : {
@@ -1778,7 +1931,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "الرقم %lld من رمز التحقق"
+            "value" : "يمكنك تغيير هذا في أي وقت"
           }
         },
         "en" : {
@@ -1795,7 +1948,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Clear skies (ar)"
+            "value" : "سماء صافية"
           }
         },
         "en" : {
@@ -1897,7 +2050,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إضافة هدف"
+            "value" : "سام"
           }
         },
         "en" : {
@@ -1914,7 +2067,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Good morning name (ar)"
+            "value" : "صباح الخير يا %@"
           }
         },
         "en" : {
@@ -1965,7 +2118,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إضافة مهمة"
+            "value" : "الاسم الأخير"
           }
         },
         "en" : {
@@ -1982,7 +2135,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مساء الخير"
+            "value" : "ريفيرا"
           }
         },
         "en" : {
@@ -1999,7 +2152,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "طاب مساؤك"
+            "value" : "هيا بنا"
           }
         },
         "en" : {
@@ -2013,6 +2166,12 @@
     "onboarding.midnight_note" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تنام بعد منتصف الليل؟ سأرتب الليل لك."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2027,7 +2186,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld مهام • %@"
+            "value" : "فقط اسمك — سأستخدمه لتحيتك كل صباح."
           }
         },
         "en" : {
@@ -2044,7 +2203,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld مهمة • %@"
+            "value" : "ماذا تحب أن أناديك؟"
           }
         },
         "en" : {
@@ -2061,7 +2220,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nothing scheduled (ar)"
+            "value" : "لا شيء مجدول"
           }
         },
         "en" : {
@@ -2078,7 +2237,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld من %lld مكتملة"
+            "value" : "%lld ساعة من السماء المفتوحة"
           }
         },
         "en" : {
@@ -2095,7 +2254,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Out of bounds warning (ar)"
+            "value" : "خارج النطاق"
           }
         },
         "en" : {
@@ -2129,7 +2288,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ستُضاف بسلاسة"
+            "value" : "ارتداد"
           }
         },
         "en" : {
@@ -2146,7 +2305,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld دقيقة"
+            "value" : "معاينة"
           }
         },
         "en" : {
@@ -2265,7 +2424,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld ساعة"
+            "value" : "إعداد يدوي"
           }
         },
         "en" : {
@@ -2282,7 +2441,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Short day warning (ar)"
+            "value" : "يوم قصير"
           }
         },
         "en" : {
@@ -2299,7 +2458,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld ساعة %lld دقيقة"
+            "value" : "تخطي"
           }
         },
         "en" : {
@@ -2316,7 +2475,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ثابت"
+            "value" : "تخطي الآن"
           }
         },
         "en" : {
@@ -2333,7 +2492,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أضف مهمة أو هدفاً لتبدأ خطتك."
+            "value" : "تخطي الإعداد"
           }
         },
         "en" : {
@@ -2350,7 +2509,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sky setup zones (ar)"
+            "value" : "إعداد فترات السماء"
           }
         },
         "en" : {
@@ -2367,7 +2526,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تعذر تحديث يومك"
+            "value" : "أنام عادة في"
           }
         },
         "en" : {
@@ -2384,7 +2543,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "لم نتمكن من تحميل خطتك."
+            "value" : "سنقسم المهام الطويلة إلى جلسات من ساعتين."
           }
         },
         "en" : {
@@ -2401,7 +2560,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حاول مرة أخرى"
+            "value" : "المهام الطويلة قد تكون مرهقة. "
           }
         },
         "en" : {
@@ -2466,6 +2625,12 @@
     "onboarding.use_this" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "استخدم هذا"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2480,7 +2645,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إعادة الجدولة والتثبيت"
+            "value" : "أستيقظ عادة في"
           }
         },
         "en" : {
@@ -2497,7 +2662,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تثبيت الجلسة"
+            "value" : "متى يبدأ يومك وينتهي؟"
           }
         },
         "en" : {
@@ -2514,7 +2679,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إلغاء تثبيت الجلسة"
+            "value" : "أخبرني قليلاً عن يومك وسأبني\nجدولاً يعالج نفسه بهدوء\nعندما تحدث تغييرات."
           }
         },
         "en" : {
@@ -2531,7 +2696,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حذف الجلسة"
+            "value" : "مرحباً، أنا أوان.\nالسماء لك اليوم."
           }
         },
         "en" : {
@@ -2548,7 +2713,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "هل تريد حذف هذه الجلسة المجدولة؟ ستبقى المهمة متاحة."
+            "value" : "يومك"
           }
         },
         "en" : {
@@ -2633,7 +2798,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مهام أوان"
+            "value" : "هذا الوقت يتداخل مع فترة موجودة"
           }
         },
         "en" : {
@@ -2667,7 +2832,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سلسلة المهام"
+            "value" : "ستملأ الفترات هذا لاحقاً"
           }
         },
         "en" : {
@@ -2684,7 +2849,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مغامرة اليوم"
+            "value" : "إليك يوماً رسمته لك"
           }
         },
         "en" : {
@@ -2701,7 +2866,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld دقيقة"
+            "value" : "الرقم %lld من رمز التحقق"
           }
         },
         "en" : {
@@ -2715,6 +2880,12 @@
     "otp.error.offline" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أنت غير متصل بالإنترنت — عاود الاتصال للتحقق أو أعد إرسال رمزك."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2729,7 +2900,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "يومك جاهز للمغامرة"
+            "value" : "لوحة مفاتيح رقمية · يتم الإرسال التلقائي عند الرقم السادس"
           }
         },
         "en" : {
@@ -2746,7 +2917,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أنشئ مهمة أو جرب مختبر التعارض أعلاه."
+            "value" : "إعادة إرسال الرمز"
           }
         },
         "en" : {
@@ -2763,7 +2934,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "وقتك"
+            "value" : "إعادة إرسال الرمز • %@"
           }
         },
         "en" : {
@@ -2780,7 +2951,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اسحب عمودياً لتغيير الوقت بخطوات من ١٥ دقيقة"
+            "value" : "أدخل الرمز الذي أرسلناه إلى"
           }
         },
         "en" : {
@@ -2797,7 +2968,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اسم المهمة"
+            "value" : "أنت في الداخل! ☀️"
           }
         },
         "en" : {
@@ -2814,7 +2985,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ماذا ستقهر؟"
+            "value" : "تم التحقق — جاري دخولك"
           }
         },
         "en" : {
@@ -2927,40 +3098,6 @@
         }
       }
     },
-    "profile.language.arabic" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "العربية"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arabic"
-          }
-        }
-      }
-    },
-    "profile.language.english" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الإنجليزية"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "English"
-          }
-        }
-      }
-    },
     "profile.language_and_appearance" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2991,6 +3128,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Select Language"
+          }
+        }
+      }
+    },
+    "profile.language.arabic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "العربية"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arabic"
+          }
+        }
+      }
+    },
+    "profile.language.english" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الإنجليزية"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "English"
           }
         }
       }
@@ -3205,7 +3376,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "المدة"
+            "value" : "هدف من ٧ مهام"
           }
         },
         "en" : {
@@ -3219,6 +3390,12 @@
     "schedule.add_task" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إضافة مهمة"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3233,7 +3410,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "الفترة"
+            "value" : "خطوة واحدة مركزة كل يوم"
           }
         },
         "en" : {
@@ -3250,7 +3427,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مستقل"
+            "value" : "بناء مهمة لـ ٧ أيام"
           }
         },
         "en" : {
@@ -3267,7 +3444,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اختر الفترة"
+            "value" : "يمكن تقسيمه إلى جلسات"
           }
         },
         "en" : {
@@ -3284,7 +3461,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "يمكن تقسيمه إلى جلسات"
+            "value" : "اختر الفترة"
           }
         },
         "en" : {
@@ -3301,7 +3478,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إبقاء الوقت المجدول ثابتاً"
+            "value" : "إنشاء مهمة"
           }
         },
         "en" : {
@@ -3318,7 +3495,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إنشاء مهمة"
+            "value" : "حذف المهمة"
           }
         },
         "en" : {
@@ -3335,7 +3512,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حفظ التغييرات"
+            "value" : "اسحب عمودياً لتغيير الوقت بخطوات من ١٥ دقيقة"
           }
         },
         "en" : {
@@ -3352,7 +3529,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حذف المهمة"
+            "value" : "المدة"
           }
         },
         "en" : {
@@ -3369,7 +3546,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "مهمة يومية جديدة"
+            "value" : "%lld دقيقة"
           }
         },
         "en" : {
@@ -3386,7 +3563,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تعديل مهمتك"
+            "value" : "كل خطوة"
           }
         },
         "en" : {
@@ -3403,7 +3580,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "بناء مهمة لـ ٧ أيام"
+            "value" : "أنشئ مهمة أو جرب مختبر التعارض أعلاه."
           }
         },
         "en" : {
@@ -3420,7 +3597,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "خطوة واحدة مركزة كل يوم"
+            "value" : "يومك جاهز للمغامرة"
           }
         },
         "en" : {
@@ -3437,7 +3614,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اسم الهدف"
+            "value" : "اعترض شيء طريقنا"
           }
         },
         "en" : {
@@ -3454,7 +3631,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "كل خطوة"
+            "value" : "اسم الهدف"
           }
         },
         "en" : {
@@ -3471,7 +3648,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ابدأ مهمة ٧ أيام"
+            "value" : "إبقاء الوقت المجدول ثابتاً"
           }
         },
         "en" : {
@@ -3488,7 +3665,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اعترض شيء طريقنا"
+            "value" : "%lld دقيقة"
           }
         },
         "en" : {
@@ -3505,7 +3682,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إضافة مهمة"
+            "value" : "مهمة يومية جديدة"
           }
         },
         "en" : {
@@ -3519,6 +3696,12 @@
     "schedule.quest_chain" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سلسلة المهام"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3530,6 +3713,12 @@
     "schedule.quest_name" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اسم المهمة"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3541,6 +3730,12 @@
     "schedule.quest_name_placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ماذا ستقهر؟"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3552,6 +3747,12 @@
     "schedule.quests_title" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مهام أوان"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3580,6 +3781,12 @@
     "schedule.standalone" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مستقل"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3591,6 +3798,12 @@
     "schedule.start_quest" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ابدأ مهمة ٧ أيام"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3602,6 +3815,12 @@
     "schedule.streak_accessibility" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سلسلة سبعة أيام"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3613,6 +3832,12 @@
     "schedule.this_week" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هذا الأسبوع"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3624,6 +3849,12 @@
     "schedule.todays_adventure" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مغامرة اليوم"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3635,6 +3866,12 @@
     "schedule.tune_quest" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ضبط مهمتك"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3646,6 +3883,12 @@
     "schedule.your_time" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "وقتك"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3660,7 +3903,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "هدف من ٧ مهام"
+            "value" : "الفترة"
           }
         },
         "en" : {
@@ -3691,6 +3934,12 @@
     "templates.day" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اليوم"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3702,6 +3951,12 @@
     "templates.save_day" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حفظ %@"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
