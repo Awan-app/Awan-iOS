@@ -15,6 +15,8 @@ struct AppRootView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthenticationState.self) private var authenticationState
     @Environment(LanguageManager.self) private var languageManager
+    @Environment(AppearanceManager.self)
+    private var appearanceManager
     @State private var creationSheetDetent = Self.compactCreationDetent
     private let factory: PresentationFactory
     
@@ -124,6 +126,7 @@ struct AppRootView: View {
                             switch route {
                             case .dailyZones:
                                 factory.makeDailyZonesView()
+                                    .environment(appearanceManager)
                             default:
                                 EmptyView()
                             }
