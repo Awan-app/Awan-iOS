@@ -67,14 +67,14 @@ struct DataAssembly: Assembly {
                 localDataSource: Self.resolve(LocalGoalDataSource.self, from: resolver)
             )
         }
-//        container.register(GoalDecompositionRepository.self) { resolver in
-//            DefaultGoalDecompositionRepository(remoteDataSource: Self.resolve(RemoteGoalDecompositionDataSource.self, from: resolver))
-//        }
-//        .inObjectScope(.container)
         container.register(GoalDecompositionRepository.self) { resolver in
-            MockGoalDecompositionRepository()
+            DefaultGoalDecompositionRepository(remoteDataSource: Self.resolve(RemoteGoalDecompositionDataSource.self, from: resolver))
         }
         .inObjectScope(.container)
+//        container.register(GoalDecompositionRepository.self) { resolver in
+//            MockGoalDecompositionRepository()
+//        }
+//        .inObjectScope(.container)
         container.register(SessionRepository.self) { resolver in
             DefaultSessionRepository(
                 localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver),
