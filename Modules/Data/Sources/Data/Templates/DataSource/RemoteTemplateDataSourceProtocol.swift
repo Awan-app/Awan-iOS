@@ -16,6 +16,7 @@ public protocol RemoteTemplateDataSourceProtocol: Sendable {
     func deleteTemplate(templateID: UUID) async throws
     func addZone(templateID: UUID, request: AddZoneRequestDTO) async throws -> ZoneResponseDTO
     func getZones(templateID: UUID) async throws -> [ZoneResponseDTO]
+    func bulkUpdate(templateID: UUID, request: BulkUpdateZonesRequestDTO) async throws -> [ZoneResponseDTO]
 }
 
 public final class RemoteTemplateDataSource: RemoteTemplateDataSourceProtocol {
@@ -53,5 +54,9 @@ public final class RemoteTemplateDataSource: RemoteTemplateDataSourceProtocol {
 
     public func getZones(templateID: UUID) async throws -> [ZoneResponseDTO] {
         try await networkService.request(TemplateEndpoint.getZones(templateID: templateID))
+    }
+    
+    public func bulkUpdate(templateID: UUID, request: BulkUpdateZonesRequestDTO) async throws -> [ZoneResponseDTO] {
+        try await networkService.request(TemplateEndpoint.bulkUpdate(templateID: templateID, request))
     }
 }

@@ -53,4 +53,27 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
 
         try await localDataSource.addTemplate(localTemplate)
     }
+
+    public func listTemplates() async throws -> [Template] {
+        let responses = try await remoteDataSource.listTemplates()
+        return try responses.map(HomeRemoteMapper.template)
+    }
+
+    public func updateTemplate(id: UUID, zones: [ZoneWithoutId]) async throws -> Template {
+        let zonePayloads = zones.map { zone in
+            BulkUpdateZonesRequestDTO.ZonePayload(
+                name: zone.name,
+                startTime: String(format: "%02d:%02d:00", zone.startTime.hour, zone.startTime.minute),
+                endTime: String(format: "%02d:%02d:00", zone.endTime.hour, zone.endTime.minute),
+                color: zone.color.hex
+            )
+        }
+
+        let request = BulkUpdateZonesRequestDTO(zones: zonePayloads)
+
+        _ = try await remoteDataSource.bulkUpdate(templateID: id, request: request)
+        
+        let templateResponse = try await remoteDataSource.getTemplate(templateID: id)
+        return try HomeRemoteMapper.template(templateResponse)
+    }
 }
