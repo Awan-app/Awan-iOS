@@ -40,7 +40,7 @@ public struct DailyZonesView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 GifImageView("awan-mascot-clock")
-                    .frame(width: 50, height: 50)
+                    .frame(width: 85, height: 85)
             }
         }
         .task {
