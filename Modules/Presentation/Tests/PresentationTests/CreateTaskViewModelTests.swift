@@ -142,7 +142,12 @@ final class CreateTaskViewModelTests: XCTestCase {
                 fetchZones: stub,
                 createTask: stub,
                 createTaskWithAwan: EmptyCreateTaskWithAwanUseCase(),
-                userProfile: UserProfileUseCaseStub()
+                userProfile: UserProfileUseCaseStub(),
+                goalDecomposition: GoalDecompositionUseCases(
+                    sendMessage: GoalMessageUseCaseStub(),
+                    confirmProposal: GoalConfirmUseCaseStub(),
+                    scheduleGoal: GoalScheduleUseCaseStub()
+                )
             ),
             speechTranscriber: speechTranscriber ?? SpeechTranscriberStub(),
             selectedDay: selectedDay ?? date(hour: 0),
@@ -172,6 +177,29 @@ final class CreateTaskViewModelTests: XCTestCase {
             )
         ) ?? .distantPast
     }
+}
+
+private struct GoalMessageUseCaseStub: SendGoalDecompositionMessageUseCase {
+    func execute(
+        _ request: GoalDecompositionRequest
+    ) async throws -> GoalDecompositionResponse {
+        GoalDecompositionResponse(
+            sessionID: UUID(),
+            blocks: [],
+            hasProposal: false,
+            timestamp: Date()
+        )
+    }
+}
+
+private struct GoalConfirmUseCaseStub: ConfirmGoalProposalUseCase {
+    func execute(sessionID: UUID) async throws -> ConfirmedGoal {
+        ConfirmedGoal(id: UUID(), title: "")
+    }
+}
+
+private struct GoalScheduleUseCaseStub: ScheduleCreatedGoalUseCase {
+    func execute(goalID: UUID) async throws {}
 }
 
 private struct UserProfileUseCaseStub: GetUserProfileUseCase {

@@ -1,44 +1,61 @@
 import Common
+import Domain
 import SwiftUI
 
 struct CreateGoalView: View {
     @State private var viewModel: CreateGoalViewModel
 
-    init(viewModel: CreateGoalViewModel) {
+    private let onGoalScheduled: () -> Void
+    private let onFullScreenChanged: (Bool) -> Void
+
+    init(
+        viewModel: CreateGoalViewModel,
+        onGoalScheduled: @escaping () -> Void,
+        onFullScreenChanged: @escaping (Bool) -> Void
+    ) {
         _viewModel = State(initialValue: viewModel)
+        self.onGoalScheduled = onGoalScheduled
+        self.onFullScreenChanged = onFullScreenChanged
     }
 
     var body: some View {
         @Bindable var bindableViewModel = viewModel
 
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 16) {
-                starterContent
-
-                QuickTaskComposer(
-                    text: $bindableViewModel.prompt,
+        Group {
+            switch viewModel.phase {
+            case .starter:
+                starterView(text: $bindableViewModel.prompt)
+            case .loading:
+                GoalCreationLoadingView(
+                    message: L10n.GoalCreation.planning
+                )
+            case .conversation(let blocks):
+                conversationView(
+                    blocks: blocks,
+                    text: $bindableViewModel.prompt
+                )
+            case .proposal(let narration, let goal):
+                GoalProposalView(
+                    narration: narration,
+                    proposal: goal,
+                    prompt: $bindableViewModel.prompt,
                     isRecording: viewModel.isRecording,
-                    placeholder: L10n.GoalCreation.promptPlaceholder,
-                    sendAccessibilityLabel: L10n.GoalCreation.sendPrompt,
-                    recordingAccessibilityLabel: L10n.Home.tellAwan,
-                    onSend: viewModel.submitCurrentPrompt,
-                    onRecordingStarted: {
-                        Task {
-                            await viewModel.beginRecording()
-                        }
-                    },
-                    onRecordingEnded: {
-                        Task {
-                            await viewModel.finishRecording()
-                        }
-                    }
+                    onSend: submitPrompt,
+                    onOptionSelected: selectOption,
+                    onRecordingStarted: startRecording,
+                    onRecordingEnded: finishRecording,
+                    onConfirm: confirmGoal
+                )
+            case .confirming:
+                GoalCreationLoadingView(
+                    message: L10n.GoalCreation.scheduling
                 )
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-            .padding(.bottom, 28)
         }
         .background(AppColors.screenBackground.ignoresSafeArea())
+        .onChange(of: viewModel.requiresFullScreen, initial: true) { _, isFullScreen in
+            onFullScreenChanged(isFullScreen)
+        }
         .onDisappear {
             viewModel.cancelRecording()
         }
@@ -49,6 +66,60 @@ struct CreateGoalView: View {
         } message: {
             Text(viewModel.errorMessage ?? L10n.Common.pleaseTryAgain)
         }
+    }
+
+    private func starterView(text: Binding<String>) -> some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 16) {
+                starterContent
+                composer(
+                    text: text,
+                    placeholder: L10n.GoalCreation.promptPlaceholder
+                )
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 28)
+        }
+    }
+
+    private func conversationView(
+        blocks: [GoalDecompositionBlock],
+        text: Binding<String>
+    ) -> some View {
+        VStack(spacing: 0) {
+            ScrollView(showsIndicators: false) {
+                GoalAssistantBlocksView(
+                    blocks: blocks,
+                    onOptionSelected: selectOption
+                )
+                .padding(.horizontal, 20)
+                .padding(.vertical, 18)
+            }
+
+            composer(
+                text: text,
+                placeholder: L10n.GoalCreation.replyPlaceholder
+            )
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+        }
+    }
+
+    private func composer(
+        text: Binding<String>,
+        placeholder: String
+    ) -> some View {
+        QuickTaskComposer(
+            text: text,
+            isRecording: viewModel.isRecording,
+            placeholder: placeholder,
+            sendAccessibilityLabel: L10n.GoalCreation.sendPrompt,
+            recordingAccessibilityLabel: L10n.Home.tellAwan,
+            onSend: submitPrompt,
+            onRecordingStarted: startRecording,
+            onRecordingEnded: finishRecording
+        )
     }
 
     private var starterContent: some View {
@@ -70,14 +141,44 @@ struct CreateGoalView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 AwanMascotView(state: .goal)
                     .frame(width: 150, height: 150)
-
-                
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func submitPrompt() {
+        Task {
+            await viewModel.submitCurrentPrompt()
+        }
+    }
+
+    private func selectOption(_ option: String) {
+        Task {
+            await viewModel.selectOption(option)
+        }
+    }
+
+    private func startRecording() {
+        Task {
+            await viewModel.beginRecording()
+        }
+    }
+
+    private func finishRecording() {
+        Task {
+            await viewModel.finishRecording()
+        }
+    }
+
+    private func confirmGoal() {
+        Task {
+            if await viewModel.confirmProposal() {
+                onGoalScheduled()
+            }
+        }
     }
 
     private var errorBinding: Binding<Bool> {
