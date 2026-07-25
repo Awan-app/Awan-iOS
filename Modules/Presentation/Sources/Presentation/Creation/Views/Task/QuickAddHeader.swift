@@ -15,7 +15,7 @@ struct QuickAddHeader: View {
             HStack(alignment: .center, spacing: 8) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(headline)
-                        .font(.system(size: 24, weight: .black, design: .rounded))
+                        .font(AppFonts.bigTitle)
                         .foregroundStyle(AppColors.brandDarkBlue)
                         .fixedSize(horizontal: false, vertical: true)
 

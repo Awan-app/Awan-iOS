@@ -65,6 +65,9 @@ public struct PresentationFactory {
                 useCases: creationUseCases,
                 speechTranscriber: LiveSpeechTranscriber()
             ),
+            goalViewModel: CreateGoalViewModel(
+                speechTranscriber: LiveSpeechTranscriber()
+            ),
             onDismiss: onDismiss,
             onTaskSchedulingModeChanged: onTaskSchedulingModeChanged
         )

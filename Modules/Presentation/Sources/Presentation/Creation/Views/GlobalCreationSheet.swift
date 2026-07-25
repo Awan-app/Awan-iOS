@@ -4,16 +4,19 @@ import SwiftUI
 struct GlobalCreationSheet: View {
     @State private var selectedMode: CreationMode = .task
     @State private var taskViewModel: CreateTaskViewModel
+    @State private var goalViewModel: CreateGoalViewModel
 
     private let onDismiss: () -> Void
     private let onTaskSchedulingModeChanged: (Bool) -> Void
 
     init(
         taskViewModel: CreateTaskViewModel,
+        goalViewModel: CreateGoalViewModel,
         onDismiss: @escaping () -> Void,
         onTaskSchedulingModeChanged: @escaping (Bool) -> Void
     ) {
         _taskViewModel = State(initialValue: taskViewModel)
+        _goalViewModel = State(initialValue: goalViewModel)
         self.onDismiss = onDismiss
         self.onTaskSchedulingModeChanged = onTaskSchedulingModeChanged
     }
@@ -33,8 +36,7 @@ struct GlobalCreationSheet: View {
                     onSchedulingModeChanged: onTaskSchedulingModeChanged
                 )
             case .goal:
-                Color.clear
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                CreateGoalView(viewModel: goalViewModel)
             }
         }
         .background(AppColors.screenBackground.ignoresSafeArea())

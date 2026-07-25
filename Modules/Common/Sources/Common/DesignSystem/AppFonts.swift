@@ -88,4 +88,6 @@ public enum AppFonts {
     public static let nudgeSymbol = Font.system(size: 26, weight: .black)
     public static let heroSymbol = Font.system(size: 52, weight: .black)
     public static let goalHeroSymbol = Font.system(size: 58, weight: .black)
+    public static let bigTitle = Font.system(size: 24, weight: .black, design: .rounded)
+    
 }

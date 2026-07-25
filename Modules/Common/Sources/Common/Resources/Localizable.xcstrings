@@ -140,6 +140,91 @@
         }
       }
     },
+    "goal_creation.caption" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "احكِ لي عن هدفك، وسأطرح عليك بعض الأسئلة لأحوّله إلى خطة تناسبك."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tell me about your goal. I'll ask a few questions and turn it into a plan you can shape."
+          }
+        }
+      }
+    },
+    "goal_creation.header" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خطط مع أوان"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PLAN WITH AWAN"
+          }
+        }
+      }
+    },
+    "goal_creation.headline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ما الذي ترغب في تحقيقه؟"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What would you like to achieve?"
+          }
+        }
+      }
+    },
+    "goal_creation.prompt_placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "صِف هدفاً ترغب في تحقيقه..."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe a goal you want to achieve..."
+          }
+        }
+      }
+    },
+    "goal_creation.send_prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إرسال الهدف إلى أوان"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send goal to Awan"
+          }
+        }
+      }
+    },
     "home.add_goal" : {
       "extractionState" : "manual",
       "localizations" : {

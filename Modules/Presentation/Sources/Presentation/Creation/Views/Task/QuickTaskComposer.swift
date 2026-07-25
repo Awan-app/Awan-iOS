@@ -4,6 +4,9 @@ import SwiftUI
 struct QuickTaskComposer: View {
     @Binding var text: String
     let isRecording: Bool
+    var placeholder = L10n.Schedule.questNamePlaceholder
+    var sendAccessibilityLabel = L10n.Home.btnPlanItForMe
+    var recordingAccessibilityLabel = L10n.Home.tellAwan
     let onSend: () -> Void
     let onRecordingStarted: () -> Void
     let onRecordingEnded: () -> Void
@@ -18,7 +21,7 @@ struct QuickTaskComposer: View {
         HStack(alignment: .bottom, spacing: 12) {
             AppTextField(
                 text: $text,
-                placeholder: L10n.Schedule.questNamePlaceholder,
+                placeholder: placeholder,
                 axis: .vertical,
                 lineLimit: 1...3,
                 submitLabel: .send
@@ -36,7 +39,7 @@ struct QuickTaskComposer: View {
                 .buttonStyle(
                     ComposerActionButtonStyle(color: AppColors.accentBlue)
                 )
-                .accessibilityLabel(L10n.Home.btnPlanItForMe)
+                .accessibilityLabel(sendAccessibilityLabel)
             } else {
                 actionFace(
                     icon: "mic.fill",
@@ -45,7 +48,7 @@ struct QuickTaskComposer: View {
                 .contentShape(Circle())
                 .gesture(recordingGesture)
                 .accessibilityElement()
-                .accessibilityLabel(L10n.Home.tellAwan)
+                .accessibilityLabel(recordingAccessibilityLabel)
                 .accessibilityAddTraits(.isButton)
             }
         }

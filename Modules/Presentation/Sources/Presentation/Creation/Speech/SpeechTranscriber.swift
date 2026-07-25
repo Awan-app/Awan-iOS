@@ -18,9 +18,9 @@ public enum SpeechTranscriptionError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .microphonePermissionDenied:
-            "Microphone access is required to record a task."
+            "Microphone access is required to record your prompt."
         case .speechRecognitionPermissionDenied:
-            "Speech recognition access is required to transcribe a task."
+            "Speech recognition access is required to transcribe your prompt."
         case .speechRecognizerUnavailable:
             "Speech recognition is currently unavailable."
         case .audioInputUnavailable:

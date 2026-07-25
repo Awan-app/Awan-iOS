@@ -307,6 +307,48 @@ public enum L10n {
         }
     }
 
+    public enum GoalCreation {
+        public static var header: String {
+            L10n.currentBundle.localizedString(
+                forKey: "goal_creation.header",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+
+        public static var headline: String {
+            L10n.currentBundle.localizedString(
+                forKey: "goal_creation.headline",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+
+        public static var caption: String {
+            L10n.currentBundle.localizedString(
+                forKey: "goal_creation.caption",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+
+        public static var promptPlaceholder: String {
+            L10n.currentBundle.localizedString(
+                forKey: "goal_creation.prompt_placeholder",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+
+        public static var sendPrompt: String {
+            L10n.currentBundle.localizedString(
+                forKey: "goal_creation.send_prompt",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+    }
+
     public enum Home {
         public static var addTask: String { L10n.currentBundle.localizedString(forKey: "home.add_task", value: nil, table: "Localizable") }
         public static var addGoal: String { L10n.currentBundle.localizedString(forKey: "home.add_goal", value: nil, table: "Localizable") }
