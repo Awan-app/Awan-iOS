@@ -1,7 +1,9 @@
 import Swinject
+import Data
 import SwiftData
 
 final class AppDependencyContainer {
+    static let shared = AppDependencyContainer(modelContainer: makeSchedulingModelContainer())
     let resolver: Resolver
 
     init(modelContainer: ModelContainer) {
@@ -25,5 +27,20 @@ final class AppDependencyContainer {
             preconditionFailure("Missing app dependency for \(serviceType) with argument \(Arg1.self)")
         }
         return service
+    }
+    private static func makeSchedulingModelContainer() -> ModelContainer {
+        let schema = SchedulingPersistence.schema
+        let configuration = ModelConfiguration(
+            "AwanScheduling",
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            groupContainer: .none,
+            cloudKitDatabase: .none
+        )
+        do {
+            return try ModelContainer(for: schema, configurations: [configuration])
+        } catch {
+            fatalError("Could not create scheduling ModelContainer: \(error)")
+        }
     }
 }

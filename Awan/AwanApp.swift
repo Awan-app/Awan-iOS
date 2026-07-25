@@ -17,14 +17,9 @@ struct AwanApp: App {
     @State private var appearanceManager = AppearanceManager()
 
     private let presentationFactory: PresentationFactory
-    private let sharedModelContainer: ModelContainer
 
     init() {
-        sharedModelContainer = Self.makeSchedulingModelContainer()
-        let dependencies = AppDependencyContainer(
-            modelContainer: sharedModelContainer
-        )
-        presentationFactory = dependencies.resolve(PresentationFactory.self)
+        presentationFactory = AppDependencyContainer.shared.resolve(PresentationFactory.self)
     }
 
     var body: some Scene {
@@ -37,24 +32,5 @@ struct AwanApp: App {
             .preferredColorScheme(appearanceManager.currentAppearance.colorScheme)
         }
        
-    }
-
-    private static func makeSchedulingModelContainer() -> ModelContainer {
-        let schema = SchedulingPersistence.schema
-        let configuration = ModelConfiguration(
-            "AwanScheduling",
-            schema: schema,
-            isStoredInMemoryOnly: false,
-            groupContainer: .none,
-            cloudKitDatabase: .none
-        )
-        do {
-            return try ModelContainer(
-                for: schema,
-                configurations: [configuration]
-            )
-        } catch {
-            fatalError("Could not create scheduling ModelContainer: \(error)")
-        }
     }
 }
