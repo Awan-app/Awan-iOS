@@ -11,6 +11,7 @@ import UIKit
 
 struct LoginView: View {
     @Environment(AppCoordinator.self) private var appCoordinator
+    @Environment(\.colorScheme) private var colorScheme
     @State private var viewModel: LoginViewModel
     init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
@@ -29,14 +30,20 @@ struct LoginView: View {
         .padding(.horizontal, 24)
         .padding(.bottom, 24)
         .background(
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.skyGradientTop, location: 0.0),
-                    .init(color: AppColors.skyGradientBottom, location: 0.5)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            Group {
+                if colorScheme == .dark {
+                    AppColors.screenBackground
+                } else {
+                    LinearGradient(
+                        stops: [
+                            .init(color: AppColors.skyGradientTop, location: 0.0),
+                            .init(color: AppColors.skyGradientBottom, location: 0.5)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+            }
             .ignoresSafeArea()
         )
         .ignoresSafeArea(.all, edges: .top)
@@ -167,8 +174,8 @@ struct LoginView: View {
                 title: L10n.Login.signInWithApple,
                 icon: nil,
                 iconAsset: "apple-icon",
-                color: AppColors.textPrimary,
-                foregroundColor: AppColors.onAccent,
+                color: .black,
+                foregroundColor: .white,
                 onTap: {
                     triggerHaptic()
                     viewModel.onAppleSignInTapped()

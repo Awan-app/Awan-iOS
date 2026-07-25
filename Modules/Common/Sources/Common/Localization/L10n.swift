@@ -307,6 +307,84 @@ public enum L10n {
         }
     }
 
+    public enum GoalCreation {
+        public static var header: String {
+            L10n.currentBundle.localizedString(
+                forKey: "goal_creation.header",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+
+        public static var headline: String {
+            L10n.currentBundle.localizedString(
+                forKey: "goal_creation.headline",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+
+        public static var caption: String {
+            L10n.currentBundle.localizedString(
+                forKey: "goal_creation.caption",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+
+        public static var promptPlaceholder: String {
+            L10n.currentBundle.localizedString(
+                forKey: "goal_creation.prompt_placeholder",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+
+        public static var sendPrompt: String {
+            L10n.currentBundle.localizedString(
+                forKey: "goal_creation.send_prompt",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+
+        public static var planning: String {
+            value("goal_creation.planning")
+        }
+
+        public static var scheduling: String {
+            value("goal_creation.scheduling")
+        }
+
+        public static var replyPlaceholder: String {
+            value("goal_creation.reply_placeholder")
+        }
+
+        public static var modifyPlaceholder: String {
+            value("goal_creation.modify_placeholder")
+        }
+
+        public static var sessions: String {
+            value("goal_creation.sessions")
+        }
+
+        public static var oneSession: String {
+            value("goal_creation.one_session")
+        }
+
+        public static var confirm: String {
+            value("goal_creation.confirm")
+        }
+
+        private static func value(_ key: String) -> String {
+            L10n.currentBundle.localizedString(
+                forKey: key,
+                value: nil,
+                table: "Localizable"
+            )
+        }
+    }
+
     public enum Home {
         public static var addTask: String { L10n.currentBundle.localizedString(forKey: "home.add_task", value: nil, table: "Localizable") }
         public static var addGoal: String { L10n.currentBundle.localizedString(forKey: "home.add_goal", value: nil, table: "Localizable") }
@@ -375,6 +453,18 @@ public enum L10n {
 
         public static var quickAddCaption: String {
             L10n.currentBundle.localizedString(forKey: "home.quick_add_caption", value: nil, table: "Localizable")
+        }
+
+        public static var manualAddHeader: String {
+            L10n.currentBundle.localizedString(forKey: "home.manual_add_header", value: nil, table: "Localizable")
+        }
+
+        public static var manualAddHeadline: String {
+            L10n.currentBundle.localizedString(forKey: "home.manual_add_headline", value: nil, table: "Localizable")
+        }
+
+        public static var manualAddCaption: String {
+            L10n.currentBundle.localizedString(forKey: "home.manual_add_caption", value: nil, table: "Localizable")
         }
 
         public static var fieldTask: String {
@@ -618,5 +708,11 @@ public enum L10n {
         public static var dummyTimeZone: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_time_zone", value: nil, table: "Localizable") }
         public static var dummySleepSchedule: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_sleep_schedule", value: nil, table: "Localizable") }
         public static var ready: String { L10n.currentBundle.localizedString(forKey: "profile.ready", value: nil, table: "Localizable") }
+    }
+
+    public enum Templates {
+        public static var dailyZonesTitle: String { L10n.currentBundle.localizedString(forKey: "templates.daily_zones_title", value: nil, table: "Localizable") }
+        public static func saveDay(_ day: String) -> String { String(format: L10n.currentBundle.localizedString(forKey: "templates.save_day", value: nil, table: "Localizable"), day) }
+        public static var day: String { L10n.currentBundle.localizedString(forKey: "templates.day", value: nil, table: "Localizable") }
     }
 }

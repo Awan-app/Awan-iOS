@@ -12,10 +12,13 @@ public enum MainTab: Hashable, Sendable {
     case calendar
     case rewards
     case you
+    case add
 }
 
 public enum MainRoute: Hashable, Identifiable, Sendable {
     case home
+    case add
+    case dailyZones
 
     public var id: Self { self }
 }

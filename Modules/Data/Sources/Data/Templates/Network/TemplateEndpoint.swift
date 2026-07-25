@@ -22,6 +22,7 @@ enum TemplateEndpoint: APIEndpoint {
 
     case addZone(templateID: UUID, AddZoneRequestDTO)
     case getZones(templateID: UUID)
+    case bulkUpdate(templateID: UUID, BulkUpdateZonesRequestDTO)
 
     // MARK: - APIEndpoint
 
@@ -41,7 +42,7 @@ enum TemplateEndpoint: APIEndpoint {
             return "/templates/\(templateID.uuidString)"
         case .addZone(let templateID, _):
             return "/templates/\(templateID.uuidString)/zones"
-        case .getZones(let templateID):
+        case .getZones(let templateID), .bulkUpdate(let templateID, _):
             return "/templates/\(templateID.uuidString)/zones"
         }
     }
@@ -52,7 +53,7 @@ enum TemplateEndpoint: APIEndpoint {
             return .post
         case .listTemplates, .getTemplate, .getZones:
             return .get
-        case .updateTemplate:
+        case .updateTemplate, .bulkUpdate:
             return .put
         case .deleteTemplate:
             return .delete
@@ -70,6 +71,8 @@ enum TemplateEndpoint: APIEndpoint {
         case .updateTemplate(_, let request):
             return request
         case .addZone(_, let request):
+            return request
+        case .bulkUpdate(_, let request):
             return request
         default:
             return nil

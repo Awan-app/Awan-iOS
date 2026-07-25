@@ -5,11 +5,13 @@ struct ZoneNameField: View {
     @Binding var zoneName: String
     @FocusState private var isNameFocused: Bool
 
+    @Environment(\.colorScheme) var colorScheme
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(L10n.Onboarding.zoneNameLabel)
                 .font(.system(.caption, design: .rounded, weight: .heavy))
-                .foregroundStyle(AppColors.brandDarkBlue)
+                .foregroundStyle(colorScheme == .dark ? Color.white : AppColors.brandDarkBlue)
                 .kerning(1.2)
 
             TextField(

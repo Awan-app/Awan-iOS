@@ -10,9 +10,30 @@ import Foundation
 public struct UpdateTemplateRequestDTO: Encodable, Sendable {
     public let name: String
     public let daysOfWeek: [String]
+    public let zones: [ZonePayload]?
 
-    public init(name: String, daysOfWeek: [String]) {
+    public init(name: String, daysOfWeek: [String], zones: [ZonePayload]? = nil) {
         self.name = name
         self.daysOfWeek = daysOfWeek
+        self.zones = zones
+    }
+
+    public struct ZonePayload: Encodable, Sendable {
+        public let name: String
+        public let startTime: String
+        public let endTime: String
+        public let color: String?
+
+        public init(
+            name: String,
+            startTime: String,
+            endTime: String,
+            color: String? = nil
+        ) {
+            self.name = name
+            self.startTime = startTime
+            self.endTime = endTime
+            self.color = color
+        }
     }
 }

@@ -63,6 +63,14 @@ struct DataAssembly: Assembly {
                 localDataSource: Self.resolve(LocalGoalDataSource.self, from: resolver)
             )
         }
+        container.register(GoalDecompositionRepository.self) { resolver in
+            DefaultGoalDecompositionRepository(remoteDataSource: Self.resolve(RemoteGoalDecompositionDataSource.self, from: resolver))
+        }
+        .inObjectScope(.container)
+//        container.register(GoalDecompositionRepository.self) { resolver in
+//            MockGoalDecompositionRepository()
+//        }
+//        .inObjectScope(.container)
         container.register(SessionRepository.self) { resolver in
             DefaultSessionRepository(
                 localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver),
@@ -195,6 +203,14 @@ struct DataAssembly: Assembly {
         container.register(RemoteGoalDataSource.self) { resolver in
             DefaultRemoteGoalDataSource(
                 networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+        container.register(RemoteGoalDecompositionDataSource.self) { resolver in
+            DefaultRemoteGoalDecompositionDataSource(
+                networkService: Self.resolve(
+                    NetworkServiceProtocol.self,
+                    from: resolver
+                )
             )
         }
         container.register(RemoteTaskDataSource.self) { resolver in
