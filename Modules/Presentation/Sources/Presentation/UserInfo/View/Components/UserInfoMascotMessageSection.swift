@@ -6,10 +6,6 @@ struct UserInfoMascotMessageSection: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            Image("info-cloud")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 65, height: 65)
             
             Text(L10n.UserInfo.mascotMessage(firstName))
                 .font(.system(size: 16, weight: .medium, design: .rounded))

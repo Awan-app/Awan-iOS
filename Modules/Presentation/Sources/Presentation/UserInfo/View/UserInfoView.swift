@@ -1,6 +1,7 @@
 import SwiftUI
 import Common
 import PhotosUI
+import Domain
 
 public struct UserInfoView: View {
     @Environment(\.dismiss) private var dismiss
@@ -12,7 +13,7 @@ public struct UserInfoView: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var profileImage: Image?
     
-    public init(viewModel: UserInfoViewModel = UserInfoViewModel()) {
+    public init(viewModel: UserInfoViewModel) {
         self.viewModel = viewModel
     }
     
@@ -67,11 +68,14 @@ public struct UserInfoView: View {
                     .frame(width: 65, height: 65)
             }
         }
+        .task {
+            await viewModel.fetchUserProfile()
+        }
     }
 }
 
 #Preview {
-    UserInfoView()
+    UserInfoView(viewModel: UserInfoViewModel(getUserProfileUseCase: MockGetUserProfileUseCase()))
         .environment(AppearanceManager())
         .environment(LanguageManager())
 }

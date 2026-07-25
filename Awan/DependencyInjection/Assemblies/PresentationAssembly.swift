@@ -121,6 +121,13 @@ struct PresentationAssembly: Assembly {
         }
         .inObjectScope(.container)
 
+        container.register(UserInfoViewModel.self) { resolver in
+            let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                UserInfoViewModel(getUserProfileUseCase: useCase)
+            }
+        }
+
         container.register(PresentationFactory.self) { resolver in
             let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
             let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
@@ -145,7 +152,10 @@ struct PresentationAssembly: Assembly {
                         )
                     },
                     onboardingViewModel: onboardingViewModel,
-                    profileViewModel: profileViewModel
+                    profileViewModel: profileViewModel,
+                    makeUserInfoViewModel: {
+                        Self.resolve(UserInfoViewModel.self, from: resolver)
+                    }
                 )
             }
         }

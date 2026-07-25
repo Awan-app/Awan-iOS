@@ -19,6 +19,8 @@ struct UserInfoActionButtonsSection: View {
                     }
                 }
             )
+            .disabled(viewModel.isSaveDisabled)
+            .opacity(viewModel.isSaveDisabled ? 0.5 : 1.0)
         }
     }
 }
