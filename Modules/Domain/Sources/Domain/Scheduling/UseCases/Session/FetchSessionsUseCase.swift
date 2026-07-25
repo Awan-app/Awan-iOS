@@ -2,15 +2,13 @@ import Combine
 import Foundation
 
 public protocol FetchSessionsUseCase: Sendable {
-    func execute() async throws -> [Session]
-    func observe(taskIDs: [UUID]) -> AnyPublisher<[Session], Error>
+    func execute(for date: Date) async throws -> [Session]
+    func observe(for date: Date) -> AnyPublisher<[Session], Error>
 }
 
 public extension FetchSessionsUseCase {
-    func observe(taskIDs: [UUID]) -> AnyPublisher<[Session], Error> {
-        AsyncValuePublisher.make {
-            try await execute().filter { taskIDs.contains($0.taskID) }
-        }
+    func observe(for date: Date) -> AnyPublisher<[Session], Error> {
+        AsyncValuePublisher.make { try await execute(for: date) }
     }
 }
 
@@ -21,11 +19,11 @@ public struct DefaultFetchSessionsUseCase: FetchSessionsUseCase {
         self.repository = repository
     }
 
-    public func execute() async throws -> [Session] {
-        try await repository.fetchSessions()
+    public func execute(for date: Date) async throws -> [Session] {
+        try await repository.fetchSessions(for: date)
     }
 
-    public func observe(taskIDs: [UUID]) -> AnyPublisher<[Session], Error> {
-        repository.observeSessions(taskIDs: taskIDs)
+    public func observe(for date: Date) -> AnyPublisher<[Session], Error> {
+        repository.observeSessions(for: date)
     }
 }

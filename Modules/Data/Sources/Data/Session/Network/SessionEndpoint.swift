@@ -74,8 +74,11 @@ enum SessionEndpoint: APIEndpoint {
 
     var queryParameters: [String: String]? {
         switch self {
-        case .getSessionsByDateRange(let startDate, let endDate):
-            return ["startDate": startDate, "endDate": endDate]
+        case let .getSessionsByDateRange(startDate, endDate):
+            return [
+                "startDate": startDate,
+                "endDate": endDate,
+            ]
         case .updateSessionStatus(_, let status):
             return ["status": status]
         default:

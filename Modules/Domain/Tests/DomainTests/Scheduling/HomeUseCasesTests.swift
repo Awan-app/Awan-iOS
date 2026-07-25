@@ -11,8 +11,11 @@ final class HomeUseCasesTests: XCTestCase {
         let sessionRepository = SessionRepositoryStub(sessions: [session])
         let profileRepository = UserProfileRepositoryStub(profile: profile)
 
-        let tasks = try await DefaultFetchTasksUseCase(repository: taskRepository).execute()
-        let sessions = try await DefaultFetchSessionsUseCase(repository: sessionRepository).execute()
+        let selectedDay = date(hour: 0)
+        let tasks = try await DefaultFetchTasksUseCase(repository: taskRepository)
+            .execute(for: selectedDay)
+        let sessions = try await DefaultFetchSessionsUseCase(repository: sessionRepository)
+            .execute(for: selectedDay)
         let user = try await DefaultGetUserProfileUseCase(repository: profileRepository).execute()
 
         XCTAssertEqual(tasks, [task])

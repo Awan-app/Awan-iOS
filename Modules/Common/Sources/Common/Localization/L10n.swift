@@ -488,6 +488,55 @@ public enum L10n {
         public static var deleteSessionConfirmation: String {
             L10n.currentBundle.localizedString(forKey: "home.delete_session_confirmation", value: nil, table: "Localizable")
         }
+        public static var taskDetails: String {
+            L10n.currentBundle.localizedString(forKey: "home.task_details", value: nil, table: "Localizable")
+        }
+        public static var description: String {
+            L10n.currentBundle.localizedString(forKey: "home.description", value: nil, table: "Localizable")
+        }
+        public static var status: String {
+            L10n.currentBundle.localizedString(forKey: "home.status", value: nil, table: "Localizable")
+        }
+        public static var duration: String {
+            L10n.currentBundle.localizedString(forKey: "home.duration", value: nil, table: "Localizable")
+        }
+        public static var points: String {
+            L10n.currentBundle.localizedString(forKey: "home.points", value: nil, table: "Localizable")
+        }
+        public static func pointsValue(_ points: Int) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: "home.points_value",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                points
+            )
+        }
+        public static var mandatory: String {
+            L10n.currentBundle.localizedString(forKey: "home.mandatory", value: nil, table: "Localizable")
+        }
+        public static var canSplit: String {
+            L10n.currentBundle.localizedString(forKey: "home.can_split", value: nil, table: "Localizable")
+        }
+        public static var yes: String {
+            L10n.currentBundle.localizedString(forKey: "home.yes", value: nil, table: "Localizable")
+        }
+        public static var no: String {
+            L10n.currentBundle.localizedString(forKey: "home.no", value: nil, table: "Localizable")
+        }
+        public static var statusPending: String {
+            L10n.currentBundle.localizedString(forKey: "home.status_pending", value: nil, table: "Localizable")
+        }
+        public static var statusInProgress: String {
+            L10n.currentBundle.localizedString(forKey: "home.status_in_progress", value: nil, table: "Localizable")
+        }
+        public static var statusCompleted: String {
+            L10n.currentBundle.localizedString(forKey: "home.status_completed", value: nil, table: "Localizable")
+        }
+        public static var statusCancelled: String {
+            L10n.currentBundle.localizedString(forKey: "home.status_cancelled", value: nil, table: "Localizable")
+        }
         public static var today: String { L10n.currentBundle.localizedString(forKey: "home.today", value: nil, table: "Localizable") }
         public static var calendar: String { L10n.currentBundle.localizedString(forKey: "home.calendar", value: nil, table: "Localizable") }
         public static var rewards: String { L10n.currentBundle.localizedString(forKey: "home.rewards", value: nil, table: "Localizable") }

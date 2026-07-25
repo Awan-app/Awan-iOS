@@ -25,6 +25,12 @@ final class HomeViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.state.success?.taskCount, 1)
         XCTAssertEqual(viewModel.state.success?.scheduledMinutes, 60)
         XCTAssertEqual(viewModel.state.success?.timelineItems.first?.title, "Focus")
+
+        viewModel.send(.presentSession(fixture.session.id))
+        XCTAssertEqual(viewModel.state.selectedSession?.task, fixture.task)
+        let requestedDates = await stub.requestedReadDates()
+        XCTAssertEqual(requestedDates.tasks, [date()])
+        XCTAssertEqual(requestedDates.sessions, [date()])
     }
 
     func testDragSnapsToQuarterHourAndLocksSession() async throws {
@@ -351,6 +357,8 @@ private actor HomeUseCaseStub:
     CreateTaskUseCase {
     private var tasks: [AwanTask]
     private var sessions: [Session]
+    private var requestedTaskDates: [Date] = []
+    private var requestedSessionDates: [Date] = []
     private let zones: [Zone]
     private let profile: UserProfile
     private let shouldFailReads: Bool
@@ -381,16 +389,22 @@ private actor HomeUseCaseStub:
         self.shouldReturnNudgeOnCreate = shouldReturnNudgeOnCreate
     }
 
-    func execute() async throws -> [AwanTask] {
+    func execute(for date: Date) async throws -> [AwanTask] {
+        requestedTaskDates.append(date)
         try await pause()
         if shouldFailReads { throw HomeStubError.failed }
         return tasks
     }
 
-    func execute() async throws -> [Session] {
+    func execute(for date: Date) async throws -> [Session] {
+        requestedSessionDates.append(date)
         try await pause()
         if shouldFailReads { throw HomeStubError.failed }
         return sessions
+    }
+
+    func requestedReadDates() -> (tasks: [Date], sessions: [Date]) {
+        (requestedTaskDates, requestedSessionDates)
     }
 
     func execute(for date: Date) async throws -> [Zone] {

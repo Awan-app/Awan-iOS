@@ -29,6 +29,13 @@ struct HomeTimelineItem: Identifiable, Hashable {
     }
 }
 
+struct HomeSessionDetail: Identifiable, Hashable {
+    let item: HomeTimelineItem
+    let task: AwanTask
+
+    var id: UUID { item.id }
+}
+
 struct HomeTimelineZoneItem: Identifiable, Hashable {
     let id: UUID
     let name: String
@@ -58,8 +65,13 @@ struct HomeState {
     var isAddTaskPresented: Bool
     var activeNudge: ScheduleNudge?
 
-    var selectedSession: HomeTimelineItem? {
-        success?.timelineItems.first { $0.id == selectedSessionID }
+    var selectedSession: HomeSessionDetail? {
+        guard let success,
+              let item = success.timelineItems.first(where: { $0.id == selectedSessionID }),
+              let task = success.tasks.first(where: { $0.id == item.taskID }) else {
+            return nil
+        }
+        return HomeSessionDetail(item: item, task: task)
     }
 
     static func initial(selectedDay: Date) -> HomeState {

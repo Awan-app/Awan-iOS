@@ -2,8 +2,8 @@ import Combine
 import Foundation
 
 public protocol TaskRepository: Sendable {
-    func fetchTasks() async throws -> [AwanTask]
-    func observeTasks() -> AnyPublisher<[AwanTask], Error>
+    func fetchTasks(for date: Date) async throws -> [AwanTask]
+    func observeTasks(for date: Date) -> AnyPublisher<[AwanTask], Error>
     func updateTask(_ task: AwanTask) async throws
     func deleteTask(id: UUID) async throws
     func deleteAllTasks() async throws
@@ -15,7 +15,11 @@ public protocol TaskRepository: Sendable {
 }
 
 public extension TaskRepository {
-    func observeTasks() -> AnyPublisher<[AwanTask], Error> {
-        AsyncValuePublisher.make { try await fetchTasks() }
+    func fetchTasks(for date: Date) async throws -> [AwanTask] {
+        try await fetchTasks()
+    }
+
+    func observeTasks(for date: Date) -> AnyPublisher<[AwanTask], Error> {
+        AsyncValuePublisher.make { try await fetchTasks(for: date) }
     }
 }

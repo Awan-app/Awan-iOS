@@ -67,7 +67,10 @@ enum TaskEndpoint: APIEndpoint {
     var queryParameters: [String: String]? {
         switch self {
         case .getTasksByDateRange(let startDate, let endDate):
-            return ["startDate": startDate, "endDate": endDate]
+            return [
+                "startDate": startDate,
+                "endDate": endDate,
+            ]
         case .deleteTask(_, let cascade):
             return ["cascade": String(cascade)]
         default:
