@@ -75,7 +75,9 @@ struct ProfileMainView: View {
                             avatarImage: Image("user-avatar"), // Using actual asset
                             name: viewModel.userName,
                             email: viewModel.userEmail,
-                            onEdit: {}
+                            onEdit: {
+                                coordinator.mainCoordinator.push(MainRoute.userInfo)
+                            }
                         ).id(languageManager.currentLanguage)
 
                         // Daily Zones

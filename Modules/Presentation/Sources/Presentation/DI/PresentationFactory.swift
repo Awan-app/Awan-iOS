@@ -79,4 +79,7 @@ public struct PresentationFactory {
         ProfileMainView(viewModel: profileViewModel)
     }
 
+    func makeUserInfoView() -> some View {
+        UserInfoView()
+    }
 }
