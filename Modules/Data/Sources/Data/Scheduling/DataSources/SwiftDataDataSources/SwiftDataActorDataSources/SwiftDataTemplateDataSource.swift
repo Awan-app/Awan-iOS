@@ -51,6 +51,68 @@ public actor SwiftDataTemplateDataSource: LocalTemplateDataSource {
         try modelContext.save()
     }
 
+    public func upsertTemplate(_ template: TemplateData) throws {
+        if try find(id: template.id) == nil {
+            try addTemplate(template)
+        } else {
+            try updateTemplate(template)
+        }
+    }
+
+    public func replaceTemplates(_ templates: [TemplateData]) throws {
+        try validateReplacement(templates)
+
+        let existingTemplates = try modelContext.fetch(FetchDescriptor<TemplateModel>())
+        let existingZones = try modelContext.fetch(FetchDescriptor<ZoneModel>())
+        let desiredTemplateIDs = Set(templates.map(\.id))
+        let desiredZoneIDs = Set(templates.flatMap(\.zones).map(\.id))
+        let templatesByID = Dictionary(
+            uniqueKeysWithValues: existingTemplates.map { ($0.id, $0) }
+        )
+        let zonesByID = Dictionary(uniqueKeysWithValues: existingZones.map { ($0.id, $0) })
+
+        for model in existingTemplates where !desiredTemplateIDs.contains(model.id) {
+            modelContext.delete(model)
+        }
+        for model in existingZones
+        where model.templateID != nil && !desiredZoneIDs.contains(model.id) {
+            modelContext.delete(model)
+        }
+
+        for template in templates {
+            if let model = templatesByID[template.id] {
+                model.name = template.name
+                model.weekDaysRaw = template.weekDays.sorted()
+            } else {
+                modelContext.insert(
+                    TemplateModel(
+                        id: template.id,
+                        name: template.name,
+                        createdAt: template.createdAt,
+                        weekDaysRaw: template.weekDays.sorted()
+                    )
+                )
+            }
+
+            for zone in template.zones {
+                if let model = zonesByID[zone.id] {
+                    model.update(from: zone)
+                    model.templateID = template.id
+                    model.templateOverrideID = nil
+                } else {
+                    modelContext.insert(
+                        ZoneModel(
+                            domain: zone,
+                            templateID: template.id,
+                            templateOverrideID: nil
+                        )
+                    )
+                }
+            }
+        }
+        try modelContext.save()
+    }
+
     public func updateTemplate(_ template: TemplateData) throws {
         try validateWeekDays(template.weekDays)
         guard let model = try find(id: template.id) else {
@@ -127,6 +189,43 @@ public actor SwiftDataTemplateDataSource: LocalTemplateDataSource {
     private func validateWeekDays(_ weekDays: Set<Int>) throws {
         guard !weekDays.isEmpty, weekDays.allSatisfy({ (1...7).contains($0) }) else {
             throw SchedulingPersistenceError.invalidWeekDays(weekDays)
+        }
+    }
+
+    private func validateReplacement(_ templates: [TemplateData]) throws {
+        let templateIDs = templates.map(\.id)
+        guard Set(templateIDs).count == templateIDs.count else {
+            throw SchedulingPersistenceError.duplicateID(
+                templateIDs.first ?? UUID()
+            )
+        }
+
+        var claimedWeekDays = Set<Int>()
+        var claimedZoneIDs = Set<UUID>()
+        for template in templates {
+            try validateWeekDays(template.weekDays)
+            let overlap = claimedWeekDays.intersection(template.weekDays)
+            guard overlap.isEmpty else {
+                throw SchedulingPersistenceError.overlappingTemplateWeekDays(overlap)
+            }
+            claimedWeekDays.formUnion(template.weekDays)
+
+            for zone in template.zones {
+                guard claimedZoneIDs.insert(zone.id).inserted else {
+                    throw SchedulingPersistenceError.duplicateZoneID(zone.id)
+                }
+            }
+        }
+
+        let overrideZoneIDs = Set(
+            try modelContext.fetch(FetchDescriptor<ZoneModel>())
+                .filter {
+                    $0.templateID == nil && $0.templateOverrideID != nil
+                }
+                .map(\.id)
+        )
+        if let conflict = claimedZoneIDs.first(where: overrideZoneIDs.contains) {
+            throw SchedulingPersistenceError.invalidZoneOwnership(conflict)
         }
     }
 

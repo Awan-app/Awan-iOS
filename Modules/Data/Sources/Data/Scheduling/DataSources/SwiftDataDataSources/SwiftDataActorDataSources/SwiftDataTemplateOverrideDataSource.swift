@@ -15,6 +15,10 @@ public actor SwiftDataTemplateOverrideDataSource: LocalTemplateOverrideDataSourc
 
     public func fetchTemplateOverride(for date: Date) throws -> TemplateOverrideData? {
         let dateKey = LocalDateKey.value(for: date)
+        return try fetchTemplateOverride(forDateKey: dateKey)
+    }
+
+    public func fetchTemplateOverride(forDateKey dateKey: String) throws -> TemplateOverrideData? {
         let context = ModelContext(modelContainer)
         let matches = try models(dateKey: dateKey, in: context)
         guard matches.count <= 1 else {
@@ -25,7 +29,7 @@ public actor SwiftDataTemplateOverrideDataSource: LocalTemplateOverrideDataSourc
     }
 
     public func addTemplateOverride(_ templateOverride: TemplateOverrideData) throws {
-        let dateKey = LocalDateKey.value(for: templateOverride.dateOfDay)
+        let dateKey = templateOverride.dateKey
         guard try find(id: templateOverride.id) == nil else {
             throw SchedulingPersistenceError.duplicateID(templateOverride.id)
         }
@@ -55,8 +59,68 @@ public actor SwiftDataTemplateOverrideDataSource: LocalTemplateOverrideDataSourc
         try modelContext.save()
     }
 
+    public func replaceTemplateOverrides(
+        _ templateOverrides: [TemplateOverrideData]
+    ) throws {
+        try validateReplacement(templateOverrides)
+
+        let existingOverrides = try modelContext.fetch(
+            FetchDescriptor<TemplateOverrideModel>()
+        )
+        let existingZones = try modelContext.fetch(FetchDescriptor<ZoneModel>())
+        let desiredOverrideIDs = Set(templateOverrides.map(\.id))
+        let desiredZoneIDs = Set(templateOverrides.flatMap(\.zones).map(\.id))
+        let overridesByID = Dictionary(
+            uniqueKeysWithValues: existingOverrides.map { ($0.id, $0) }
+        )
+        let zonesByID = Dictionary(uniqueKeysWithValues: existingZones.map { ($0.id, $0) })
+
+        for model in existingOverrides where !desiredOverrideIDs.contains(model.id) {
+            modelContext.delete(model)
+        }
+        for model in existingZones
+        where model.templateOverrideID != nil && !desiredZoneIDs.contains(model.id) {
+            modelContext.delete(model)
+        }
+
+        for templateOverride in templateOverrides {
+            if let model = overridesByID[templateOverride.id] {
+                model.dateKey = templateOverride.dateKey
+                model.name = templateOverride.name
+                model.dateOfDay = templateOverride.dateOfDay
+            } else {
+                modelContext.insert(
+                    TemplateOverrideModel(
+                        id: templateOverride.id,
+                        dateKey: templateOverride.dateKey,
+                        name: templateOverride.name,
+                        createdAt: templateOverride.createdAt,
+                        dateOfDay: templateOverride.dateOfDay
+                    )
+                )
+            }
+
+            for zone in templateOverride.zones {
+                if let model = zonesByID[zone.id] {
+                    model.update(from: zone)
+                    model.templateID = nil
+                    model.templateOverrideID = templateOverride.id
+                } else {
+                    modelContext.insert(
+                        ZoneModel(
+                            domain: zone,
+                            templateID: nil,
+                            templateOverrideID: templateOverride.id
+                        )
+                    )
+                }
+            }
+        }
+        try modelContext.save()
+    }
+
     public func updateTemplateOverride(_ templateOverride: TemplateOverrideData) throws {
-        let dateKey = LocalDateKey.value(for: templateOverride.dateOfDay)
+        let dateKey = templateOverride.dateKey
         guard let model = try find(id: templateOverride.id) else {
             throw SchedulingError.entityNotFound(id: templateOverride.id)
         }
@@ -136,6 +200,7 @@ public actor SwiftDataTemplateOverrideDataSource: LocalTemplateOverrideDataSourc
             id: model.id,
             name: model.name,
             createdAt: model.createdAt,
+            dateKey: model.dateKey,
             dateOfDay: model.dateOfDay,
             zones: try ownedZones.map { try $0.toDomain() }
                 .sorted { $0.startTime < $1.startTime }
@@ -167,6 +232,43 @@ public actor SwiftDataTemplateOverrideDataSource: LocalTemplateOverrideDataSourc
         )
         if let duplicate = zones.first(where: { existingIDs.contains($0.id) }) {
             throw SchedulingPersistenceError.duplicateZoneID(duplicate.id)
+        }
+    }
+
+    private func validateReplacement(
+        _ templateOverrides: [TemplateOverrideData]
+    ) throws {
+        let overrideIDs = templateOverrides.map(\.id)
+        guard Set(overrideIDs).count == overrideIDs.count else {
+            throw SchedulingPersistenceError.duplicateID(
+                overrideIDs.first ?? UUID()
+            )
+        }
+
+        var claimedDateKeys = Set<String>()
+        var claimedZoneIDs = Set<UUID>()
+        for templateOverride in templateOverrides {
+            guard claimedDateKeys.insert(templateOverride.dateKey).inserted else {
+                throw SchedulingPersistenceError.duplicateOverrideDate(
+                    templateOverride.dateKey
+                )
+            }
+            for zone in templateOverride.zones {
+                guard claimedZoneIDs.insert(zone.id).inserted else {
+                    throw SchedulingPersistenceError.duplicateZoneID(zone.id)
+                }
+            }
+        }
+
+        let templateZoneIDs = Set(
+            try modelContext.fetch(FetchDescriptor<ZoneModel>())
+                .filter {
+                    $0.templateID != nil && $0.templateOverrideID == nil
+                }
+                .map(\.id)
+        )
+        if let conflict = claimedZoneIDs.first(where: templateZoneIDs.contains) {
+            throw SchedulingPersistenceError.invalidZoneOwnership(conflict)
         }
     }
 

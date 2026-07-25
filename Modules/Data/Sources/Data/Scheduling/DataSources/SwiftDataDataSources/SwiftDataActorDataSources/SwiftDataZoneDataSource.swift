@@ -12,6 +12,32 @@ public actor SwiftDataZoneDataSource: LocalZoneDataSource {
         }
     }
 
+    public func removeOrphanedZones() throws {
+        let templateIDs = Set(
+            try modelContext.fetch(FetchDescriptor<TemplateModel>()).map(\.id)
+        )
+        let templateOverrideIDs = Set(
+            try modelContext.fetch(FetchDescriptor<TemplateOverrideModel>()).map(\.id)
+        )
+        let zones = try modelContext.fetch(FetchDescriptor<ZoneModel>())
+        var removedAny = false
+
+        for zone in zones {
+            let hasTemplate = zone.templateID.map(templateIDs.contains) ?? false
+            let hasTemplateOverride = zone.templateOverrideID
+                .map(templateOverrideIDs.contains) ?? false
+            guard zone.hasValidOwner, hasTemplate != hasTemplateOverride else {
+                modelContext.delete(zone)
+                removedAny = true
+                continue
+            }
+        }
+
+        if removedAny {
+            try modelContext.save()
+        }
+    }
+
     public func updateZone(_ zone: Zone) throws {
         guard let model = try find(id: zone.id) else {
             throw SchedulingError.entityNotFound(id: zone.id)
@@ -20,28 +46,6 @@ public actor SwiftDataZoneDataSource: LocalZoneDataSource {
             throw SchedulingPersistenceError.invalidZoneOwnership(zone.id)
         }
         model.update(from: zone)
-        try modelContext.save()
-    }
-
-    public func upsertZone(_ zone: Zone, templateID: UUID?, templateOverrideID: UUID?) throws {
-        if let model = try find(id: zone.id) {
-            model.update(from: zone)
-            if let templateID { model.templateID = templateID }
-            if let templateOverrideID { model.templateOverrideID = templateOverrideID }
-            guard model.hasValidOwner else {
-                throw SchedulingPersistenceError.invalidZoneOwnership(zone.id)
-            }
-        } else {
-            let newModel = ZoneModel(
-                domain: zone,
-                templateID: templateID,
-                templateOverrideID: templateOverrideID
-            )
-            guard newModel.hasValidOwner else {
-                throw SchedulingPersistenceError.invalidZoneOwnership(zone.id)
-            }
-            modelContext.insert(newModel)
-        }
         try modelContext.save()
     }
 

@@ -27,6 +27,7 @@ public struct TemplateOverrideData: Identifiable, Hashable, Sendable {
     public let id: UUID
     public let name: String
     public let createdAt: Date
+    public let dateKey: String
     public let dateOfDay: Date
     public let zones: [Zone]
 
@@ -40,6 +41,23 @@ public struct TemplateOverrideData: Identifiable, Hashable, Sendable {
         self.id = id
         self.name = name
         self.createdAt = createdAt
+        self.dateKey = LocalDateKey.value(for: dateOfDay)
+        self.dateOfDay = dateOfDay
+        self.zones = zones
+    }
+
+    init(
+        id: UUID,
+        name: String,
+        createdAt: Date = Date(),
+        dateKey: String,
+        dateOfDay: Date,
+        zones: [Zone]
+    ) {
+        self.id = id
+        self.name = name
+        self.createdAt = createdAt
+        self.dateKey = dateKey
         self.dateOfDay = dateOfDay
         self.zones = zones
     }

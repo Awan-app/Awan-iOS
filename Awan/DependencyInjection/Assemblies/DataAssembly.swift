@@ -27,8 +27,12 @@ struct DataAssembly: Assembly {
                     LocalUserProfileDataSource.self,
                     from: resolver
                 ),
-                remoteDataSource: Self.resolve(
-                    RemoteZoneDataSourceProtocol.self,
+                remoteTemplateDataSource: Self.resolve(
+                    RemoteTemplateDataSourceProtocol.self,
+                    from: resolver
+                ),
+                remoteTemplateOverrideDataSource: Self.resolve(
+                    RemoteTemplateOverrideDataSourceProtocol.self,
                     from: resolver
                 )
             )
@@ -63,14 +67,14 @@ struct DataAssembly: Assembly {
                 localDataSource: Self.resolve(LocalGoalDataSource.self, from: resolver)
             )
         }
-        container.register(GoalDecompositionRepository.self) { resolver in
-            DefaultGoalDecompositionRepository(remoteDataSource: Self.resolve(RemoteGoalDecompositionDataSource.self, from: resolver))
-        }
-        .inObjectScope(.container)
 //        container.register(GoalDecompositionRepository.self) { resolver in
-//            MockGoalDecompositionRepository()
+//            DefaultGoalDecompositionRepository(remoteDataSource: Self.resolve(RemoteGoalDecompositionDataSource.self, from: resolver))
 //        }
 //        .inObjectScope(.container)
+        container.register(GoalDecompositionRepository.self) { resolver in
+            MockGoalDecompositionRepository()
+        }
+        .inObjectScope(.container)
         container.register(SessionRepository.self) { resolver in
             DefaultSessionRepository(
                 localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver),
@@ -87,6 +91,11 @@ struct DataAssembly: Assembly {
         }
         container.register(RemoteTemplateDataSourceProtocol.self) { resolver in
             RemoteTemplateDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+        container.register(RemoteTemplateOverrideDataSourceProtocol.self) { resolver in
+            RemoteTemplateOverrideDataSource(
                 networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
             )
         }

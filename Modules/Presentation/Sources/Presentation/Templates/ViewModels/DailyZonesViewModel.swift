@@ -162,7 +162,6 @@ public final class DailyZonesViewModel: ZoneManaging {
         guard let currentTemplate else { return }
 
         do {
-            print("Here is my temp id : \(currentTemplate.id)")
             _ = try await updateTemplateUseCase.execute(
                 id: currentTemplate.id,
                 zones: suggestedZones.map(\.asDraft)
@@ -171,6 +170,15 @@ public final class DailyZonesViewModel: ZoneManaging {
         } catch {
             state = .failure(error.localizedDescription)
         }
+    }
+
+    public var errorMessage: String? {
+        guard case let .failure(message) = state else { return nil }
+        return message
+    }
+
+    public func dismissError() {
+        state = currentTemplate == nil ? .idle : .content
     }
 
     private func refreshZones() {
