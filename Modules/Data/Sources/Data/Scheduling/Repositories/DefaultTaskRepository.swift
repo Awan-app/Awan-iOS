@@ -29,6 +29,10 @@ public struct DefaultTaskRepository: TaskRepository {
     public func fetchTasks() async throws -> [AwanTask] {
         try await localDataSource.fetchTasks()
     }
+
+    public func observeTasks() -> AnyPublisher<[AwanTask], Error> {
+        localDataSource.observeTasks()
+    }
     public func fetchTasks(for date: Date) async throws -> [AwanTask] {
         let profile = try await requireProfile()
         return try await cachedTasks(
@@ -173,7 +177,6 @@ public struct DefaultTaskRepository: TaskRepository {
         let acceptedSessions = try response.sessions.map {
             try HomeRemoteMapper.session(
                 $0,
-                taskID: acceptedTask.id,
                 timeZoneID: timeZoneID
             )
         }

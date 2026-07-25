@@ -15,8 +15,7 @@ public protocol RemoteSessionDataSourceProtocol: Sendable {
         endDate: String
     ) async throws -> [String: [SessionResponseDTO]]
     func getSession(sessionID: UUID) async throws -> SessionResponseDTO
-    func getSessionsByDate(date: String) async throws -> [SessionResponseDTO]
-    func getSessionsByDateRange(startDate: String, endDate: String) async throws -> [String: [SessionResponseDTO]]
+
     func updateSession(sessionID: UUID, request: UpdateSessionRequestDTO) async throws -> SessionResponseDTO
     func updateSessionStatus(sessionID: UUID, status: String) async throws -> SessionResponseDTO
     func lockSession(sessionID: UUID) async throws -> SessionResponseDTO
@@ -34,7 +33,7 @@ public final class RemoteSessionDataSource: RemoteSessionDataSourceProtocol {
     }
 
     public func getSessions(date: String) async throws -> [SessionResponseDTO] {
-        try await networkService.request(SessionEndpoint.getSessionsByDate(date))
+        try await networkService.request(SessionEndpoint.getSessionsByDate(date: date))
     }
 
     public func getSessions(
@@ -53,13 +52,7 @@ public final class RemoteSessionDataSource: RemoteSessionDataSourceProtocol {
         try await networkService.request(SessionEndpoint.getSession(sessionID: sessionID))
     }
 
-    public func getSessionsByDate(date: String) async throws -> [SessionResponseDTO] {
-        try await networkService.request(SessionEndpoint.getSessionsByDate(date: date))
-    }
 
-    public func getSessionsByDateRange(startDate: String, endDate: String) async throws -> [String: [SessionResponseDTO]] {
-        try await networkService.request(SessionEndpoint.getSessionsByDateRange(startDate: startDate, endDate: endDate))
-    }
 
     public func updateSession(sessionID: UUID, request: UpdateSessionRequestDTO) async throws -> SessionResponseDTO {
         try await networkService.request(SessionEndpoint.updateSession(sessionID: sessionID, request))

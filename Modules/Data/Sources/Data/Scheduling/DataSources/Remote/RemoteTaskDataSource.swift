@@ -14,8 +14,6 @@ public protocol RemoteTaskDataSource: Sendable {
     ) async throws -> [String: [TaskWithSessionsResponseDTO]]
     func createTask(_ request: CreateTaskRequestDTO) async throws -> TaskInfoResponseDTO
     func getTask(taskID: UUID) async throws -> TaskInfoResponseDTO
-    func getTasksByDate(date: String) async throws -> [TaskWithSessionsResponseDTO]
-    func getTasksByDateRange(startDate: String, endDate: String) async throws -> [String: [TaskWithSessionsResponseDTO]]
     func updateTask(taskID: UUID, request: UpdateTaskRequestDTO) async throws -> TaskInfoResponseDTO
     func moveTask(taskID: UUID, request: MoveTaskRequestDTO) async throws -> TaskInfoResponseDTO
     func deleteTask(taskID: UUID, cascade: Bool) async throws
@@ -33,7 +31,7 @@ public final class DefaultRemoteTaskDataSource: RemoteTaskDataSource {
     }
 
     public func getTasks(date: String) async throws -> [TaskWithSessionsResponseDTO] {
-        try await networkService.request(TaskEndpoint.getTasksByDate(date))
+        try await networkService.request(TaskEndpoint.getTasksByDate(date: date))
     }
 
     public func getTasks(
@@ -53,13 +51,7 @@ public final class DefaultRemoteTaskDataSource: RemoteTaskDataSource {
         try await networkService.request(TaskEndpoint.getTask(taskID: taskID))
     }
 
-    public func getTasksByDate(date: String) async throws -> [TaskWithSessionsResponseDTO] {
-        try await networkService.request(TaskEndpoint.getTasksByDate(date: date))
-    }
 
-    public func getTasksByDateRange(startDate: String, endDate: String) async throws -> [String: [TaskWithSessionsResponseDTO]] {
-        try await networkService.request(TaskEndpoint.getTasksByDateRange(startDate: startDate, endDate: endDate))
-    }
 
     public func updateTask(taskID: UUID, request: UpdateTaskRequestDTO) async throws -> TaskInfoResponseDTO {
         try await networkService.request(TaskEndpoint.updateTask(taskID: taskID, request))
