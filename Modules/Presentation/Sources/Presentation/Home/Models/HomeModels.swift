@@ -64,6 +64,13 @@ struct HomeState {
     var isMutating: Bool
     var isAddTaskPresented: Bool
     var activeNudge: ScheduleNudge?
+    var isAITaskCreating: Bool
+    var aiTaskResult: AITaskResult?
+
+    enum AITaskResult: Equatable {
+        case created(title: String)
+        case failed(message: String)
+    }
 
     var selectedSession: HomeSessionDetail? {
         guard let success,
@@ -83,7 +90,9 @@ struct HomeState {
             selectedSessionID: nil,
             isMutating: false,
             isAddTaskPresented: false,
-            activeNudge: nil
+            activeNudge: nil,
+            isAITaskCreating: false,
+            aiTaskResult: nil
         )
     }
 }

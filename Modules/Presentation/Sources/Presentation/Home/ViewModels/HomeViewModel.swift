@@ -71,6 +71,8 @@ public final class HomeViewModel {
                 mandatory: mandatory,
                 startsAt: startsAt
             )
+        case let .createAITask(title, description):
+            createAITask(title: title, description: description)
         }
     }
 
@@ -156,6 +158,25 @@ public final class HomeViewModel {
             } catch is CancellationError {
             } catch {
                 state.failure = HomeFailureState(message: error.localizedDescription)
+            }
+        }
+    }
+
+    private func createAITask(title: String, description: String?) {
+        guard !state.isAITaskCreating else { return }
+        state.isAITaskCreating = true
+        state.aiTaskResult = nil
+
+        Task { [weak self] in
+            guard let self else { return }
+            defer { state.isAITaskCreating = false }
+            do {
+                let request = CreateAITaskRequest(title: title, description: description)
+                let task = try await useCases.createAITask.execute(request)
+                state.aiTaskResult = .created(title: task.title)
+            } catch is CancellationError {
+            } catch {
+                state.aiTaskResult = .failed(message: error.localizedDescription)
             }
         }
     }

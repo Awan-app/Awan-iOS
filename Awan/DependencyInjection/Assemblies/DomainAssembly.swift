@@ -106,6 +106,11 @@ struct DomainAssembly: Assembly {
                 reconciler: Self.resolve(TaskScheduleReconciling.self, from: resolver)
             )
         }
+        container.register(CreateAITaskUseCase.self) { resolver in
+            DefaultCreateAITaskUseCase(
+                repository: Self.resolve(AiTaskRepository.self, from: resolver)
+            )
+        }
         container.register(UpdateTaskUseCase.self) { resolver in
             DefaultUpdateTaskUseCase(
                 workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),

@@ -452,6 +452,18 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "home.btn_add_manual_task", value: nil, table: "Localizable")
         }
 
+        public static var aiCreatingTask: String {
+            L10n.currentBundle.localizedString(forKey: "home.ai_creating_task", value: nil, table: "Localizable")
+        }
+
+        public static var aiTaskCreated: String {
+            L10n.currentBundle.localizedString(forKey: "home.ai_task_created", value: nil, table: "Localizable")
+        }
+
+        public static var aiTaskError: String {
+            L10n.currentBundle.localizedString(forKey: "home.ai_task_error", value: nil, table: "Localizable")
+        }
+
         public static var buildItYourWay: String {
             L10n.currentBundle.localizedString(forKey: "home.build_it_your_way", value: nil, table: "Localizable")
         }

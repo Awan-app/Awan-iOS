@@ -15,6 +15,13 @@ public struct MockCompleteOnboardingUseCase: CompleteOnboardingUseCase {
     }
 }
 
+public struct MockCreateAITaskUseCase: CreateAITaskUseCase {
+    public init() {}
+    public func execute(_ request: CreateAITaskRequest) async throws -> AITask {
+        fatalError("Not implemented in preview mock")
+    }
+}
+
 public struct MockCreateOnboardingTemplateUseCase: CreateOnboardingTemplateUseCase {
     public init() {}
     public func execute(zoneDrafts: [Zone]) async throws {}

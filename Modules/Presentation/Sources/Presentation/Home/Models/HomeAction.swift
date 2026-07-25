@@ -24,4 +24,6 @@ enum HomeAction {
         mandatory: Bool,
         startsAt: Date
     )
+    case createAITask(title: String, description: String?)
 }
+

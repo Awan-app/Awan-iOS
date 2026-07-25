@@ -193,6 +193,39 @@
         }
       }
     },
+    "home.ai_creating_task": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creating your task…"
+          }
+        }
+      }
+    },
+    "home.ai_task_created": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Task created successfully!"
+          }
+        }
+      }
+    },
+    "home.ai_task_error": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not create task. Please try again."
+          }
+        }
+      }
+    },
     "home.btn_plan_it_for_me": {
       "extractionState": "manual",
       "localizations": {
