@@ -2,6 +2,7 @@ import SwiftUI
 import Common
 
 public struct DailyZonesView: View {
+    @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: DailyZonesViewModel
     
     @State private var draggedZone: SuggestedZone?
@@ -37,7 +38,17 @@ public struct DailyZonesView: View {
         }
         .navigationTitle(L10n.Templates.dailyZonesTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.backward")
+                        .font(.body.weight(.semibold))
+                }
+                .foregroundColor(AppColors.accentBlue)
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 GifImageView("awan-mascot-clock")
                     .frame(width: 85, height: 85)

@@ -609,8 +609,8 @@ public enum L10n {
     }
 
     public enum Templates {
-        public static var dailyZonesTitle: String { String(localized: "templates.daily_zones_title", bundle: .module) }
-        public static func saveDay(_ day: String) -> String { String(format: String(localized: "templates.save_day", bundle: .module), day) }
-        public static var day: String { String(localized: "templates.day", bundle: .module) }
+        public static var dailyZonesTitle: String { L10n.currentBundle.localizedString(forKey: "templates.daily_zones_title", value: nil, table: "Localizable") }
+        public static func saveDay(_ day: String) -> String { String(format: L10n.currentBundle.localizedString(forKey: "templates.save_day", value: nil, table: "Localizable"), day) }
+        public static var day: String { L10n.currentBundle.localizedString(forKey: "templates.day", value: nil, table: "Localizable") }
     }
 }
