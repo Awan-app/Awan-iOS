@@ -1,17 +1,17 @@
 import Foundation
 
-public protocol UpdateUserNameUseCase: Sendable {
-    func execute(firstName: String, lastName: String) async throws
+public protocol UpdateUserProfileUseCase: Sendable {
+    func execute(firstName: String?, lastName: String?, birthDate: String?) async throws
 }
 
-public struct DefaultUpdateUserNameUseCase: UpdateUserNameUseCase {
+public struct DefaultUpdateUserProfileUseCase: UpdateUserProfileUseCase {
     private let repository: any UserProfileRepository
 
     public init(repository: any UserProfileRepository) {
         self.repository = repository
     }
 
-    public func execute(firstName: String, lastName: String) async throws {
-        try await repository.updateName(firstName: firstName, lastName: lastName)
+    public func execute(firstName: String?, lastName: String?, birthDate: String?) async throws {
+        try await repository.updateProfile(firstName: firstName, lastName: lastName, birthDate: birthDate)
     }
 }

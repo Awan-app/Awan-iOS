@@ -41,9 +41,13 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
         return profile
     }
 
-    public func updateName(firstName: String, lastName: String) async throws {
-        let request = UpdateNameRequestDTO(firstName: firstName, lastName: lastName)
-        let response = try await remoteDataSource.updateName(request)
+    public func updateProfile(firstName: String?, lastName: String?, birthDate: String?) async throws {
+        let request = UpdateProfilePartialRequestDTO(
+            firstName: firstName,
+            lastName: lastName,
+            birthDate: birthDate
+        )
+        let response = try await remoteDataSource.updateProfilePartial(request)
         let profile = try HomeRemoteMapper.profile(response)
         try await localDataSource.replaceProfile(profile)
     }

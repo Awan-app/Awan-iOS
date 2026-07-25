@@ -75,8 +75,8 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(UserProfileRepository.self, from: resolver)
             )
         }
-        container.register(UpdateUserNameUseCase.self) { resolver in
-            DefaultUpdateUserNameUseCase(
+        container.register(UpdateUserProfileUseCase.self) { resolver in
+            DefaultUpdateUserProfileUseCase(
                 repository: Self.resolve(UserProfileRepository.self, from: resolver)
             )
         }

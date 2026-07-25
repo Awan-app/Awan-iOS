@@ -16,14 +16,14 @@ public final class UserInfoViewModel {
     private var profileCancellable: AnyCancellable?
     
     private let getUserProfileUseCase: any GetUserProfileUseCase
-    private let updateUserNameUseCase: any UpdateUserNameUseCase
+    private let updateUserProfileUseCase: any UpdateUserProfileUseCase
     
     public init(
         getUserProfileUseCase: any GetUserProfileUseCase,
-        updateUserNameUseCase: any UpdateUserNameUseCase
+        updateUserProfileUseCase: any UpdateUserProfileUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
-        self.updateUserNameUseCase = updateUserNameUseCase
+        self.updateUserProfileUseCase = updateUserProfileUseCase
     }
     
     public var isSaveDisabled: Bool {
@@ -61,7 +61,15 @@ public final class UserInfoViewModel {
     
     public func saveChanges() async {
         do {
-            try await updateUserNameUseCase.execute(firstName: firstName, lastName: lastName)
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let birthDateString = dateFormatter.string(from: dateOfBirth)
+            
+            try await updateUserProfileUseCase.execute(
+                firstName: firstName,
+                lastName: lastName,
+                birthDate: birthDateString
+            )
         } catch {
             print("Failed to save profile changes: \(error)")
         }

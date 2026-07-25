@@ -78,7 +78,7 @@ public struct UserInfoView: View {
     UserInfoView(
         viewModel: UserInfoViewModel(
             getUserProfileUseCase: MockGetUserProfileUseCase(),
-            updateUserNameUseCase: MockUpdateUserNameUseCase()
+            updateUserProfileUseCase: MockUpdateUserProfileUseCase()
         )
     )
         .environment(AppearanceManager())
