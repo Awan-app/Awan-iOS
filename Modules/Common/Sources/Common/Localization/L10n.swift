@@ -347,6 +347,42 @@ public enum L10n {
                 table: "Localizable"
             )
         }
+
+        public static var planning: String {
+            value("goal_creation.planning")
+        }
+
+        public static var scheduling: String {
+            value("goal_creation.scheduling")
+        }
+
+        public static var replyPlaceholder: String {
+            value("goal_creation.reply_placeholder")
+        }
+
+        public static var modifyPlaceholder: String {
+            value("goal_creation.modify_placeholder")
+        }
+
+        public static var sessions: String {
+            value("goal_creation.sessions")
+        }
+
+        public static var oneSession: String {
+            value("goal_creation.one_session")
+        }
+
+        public static var confirm: String {
+            value("goal_creation.confirm")
+        }
+
+        private static func value(_ key: String) -> String {
+            L10n.currentBundle.localizedString(
+                forKey: key,
+                value: nil,
+                table: "Localizable"
+            )
+        }
     }
 
     public enum Home {
