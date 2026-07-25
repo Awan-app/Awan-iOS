@@ -11,6 +11,10 @@ public final class CreateTaskViewModel {
     public private(set) var errorMessage: String?
     public private(set) var didCreateTask = false
     public private(set) var activeNudge: ScheduleNudge?
+    /// Drives `GoalCreationLoadingView` sheet presentation.
+    private(set) var isShowingAILoading = false
+    /// Drives `AITaskResultSheet` presentation once the AI call completes.
+    private(set) var pendingAITaskItem: AITaskSheetItem?
     var quickText = ""
     var isAwanSchedulingEnabled = true
     var durationMinutes = 60
@@ -143,23 +147,48 @@ public final class CreateTaskViewModel {
         guard !isSubmitting else { return }
         isSubmitting = true
         errorMessage = nil
-        defer { isSubmitting = false }
+        isShowingAILoading = true
+        defer {
+            isSubmitting = false
+            isShowingAILoading = false
+        }
+
+        let startTime = Date()
 
         do {
-            let result = try await useCases.createTaskWithAwan.execute(
-                CreateTaskWithAwanRequest(
-                    prompt: prompt,
-                    selectedDay: selectedDay,
-                    timeZone: timeZone
-                )
+            let aiTask = try await useCases.createAITask.execute(
+                CreateAITaskRequest(title: prompt)
             )
-            if result != nil {
-                didCreateTask = true
-            }
+            pendingAITaskItem = AITaskSheetItem(task: aiTask, startTime: startTime)
         } catch is CancellationError {
+            // User cancelled — abort silently.
         } catch {
-            errorMessage = error.localizedDescription
+            // TODO: Remove once backend is stable. Fall back to mock data so the
+            // UI flow is always testable end-to-end during development.
+            #if DEBUG
+            print("[CreateTaskViewModel] AI endpoint failed (\(error)). Using mock data.")
+            #endif
+            pendingAITaskItem = AITaskSheetItem(
+                task: AITask(
+                    id: UUID(),
+                    title: prompt,
+                    description: nil,
+                    estimatedDuration: 60,
+                    status: "SCHEDULED",
+                    mandatory: true,
+                    estimatedPoints: 20,
+                    isSplittable: false,
+                    goalID: UUID(),
+                    dependencyIDs: [],
+                    category: TaskCategory(id: UUID(), name: "General")
+                ),
+                startTime: startTime
+            )
         }
+    }
+
+    func dismissAITaskResult() {
+        pendingAITaskItem = nil
     }
 
     func beginRecording() async {

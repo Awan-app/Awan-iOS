@@ -118,3 +118,11 @@ struct HomeTimelineEmptyStateView: View {
         .padding(.vertical, 20)
     }
 }
+
+
+import Domain
+#Preview {
+    HomeTimelineBackgroundView(window: HomeTimelineWindow(start: Date(), end: Date().addingTimeInterval(3600)), zones: [], labelWidth: 50, plotWidth: 300, hourHeight: 80)
+        .padding()
+}
+

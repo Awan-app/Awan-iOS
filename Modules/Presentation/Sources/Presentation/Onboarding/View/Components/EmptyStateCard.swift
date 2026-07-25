@@ -50,3 +50,10 @@ struct EmptyStateCard: View {
         .padding()
         .background(AppColors.screenBackground)
 }
+
+
+#Preview {
+    EmptyStateCard(onAddFirstTask: {})
+        .padding()
+}
+

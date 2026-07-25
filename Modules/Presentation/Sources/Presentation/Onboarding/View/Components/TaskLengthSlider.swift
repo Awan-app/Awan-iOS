@@ -84,6 +84,13 @@ struct TaskLengthSlider: View {
         .padding(.top, 24)
     }
 }
-//#Preview( {
-//    TaskLengthSlider(focusDurationIndex: $5, labels: [])
-//}
+#Preview {
+    TaskLengthSlider(focusDurationIndex: .constant(5), labels: ["15m", "30m", "45m", "1h", "1.5h", "2h", "2.5h", "3h"])
+}
+
+
+#Preview {
+    TaskLengthSlider(focusDurationIndex: .constant(0), labels: ["Short", "Medium", "Long"])
+        .padding()
+}
+

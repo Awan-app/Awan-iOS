@@ -198,3 +198,5 @@ private struct GoalProposalTaskCard: View {
         .padding(.bottom, 4)
     }
 }
+
+

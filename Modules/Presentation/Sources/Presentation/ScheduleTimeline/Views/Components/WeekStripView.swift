@@ -57,3 +57,11 @@ struct WeekStripView: View {
         .animation(.spring(response: 0.45, dampingFraction: 0.8), value: selectedDay)
     }
 }
+
+
+import Domain
+#Preview {
+    WeekStripView(days: [Date()], selectedDay: Date(), onSelect: { _ in })
+        .padding()
+}
+

@@ -24,6 +24,13 @@ import Common
     }
 }
 
-//#Preview {
-//    TaskLengthTitleArea()
-//}
+#Preview {
+    TaskLengthTitleArea()
+}
+
+
+#Preview {
+    TaskLengthTitleArea()
+        .padding()
+}
+

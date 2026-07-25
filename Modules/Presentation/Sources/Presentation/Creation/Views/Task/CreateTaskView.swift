@@ -69,7 +69,8 @@ struct CreateTaskView: View {
         .background(AppColors.screenBackground.ignoresSafeArea())
         .disabled(viewModel.isSubmitting)
         .overlay {
-            if viewModel.isLoadingZones || viewModel.isSubmitting {
+            // Only show the spinner for zone loading; the AI loading uses its own sheet.
+            if viewModel.isLoadingZones {
                 ProgressView()
                     .controlSize(.large)
                     .padding(22)
@@ -78,6 +79,22 @@ struct CreateTaskView: View {
                         in: RoundedRectangle(cornerRadius: 20)
                     )
             }
+        }
+        // Loading sheet — shown while AI endpoint is being called.
+        .sheet(isPresented: aiLoadingBinding) {
+            GoalCreationLoadingView(message: L10n.Home.aiCreatingTask)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+                .interactiveDismissDisabled()
+        }
+        // Result sheet — shown once the AI response arrives.
+        .sheet(item: aiTaskResultBinding) { sheetItem in
+            AITaskResultSheet(item: sheetItem) {
+                viewModel.dismissAITaskResult()
+                onCreated()
+            }
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
         }
         .task {
             await viewModel.loadCreationData()
@@ -106,6 +123,20 @@ struct CreateTaskView: View {
         Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.dismissError() } }
+        )
+    }
+
+    private var aiLoadingBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.isShowingAILoading },
+            set: { _ in } // dismissal is controlled by the ViewModel
+        )
+    }
+
+    private var aiTaskResultBinding: Binding<AITaskSheetItem?> {
+        Binding(
+            get: { viewModel.pendingAITaskItem },
+            set: { if $0 == nil { viewModel.dismissAITaskResult() } }
         )
     }
 }

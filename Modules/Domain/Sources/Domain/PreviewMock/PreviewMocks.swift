@@ -27,9 +27,8 @@ public struct MockCreateOnboardingTemplateUseCase: CreateOnboardingTemplateUseCa
     public func execute(zoneDrafts: [Zone]) async throws {}
 }
 
-public struct MockGetUserProfileUseCase: GetUserProfileUseCase {
-    public init() {}
-    public func execute() async throws -> UserProfile {
+public extension UserProfile {
+    static var mock: UserProfile {
         UserProfile(
             id: UUID(),
             email: "mock@awan.app",
@@ -48,6 +47,13 @@ public struct MockGetUserProfileUseCase: GetUserProfileUseCase {
             )
         )
     }
+}
+
+public struct MockGetUserProfileUseCase: GetUserProfileUseCase {
+    public init() {}
+    public func execute() async throws -> UserProfile {
+        UserProfile.mock
+    }
     public func observe() -> AnyPublisher<UserProfile, Error> {
         Empty().eraseToAnyPublisher()
     }
@@ -60,6 +66,20 @@ public struct MockFetchZonesUseCase: FetchZonesUseCase {
     }
     public func observe(for date: Date) -> AnyPublisher<[Zone], Error> {
         Just(Zone.mockDailyZones).setFailureType(to: Error.self).eraseToAnyPublisher()
+    }
+}
+
+public struct MockFetchTemplatesUseCase: FetchTemplatesUseCase {
+    public init() {}
+    public func execute() async throws -> [Template] {
+        return []
+    }
+}
+
+public struct MockUpdateTemplateUseCase: UpdateTemplateUseCase {
+    public init() {}
+    public func execute(id: UUID, zones: [Zone]) async throws -> Template {
+        fatalError("Not implemented in preview mock")
     }
 }
 
@@ -106,5 +126,126 @@ public extension Zone {
         } catch {
             return []
         }
+    }
+}
+
+public struct MockRequestOTPUseCase: RequestOTPUseCase {
+    public init() {}
+    public func execute(email: String) async throws -> OTPRequestResult {
+        return OTPRequestResult(expiresInSeconds: 60, resendAvailableInSeconds: 60)
+    }
+}
+
+public struct MockAuthRepository: AuthRepository {
+    public init() {}
+    public func requestOTP(email: String) async throws -> OTPRequestResult {
+        return OTPRequestResult(expiresInSeconds: 60, resendAvailableInSeconds: 60)
+    }
+    public func verifyOTP(email: String, code: String) async throws -> VerifyOTPResult {
+        return VerifyOTPResult(user: UserEntity(id: "1", email: "test@test.com", isNew: false))
+    }
+    public func observeAuthenticatedUser() -> AsyncStream<UserEntity?> {
+        AsyncStream { continuation in
+            continuation.yield(UserEntity(id: "1", email: "test@test.com", isNew: false))
+            continuation.finish()
+        }
+    }
+    public func logout() async throws {}
+}
+
+public extension Date {
+    static var mockWakeTime: Date {
+        Calendar.current.date(from: DateComponents(hour: 7, minute: 0)) ?? .now
+    }
+    
+    static var mockSleepTime: Date {
+        Calendar.current.date(from: DateComponents(hour: 23, minute: 0)) ?? .now
+    }
+}
+
+
+import Combine
+
+public struct MockFetchTasksUseCase: FetchTasksUseCase {
+    public init() {}
+    public func execute(for date: Date) async throws -> [AwanTask] {
+        return []
+    }
+    public func observe(for date: Date) -> AnyPublisher<[AwanTask], Error> {
+        return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
+    }
+}
+
+public struct MockFetchSessionsUseCase: FetchSessionsUseCase {
+    public init() {}
+    public func execute(for date: Date) async throws -> [Session] {
+        return []
+    }
+    public func observe(for date: Date) -> AnyPublisher<[Session], Error> {
+        return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
+    }
+}
+
+public struct MockRescheduleSessionUseCase: RescheduleSessionUseCase {
+    public init() {}
+    public func execute(sessionID: UUID, newStart: Date) async throws -> Session {
+        fatalError()
+    }
+}
+
+public struct MockSetSessionLockUseCase: SetSessionLockUseCase {
+    public init() {}
+    public func execute(sessionID: UUID, isLocked: Bool) async throws -> Session {
+        fatalError()
+    }
+}
+
+public struct MockSetSessionCompletionUseCase: SetSessionCompletionUseCase {
+    public init() {}
+    public func execute(sessionID: UUID, isCompleted: Bool) async throws -> Session {
+        fatalError()
+    }
+}
+
+public struct MockDeleteSessionUseCase: DeleteSessionUseCase {
+    public init() {}
+    public func execute(sessionID: UUID) async throws {}
+}
+
+public struct MockCreateTaskUseCase: CreateTaskUseCase {
+    public init() {}
+    public func execute(_ request: CreateTaskRequest) async throws -> ScheduleOperationResult {
+        fatalError()
+    }
+}
+
+
+
+public struct MockManageZoneScheduleUseCase: ManageZoneScheduleUseCase {
+    public init() {}
+    public func swapZones(_ zones: [Zone], at sourceIndex: Int, with destinationIndex: Int) -> [Zone] { return zones }
+    public func sortedChronologically(_ zones: [Zone]) -> [Zone] { return zones }
+    public func isOverlapping(start: String, end: String, in zones: [Zone], excludingID: UUID?) -> Bool { return false }
+    public func isOutsideActiveHours(start: Date, end: Date, wakeupTime: Date, sleepTime: Date) -> Bool { return false }
+    public func firstAvailableInterval(wakeupTime: Date, existingZones: [Zone]) -> (start: Date, end: Date) { return (Date(), Date().addingTimeInterval(3600)) }
+    public func formatTime(_ date: Date) -> String { return "10:00 AM" }
+    public func parseTime(_ timeString: String) -> Date? { return Date() }
+}
+
+
+public extension AwanTask {
+    static var mock: AwanTask {
+        AwanTask(
+            id: UUID(),
+            title: "Mock Task",
+            description: "Mock Task Description",
+            status: .inProgress,
+            goalID: nil,
+            zoneID: nil,
+            duration: try! TaskDuration(minutes: 60),
+            isSplittable: false,
+            mandatory: false,
+            estimatedPoints: 10
+        )
     }
 }

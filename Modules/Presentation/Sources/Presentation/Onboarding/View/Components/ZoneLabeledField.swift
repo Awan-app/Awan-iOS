@@ -23,3 +23,12 @@ struct ZoneLabeledField<Content: View>: View {
         }
     }
 }
+
+
+#Preview {
+    ZoneLabeledField("Name", icon: "pencil") {
+        Text("Content")
+    }
+    .padding()
+}
+

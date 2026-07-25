@@ -28,3 +28,10 @@ struct SectionHeaderLabel: View {
         }
     }
 }
+
+
+#Preview {
+    SectionHeaderLabel(title: "Section")
+        .padding()
+}
+

@@ -82,7 +82,9 @@ struct PresentationAssembly: Assembly {
                     setLock: Self.resolve(SetSessionLockUseCase.self, from: resolver),
                     setCompletion: Self.resolve(SetSessionCompletionUseCase.self, from: resolver),
                     delete: Self.resolve(DeleteSessionUseCase.self, from: resolver)
-                )
+                ),
+                createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
+                createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver)
             )
         }
 
@@ -91,6 +93,7 @@ struct PresentationAssembly: Assembly {
                 fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
                 createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
                 createTaskWithAwan: EmptyCreateTaskWithAwanUseCase(),
+                createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver),
                 userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 goalDecomposition: GoalDecompositionUseCases(
                     sendMessage: Self.resolve(
@@ -106,9 +109,6 @@ struct PresentationAssembly: Assembly {
                         from: resolver
                     )
                 )
-                ),
-                createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
-                createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver)
             )
         }
 

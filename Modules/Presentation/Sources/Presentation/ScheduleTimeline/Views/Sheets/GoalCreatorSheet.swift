@@ -131,3 +131,10 @@ struct GoalCreatorSheet: View {
         zones.first { $0.id == zoneID }
     }
 }
+
+
+import Domain
+#Preview {
+    GoalCreatorSheet(zones: [], startDay: Date(), onCreate: { _, _, _ in })
+}
+

@@ -117,11 +117,14 @@ struct DayPreviewCard: View {
 }
 
 #Preview {
-    let calendar = Calendar.current
-    let wake = calendar.date(from: DateComponents(hour: 7, minute: 0)) ?? .now
-    let sleep = calendar.date(from: DateComponents(hour: 23, minute: 0)) ?? .now
-
-    DayPreviewCard(wakeupTime: wake, sleepTime: sleep)
+    DayPreviewCard(wakeupTime: Date.mockWakeTime, sleepTime: Date.mockSleepTime)
         .padding()
         .background(AppColors.skyGradientBottom)
 }
+
+
+#Preview {
+    DayPreviewCard(wakeupTime: Date(), sleepTime: Date().addingTimeInterval(3600 * 16))
+        .padding()
+}
+

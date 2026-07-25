@@ -92,3 +92,11 @@ struct QuestHeaderView: View {
         .shadow(color: AppColors.shadow.opacity(0.07), radius: 18, y: 8)
     }
 }
+
+
+import Domain
+#Preview {
+    QuestHeaderView(selectedDayTitle: "Today", scheduledMinutes: 120, goalProgress: 0.5)
+        .padding()
+}
+

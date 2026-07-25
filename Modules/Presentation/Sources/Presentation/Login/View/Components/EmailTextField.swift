@@ -83,3 +83,10 @@ struct EmailTextField: View {
         return true
     }
 }
+
+
+#Preview {
+    EmailTextField(text: .constant("test@test.com"), errorState: nil, isRateLimited: false)
+        .padding()
+}
+

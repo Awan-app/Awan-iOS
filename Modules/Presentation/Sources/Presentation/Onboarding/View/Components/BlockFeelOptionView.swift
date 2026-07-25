@@ -40,3 +40,10 @@ struct BlockFeelOptionView: View {
         )
     }
 }
+
+
+#Preview {
+    BlockFeelOptionView(title: "Short", subtitle: "25 min", numberOfBlocks: 1, isSelected: false)
+        .padding()
+}
+

@@ -127,3 +127,39 @@ struct HomeSessionActionSheet: View {
         value ? L10n.Home.yes : L10n.Home.no
     }
 }
+
+
+
+import Domain
+extension HomeTimelineItem {
+    static var mock: HomeTimelineItem {
+        HomeTimelineItem(
+            id: UUID(),
+            taskID: UUID(),
+            title: "Test Timeline Item",
+            points: 10,
+            color: AppColors.accentBlue,
+            start: Date(),
+            end: Date().addingTimeInterval(3600),
+            blocking: false,
+            status: .planned,
+            lane: 0,
+            laneCount: 1
+        )
+    }
+}
+
+#Preview {
+    HomeSessionActionSheet(
+        item: .mock,
+        task: .mock,
+        window: nil,
+        isMutating: false,
+        onReschedule: { _ in },
+        onSetLock: { _ in },
+        onDelete: {},
+        onDismiss: {}
+    )
+    .padding()
+}
+

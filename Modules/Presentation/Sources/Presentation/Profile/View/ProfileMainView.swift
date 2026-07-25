@@ -125,9 +125,17 @@ struct ProfileMainView: View {
     }
 }
 
-//#Preview {
-//    ProfileMainView(viewModel: ProfileViewModel(
-//        getUserProfileUseCase: MockGetUserProfileUseCase(),
-//        fetchZonesUseCase: MockFetchZonesUseCase()
-//    ))
-//}
+#Preview {
+    ProfileMainView(
+        viewModel: ProfileViewModel(
+            getUserProfileUseCase: MockGetUserProfileUseCase(),
+            fetchZonesUseCase: MockFetchZonesUseCase()
+        ),
+        dailyZonesViewModel: DailyZonesViewModel(
+            fetchTemplatesUseCase: MockFetchTemplatesUseCase(),
+            updateTemplateUseCase: MockUpdateTemplateUseCase(),
+            getUserProfileUseCase: MockGetUserProfileUseCase(),
+            manageDailyZoneScheduleUseCase: DefaultManageDailyZoneScheduleUseCase()
+        )
+    )
+}

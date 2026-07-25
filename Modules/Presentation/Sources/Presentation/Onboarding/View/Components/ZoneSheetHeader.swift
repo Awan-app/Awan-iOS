@@ -18,3 +18,10 @@ struct ZoneSheetHeader: View {
         }
     }
 }
+
+
+#Preview {
+    ZoneSheetHeader(iconName: "star", title: "Add Zone", selectedColor: .blue, bounceValue: 0)
+        .padding()
+}
+

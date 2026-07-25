@@ -42,3 +42,8 @@ struct PreferenceRowView: View {
         .buttonStyle(.plain)
     }
 }
+
+#Preview {
+    PreferenceRowView(icon: "star", title: "Test", value: "Value", onTap: {})
+        .padding()
+}

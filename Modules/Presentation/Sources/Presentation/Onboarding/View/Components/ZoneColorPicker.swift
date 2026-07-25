@@ -45,3 +45,10 @@ struct ZoneColorPicker: View {
         }
     }
 }
+
+
+#Preview {
+    ZoneColorPicker(selectedColorIndex: .constant(0))
+        .padding()
+}
+

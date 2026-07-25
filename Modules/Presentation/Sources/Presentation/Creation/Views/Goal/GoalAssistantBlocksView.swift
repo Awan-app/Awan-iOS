@@ -147,3 +147,10 @@ private struct FlowLayout: Layout {
         )
     }
 }
+
+
+#Preview {
+    GoalAssistantBlocksView(blocks: [], onOptionSelected: { _ in })
+        .padding()
+}
+
