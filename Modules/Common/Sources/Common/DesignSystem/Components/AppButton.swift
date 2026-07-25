@@ -49,17 +49,30 @@ public struct AppButton: View {
         Button(action: onTap) {
             Group {
                 if let icon {
-                    Label(title, systemImage: icon)
+                    if title.isEmpty {
+                        Image(systemName: icon)
+                    } else {
+                        Label(title, systemImage: icon)
+                    }
                 } else if let iconAsset {
-                    Label {
-                        Text(title)
-                    } icon: {
+                    if title.isEmpty {
                         Image(iconAsset)
                             .resizable()
                             .scaledToFit()
                             .frame(
                                 width: size == .regular ? 20 : 16,
                                 height: size == .regular ? 20 : 16)
+                    } else {
+                        Label {
+                            Text(title)
+                        } icon: {
+                            Image(iconAsset)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(
+                                    width: size == .regular ? 20 : 16,
+                                    height: size == .regular ? 20 : 16)
+                        }
                     }
                 } else {
                     Text(title)
