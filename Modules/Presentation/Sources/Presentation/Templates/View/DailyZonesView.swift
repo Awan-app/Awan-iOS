@@ -14,13 +14,6 @@ public struct DailyZonesView: View {
 
     public var body: some View {
         VStack(spacing: 0) {
-            // Header
-            headerSection
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 32)
-
-
             if viewModel.state == .loading {
                 Spacer()
                 ProgressView()
@@ -40,7 +33,15 @@ public struct DailyZonesView: View {
 
             bottomButton
                 .padding(.horizontal, 24)
-                .padding(.bottom, 24)
+                .padding(.bottom, 48) // Increased bottom padding
+        }
+        .navigationTitle(L10n.Templates.dailyZonesTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                GifImageView("awan-mascot-clock")
+                    .frame(width: 50, height: 50)
+            }
         }
         .task {
             await viewModel.load()
@@ -54,31 +55,7 @@ public struct DailyZonesView: View {
         .background(AppColors.screenBackground.ignoresSafeArea())
     }
 
-    private var headerSection: some View {
-        ZStack {
-            HStack {
-                Button(action: {
-                    // Handle back navigation if needed
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(AppColors.accentBlue)
-                }
-                Spacer()
-            }
-            
-            // Header Area
-            Text(L10n.Templates.dailyZonesTitle)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundStyle(AppColors.brandDarkBlue)
-                
-            HStack {
-                Spacer()
-                GifImageView("awan-mascot-clock")
-                    .frame(width: 80, height: 80)
-            }
-        }
-    }
+
 
     private var zonesListWithTimeline: some View {
         VStack(spacing: 16) {

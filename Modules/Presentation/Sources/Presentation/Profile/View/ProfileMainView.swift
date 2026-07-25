@@ -16,8 +16,6 @@ struct ProfileMainView: View {
     var dailyZonesViewModel: DailyZonesViewModel
     @State private var isLanguageSheetPresented = false
     
-    @State private var showDailyZones = false
-    
     init(viewModel: ProfileViewModel, dailyZonesViewModel: DailyZonesViewModel) {
         self.viewModel = viewModel
         self.dailyZonesViewModel = dailyZonesViewModel
@@ -87,9 +85,9 @@ struct ProfileMainView: View {
                             zones: viewModel.dailyZones,
                             isReady: viewModel.isReady,
                             onTap: {
-                                showDailyZones = true
+                                coordinator.mainCoordinator.push(MainRoute.dailyZones)
                             }
-                        )
+                        ).id(languageManager.currentLanguage)
 
                         // Preferences
                         PreferencesCard(preferences: [
@@ -127,9 +125,9 @@ struct ProfileMainView: View {
     }
 }
 
-#Preview {
-    ProfileMainView(viewModel: ProfileViewModel(
-        getUserProfileUseCase: MockGetUserProfileUseCase(),
-        fetchZonesUseCase: MockFetchZonesUseCase()
-    ))
-}
+//#Preview {
+//    ProfileMainView(viewModel: ProfileViewModel(
+//        getUserProfileUseCase: MockGetUserProfileUseCase(),
+//        fetchZonesUseCase: MockFetchZonesUseCase()
+//    ))
+//}

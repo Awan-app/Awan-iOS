@@ -85,4 +85,7 @@ public struct PresentationFactory {
         )
     }
 
+    func makeDailyZonesView() -> some View {
+        DailyZonesView(viewModel: dailyZonesViewModel)
+    }
 }

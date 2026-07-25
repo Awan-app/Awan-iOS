@@ -8,9 +8,9 @@
 import Common
 import SwiftUI
 
-struct AddZoneSheet<VM: ZoneManaging & Observable>: View {
+struct AddZoneSheet<ViewModelType: ZoneManaging & Observable>: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable var viewModel: VM
+    @Bindable var viewModel: ViewModelType
 
     @State private var zoneName: String = ""
     @State private var selectedColorIndex: Int = 0
@@ -20,7 +20,7 @@ struct AddZoneSheet<VM: ZoneManaging & Observable>: View {
     @State private var showOutsideHoursWarning: Bool = false
     @FocusState private var isNameFocused: Bool
 
-    init(viewModel: VM) {
+    init(viewModel: ViewModelType) {
         self.viewModel = viewModel
         let availableTime = viewModel.firstAvailableTimeInterval()
         _startTime = State(initialValue: availableTime.start)

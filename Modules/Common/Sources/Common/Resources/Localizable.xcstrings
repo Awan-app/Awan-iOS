@@ -3633,6 +3633,8 @@
             "value" : "Save %@"
           }
         }
+      }
+    },
     "home.task_details": {
       "extractionState": "manual",
       "localizations": {
