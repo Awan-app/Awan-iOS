@@ -139,6 +139,10 @@ struct AppRootView: View {
                     creationSheetDetent = isAwanSchedulingEnabled
                         ? Self.compactCreationDetent
                         : Self.expandedCreationDetent
+                } onGoalFullScreenChanged: { requiresFullScreen in
+                    creationSheetDetent = requiresFullScreen
+                        ? .large
+                        : Self.compactCreationDetent
                 }
                 .presentationDetents(
                     [

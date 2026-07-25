@@ -58,7 +58,8 @@ public struct PresentationFactory {
 
     func makeGlobalCreationSheet(
         onDismiss: @escaping () -> Void,
-        onTaskSchedulingModeChanged: @escaping (Bool) -> Void
+        onTaskSchedulingModeChanged: @escaping (Bool) -> Void,
+        onGoalFullScreenChanged: @escaping (Bool) -> Void
     ) -> some View {
         GlobalCreationSheet(
             taskViewModel: CreateTaskViewModel(
@@ -66,10 +67,12 @@ public struct PresentationFactory {
                 speechTranscriber: LiveSpeechTranscriber()
             ),
             goalViewModel: CreateGoalViewModel(
+                useCases: creationUseCases.goalDecomposition,
                 speechTranscriber: LiveSpeechTranscriber()
             ),
             onDismiss: onDismiss,
-            onTaskSchedulingModeChanged: onTaskSchedulingModeChanged
+            onTaskSchedulingModeChanged: onTaskSchedulingModeChanged,
+            onGoalFullScreenChanged: onGoalFullScreenChanged
         )
     }
 

@@ -91,7 +91,21 @@ struct PresentationAssembly: Assembly {
                 fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
                 createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
                 createTaskWithAwan: EmptyCreateTaskWithAwanUseCase(),
-                userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver)
+                userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
+                goalDecomposition: GoalDecompositionUseCases(
+                    sendMessage: Self.resolve(
+                        SendGoalDecompositionMessageUseCase.self,
+                        from: resolver
+                    ),
+                    confirmProposal: Self.resolve(
+                        ConfirmGoalProposalUseCase.self,
+                        from: resolver
+                    ),
+                    scheduleGoal: Self.resolve(
+                        ScheduleCreatedGoalUseCase.self,
+                        from: resolver
+                    )
+                )
             )
         }
 
