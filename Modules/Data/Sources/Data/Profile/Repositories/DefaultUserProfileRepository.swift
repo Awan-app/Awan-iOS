@@ -21,17 +21,30 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
     }
 
     public func observeCurrentUser() -> AnyPublisher<UserProfile, Error> {
-        let cached = AsyncValuePublisher.make {
-            try await localDataSource.fetchProfile()
-        }
-        .compactMap { $0 }
+        let local = localDataSource.observeProfile()
+            .compactMap { $0 }
+            .eraseToAnyPublisher()
+            
         let remote = AsyncValuePublisher.make { try await loadRemoteUser() }
-        return cached.append(remote).eraseToAnyPublisher()
+            .catch { _ in Empty<UserProfile, Error>() }
+            .eraseToAnyPublisher()
+            
+        return local
+            .merge(with: remote)
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
 
     private func loadRemoteUser() async throws -> UserProfile {
         let profile = try HomeRemoteMapper.profile(try await remoteDataSource.getProfile())
         try await localDataSource.replaceProfile(profile)
         return profile
+    }
+
+    public func updateName(firstName: String, lastName: String) async throws {
+        let request = UpdateNameRequestDTO(firstName: firstName, lastName: lastName)
+        let response = try await remoteDataSource.updateName(request)
+        let profile = try HomeRemoteMapper.profile(response)
+        try await localDataSource.replaceProfile(profile)
     }
 }

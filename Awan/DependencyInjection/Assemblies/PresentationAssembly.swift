@@ -123,8 +123,12 @@ struct PresentationAssembly: Assembly {
 
         container.register(UserInfoViewModel.self) { resolver in
             let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
+            let updateUseCase = Self.resolve(UpdateUserNameUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
-                UserInfoViewModel(getUserProfileUseCase: useCase)
+                UserInfoViewModel(
+                    getUserProfileUseCase: useCase,
+                    updateUserNameUseCase: updateUseCase
+                )
             }
         }
 

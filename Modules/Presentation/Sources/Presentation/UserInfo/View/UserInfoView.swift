@@ -69,13 +69,18 @@ public struct UserInfoView: View {
             }
         }
         .task {
-            await viewModel.fetchUserProfile()
+            viewModel.observeUserProfile()
         }
     }
 }
 
 #Preview {
-    UserInfoView(viewModel: UserInfoViewModel(getUserProfileUseCase: MockGetUserProfileUseCase()))
+    UserInfoView(
+        viewModel: UserInfoViewModel(
+            getUserProfileUseCase: MockGetUserProfileUseCase(),
+            updateUserNameUseCase: MockUpdateUserNameUseCase()
+        )
+    )
         .environment(AppearanceManager())
         .environment(LanguageManager())
 }
