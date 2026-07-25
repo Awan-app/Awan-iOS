@@ -46,6 +46,8 @@ public struct DefaultZoneRepository: ZoneRepository {
             .catch { _ in Empty<[Zone], Error>() }
             .eraseToAnyPublisher()
         let remote = AsyncValuePublisher.make { try await loadRemoteZones(for: date) }
+            .catch { _ in Empty<[Zone], Error>() }
+            .eraseToAnyPublisher()
         return cached.append(remote).eraseToAnyPublisher()
     }
 

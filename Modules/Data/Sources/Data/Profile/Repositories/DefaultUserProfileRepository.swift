@@ -26,6 +26,8 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
         }
         .compactMap { $0 }
         let remote = AsyncValuePublisher.make { try await loadRemoteUser() }
+            .catch { _ in Empty<UserProfile, Error>() }
+            .eraseToAnyPublisher()
         return cached.append(remote).eraseToAnyPublisher()
     }
 
