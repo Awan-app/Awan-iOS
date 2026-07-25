@@ -650,6 +650,18 @@ public enum L10n {
         public static var preferences: String {
             L10n.currentBundle.localizedString(forKey: "profile.preferences", value: nil, table: "Localizable")
         }
+        public static var appearanceTitle: String {
+            L10n.currentBundle.localizedString(forKey: "profile.appearance", value: "Appearance", table: "Localizable")
+        }
+        public static var appearanceLight: String {
+            L10n.currentBundle.localizedString(forKey: "profile.appearance_light", value: "Light", table: "Localizable")
+        }
+        public static var appearanceDark: String {
+            L10n.currentBundle.localizedString(forKey: "profile.appearance_dark", value: "Dark", table: "Localizable")
+        }
+        public static var appearanceSystem: String {
+            L10n.currentBundle.localizedString(forKey: "profile.appearance_system", value: "System", table: "Localizable")
+        }
         public static var sessionTime: String {
             L10n.currentBundle.localizedString(forKey: "profile.session_time", value: nil, table: "Localizable")
         }
@@ -684,5 +696,11 @@ public enum L10n {
         public static var dummyTimeZone: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_time_zone", value: nil, table: "Localizable") }
         public static var dummySleepSchedule: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_sleep_schedule", value: nil, table: "Localizable") }
         public static var ready: String { L10n.currentBundle.localizedString(forKey: "profile.ready", value: nil, table: "Localizable") }
+    }
+
+    public enum Templates {
+        public static var dailyZonesTitle: String { L10n.currentBundle.localizedString(forKey: "templates.daily_zones_title", value: nil, table: "Localizable") }
+        public static func saveDay(_ day: String) -> String { String(format: L10n.currentBundle.localizedString(forKey: "templates.save_day", value: nil, table: "Localizable"), day) }
+        public static var day: String { L10n.currentBundle.localizedString(forKey: "templates.day", value: nil, table: "Localizable") }
     }
 }

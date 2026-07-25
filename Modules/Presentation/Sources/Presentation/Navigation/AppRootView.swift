@@ -107,11 +107,18 @@ struct AppRootView: View {
                 Label(L10n.Home.rewards, systemImage: "gift.fill")
             }
 
-            Tab(value: MainTab.you) {
-                NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
-                    factory.makeProfileMainView()
-                }
-            } label: {
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
+                factory.makeProfileMainView()
+                    .navigationDestination(for: MainRoute.self) { route in
+                        switch route {
+                        case .dailyZones:
+                            factory.makeDailyZonesView()
+                        default:
+                            EmptyView()
+                        }
+                    }
+            }
+            .tabItem {
                 Label(L10n.Home.you, systemImage: "person.fill")
             }
 

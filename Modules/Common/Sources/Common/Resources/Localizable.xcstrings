@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
     "app_language" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -157,6 +154,23 @@
         }
       }
     },
+    "goal_creation.confirm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تأكيد الهدف وجدولته"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm and schedule goal"
+          }
+        }
+      }
+    },
     "goal_creation.header" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -187,57 +201,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "What would you like to achieve?"
-          }
-        }
-      }
-    },
-    "goal_creation.prompt_placeholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "صِف هدفاً ترغب في تحقيقه..."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Describe a goal you want to achieve..."
-          }
-        }
-      }
-    },
-    "goal_creation.send_prompt" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "إرسال الهدف إلى أوان"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Send goal to Awan"
-          }
-        }
-      }
-    },
-    "goal_creation.confirm" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تأكيد الهدف وجدولته"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confirm and schedule goal"
           }
         }
       }
@@ -293,6 +256,23 @@
         }
       }
     },
+    "goal_creation.prompt_placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "صِف هدفاً ترغب في تحقيقه..."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe a goal you want to achieve..."
+          }
+        }
+      }
+    },
     "goal_creation.reply_placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -323,6 +303,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confirming and scheduling your goal..."
+          }
+        }
+      }
+    },
+    "goal_creation.send_prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إرسال الهدف إلى أوان"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send goal to Awan"
           }
         }
       }
@@ -381,6 +378,12 @@
     "home.add_task_title" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اضافه مهمه "
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -392,6 +395,12 @@
     "home.btn_add_manual_task" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اضافه مهمه "
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -838,6 +847,57 @@
         }
       }
     },
+    "home.manual_add_caption" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اختر وقت البدء والمدة والمنطقة، ثم اكتب المهمة أو أخبرني بها."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the start time, duration, and zone—then type or tell me the task."
+          }
+        }
+      }
+    },
+    "home.manual_add_header" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خططها بطريقتك"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PLAN IT YOUR WAY"
+          }
+        }
+      }
+    },
+    "home.manual_add_headline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "متى تريد إنجازها؟"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When should we get it done?"
+          }
+        }
+      }
+    },
     "home.minutes_short" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -946,57 +1006,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "What do you want to get done?"
-          }
-        }
-      }
-    },
-    "home.manual_add_caption" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "اختر وقت البدء والمدة والمنطقة، ثم اكتب المهمة أو أخبرني بها."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose the start time, duration, and zone—then type or tell me the task."
-          }
-        }
-      }
-    },
-    "home.manual_add_header" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "خططها بطريقتك"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PLAN IT YOUR WAY"
-          }
-        }
-      }
-    },
-    "home.manual_add_headline" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "متى تريد إنجازها؟"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "When should we get it done?"
           }
         }
       }
@@ -1701,7 +1710,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add first task (ar)"
+            "value" : "اضافة اول مهمه"
           }
         },
         "en" : {
@@ -1735,7 +1744,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إعادة إرسال الرمز"
+            "value" : "اضافة فترة زمنية"
           }
         },
         "en" : {
@@ -1752,7 +1761,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "لوحة مفاتيح رقمية · يتم الإرسال التلقائي عند الرقم السادس"
+            "value" : "إضافة فترة"
           }
         },
         "en" : {
@@ -1803,7 +1812,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Edit zone (ar)"
+            "value" : "تعديل الفترة"
           }
         },
         "en" : {
@@ -2239,7 +2248,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save zone (ar)"
+            "value" : "حفظ الفترة"
           }
         },
         "en" : {
@@ -2556,7 +2565,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اليوم"
+            "value" : "اللون"
           }
         },
         "en" : {
@@ -2573,7 +2582,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "التقويم"
+            "value" : "نهاية الفترة"
           }
         },
         "en" : {
@@ -2590,7 +2599,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "المكافآت"
+            "value" : "اسم الفترة الزمنية"
           }
         },
         "en" : {
@@ -2607,7 +2616,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أنت"
+            "value" : "مثال: عمل، مذاكرة"
           }
         },
         "en" : {
@@ -2641,7 +2650,7 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سلسلة من سبعة أيام"
+            "value" : "بداية الفترة"
           }
         },
         "en" : {
@@ -2918,40 +2927,6 @@
         }
       }
     },
-    "profile.language_and_appearance" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "اللغة والمظهر"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "LANGUAGE & APPEARANCE"
-          }
-        }
-      }
-    },
-    "profile.language_selection_title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "اختر اللغة"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select Language"
-          }
-        }
-      }
-    },
     "profile.language.arabic" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2982,6 +2957,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "English"
+          }
+        }
+      }
+    },
+    "profile.language_and_appearance" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اللغة والمظهر"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LANGUAGE & APPEARANCE"
+          }
+        }
+      }
+    },
+    "profile.language_selection_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اختر اللغة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Language"
           }
         }
       }
@@ -3554,6 +3563,12 @@
     "schedule.save_changes" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حفظ التغييرات"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3652,6 +3667,45 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zone"
+          }
+        }
+      }
+    },
+    "templates.daily_zones_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فترات يومية"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily Zones"
+          }
+        }
+      }
+    },
+    "templates.day" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Day"
+          }
+        }
+      }
+    },
+    "templates.save_day" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save %@"
           }
         }
       }
