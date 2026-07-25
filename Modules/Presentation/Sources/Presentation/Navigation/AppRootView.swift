@@ -9,11 +9,27 @@ import SwiftUI
 import Common
 
 struct AppRootView: View {
+    private static let compactCreationDetent = PresentationDetent.height(370)
+    private static let expandedCreationDetent = PresentationDetent.height(590)
+
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthenticationState.self) private var authenticationState
     @Environment(LanguageManager.self) private var languageManager
+    @Environment(AppearanceManager.self)
+    private var appearanceManager
+    @State private var creationSheetDetent = Self.compactCreationDetent
     private let factory: PresentationFactory
+    
+    private var currentLayoutDirection: LayoutDirection {
+        languageManager.currentLanguage == .arabic
+            ? .rightToLeft
+            : .leftToRight
+    }
 
+    private var currentLocale: Locale {
+        Locale(identifier: languageManager.currentLanguage.rawValue)
+    }
+    
     init(factory: PresentationFactory) {
         self.factory = factory
     }
@@ -79,63 +95,99 @@ struct AppRootView: View {
 
     private var mainFlow: some View {
         TabView(selection: Bindable(coordinator.mainCoordinator).selectedTab) {
-            // ----------------------------------------------------------------
-            //today -----------------------------------------------------------
-            // ----------------------------------------------------------------
-            
-            NavigationStack(path: Bindable(coordinator.mainCoordinator).homePath) {
-                factory.makeHomeView()
-            }
-            .tabItem {
+            Tab(value: MainTab.home) {
+                NavigationStack(path: Bindable(coordinator.mainCoordinator).homePath) {
+                    factory.makeHomeView()
+                }
+            } label: {
                 Label(L10n.Home.today, systemImage: "sun.max.fill")
             }
-            .tag(MainTab.home)
-            
-            // ------------------------------------------------------------------
-            //calender -----------------------------------------------------------
-            // ------------------------------------------------------------------
-            
-            NavigationStack(path: Bindable(coordinator.mainCoordinator).calendarPath) {
-                factory.makeCalendarView()
-            }
-            .tabItem {
-                Label(L10n.Home.calendar, systemImage: "calendar")
-            }
-            .tag(MainTab.calendar)
-            
-            // ------------------------------------------------------------------
-            //rewards - maybe will be removed -----------------------------------
-            // ------------------------------------------------------------------
 
-            NavigationStack(path: Bindable(coordinator.mainCoordinator).rewardsPath) {
-                factory.makeRewardsView()
-            }
-            .tabItem {
+//            Tab(value: MainTab.calendar) {
+//                NavigationStack(path: Bindable(coordinator.mainCoordinator).calendarPath) {
+//                    factory.makeCalendarView()
+//                }
+//            } label: {
+//                Label(L10n.Home.calendar, systemImage: "calendar")
+//            }
+
+            Tab(value: MainTab.rewards) {
+                NavigationStack(path: Bindable(coordinator.mainCoordinator).rewardsPath) {
+                    factory.makeRewardsView()
+                }
+            } label: {
                 Label(L10n.Home.rewards, systemImage: "gift.fill")
             }
-            .tag(MainTab.rewards)
-            // ------------------------------------------------------------------
-            // profile ----------------------------------------------------------
-            // ------------------------------------------------------------------
-
-            NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
-                factory.makeProfileMainView()
-                    .navigationDestination(for: MainRoute.self) { route in
-                        switch route {
-                        case .dailyZones:
-                            factory.makeDailyZonesView()
-                        default:
-                            EmptyView()
+            
+            Tab(value: MainTab.you) {
+                NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
+                    factory.makeProfileMainView()
+                        .navigationDestination(for: MainRoute.self) { route in
+                            switch route {
+                            case .dailyZones:
+                                factory.makeDailyZonesView()
+                                    .environment(appearanceManager)
+                            default:
+                                EmptyView()
+                            }
                         }
-                    }
-            }
-            .tabItem {
+                }
+            } label: {
                 Label(L10n.Home.you, systemImage: "person.fill")
             }
-            .tag(MainTab.you)
+
+            // Floats independently beside the tab bar — acts as a button, not a real destination
+            Tab(value: MainTab.add, role: .search) {
+                Color.clear
+            } label: {
+                Label("Add", systemImage: "wand.and.sparkles")
+            }
         }
         .id(languageManager.currentLanguage)
         .tint(AppColors.accentBlue)
+        .onChange(of: coordinator.mainCoordinator.selectedTab) { oldValue, newValue in
+            guard newValue == .add else { return }
+            creationSheetDetent = Self.compactCreationDetent
+            coordinator.mainCoordinator.presentAddItem()
+            coordinator.mainCoordinator.selectedTab = oldValue
+        }
+        .sheet(item: Bindable(coordinator.mainCoordinator).presentedSheet) { route in
+            switch route {
+            case .add:
+                factory.makeGlobalCreationSheet {
+                    coordinator.mainCoordinator.dismissSheet()
+                } onTaskSchedulingModeChanged: { isAwanSchedulingEnabled in
+                    creationSheetDetent = isAwanSchedulingEnabled
+                        ? Self.compactCreationDetent
+                        : Self.expandedCreationDetent
+                } onGoalFullScreenChanged: { requiresFullScreen in
+                    creationSheetDetent = requiresFullScreen
+                        ? .large
+                        : Self.compactCreationDetent
+                }
+                .environment(
+                    \.layoutDirection,
+                    languageManager.currentLanguage == .arabic
+                        ? .rightToLeft
+                        : .leftToRight
+                )
+                .environment(
+                    \.locale,
+                    Locale(identifier: languageManager.currentLanguage.rawValue)
+                )
+                .id(languageManager.currentLanguage)
+                .presentationDetents(
+                    [
+                        Self.compactCreationDetent,
+                        Self.expandedCreationDetent,
+                        .large
+                    ],
+                    selection: $creationSheetDetent
+                )
+                .presentationDragIndicator(.visible)
+            case .home, .dailyZones:
+                EmptyView()
+            }
+        }
     }
 }
-

@@ -82,8 +82,30 @@ struct PresentationAssembly: Assembly {
                     setLock: Self.resolve(SetSessionLockUseCase.self, from: resolver),
                     setCompletion: Self.resolve(SetSessionCompletionUseCase.self, from: resolver),
                     delete: Self.resolve(DeleteSessionUseCase.self, from: resolver)
-                ),
-                createTask: Self.resolve(CreateTaskUseCase.self, from: resolver)
+                )
+            )
+        }
+
+        container.register(CreationUseCases.self) { resolver in
+            CreationUseCases(
+                fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
+                createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
+                createTaskWithAwan: EmptyCreateTaskWithAwanUseCase(),
+                userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
+                goalDecomposition: GoalDecompositionUseCases(
+                    sendMessage: Self.resolve(
+                        SendGoalDecompositionMessageUseCase.self,
+                        from: resolver
+                    ),
+                    confirmProposal: Self.resolve(
+                        ConfirmGoalProposalUseCase.self,
+                        from: resolver
+                    ),
+                    scheduleGoal: Self.resolve(
+                        ScheduleCreatedGoalUseCase.self,
+                        from: resolver
+                    )
+                )
             )
         }
 
@@ -144,6 +166,7 @@ struct PresentationAssembly: Assembly {
             let loginViewModel = Self.resolve(LoginViewModel.self, from: resolver)
             let homeViewModel = Self.resolve(HomeViewModel.self, from: resolver)
             let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
+            let creationUseCases = Self.resolve(CreationUseCases.self, from: resolver)
             let onboardingViewModel = Self.resolve(OnboardingViewModel.self, from: resolver)
             let profileViewModel = Self.resolve(ProfileViewModel.self, from: resolver)
             let dailyZonesViewModel = Self.resolve(DailyZonesViewModel.self, from: resolver)
@@ -155,6 +178,7 @@ struct PresentationAssembly: Assembly {
                     loginViewModel: loginViewModel,
                     homeViewModel: homeViewModel,
                     scheduleViewModel: scheduleViewModel,
+                    creationUseCases: creationUseCases,
                     makeOtpViewModel: { context in
                         Self.resolve(
                             OtpVerificationViewModel.self,
