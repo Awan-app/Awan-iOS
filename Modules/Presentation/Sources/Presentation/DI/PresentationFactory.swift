@@ -12,6 +12,7 @@ public struct PresentationFactory {
     private let onboardingViewModel: OnboardingViewModel
     private let profileViewModel: ProfileViewModel
     private let dailyZonesViewModel: DailyZonesViewModel
+    private let makeUserInfoViewModel: () -> UserInfoViewModel
 
     public init(
         appCoordinator: AppCoordinator,
@@ -23,7 +24,8 @@ public struct PresentationFactory {
         makeOtpViewModel: @escaping (OtpVerificationContext) -> OtpVerificationViewModel,
         onboardingViewModel: OnboardingViewModel,
         profileViewModel: ProfileViewModel,
-        dailyZonesViewModel: DailyZonesViewModel
+        dailyZonesViewModel: DailyZonesViewModel,
+        makeUserInfoViewModel: @escaping () -> UserInfoViewModel
     ) {
         self.appCoordinator = appCoordinator
         self.authenticationState = authenticationState
@@ -35,6 +37,7 @@ public struct PresentationFactory {
         self.onboardingViewModel = onboardingViewModel
         self.profileViewModel = profileViewModel
         self.dailyZonesViewModel = dailyZonesViewModel
+        self.makeUserInfoViewModel = makeUserInfoViewModel
     }
 
     public func makeAppRootView() -> some View {
@@ -110,5 +113,8 @@ public struct PresentationFactory {
 
     func makeDailyZonesView() -> some View {
         DailyZonesView(viewModel: dailyZonesViewModel)
+    }
+    func makeUserInfoView() -> some View {
+        UserInfoView(viewModel: makeUserInfoViewModel())
     }
 }

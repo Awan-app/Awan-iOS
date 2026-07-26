@@ -46,6 +46,11 @@ public struct MockGetUserProfileUseCase: GetUserProfileUseCase {
     }
 }
 
+public struct MockUpdateUserProfileUseCase: UpdateUserProfileUseCase {
+    public init() {}
+    public func execute(firstName: String?, lastName: String?, birthDate: String?) async throws {}
+}
+
 public struct MockFetchZonesUseCase: FetchZonesUseCase {
     public init() {}
     public func execute(for date: Date) async throws -> [Zone] {
