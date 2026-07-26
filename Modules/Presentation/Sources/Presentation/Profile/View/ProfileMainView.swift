@@ -77,7 +77,7 @@ struct ProfileMainView: View {
 
                     VStack(spacing: 10) {
                         PersonalInfoCard(
-                            avatarImage: Image("user-avatar"), // Using actual asset
+                            avatarImage: Image("profile"), // Using actual asset
                             name: viewModel.userName,
                             email: viewModel.userEmail,
                             onEdit: {

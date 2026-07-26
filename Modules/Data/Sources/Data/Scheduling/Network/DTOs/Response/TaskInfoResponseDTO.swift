@@ -16,6 +16,7 @@ public struct TaskInfoResponseDTO: Decodable, Sendable {
     public let estimatedPoints: Int
     public let isSplittable: Bool
     public let dependencyIDs: [UUID]
+    public let category: CategoryResponseDTO?
 
     private enum CodingKeys: String, CodingKey {
         case id
@@ -28,6 +29,7 @@ public struct TaskInfoResponseDTO: Decodable, Sendable {
         case estimatedPoints
         case isSplittable = "allowTaskSplitting"
         case dependencyIDs = "dependsOnTaskIds"
+        case category
     }
 
     public init(
@@ -40,7 +42,8 @@ public struct TaskInfoResponseDTO: Decodable, Sendable {
         mandatory: Bool,
         estimatedPoints: Int,
         isSplittable: Bool,
-        dependencyIDs: [UUID]
+        dependencyIDs: [UUID],
+        category: CategoryResponseDTO? = nil
     ) {
         self.id = id
         self.title = title
@@ -52,5 +55,6 @@ public struct TaskInfoResponseDTO: Decodable, Sendable {
         self.estimatedPoints = estimatedPoints
         self.isSplittable = isSplittable
         self.dependencyIDs = dependencyIDs
+        self.category = category
     }
 }

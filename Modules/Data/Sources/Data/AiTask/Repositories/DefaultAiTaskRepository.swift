@@ -22,18 +22,18 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
 
 // MARK: - Mapping
 
-private extension AITaskInfoResponseDTO {
+private extension TaskInfoResponseDTO {
     func toDomain() -> AITask {
         AITask(
             id: id,
             title: title,
             description: description,
-            estimatedDuration: estimatedDuration,
+            estimatedDuration: estimatedDuration ?? 0,
             status: status,
             mandatory: mandatory,
             estimatedPoints: estimatedPoints,
             isSplittable: isSplittable,
-            goalID: goalID,
+            goalID: goalID ?? UUID(),
             dependencyIDs: dependencyIDs,
             category: category?.toDomain()
         )
