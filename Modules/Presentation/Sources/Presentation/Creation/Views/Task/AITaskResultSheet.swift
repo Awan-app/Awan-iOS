@@ -17,7 +17,7 @@ struct AITaskResultSheet: View {
         self.item = item
         self.onAdd = onAdd
         self.onDismiss = onDismiss
-        _editedDurationMinutes = State(initialValue: max(15, item.task.estimatedDuration))
+        _editedDurationMinutes = State(initialValue: max(15, item.task.duration.minutes))
     }
 
     private var computedEndTime: Date {

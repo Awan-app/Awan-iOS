@@ -13,7 +13,7 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
         self.remoteDataSource = remoteDataSource
     }
 
-    public func createAITask(title: String, description: String?) async throws -> AITask {
+    public func createAITask(title: String, description: String?) async throws -> AwanTask {
         let request = CreateAITaskRequestDTO(title: title, description: description)
         let response = try await remoteDataSource.createAITask(request)
         return response.toDomain()
@@ -23,20 +23,31 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
 // MARK: - Mapping
 
 private extension TaskInfoResponseDTO {
-    func toDomain() -> AITask {
-        AITask(
+    func toDomain() -> AwanTask {
+        AwanTask(
             id: id,
             title: title,
             description: description,
-            estimatedDuration: estimatedDuration ?? 0,
-            status: status,
+            status: mappedStatus(from: status),
+            goalID: goalID,
+            zoneID: nil,
+            duration: try! TaskDuration(minutes: max(1, estimatedDuration ?? 60)),
+            isSplittable: isSplittable,
             mandatory: mandatory,
             estimatedPoints: estimatedPoints,
-            isSplittable: isSplittable,
-            goalID: goalID ?? UUID(),
-            dependencyIDs: dependencyIDs,
+            dependencyIDs: Set(dependencyIDs),
             category: category?.toDomain()
         )
+    }
+
+    private func mappedStatus(from raw: String) -> TaskStatus {
+        switch raw.uppercased() {
+        case "SCHEDULED", "PENDING": .pending
+        case "IN_PROGRESS": .inProgress
+        case "COMPLETED": .completed
+        case "CANCELLED": .cancelled
+        default: .pending
+        }
     }
 }
 

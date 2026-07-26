@@ -169,16 +169,17 @@ public final class CreateTaskViewModel {
             print("[CreateTaskViewModel] AI endpoint failed (\(error)). Using mock data.")
             #endif
             pendingAITaskItem = AITaskSheetItem(
-                task: AITask(
+                task: AwanTask(
                     id: UUID(),
                     title: prompt,
                     description: nil,
-                    estimatedDuration: 60,
-                    status: "SCHEDULED",
+                    status: .pending,
+                    goalID: nil,
+                    zoneID: nil,
+                    duration: try! TaskDuration(minutes: 60),
+                    isSplittable: false,
                     mandatory: true,
                     estimatedPoints: 20,
-                    isSplittable: false,
-                    goalID: UUID(),
                     dependencyIDs: [],
                     category: TaskCategory(id: UUID(), name: "Study")
                 ),
