@@ -37,7 +37,6 @@ public struct DailyZonesView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 48) // Increased bottom padding
         }
-        .navigationTitle(L10n.Templates.dailyZonesTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -50,9 +49,15 @@ public struct DailyZonesView: View {
                 }
                 .foregroundColor(AppColors.accentBlue)
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                GifImageView("awan-mascot-clock")
-                    .frame(width: 85, height: 85)
+            ToolbarItem(placement: .principal) {
+                Text(L10n.Templates.dailyZonesTitle)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .overlay(alignment: .trailing) {
+                        GifImageView("awan-mascot-clock")
+                            .frame(width: 85, height: 85)
+                            .allowsHitTesting(false)
+                    }
             }
         }
         .task {

@@ -62,16 +62,12 @@ public struct UserInfoView: View {
                 Text(L10n.UserInfo.title)
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundColor(AppColors.brandDarkBlue)
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Color.clear
-                    .frame(width: 85, height: 85)
-                    .overlay {
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .overlay(alignment: .trailing) {
                         GifImageView("Animated AWAN mascot")
-                            .frame(width: 85, height: 85)
+                            .frame(width: 80, height: 80)
                             .allowsHitTesting(false)
                     }
-                    
             }
         }
         .task {
