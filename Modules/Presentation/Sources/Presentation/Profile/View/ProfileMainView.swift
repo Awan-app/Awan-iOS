@@ -13,10 +13,12 @@ struct ProfileMainView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(LanguageManager.self) private var languageManager
     @State private var viewModel: ProfileViewModel
+    var dailyZonesViewModel: DailyZonesViewModel
     @State private var isLanguageSheetPresented = false
     
-    init(viewModel: ProfileViewModel) {
+    init(viewModel: ProfileViewModel, dailyZonesViewModel: DailyZonesViewModel) {
         self.viewModel = viewModel
+        self.dailyZonesViewModel = dailyZonesViewModel
     }
 
     private var formattedSessionTime: String {
@@ -84,7 +86,9 @@ struct ProfileMainView: View {
                         DailyZonesCard(
                             zones: viewModel.dailyZones,
                             isReady: viewModel.isReady,
-                            onTap: {}
+                            onTap: {
+                                coordinator.mainCoordinator.push(MainRoute.dailyZones)
+                            }
                         ).id(languageManager.currentLanguage)
 
                         // Preferences
@@ -107,6 +111,7 @@ struct ProfileMainView: View {
                                 isLanguageSheetPresented = true
                             }
                         )
+
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 40)
@@ -122,11 +127,9 @@ struct ProfileMainView: View {
     }
 }
 
-
-#Preview {
-    ProfileMainView(viewModel: ProfileViewModel(
-        getUserProfileUseCase: MockGetUserProfileUseCase(),
-        fetchZonesUseCase: MockFetchZonesUseCase()
-    ))
-}
-
+//#Preview {
+//    ProfileMainView(viewModel: ProfileViewModel(
+//        getUserProfileUseCase: MockGetUserProfileUseCase(),
+//        fetchZonesUseCase: MockFetchZonesUseCase()
+//    ))
+//}

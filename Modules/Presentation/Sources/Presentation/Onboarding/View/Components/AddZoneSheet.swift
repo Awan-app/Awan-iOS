@@ -8,9 +8,10 @@
 import Common
 import SwiftUI
 
-struct AddZoneSheet: View {
+struct AddZoneSheet<ViewModelType: ZoneManaging & Observable>: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable var viewModel: OnboardingViewModel
+    @Environment(\.colorScheme) var colorScheme
+    @Bindable var viewModel: ViewModelType
 
     @State private var zoneName: String = ""
     @State private var selectedColorIndex: Int = 0
@@ -20,7 +21,7 @@ struct AddZoneSheet: View {
     @State private var showOutsideHoursWarning: Bool = false
     @FocusState private var isNameFocused: Bool
 
-    init(viewModel: OnboardingViewModel) {
+    init(viewModel: ViewModelType) {
         self.viewModel = viewModel
         let availableTime = viewModel.firstAvailableTimeInterval()
         _startTime = State(initialValue: availableTime.start)
@@ -43,7 +44,7 @@ struct AddZoneSheet: View {
         guard !startAfterEnd else { return false }
         let start = OnboardingViewModel.formatTime(startTime)
         let end = OnboardingViewModel.formatTime(endTime)
-        return !viewModel.isTimeIntervalOverlapping(start: start, end: end)
+        return !viewModel.isTimeIntervalOverlapping(start: start, end: end, excludingID: nil)
     }
 
     private var startAfterEnd: Bool {
@@ -65,15 +66,22 @@ struct AddZoneSheet: View {
             }
             .onAppear { validateOverlap() }
             .background(
-                LinearGradient(
-                    stops: [
-                        .init(color: AppColors.skyGradientTop, location: 0.0),
-                        .init(color: AppColors.skyGradientBottom, location: 0.5),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                Group {
+                    if colorScheme == .dark {
+                        AppColors.screenBackground
+                            .ignoresSafeArea()
+                    } else {
+                        LinearGradient(
+                            stops: [
+                                .init(color: AppColors.skyGradientTop, location: 0.0),
+                                .init(color: AppColors.skyGradientBottom, location: 0.5),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .ignoresSafeArea()
+                    }
+                }
             )
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -161,7 +169,7 @@ struct AddZoneSheet: View {
         let end = OnboardingViewModel.formatTime(endTime)
         withAnimation(.snappy(duration: 0.2)) {
             showOverlapError = !startAfterEnd
-                && viewModel.isTimeIntervalOverlapping(start: start, end: end)
+                && viewModel.isTimeIntervalOverlapping(start: start, end: end, excludingID: nil)
             
             showOutsideHoursWarning = viewModel.isTimeIntervalOutsideActiveHours(start: startTime, end: endTime)
         }

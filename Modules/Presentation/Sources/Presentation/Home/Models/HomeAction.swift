@@ -12,16 +12,4 @@ enum HomeAction {
     case setSessionCompletion(sessionID: UUID, isCompleted: Bool)
     case deleteSession(UUID)
     case dismissError
-    case presentAddTask
-    case dismissAddTask
-    case dismissNudge
-    case createTask(
-        title: String,
-        description: String?,
-        durationMinutes: Int,
-        zoneID: UUID?,
-        isSplittable: Bool,
-        mandatory: Bool,
-        startsAt: Date
-    )
 }

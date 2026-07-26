@@ -40,6 +40,9 @@ public final class MainCoordinator: Coordinating {
             presentedSheet = mainRoute
         }
     }
+    public func presentAddItem() {
+        present(sheet: .add)
+    }
 
     public func dismissSheet() {
         presentedSheet = nil
@@ -63,6 +66,8 @@ public final class MainCoordinator: Coordinating {
             mutation(&rewardsPath)
         case .you:
             mutation(&youPath)
+        case .add:
+            break
         }
     }
 }

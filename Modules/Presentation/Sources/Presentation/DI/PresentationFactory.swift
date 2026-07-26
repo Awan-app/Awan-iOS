@@ -7,9 +7,11 @@ public struct PresentationFactory {
     private let loginViewModel: LoginViewModel
     private let homeViewModel: HomeViewModel
     private let scheduleViewModel: ScheduleTimelineViewModel
+    private let creationUseCases: CreationUseCases
     private let makeOtpViewModel: (OtpVerificationContext) -> OtpVerificationViewModel
     private let onboardingViewModel: OnboardingViewModel
     private let profileViewModel: ProfileViewModel
+    private let dailyZonesViewModel: DailyZonesViewModel
     private let makeUserInfoViewModel: () -> UserInfoViewModel
 
     public init(
@@ -18,9 +20,11 @@ public struct PresentationFactory {
         loginViewModel: LoginViewModel,
         homeViewModel: HomeViewModel,
         scheduleViewModel: ScheduleTimelineViewModel,
+        creationUseCases: CreationUseCases,
         makeOtpViewModel: @escaping (OtpVerificationContext) -> OtpVerificationViewModel,
         onboardingViewModel: OnboardingViewModel,
         profileViewModel: ProfileViewModel,
+        dailyZonesViewModel: DailyZonesViewModel,
         makeUserInfoViewModel: @escaping () -> UserInfoViewModel
     ) {
         self.appCoordinator = appCoordinator
@@ -28,9 +32,11 @@ public struct PresentationFactory {
         self.loginViewModel = loginViewModel
         self.homeViewModel = homeViewModel
         self.scheduleViewModel = scheduleViewModel
+        self.creationUseCases = creationUseCases
         self.makeOtpViewModel = makeOtpViewModel
         self.onboardingViewModel = onboardingViewModel
         self.profileViewModel = profileViewModel
+        self.dailyZonesViewModel = dailyZonesViewModel
         self.makeUserInfoViewModel = makeUserInfoViewModel
     }
 
@@ -56,6 +62,26 @@ public struct PresentationFactory {
         ScheduleTimelineView(viewModel: scheduleViewModel)
     }
 
+    func makeGlobalCreationSheet(
+        onDismiss: @escaping () -> Void,
+        onTaskSchedulingModeChanged: @escaping (Bool) -> Void,
+        onGoalFullScreenChanged: @escaping (Bool) -> Void
+    ) -> some View {
+        GlobalCreationSheet(
+            taskViewModel: CreateTaskViewModel(
+                useCases: creationUseCases,
+                speechTranscriber: LiveSpeechTranscriber()
+            ),
+            goalViewModel: CreateGoalViewModel(
+                useCases: creationUseCases.goalDecomposition,
+                speechTranscriber: LiveSpeechTranscriber()
+            ),
+            onDismiss: onDismiss,
+            onTaskSchedulingModeChanged: onTaskSchedulingModeChanged,
+            onGoalFullScreenChanged: onGoalFullScreenChanged
+        )
+    }
+
     func makeCalendarView() -> some View {
         CalendarView()
     }
@@ -65,7 +91,7 @@ public struct PresentationFactory {
     }
 
     func makeYouView() -> some View {
-        YouView()
+        makeProfileMainView()
     }
 
     func makeOnboardingWelcomeView() -> some View {
@@ -78,10 +104,16 @@ public struct PresentationFactory {
         )
     }
 
-    func makeProfileMainView() -> some View {
-        ProfileMainView(viewModel: profileViewModel)
+    public func makeProfileMainView() -> some View {
+        ProfileMainView(
+            viewModel: profileViewModel,
+            dailyZonesViewModel: dailyZonesViewModel
+        )
     }
 
+    func makeDailyZonesView() -> some View {
+        DailyZonesView(viewModel: dailyZonesViewModel)
+    }
     func makeUserInfoView() -> some View {
         UserInfoView(viewModel: makeUserInfoViewModel())
     }

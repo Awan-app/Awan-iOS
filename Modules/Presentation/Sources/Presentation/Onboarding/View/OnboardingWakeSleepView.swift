@@ -55,7 +55,7 @@ struct OnboardingWakeSleepView: View {
                 icon: "🌙",
                 label: L10n.Onboarding.sleepLabel,
                 time: $viewModel.sleepTime,
-                isHighlighted: true
+                isHighlighted: false
             )
         }
     }

@@ -12,11 +12,13 @@ struct ZoneLabeledField<Content: View>: View {
         self.content = content()
     }
 
+    @Environment(\.colorScheme) var colorScheme
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label(title, systemImage: icon)
                 .font(AppFonts.subheadlineHeavy)
-                .foregroundStyle(AppColors.textSecondary)
+                .foregroundStyle(colorScheme == .dark ? Color.white : AppColors.textSecondary)
             content
         }
     }
