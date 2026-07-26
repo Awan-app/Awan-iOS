@@ -393,6 +393,23 @@
         }
       }
     },
+    "home.bedtime": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وقت النوم"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedtime"
+          }
+        }
+      }
+    },
     "home.btn_add_manual_task": {
       "extractionState": "manual",
       "localizations": {
@@ -1511,6 +1528,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Unlock session"
+          }
+        }
+      }
+    },
+    "home.wake_up": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وقت الاستيقاظ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wake up"
           }
         }
       }

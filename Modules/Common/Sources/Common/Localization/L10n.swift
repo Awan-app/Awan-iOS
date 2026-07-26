@@ -545,6 +545,9 @@ public enum L10n {
         public static var buildItYourWay: String {
             L10n.currentBundle.localizedString(forKey: "home.build_it_your_way", value: nil, table: "Localizable")
         }
+        public static var bedtime: String {
+            L10n.currentBundle.localizedString(forKey: "home.bedtime", value: nil, table: "Localizable")
+        }
 
         public static var estimatedDuration: String {
             L10n.currentBundle.localizedString(forKey: "home.estimated_duration", value: nil, table: "Localizable")
@@ -560,6 +563,9 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "home.load_failed", value: nil, table: "Localizable")
         }
         public static var retry: String { L10n.currentBundle.localizedString(forKey: "home.retry", value: nil, table: "Localizable") }
+        public static var wakeUp: String {
+            L10n.currentBundle.localizedString(forKey: "home.wake_up", value: nil, table: "Localizable")
+        }
         public static var startTime: String {
             L10n.currentBundle.localizedString(forKey: "home.start_time", value: nil, table: "Localizable")
         }
