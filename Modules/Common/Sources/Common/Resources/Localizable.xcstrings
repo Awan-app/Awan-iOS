@@ -3283,6 +3283,23 @@
         }
       }
     },
+    "profile.logout": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تسجيل الخروج"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log Out"
+          }
+        }
+      }
+    },
     "profile.system": {
       "extractionState": "manual",
       "localizations": {
