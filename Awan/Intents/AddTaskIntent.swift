@@ -38,16 +38,24 @@ public struct AddTaskIntent: AppIntent {
     @Parameter(
         title: LocalizedStringResource("Date and Time", comment: "When the task starts"),
         requestValueDialog: IntentDialog(
-            LocalizedStringResource("When do you want to schedule it?",
+            LocalizedStringResource("Which day and time should I schedule it for?",
                                    comment: "Siri prompt: asking for task date and time")
         )
     )
-    public var startsAt: Date
+    public var scheduledDate: Date
 
     @Parameter(
         title: LocalizedStringResource("Description", comment: "Optional task description")
     )
     public var taskDescription: String?
+
+    public static var parameterSummary: some ParameterSummary {
+        Summary("Add \(\.$title)") {
+            \.$durationMinutes
+            \.$scheduledDate
+            \.$taskDescription
+        }
+    }
 
     public init() {}
 
@@ -74,18 +82,24 @@ public struct AddTaskIntent: AppIntent {
             isSplittable: true,
             mandatory: true,
             estimatedPoints: 0,
-            startsAt: startsAt,
-            selectedDay: startsAt,
+            startsAt: scheduledDate,
+            selectedDay: scheduledDate,
             timeZone: .current
         )
+
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        formatter.locale = .current
+        let formattedDate = formatter.string(from: scheduledDate)
 
         do {
             _ = try await useCase.execute(request)
             return .result(
                 dialog: IntentDialog(
                     LocalizedStringResource(
-                        "Done! '\(title)' was added to your Awan schedule.",
-                        comment: "Siri success message after task is created"
+                        "Done! '\(title)' was added to your Awan schedule for \(formattedDate).",
+                        comment: "Siri success message after task is created, includes date"
                     )
                 )
             )
