@@ -1,0 +1,233 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Add a Task" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إضافة مهمة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a Task"
+          }
+        }
+      }
+    },
+    "Add Task" : {
+
+    },
+    "Couldn't connect to Awan. Please check your internet connection and try again." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعذّر الاتصال بـ Awan. تحقّق من اتصالك بالإنترنت وحاوِل مجدداً."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't connect to Awan. Please check your internet connection and try again."
+          }
+        }
+      }
+    },
+    "Creates a new task in Awan." : {
+
+    },
+    "Date and Time" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "التاريخ والوقت"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date and Time"
+          }
+        }
+      }
+    },
+    "Description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الوصف"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description"
+          }
+        }
+      }
+    },
+    "Done! '%@' was added to your Awan schedule." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تم! تمت إضافة '%@' إلى جدولك في Awan."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done! '%@' was added to your Awan schedule."
+          }
+        }
+      }
+    },
+    "Duration (minutes)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المدة (بالدقائق)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duration (minutes)"
+          }
+        }
+      }
+    },
+    "How many minutes will it take?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "كم دقيقة ستستغرق؟"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How many minutes will it take?"
+          }
+        }
+      }
+    },
+    "Something went wrong. Please open Awan and add the task manually." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "حدث خطأ ما. افتح Awan وأضِف المهمة يدوياً."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong. Please open Awan and add the task manually."
+          }
+        }
+      }
+    },
+    "Task Title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اسم المهمة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Task Title"
+          }
+        }
+      }
+    },
+    "What would you like to call the task?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ما اسم المهمة؟"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What would you like to call the task?"
+          }
+        }
+      }
+    },
+    "When do you want to schedule it?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "متى تريد جدولتها؟"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When do you want to schedule it?"
+          }
+        }
+      }
+    },
+    "You need to be signed in to Awan to add a task. Please open the app and log in first." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يجب تسجيل الدخول إلى Awan أولاً. افتح التطبيق وسجّل دخولك."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You need to be signed in to Awan to add a task. Please open the app and log in first."
+          }
+        }
+      }
+    },
+    "Your session has expired. Please open Awan and log in again, then try adding the task." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انتهت جلستك. افتح Awan وسجّل دخولك مرة أخرى ثم حاوِل مجدداً."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your session has expired. Please open Awan and log in again, then try adding the task."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
