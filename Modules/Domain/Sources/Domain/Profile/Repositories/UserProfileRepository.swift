@@ -3,6 +3,7 @@ import Combine
 public protocol UserProfileRepository: Sendable {
     func fetchCurrentUser() async throws -> UserProfile
     func observeCurrentUser() -> AnyPublisher<UserProfile, Error>
+    func updateSessionDuration(_ durationMinutes: Int) async throws -> UserProfile
 }
 
 public extension UserProfileRepository {

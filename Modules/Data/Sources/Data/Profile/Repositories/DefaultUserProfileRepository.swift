@@ -29,6 +29,14 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
         return cached.append(remote).eraseToAnyPublisher()
     }
 
+    public func updateSessionDuration(_ durationMinutes: Int) async throws -> UserProfile {
+        let request = UpdateProfilePartialRequestDTO(preferredSessionDuration: durationMinutes)
+        let response = try await remoteDataSource.updateProfilePartial(request)
+        let profile = try HomeRemoteMapper.profile(response)
+        try await localDataSource.replaceProfile(profile)
+        return profile
+    }
+
     private func loadRemoteUser() async throws -> UserProfile {
         let profile = try HomeRemoteMapper.profile(try await remoteDataSource.getProfile())
         try await localDataSource.replaceProfile(profile)

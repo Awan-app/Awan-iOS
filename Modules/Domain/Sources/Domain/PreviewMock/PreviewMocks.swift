@@ -270,3 +270,10 @@ public extension AITaskSheetItem {
         )
     }
 }
+
+public struct MockUpdateSessionDurationUseCase: UpdateSessionDurationUseCase {
+    public init() {}
+    public func execute(_ durationMinutes: Int) async throws -> UserProfile {
+        UserProfile.mock
+    }
+}

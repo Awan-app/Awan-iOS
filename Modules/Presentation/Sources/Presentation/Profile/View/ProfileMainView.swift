@@ -15,6 +15,7 @@ struct ProfileMainView: View {
     @State private var viewModel: ProfileViewModel
     var dailyZonesViewModel: DailyZonesViewModel
     @State private var isLanguageSheetPresented = false
+    @State private var isSessionTimeSheetPresented = false
     
     init(viewModel: ProfileViewModel, dailyZonesViewModel: DailyZonesViewModel) {
         self.viewModel = viewModel
@@ -92,7 +93,7 @@ struct ProfileMainView: View {
                         // Preferences
                         PreferencesCard(preferences: [
                             PreferenceItem(icon: "clock", title: L10n.Profile.sessionTime, value: formattedSessionTime, onTap: {
-                                //go to session time view
+                                isSessionTimeSheetPresented = true
                             }),
                             PreferenceItem(icon: "globe", title: L10n.Profile.timeZone, value: viewModel.timeZone, onTap: {
                                 //go to time zone view
@@ -119,6 +120,22 @@ struct ProfileMainView: View {
         .sheet(isPresented: $isLanguageSheetPresented) {
             LanguageSelectionView()
         }
+        .sheet(isPresented: $isSessionTimeSheetPresented) {
+            SessionTimeSheet(
+                initialDuration: viewModel.sessionTime > 0 ? viewModel.sessionTime : 60,
+                onSave: { newDuration in
+                    Task {
+                        await viewModel.updateSessionTime(newDuration)
+                    }
+                    isSessionTimeSheetPresented = false
+                },
+                onDismiss: {
+                    isSessionTimeSheetPresented = false
+                }
+            )
+            .presentationDetents([.height(360)])
+            .presentationDragIndicator(.visible)
+        }
         .task {
             await viewModel.fetchUserProfile()
         }
@@ -129,6 +146,7 @@ struct ProfileMainView: View {
     ProfileMainView(
         viewModel: ProfileViewModel(
             getUserProfileUseCase: MockGetUserProfileUseCase(),
+            updateSessionDurationUseCase: MockUpdateSessionDurationUseCase(),
             fetchZonesUseCase: MockFetchZonesUseCase()
         ),
         dailyZonesViewModel: DailyZonesViewModel(

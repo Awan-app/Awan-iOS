@@ -39,13 +39,16 @@ public final class ProfileViewModel {
     // MARK: - Init
     
     private let getUserProfileUseCase: GetUserProfileUseCase
+    private let updateSessionDurationUseCase: any UpdateSessionDurationUseCase
     private let fetchZonesUseCase: FetchZonesUseCase
     
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
+        updateSessionDurationUseCase: any UpdateSessionDurationUseCase,
         fetchZonesUseCase: FetchZonesUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
+        self.updateSessionDurationUseCase = updateSessionDurationUseCase
         self.fetchZonesUseCase = fetchZonesUseCase
     }
     
@@ -55,18 +58,32 @@ public final class ProfileViewModel {
     public func fetchUserProfile() async {
         do {
             let profile = try await getUserProfileUseCase.execute()
-            self.userName = profile.firstName + " " + profile.lastName
-            self.userEmail = profile.email
-            self.sessionTime = profile.preferences.preferredSessionDuration
-            self.timeZone = profile.preferences.timezone
-            self.wakeupTime = profile.preferences.wakeupTime
-            self.sleepTime = profile.preferences.sleepTime
+            applyUserProfile(profile)
             
             // Fetch daily zones AFTER profile is cached locally
             fetchDailyZones()
         } catch {
             print("Failed to fetch user profile: \(error)")
         }
+    }
+
+    /// Update session time via updateProfilePartial backend endpoint
+    public func updateSessionTime(_ newDuration: Int) async {
+        do {
+            let updatedProfile = try await updateSessionDurationUseCase.execute(newDuration)
+            applyUserProfile(updatedProfile)
+        } catch {
+            print("Failed to update session duration via API: \(error)")
+        }
+    }
+
+    private func applyUserProfile(_ profile: UserProfile) {
+        self.userName = profile.firstName + " " + profile.lastName
+        self.userEmail = profile.email
+        self.sessionTime = profile.preferences.preferredSessionDuration
+        self.timeZone = profile.preferences.timezone
+        self.wakeupTime = profile.preferences.wakeupTime
+        self.sleepTime = profile.preferences.sleepTime
     }
 
     private func fetchDailyZones() {
