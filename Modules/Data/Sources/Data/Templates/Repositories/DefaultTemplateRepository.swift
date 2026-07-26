@@ -42,21 +42,17 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
         let response = try await remoteDataSource.createTemplate(request: request)
 
         // 2. Cache the server-created aggregate so remote identifiers remain authoritative.
-        let remoteZones = try response.zones.map(HomeRemoteMapper.zone)
-        let localTemplate = TemplateData(
-            id: response.id,
-            name: response.name,
-            createdAt: Date(),
-            weekDays: Set([1,2,3,4,5,6,7]),
-            zones: remoteZones
+        try await localDataSource.upsertTemplate(
+            HomeRemoteMapper.templateData(response)
         )
-
-        try await localDataSource.addTemplate(localTemplate)
     }
 
     public func listTemplates() async throws -> [Template] {
         let responses = try await remoteDataSource.listTemplates()
-        return try responses.map(HomeRemoteMapper.template)
+        let localTemplates = try responses.map(HomeRemoteMapper.templateData)
+        let templates = try responses.map(HomeRemoteMapper.template)
+        try await localDataSource.replaceTemplates(localTemplates)
+        return templates
     }
 
     public func updateTemplate(id: UUID, zones: [ZoneWithoutId]) async throws -> Template {
@@ -74,6 +70,9 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
         _ = try await remoteDataSource.bulkUpdate(templateID: id, request: request)
         
         let templateResponse = try await remoteDataSource.getTemplate(templateID: id)
-        return try HomeRemoteMapper.template(templateResponse)
+        let localTemplate = try HomeRemoteMapper.templateData(templateResponse)
+        let template = try HomeRemoteMapper.template(templateResponse)
+        try await localDataSource.upsertTemplate(localTemplate)
+        return template
     }
 }

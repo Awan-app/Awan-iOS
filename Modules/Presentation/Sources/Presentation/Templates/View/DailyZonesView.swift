@@ -66,10 +66,26 @@ public struct DailyZonesView: View {
             EditZoneTimeSheet(viewModel: viewModel, zone: zone)
                 .preferredColorScheme(appearanceManager.currentAppearance.colorScheme)
         }
+        .alert(L10n.Schedule.errorTitle, isPresented: errorBinding) {
+            Button(L10n.Common.gotIt) {
+                viewModel.dismissError()
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? L10n.Common.pleaseTryAgain)
+        }
         .background(AppColors.screenBackground.ignoresSafeArea())
     }
 
-
+    private var errorBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { isPresented in
+                if !isPresented {
+                    viewModel.dismissError()
+                }
+            }
+        )
+    }
 
     private var zonesListWithTimeline: some View {
         VStack(spacing: 16) {

@@ -12,7 +12,6 @@ public struct DefaultUpdateTemplateUseCase: UpdateTemplateUseCase {
     }
 
     public func execute(id: UUID, zones: [Zone]) async throws -> Template {
-        print("Here is the temp id : \(id)")
         let payload = zones.map {
             ZoneWithoutId(
                 name: $0.name,
