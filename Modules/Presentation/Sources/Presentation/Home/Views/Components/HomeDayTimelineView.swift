@@ -88,6 +88,7 @@ struct HomeDayTimelineView: View {
             .offset(y: verticalInset)
         }
         .frame(height: totalHeight)
+        .contentShape(Rectangle())
         .simultaneousGesture(zoomGesture)
         .background(AppColors.surface, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay {
