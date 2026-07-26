@@ -277,3 +277,10 @@ public struct MockUpdateSessionDurationUseCase: UpdateSessionDurationUseCase {
         UserProfile.mock
     }
 }
+
+public struct MockUpdateTimezoneUseCase: UpdateTimezoneUseCase {
+    public init() {}
+    public func execute(_ timezone: String) async throws -> UserProfile {
+        UserProfile.mock
+    }
+}

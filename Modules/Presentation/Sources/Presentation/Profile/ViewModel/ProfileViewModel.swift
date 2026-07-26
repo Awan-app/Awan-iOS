@@ -40,15 +40,18 @@ public final class ProfileViewModel {
     
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let updateSessionDurationUseCase: any UpdateSessionDurationUseCase
+    private let updateTimezoneUseCase: any UpdateTimezoneUseCase
     private let fetchZonesUseCase: FetchZonesUseCase
     
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
         updateSessionDurationUseCase: any UpdateSessionDurationUseCase,
+        updateTimezoneUseCase: any UpdateTimezoneUseCase,
         fetchZonesUseCase: FetchZonesUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.updateSessionDurationUseCase = updateSessionDurationUseCase
+        self.updateTimezoneUseCase = updateTimezoneUseCase
         self.fetchZonesUseCase = fetchZonesUseCase
     }
     
@@ -74,6 +77,16 @@ public final class ProfileViewModel {
             applyUserProfile(updatedProfile)
         } catch {
             print("Failed to update session duration via API: \(error)")
+        }
+    }
+
+    /// Update time zone via updateProfilePartial backend endpoint
+    public func updateTimezone(_ newTimezone: String) async {
+        do {
+            let updatedProfile = try await updateTimezoneUseCase.execute(newTimezone)
+            applyUserProfile(updatedProfile)
+        } catch {
+            print("Failed to update timezone via API: \(error)")
         }
     }
 

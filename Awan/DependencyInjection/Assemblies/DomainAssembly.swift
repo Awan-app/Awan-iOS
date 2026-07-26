@@ -80,6 +80,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(UserProfileRepository.self, from: resolver)
             )
         }
+        container.register(UpdateTimezoneUseCase.self) { resolver in
+            DefaultUpdateTimezoneUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
         container.register(RescheduleSessionUseCase.self) { resolver in
             DefaultRescheduleSessionUseCase(
                 repository: Self.resolve(SessionRepository.self, from: resolver)

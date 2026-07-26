@@ -16,6 +16,7 @@ struct ProfileMainView: View {
     var dailyZonesViewModel: DailyZonesViewModel
     @State private var isLanguageSheetPresented = false
     @State private var isSessionTimeSheetPresented = false
+    @State private var isTimeZoneSheetPresented = false
     
     init(viewModel: ProfileViewModel, dailyZonesViewModel: DailyZonesViewModel) {
         self.viewModel = viewModel
@@ -96,7 +97,7 @@ struct ProfileMainView: View {
                                 isSessionTimeSheetPresented = true
                             }),
                             PreferenceItem(icon: "globe", title: L10n.Profile.timeZone, value: viewModel.timeZone, onTap: {
-                                //go to time zone view
+                                isTimeZoneSheetPresented = true
                             }),
                             PreferenceItem(icon: "moon", title: L10n.Profile.sleepSchedule, value: formattedSleepSchedule, onTap: {
                                 //go to sleep schedule view
@@ -136,6 +137,22 @@ struct ProfileMainView: View {
             .presentationDetents([.height(360)])
             .presentationDragIndicator(.visible)
         }
+        .sheet(isPresented: $isTimeZoneSheetPresented) {
+            TimeZoneSheet(
+                currentTimeZone: viewModel.timeZone,
+                onSave: { newTimezone in
+                    Task {
+                        await viewModel.updateTimezone(newTimezone)
+                    }
+                    isTimeZoneSheetPresented = false
+                },
+                onDismiss: {
+                    isTimeZoneSheetPresented = false
+                }
+            )
+            .presentationDetents([.height(500)])
+            .presentationDragIndicator(.visible)
+        }
         .task {
             await viewModel.fetchUserProfile()
         }
@@ -147,6 +164,7 @@ struct ProfileMainView: View {
         viewModel: ProfileViewModel(
             getUserProfileUseCase: MockGetUserProfileUseCase(),
             updateSessionDurationUseCase: MockUpdateSessionDurationUseCase(),
+            updateTimezoneUseCase: MockUpdateTimezoneUseCase(),
             fetchZonesUseCase: MockFetchZonesUseCase()
         ),
         dailyZonesViewModel: DailyZonesViewModel(

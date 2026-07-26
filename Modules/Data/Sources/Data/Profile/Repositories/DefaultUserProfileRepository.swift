@@ -37,6 +37,14 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
         return profile
     }
 
+    public func updateTimezone(_ timezone: String) async throws -> UserProfile {
+        let request = UpdateProfilePartialRequestDTO(timezone: timezone)
+        let response = try await remoteDataSource.updateProfilePartial(request)
+        let profile = try HomeRemoteMapper.profile(response)
+        try await localDataSource.replaceProfile(profile)
+        return profile
+    }
+
     private func loadRemoteUser() async throws -> UserProfile {
         let profile = try HomeRemoteMapper.profile(try await remoteDataSource.getProfile())
         try await localDataSource.replaceProfile(profile)
