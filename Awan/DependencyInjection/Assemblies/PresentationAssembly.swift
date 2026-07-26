@@ -152,6 +152,17 @@ struct PresentationAssembly: Assembly {
         }
         .inObjectScope(.container)
 
+        container.register(UserInfoViewModel.self) { resolver in
+            let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
+            let updateUseCase = Self.resolve(UpdateUserProfileUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                UserInfoViewModel(
+                    getUserProfileUseCase: useCase,
+                    updateUserProfileUseCase: updateUseCase
+                )
+            }
+        }
+
         container.register(DailyZonesViewModel.self) { resolver in
             let fetchTemplatesUseCase = Self.resolve(FetchTemplatesUseCase.self, from: resolver)
             let updateTemplateUseCase = Self.resolve(UpdateTemplateUseCase.self, from: resolver)
@@ -197,7 +208,10 @@ struct PresentationAssembly: Assembly {
                     },
                     onboardingViewModel: onboardingViewModel,
                     profileViewModel: profileViewModel,
-                    dailyZonesViewModel: dailyZonesViewModel
+                    dailyZonesViewModel: dailyZonesViewModel,
+                    makeUserInfoViewModel: {
+                        Self.resolve(UserInfoViewModel.self, from: resolver)
+                    }
                 )
             }
         }

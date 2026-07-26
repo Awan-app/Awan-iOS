@@ -1,13 +1,26 @@
+import Combine
 import Domain
 import SwiftData
 
 public protocol LocalUserProfileDataSource: Sendable {
+    func observeProfile() -> AnyPublisher<UserProfile?, Error>
     func fetchProfile() async throws -> UserProfile?
     func replaceProfile(_ profile: UserProfile) async throws
 }
 
 @ModelActor
 public actor SwiftDataUserProfileDataSource: LocalUserProfileDataSource {
+    private let changes = LocalDataObservationHub()
+    
+    public nonisolated func observeProfile() -> AnyPublisher<UserProfile?, Error> {
+        changes.publisher()
+            .prepend(())
+            .flatMap(maxPublishers: .max(1)) { [self] _ in
+                AsyncValuePublisher.make { try await self.fetchProfile() }
+            }
+            .eraseToAnyPublisher()
+    }
+    
     public func fetchProfile() throws -> UserProfile? {
         guard let model = try modelContext.fetch(FetchDescriptor<UserProfileModel>()).first else {
             return nil
@@ -61,5 +74,6 @@ public actor SwiftDataUserProfileDataSource: LocalUserProfileDataSource {
             )
         )
         try modelContext.save()
+        changes.send()
     }
 }

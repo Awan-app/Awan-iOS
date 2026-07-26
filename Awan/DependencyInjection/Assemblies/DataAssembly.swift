@@ -27,8 +27,12 @@ struct DataAssembly: Assembly {
                     LocalUserProfileDataSource.self,
                     from: resolver
                 ),
-                remoteDataSource: Self.resolve(
-                    RemoteZoneDataSourceProtocol.self,
+                remoteTemplateDataSource: Self.resolve(
+                    RemoteTemplateDataSourceProtocol.self,
+                    from: resolver
+                ),
+                remoteTemplateOverrideDataSource: Self.resolve(
+                    RemoteTemplateOverrideDataSourceProtocol.self,
                     from: resolver
                 )
             )
@@ -87,6 +91,11 @@ struct DataAssembly: Assembly {
         }
         container.register(RemoteTemplateDataSourceProtocol.self) { resolver in
             RemoteTemplateDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+        container.register(RemoteTemplateOverrideDataSourceProtocol.self) { resolver in
+            RemoteTemplateOverrideDataSource(
                 networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
             )
         }

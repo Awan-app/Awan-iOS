@@ -23,12 +23,18 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
     }
 
     public func observeCurrentUser() -> AnyPublisher<UserProfile, Error> {
-        let cached = AsyncValuePublisher.make {
-            try await localDataSource.fetchProfile()
-        }
-        .compactMap { $0 }
+        let local = localDataSource.observeProfile()
+            .compactMap { $0 }
+            .eraseToAnyPublisher()
+            
         let remote = AsyncValuePublisher.make { try await loadRemoteUser() }
-        return cached.append(remote).eraseToAnyPublisher()
+            .catch { _ in Empty<UserProfile, Error>() }
+            .eraseToAnyPublisher()
+            
+        return local
+            .merge(with: remote)
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
 
     public func updateSessionDuration(_ durationMinutes: Int) async throws -> UserProfile {
@@ -84,5 +90,16 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
         let profile = try HomeRemoteMapper.profile(try await remoteDataSource.getProfile())
         try await localDataSource.replaceProfile(profile)
         return profile
+    }
+
+    public func updateProfile(firstName: String?, lastName: String?, birthDate: String?) async throws {
+        let request = UpdateProfilePartialRequestDTO(
+            firstName: firstName,
+            lastName: lastName,
+            birthDate: birthDate
+        )
+        let response = try await remoteDataSource.updateProfilePartial(request)
+        let profile = try HomeRemoteMapper.profile(response)
+        try await localDataSource.replaceProfile(profile)
     }
 }

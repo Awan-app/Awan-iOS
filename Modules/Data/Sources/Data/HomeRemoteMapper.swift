@@ -84,12 +84,43 @@ enum HomeRemoteMapper {
     }
 
     static func template(_ dto: TemplateResponseDTO) throws -> Template {
-        let mappedZones = try dto.zones.map(zone)
+        let data = try templateData(dto)
         return Template(
+            id: data.id,
+            name: data.name,
+            daysOfWeek: dto.daysOfWeek,
+            zones: data.zones
+        )
+    }
+
+    static func templateData(_ dto: TemplateResponseDTO) throws -> TemplateData {
+        let weekDays = try Set(dto.daysOfWeek.map(weekDay))
+        guard !weekDays.isEmpty else {
+            throw RemoteDomainMappingError.missingField("template.daysOfWeek")
+        }
+        return TemplateData(
             id: dto.id,
             name: dto.name,
-            daysOfWeek: dto.daysOfWeek,
-            zones: mappedZones
+            weekDays: weekDays,
+            zones: try dto.zones.map(zone)
+        )
+    }
+
+    static func templateOverrideData(
+        _ dto: TemplateOverrideResponseDTO
+    ) throws -> TemplateOverrideData {
+        guard let date = LocalDateKey.date(from: dto.dateOfDay),
+              LocalDateKey.value(for: date, timeZoneID: "GMT") == dto.dateOfDay else {
+            throw RemoteDomainMappingError.invalidValue(
+                "templateOverride.dateOfDay.\(dto.dateOfDay)"
+            )
+        }
+        return TemplateOverrideData(
+            id: dto.id,
+            name: dto.name ?? "Override",
+            dateKey: dto.dateOfDay,
+            dateOfDay: date,
+            zones: try dto.zones.map(zone)
         )
     }
 
@@ -104,6 +135,22 @@ enum HomeRemoteMapper {
         case "COMPLETED": .completed
         case "CANCELLED": .cancelled
         default: throw RemoteDomainMappingError.invalidValue("task.status.\(raw)")
+        }
+    }
+
+    private static func weekDay(_ raw: String) throws -> Int {
+        switch raw.uppercased() {
+        case "SUNDAY": 1
+        case "MONDAY": 2
+        case "TUESDAY": 3
+        case "WEDNESDAY": 4
+        case "THURSDAY": 5
+        case "FRIDAY": 6
+        case "SATURDAY": 7
+        default:
+            throw RemoteDomainMappingError.invalidValue(
+                "template.daysOfWeek.\(raw)"
+            )
         }
     }
 

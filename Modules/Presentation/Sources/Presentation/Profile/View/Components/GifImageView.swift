@@ -21,8 +21,17 @@ struct GifImageView: UIViewRepresentable {
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
 
-        if let url = Bundle.main.url(forResource: name, withExtension: "gif"),
-           let source = CGImageSourceCreateWithURL(url as CFURL, nil) {
+        let sourceOpt: CGImageSource?
+        
+        if let dataAsset = NSDataAsset(name: name) {
+            sourceOpt = CGImageSourceCreateWithData(dataAsset.data as CFData, nil)
+        } else if let url = Bundle.main.url(forResource: name, withExtension: "gif") {
+            sourceOpt = CGImageSourceCreateWithURL(url as CFURL, nil)
+        } else {
+            sourceOpt = nil
+        }
+        
+        if let source = sourceOpt {
             let count = CGImageSourceGetCount(source)
             var images: [UIImage] = []
             var duration: TimeInterval = 0

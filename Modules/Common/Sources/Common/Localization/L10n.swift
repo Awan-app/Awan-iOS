@@ -722,6 +722,17 @@ public enum L10n {
         public static var ready: String { L10n.currentBundle.localizedString(forKey: "profile.ready", value: nil, table: "Localizable") }
     }
 
+    public enum UserInfo {
+        public static var title: String { L10n.currentBundle.localizedString(forKey: "user_info.title", value: nil, table: "Localizable") }
+        public static var subtitle: String { L10n.currentBundle.localizedString(forKey: "user_info.subtitle", value: nil, table: "Localizable") }
+        public static var personalInfo: String { L10n.currentBundle.localizedString(forKey: "user_info.personal_info", value: nil, table: "Localizable") }
+        public static var firstName: String { L10n.currentBundle.localizedString(forKey: "user_info.first_name", value: nil, table: "Localizable") }
+        public static var lastName: String { L10n.currentBundle.localizedString(forKey: "user_info.last_name", value: nil, table: "Localizable") }
+        public static var email: String { L10n.currentBundle.localizedString(forKey: "user_info.email", value: nil, table: "Localizable") }
+        public static var dateOfBirth: String { L10n.currentBundle.localizedString(forKey: "user_info.date_of_birth", value: nil, table: "Localizable") }
+        public static func mascotMessage(_ name: String) -> String { String(format: L10n.currentBundle.localizedString(forKey: "user_info.mascot_message", value: nil, table: "Localizable"), name) }
+    }
+
     public enum Templates {
         public static var dailyZonesTitle: String { L10n.currentBundle.localizedString(forKey: "templates.daily_zones_title", value: nil, table: "Localizable") }
         public static func saveDay(_ day: String) -> String { String(format: L10n.currentBundle.localizedString(forKey: "templates.save_day", value: nil, table: "Localizable"), day) }

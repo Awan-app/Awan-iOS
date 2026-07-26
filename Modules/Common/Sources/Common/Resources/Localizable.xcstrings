@@ -3096,40 +3096,6 @@
         }
       }
     },
-    "profile.language_and_appearance": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "اللغة والمظهر"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LANGUAGE & APPEARANCE"
-          }
-        }
-      }
-    },
-    "profile.language_selection_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "اختر اللغة"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Select Language"
-          }
-        }
-      }
-    },
     "profile.language.arabic": {
       "extractionState": "manual",
       "localizations": {
@@ -3160,6 +3126,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "English"
+          }
+        }
+      }
+    },
+    "profile.language_and_appearance": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اللغة والمظهر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LANGUAGE & APPEARANCE"
+          }
+        }
+      }
+    },
+    "profile.language_selection_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختر اللغة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select Language"
           }
         }
       }
@@ -3963,52 +3963,138 @@
         }
       }
     },
-    "home.ai_creating_task": {
+    "user_info.date_of_birth": {
+      "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تاريخ الميلاد"
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Planning your task…"
+            "value": "Date of birth"
           }
         }
       }
     },
-    "home.ai_task_created": {
+    "user_info.email": {
+      "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "البريد الإلكتروني"
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Task planned!"
+            "value": "Email"
           }
         }
       }
     },
-    "home.ai_task_result_title": {
+    "user_info.first_name": {
+      "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الاسم الأول"
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your AI Task"
+            "value": "First name"
           }
         }
       }
     },
-    "home.ai_task_category": {
+    "user_info.last_name": {
+      "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الاسم الأخير"
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Category"
+            "value": "Last name"
           }
         }
       }
     },
-    "home.end_time": {
+    "user_info.mascot_message": {
+      "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تبدو رائعاً يا %@!"
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "End time"
+            "value": "Looking good, %@!"
+          }
+        }
+      }
+    },
+    "user_info.personal_info": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المعلومات الشخصية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PERSONAL INFO"
+          }
+        }
+      }
+    },
+    "user_info.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اجعل ملفك الشخصي يشبهك."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Make your profile feel like you."
+          }
+        }
+      }
+    },
+    "user_info.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعديل الملف الشخصي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit profile"
           }
         }
       }
