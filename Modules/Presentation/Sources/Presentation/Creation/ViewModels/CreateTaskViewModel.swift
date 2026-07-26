@@ -165,9 +165,7 @@ public final class CreateTaskViewModel {
         } catch {
             // TODO: Remove once backend is stable. Fall back to mock data so the
             // UI flow is always testable end-to-end during development.
-            #if DEBUG
             print("[CreateTaskViewModel] AI endpoint failed (\(error)). Using mock data.")
-            #endif
             pendingAITaskItem = AITaskSheetItem(
                 task: AwanTask(
                     id: UUID(),
@@ -189,21 +187,11 @@ public final class CreateTaskViewModel {
     }
 
     func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
-        let categoryName = item.task.category?.name
-        let categoryID = item.task.category?.id
-
-        let matchedZone = zones.first { zone in
-            (categoryID != nil && zone.id == categoryID) ||
-            (categoryName != nil && zone.name.caseInsensitiveCompare(categoryName!) == .orderedSame)
-        }
-
-        let targetZoneID = matchedZone?.id ?? selectedZoneID ?? zones.first?.id
-
         await createTask(
             title: item.task.title,
             description: item.task.description,
             durationMinutes: finalDurationMinutes,
-            zoneID: targetZoneID,
+            zoneID: nil,
             isSplittable: item.task.isSplittable,
             mandatory: item.task.mandatory,
             startsAt: item.startTime
