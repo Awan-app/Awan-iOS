@@ -180,11 +180,33 @@ public final class CreateTaskViewModel {
                     isSplittable: false,
                     goalID: UUID(),
                     dependencyIDs: [],
-                    category: TaskCategory(id: UUID(), name: "General")
+                    category: TaskCategory(id: UUID(), name: "Study")
                 ),
                 startTime: startTime
             )
         }
+    }
+
+    func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
+        let categoryName = item.task.category?.name
+        let categoryID = item.task.category?.id
+
+        let matchedZone = zones.first { zone in
+            (categoryID != nil && zone.id == categoryID) ||
+            (categoryName != nil && zone.name.caseInsensitiveCompare(categoryName!) == .orderedSame)
+        }
+
+        let targetZoneID = matchedZone?.id ?? selectedZoneID ?? zones.first?.id
+
+        await createTask(
+            title: item.task.title,
+            description: item.task.description,
+            durationMinutes: finalDurationMinutes,
+            zoneID: targetZoneID,
+            isSplittable: item.task.isSplittable,
+            mandatory: item.task.mandatory,
+            startsAt: item.startTime
+        )
     }
 
     func dismissAITaskResult() {
@@ -228,9 +250,6 @@ public final class CreateTaskViewModel {
         let taskText = transcription.isEmpty
             ? pendingTranscription.trimmingCharacters(in: .whitespacesAndNewlines)
             : transcription
-        #if DEBUG
-        print("Speech transcription result: \(taskText)")
-        #endif
         if !taskText.isEmpty {
             quickText = taskText
         }

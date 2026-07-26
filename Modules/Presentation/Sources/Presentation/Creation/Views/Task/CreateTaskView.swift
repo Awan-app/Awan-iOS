@@ -1,4 +1,5 @@
 import Common
+import Domain
 import SwiftUI
 
 struct CreateTaskView: View {
@@ -89,11 +90,22 @@ struct CreateTaskView: View {
         }
         // Result sheet — shown once the AI response arrives.
         .sheet(item: aiTaskResultBinding) { sheetItem in
-            AITaskResultSheet(item: sheetItem) {
-                viewModel.dismissAITaskResult()
-                onCreated()
-            }
-            .presentationDetents([.medium])
+            AITaskResultSheet(
+                item: sheetItem,
+                onAdd: { finalDuration in
+                    Task {
+                        await viewModel.confirmAndAddAITask(
+                            item: sheetItem,
+                            finalDurationMinutes: finalDuration
+                        )
+                        viewModel.dismissAITaskResult()
+                    }
+                },
+                onDismiss: {
+                    viewModel.dismissAITaskResult()
+                }
+            )
+            .presentationDetents([.height(410)])
             .presentationDragIndicator(.visible)
         }
         .task {

@@ -249,3 +249,24 @@ public extension AwanTask {
         )
     }
 }
+
+public extension AITaskSheetItem {
+    static var mock: AITaskSheetItem {
+        AITaskSheetItem(
+            task: AITask(
+                id: UUID(),
+                title: "Build login page",
+                description: "Create a login page with email and password fields",
+                estimatedDuration: 60,
+                status: "SCHEDULED",
+                mandatory: true,
+                estimatedPoints: 20,
+                isSplittable: false,
+                goalID: UUID(),
+                dependencyIDs: [],
+                category: TaskCategory(id: UUID(), name: "Study")
+            ),
+            startTime: Date()
+        )
+    }
+}
