@@ -10,20 +10,27 @@ import Domain
 import SwiftUI
 
 struct AddRealTask: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(AppCoordinator.self) private var appCoordinator
     @Bindable var viewModel: OnboardingViewModel
 
     var body: some View {
         ZStack {
             // 1. Background Layer
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.skyGradientTop, location: 0.0),
-                    .init(color: AppColors.skyGradientBottom, location: 0.5),
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            Group {
+                if colorScheme == .dark {
+                    AppColors.screenBackground
+                } else {
+                    LinearGradient(
+                        stops: [
+                            .init(color: AppColors.skyGradientTop, location: 0.0),
+                            .init(color: AppColors.skyGradientBottom, location: 0.5),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+            }
             .ignoresSafeArea()
 
             // 2. Scrollable Content Layer

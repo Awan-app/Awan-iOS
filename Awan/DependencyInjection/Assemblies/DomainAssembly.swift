@@ -130,6 +130,30 @@ struct DomainAssembly: Assembly {
                 engine: Self.resolve(ScheduleEngine.self, from: resolver)
             )
         }
+        container.register(SendGoalDecompositionMessageUseCase.self) { resolver in
+            DefaultSendGoalDecompositionMessageUseCase(
+                repository: Self.resolve(
+                    GoalDecompositionRepository.self,
+                    from: resolver
+                )
+            )
+        }
+        container.register(ConfirmGoalProposalUseCase.self) { resolver in
+            DefaultConfirmGoalProposalUseCase(
+                repository: Self.resolve(
+                    GoalDecompositionRepository.self,
+                    from: resolver
+                )
+            )
+        }
+        container.register(ScheduleCreatedGoalUseCase.self) { resolver in
+            DefaultScheduleCreatedGoalUseCase(
+                repository: Self.resolve(
+                    GoalDecompositionRepository.self,
+                    from: resolver
+                )
+            )
+        }
         container.register(MoveSessionUseCase.self) { resolver in
             DefaultMoveSessionUseCase(
                 workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),
@@ -166,8 +190,21 @@ struct DomainAssembly: Assembly {
                 templateRepository: Self.resolve(TemplateRepository.self, from: resolver)
             )
         }
+        container.register(FetchTemplatesUseCase.self) { resolver in
+            DefaultFetchTemplatesUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTemplateUseCase.self) { resolver in
+            DefaultUpdateTemplateUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
         container.register(ManageZoneScheduleUseCase.self) { _ in
             ManageZoneScheduleUseCaseImpl()
+        }
+        container.register(ManageDailyZoneScheduleUseCase.self) { _ in
+            DefaultManageDailyZoneScheduleUseCase()
         }
     }
 

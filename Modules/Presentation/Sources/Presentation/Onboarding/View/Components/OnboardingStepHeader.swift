@@ -18,22 +18,22 @@ struct OnboardingStepHeader: View {
         VStack(spacing: 12) {
             HStack {
                 if let onBack {
-                    Button(action: onBack) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(AppColors.brandDarkBlue)
-                    }
+                    AppButton(
+                        title: "",
+                        icon: "arrow.left",
+                        color: AppColors.surface,
+                        foregroundColor: AppColors.brandDarkBlue,
+                        borderColor: AppColors.outline.opacity(0.12),
+                        size: .compact,
+                        expandsHorizontally: false,
+                        useGradient: false,
+                        onTap: { onBack() }
+                    )
                 } else {
-                    Color.clear.frame(width: 24, height: 24)
+                    Color.clear.frame(width: 44, height: 44)
                 }
                 
                 Spacer()
-
-                Button(action: onSkip) {
-                    Text(L10n.Onboarding.skip)
-                        .font(AppFonts.subheadlineHeavy)
-                        .foregroundStyle(AppColors.accentBlue)
-                }
             }
 
             OnboardingProgressBar(currentStep: currentStep, totalSteps: totalSteps)

@@ -102,6 +102,9 @@ struct DayPreviewCard: View {
                 }
             }
             .frame(height: 200)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
         }
         .background(AppColors.surface)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))

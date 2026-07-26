@@ -7,8 +7,6 @@ struct HomePlanSummaryView: View {
     let completedCount: Int
     let totalCount: Int
     let taskAllocations: [HomeTaskAllocationItem]
-    let onAddTask: () -> Void
-    let onAddGoal: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -28,24 +26,6 @@ struct HomePlanSummaryView: View {
             }
 
             allocationBar
-
-            HStack(spacing: 14) {
-                AppButton(
-                    title: L10n.Home.addTask,
-                    icon: "plus",
-                    color: AppColors.accentBlue,
-                    onTap: onAddTask
-                )
-                .accessibilityIdentifier("add-task-button")
-
-                AppButton(
-                    title: L10n.Home.addGoal,
-                    icon: "plus",
-                    color: AppColors.accentPurple,
-                    onTap: onAddGoal
-                )
-                .accessibilityIdentifier("add-goal-button")
-            }
         }
         .padding(18)
         .background(AppColors.surface, in: RoundedRectangle(cornerRadius: 22, style: .continuous))

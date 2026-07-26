@@ -1,13 +1,29 @@
 import Lottie
 import SwiftUI
 
-public struct AwanMascotView: View {
-    private let animation = LottieAnimation.named(
-        "AwanMascot",
-        bundle: .module
-    )
+public enum AwanMascotState: Sendable {
+    case normal
+    case goal
 
-    public init() {}
+    fileprivate var animationResource: String {
+        switch self {
+        case .normal:
+            "AwanMascot"
+        case .goal:
+            "AwanGoalMascot"
+        }
+    }
+}
+
+public struct AwanMascotView: View {
+    private let animation: LottieAnimation?
+
+    public init(state: AwanMascotState = .normal) {
+        animation = LottieAnimation.named(
+            state.animationResource,
+            bundle: .module
+        )
+    }
 
     public var body: some View {
         LottieView(animation: animation)
@@ -18,13 +34,23 @@ public struct AwanMascotView: View {
     }
 }
 
-#Preview("Awan Mascot - Light") {
+#Preview("Awan Mascot - Normal") {
     AwanMascotView()
+        .frame(width: 180, height: 140)
+        .padding(32)
+        .background(AppColors.screenBackground)
 }
 
-#Preview("Awan Mascot - Dark") {
-    AwanMascotView()
-        .frame(width: 120, height: 120)
+#Preview("Awan Mascot - Goal") {
+    AwanMascotView(state: .goal)
+        .frame(width: 260, height: 180)
+        .padding(32)
+        .background(AppColors.screenBackground)
+}
+
+#Preview("Awan Mascot - Goal Dark") {
+    AwanMascotView(state: .goal)
+        .frame(width: 260, height: 180)
         .padding(32)
         .background(AppColors.screenBackground)
         .preferredColorScheme(.dark)

@@ -9,9 +9,10 @@ import Common
 import SwiftUI
 import Domain
 
-struct EditZoneTimeSheet: View {
+struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable var viewModel: OnboardingViewModel
+    @Environment(\.colorScheme) var colorScheme
+    @Bindable var viewModel: VM
     let zone: SuggestedZone
 
     @State private var zoneName: String
@@ -22,7 +23,7 @@ struct EditZoneTimeSheet: View {
     @State private var showOutsideHoursWarning: Bool = false
     @FocusState private var isNameFocused: Bool
 
-    init(viewModel: OnboardingViewModel, zone: SuggestedZone) {
+    init(viewModel: VM, zone: SuggestedZone) {
         self.viewModel = viewModel
         self.zone = zone
         
@@ -73,15 +74,22 @@ struct EditZoneTimeSheet: View {
             }
             .onAppear { validateOverlap() }
             .background(
-                LinearGradient(
-                    stops: [
-                        .init(color: AppColors.skyGradientTop, location: 0.0),
-                        .init(color: AppColors.skyGradientBottom, location: 0.5),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                Group {
+                    if colorScheme == .dark {
+                        AppColors.screenBackground
+                            .ignoresSafeArea()
+                    } else {
+                        LinearGradient(
+                            stops: [
+                                .init(color: AppColors.skyGradientTop, location: 0.0),
+                                .init(color: AppColors.skyGradientBottom, location: 0.5),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .ignoresSafeArea()
+                    }
+                }
             )
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

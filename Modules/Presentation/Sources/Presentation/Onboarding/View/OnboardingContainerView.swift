@@ -2,6 +2,7 @@ import Common
 import SwiftUI
 
 struct OnboardingContainerView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(AppCoordinator.self) private var coordinator
     @Bindable var viewModel: OnboardingViewModel
 
@@ -72,14 +73,20 @@ struct OnboardingContainerView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.skyGradientTop, location: 0.0),
-                    .init(color: AppColors.skyGradientBottom, location: 0.5),
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            Group {
+                if colorScheme == .dark {
+                    AppColors.screenBackground
+                } else {
+                    LinearGradient(
+                        stops: [
+                            .init(color: AppColors.skyGradientTop, location: 0.0),
+                            .init(color: AppColors.skyGradientBottom, location: 0.5),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+            }
             .ignoresSafeArea()
         )
         // Hide the NavigationStack back button — in-container back is handled
