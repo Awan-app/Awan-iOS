@@ -85,6 +85,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(UserProfileRepository.self, from: resolver)
             )
         }
+        container.register(UpdateSleepScheduleUseCase.self) { resolver in
+            DefaultUpdateSleepScheduleUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
         container.register(RescheduleSessionUseCase.self) { resolver in
             DefaultRescheduleSessionUseCase(
                 repository: Self.resolve(SessionRepository.self, from: resolver)

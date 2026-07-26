@@ -17,6 +17,7 @@ struct ProfileMainView: View {
     @State private var isLanguageSheetPresented = false
     @State private var isSessionTimeSheetPresented = false
     @State private var isTimeZoneSheetPresented = false
+    @State private var isSleepScheduleSheetPresented = false
     
     init(viewModel: ProfileViewModel, dailyZonesViewModel: DailyZonesViewModel) {
         self.viewModel = viewModel
@@ -29,7 +30,7 @@ struct ProfileMainView: View {
     }
 
     private var formattedSleepSchedule: String {
-        guard let wake = viewModel.sleepTime, let sleep = viewModel.wakeupTime else { return "" }
+        guard let wake = viewModel.wakeupTime, let sleep = viewModel.sleepTime else { return "" }
         
         let formatter = DateFormatter()
         formatter.timeStyle = .short
@@ -76,7 +77,7 @@ struct ProfileMainView: View {
 
                     VStack(spacing: 10) {
                         PersonalInfoCard(
-                            avatarImage: Image("user-avatar"), // Using actual asset
+                            avatarImage: Image("profile-avatat2ddasdasسس"), // Using actual asset
                             name: viewModel.userName,
                             email: viewModel.userEmail,
                             onEdit: {}
@@ -100,7 +101,7 @@ struct ProfileMainView: View {
                                 isTimeZoneSheetPresented = true
                             }),
                             PreferenceItem(icon: "moon", title: L10n.Profile.sleepSchedule, value: formattedSleepSchedule, onTap: {
-                                //go to sleep schedule view
+                                isSleepScheduleSheetPresented = true
                             })
                         ])
 
@@ -153,6 +154,23 @@ struct ProfileMainView: View {
             .presentationDetents([.height(500)])
             .presentationDragIndicator(.visible)
         }
+        .sheet(isPresented: $isSleepScheduleSheetPresented) {
+            SleepScheduleSheet(
+                initialWakeUpTime: viewModel.wakeupTime,
+                initialSleepTime: viewModel.sleepTime,
+                onSave: { wakeUpTime, sleepTime in
+                    Task {
+                        await viewModel.updateSleepSchedule(wakeUpTime: wakeUpTime, sleepTime: sleepTime)
+                    }
+                    isSleepScheduleSheetPresented = false
+                },
+                onDismiss: {
+                    isSleepScheduleSheetPresented = false
+                }
+            )
+            .presentationDetents([.height(360)])
+            .presentationDragIndicator(.visible)
+        }
         .task {
             await viewModel.fetchUserProfile()
         }
@@ -165,6 +183,7 @@ struct ProfileMainView: View {
             getUserProfileUseCase: MockGetUserProfileUseCase(),
             updateSessionDurationUseCase: MockUpdateSessionDurationUseCase(),
             updateTimezoneUseCase: MockUpdateTimezoneUseCase(),
+            updateSleepScheduleUseCase: MockUpdateSleepScheduleUseCase(),
             fetchZonesUseCase: MockFetchZonesUseCase()
         ),
         dailyZonesViewModel: DailyZonesViewModel(

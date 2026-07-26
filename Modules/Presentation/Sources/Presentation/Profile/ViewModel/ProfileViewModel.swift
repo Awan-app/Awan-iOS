@@ -41,18 +41,21 @@ public final class ProfileViewModel {
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let updateSessionDurationUseCase: any UpdateSessionDurationUseCase
     private let updateTimezoneUseCase: any UpdateTimezoneUseCase
+    private let updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase
     private let fetchZonesUseCase: FetchZonesUseCase
     
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
         updateSessionDurationUseCase: any UpdateSessionDurationUseCase,
         updateTimezoneUseCase: any UpdateTimezoneUseCase,
+        updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase,
         fetchZonesUseCase: FetchZonesUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.updateSessionDurationUseCase = updateSessionDurationUseCase
         self.updateTimezoneUseCase = updateTimezoneUseCase
         self.fetchZonesUseCase = fetchZonesUseCase
+        self.updateSleepScheduleUseCase = updateSleepScheduleUseCase
     }
     
     // MARK: - Actions
@@ -89,6 +92,36 @@ public final class ProfileViewModel {
             print("Failed to update timezone via API: \(error)")
         }
     }
+    public func updateSleepSchedule(wakeUpTime: String, sleepTime: String) async {
+        do {
+            let updatedProfile = try await updateSleepScheduleUseCase.execute(wakeUpTime: wakeUpTime, sleepTime: sleepTime)
+            applyUserProfile(updatedProfile)
+        } catch {
+            print("Failed to update sleep schedule via API: \(error)")
+        }
+    }
+    
+  
+
+    public func updateSleepSchedule(_ sleepTime: String) async {
+        do {
+            let updatedProfile = try await updateSleepScheduleUseCase.updateSleepTime(sleepTime)
+            applyUserProfile(updatedProfile)
+        } catch {
+            print("Failed to update sleep time via API: \(error)")
+        }
+    }
+    
+    public func updateWakeUpSchedule(_ wakeUp: String) async {
+        do {
+            let updatedProfile = try await updateSleepScheduleUseCase.updateWakeUpTime(wakeUp)
+            applyUserProfile(updatedProfile)
+        } catch {
+            print("Failed to update wakeup time via API: \(error)")
+        }
+    }
+
+
 
     private func applyUserProfile(_ profile: UserProfile) {
         self.userName = profile.firstName + " " + profile.lastName

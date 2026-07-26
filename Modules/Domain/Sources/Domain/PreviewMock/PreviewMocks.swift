@@ -284,3 +284,10 @@ public struct MockUpdateTimezoneUseCase: UpdateTimezoneUseCase {
         UserProfile.mock
     }
 }
+
+public struct MockUpdateSleepScheduleUseCase: UpdateSleepScheduleUseCase {
+    public init() {}
+    public func updateSleepTime(_ sleepTime: String) async throws -> UserProfile { UserProfile.mock }
+    public func updateWakeUpTime(_ wakeUpTime: String) async throws -> UserProfile { UserProfile.mock }
+    public func execute(wakeUpTime: String, sleepTime: String) async throws -> UserProfile { UserProfile.mock }
+}
