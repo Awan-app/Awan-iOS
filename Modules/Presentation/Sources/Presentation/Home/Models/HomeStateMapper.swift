@@ -19,7 +19,16 @@ struct HomeStateMapper {
         let calendar = calendar(for: profile)
         let window = makeWindow(
             selectedDay: selectedDay,
-            preferences: profile.preferences,
+            calendar: calendar
+        )
+        let timelineWakeupTime = time(
+            profile.preferences.wakeupTime,
+            on: selectedDay,
+            calendar: calendar
+        )
+        let timelineBedtime = time(
+            profile.preferences.sleepTime,
+            on: selectedDay,
             calendar: calendar
         )
         let tasksByID = Dictionary(uniqueKeysWithValues: tasks.map { ($0.id, $0) })
@@ -83,6 +92,8 @@ struct HomeStateMapper {
             totalSessionCount: displayedSessions.count,
             taskAllocations: taskAllocations,
             timelineWindow: window,
+            timelineWakeupTime: timelineWakeupTime,
+            timelineBedtime: timelineBedtime,
             timelineZones: timelineZones,
             timelineItems: items
         )
@@ -215,26 +226,26 @@ struct HomeStateMapper {
 
     private func makeWindow(
         selectedDay: Date,
-        preferences: UserPreferences,
         calendar: Calendar
     ) -> HomeTimelineWindow {
-        let day = calendar.startOfDay(for: selectedDay)
-        let start = calendar.date(
-            bySettingHour: preferences.wakeupTime.hour,
-            minute: preferences.wakeupTime.minute,
-            second: 0,
-            of: day
-        ) ?? day
-        var end = calendar.date(
-            bySettingHour: preferences.sleepTime.hour,
-            minute: preferences.sleepTime.minute,
-            second: 0,
-            of: day
-        ) ?? day
-        if preferences.sleepTime <= preferences.wakeupTime {
-            end = calendar.date(byAdding: .day, value: 1, to: end) ?? end
-        }
+        let start = calendar.startOfDay(for: selectedDay)
+        let end = calendar.date(byAdding: .day, value: 1, to: start)
+            ?? start.addingTimeInterval(24 * 60 * 60)
         return HomeTimelineWindow(start: start, end: end)
+    }
+
+    private func time(
+        _ localTime: LocalTime,
+        on selectedDay: Date,
+        calendar: Calendar
+    ) -> Date {
+        let day = calendar.startOfDay(for: selectedDay)
+        return calendar.date(
+            bySettingHour: localTime.hour,
+            minute: localTime.minute,
+            second: 0,
+            of: day
+        ) ?? day
     }
 }
 

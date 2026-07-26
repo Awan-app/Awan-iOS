@@ -11,6 +11,10 @@ struct HomeTimelineWindow: Equatable {
     }
 }
 
+enum HomeTimelineScrollAnchor: Hashable {
+    case currentTime
+}
+
 struct HomeTimelineItem: Identifiable, Hashable {
     let id: UUID
     let taskID: UUID
@@ -102,6 +106,8 @@ struct HomeSuccessState {
     let totalSessionCount: Int
     let taskAllocations: [HomeTaskAllocationItem]
     let timelineWindow: HomeTimelineWindow
+    let timelineWakeupTime: Date
+    let timelineBedtime: Date
     let timelineZones: [HomeTimelineZoneItem]
     let timelineItems: [HomeTimelineItem]
 }
