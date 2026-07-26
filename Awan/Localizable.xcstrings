@@ -78,19 +78,19 @@
         }
       }
     },
-    "Done! '%@' was added to your Awan schedule." : {
+    "Done! '%@' was added to your Awan schedule for %@." : {
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تم! تمت إضافة '%@' إلى جدولك في Awan."
+            "value" : "تم! تمت إضافة '%@' إلى جدولك في Awan ليوم %@."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Done! '%@' was added to your Awan schedule."
+            "value" : "Done! '%@' was added to your Awan schedule for %@."
           }
         }
       }
@@ -180,19 +180,19 @@
         }
       }
     },
-    "When do you want to schedule it?" : {
+    "Which day and time should I schedule it for?" : {
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "متى تريد جدولتها؟"
+            "value" : "في أي يوم وتوقيت أجدولها؟"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "When do you want to schedule it?"
+            "value" : "Which day and time should I schedule it for?"
           }
         }
       }
