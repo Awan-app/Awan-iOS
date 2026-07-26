@@ -57,7 +57,7 @@ struct ProfileMainView: View {
 
             VStack(spacing: 0) {
 
-                    // Header Area
+                // Header Area
                     Text(L10n.Profile.title)
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(AppColors.brandDarkBlue)
@@ -72,6 +72,7 @@ struct ProfileMainView: View {
                                 .padding(.top, 40)
                         }
 
+                ScrollView {
                     VStack(spacing: 10) {
                         PersonalInfoCard(
                             avatarImage: Image("user-avatar"), // Using actual asset
@@ -112,14 +113,36 @@ struct ProfileMainView: View {
                             }
                         )
 
+                        // Logout
+                        AppButton(
+                            title: L10n.Profile.logout,
+                            color: AppColors.destructive,
+                            onTap: {
+                                viewModel.showLogoutConfirmation = true
+                            }
+                        )
+                        .padding(.top, 24)
+                        .disabled(viewModel.isLoggingOut)
+
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 40)
                 }
+            }
         }
         .navigationBarHidden(true)
         .sheet(isPresented: $isLanguageSheetPresented) {
             LanguageSelectionView()
+        }
+        .alert("Logout", isPresented: Bindable(viewModel).showLogoutConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Log Out", role: .destructive) {
+                Task {
+                    await viewModel.logout()
+                }
+            }
+        } message: {
+            Text("Are you sure you want to log out?")
         }
         .task {
             await viewModel.fetchUserProfile()

@@ -24,6 +24,12 @@ public final class ProfileViewModel {
     /// Indicates if the profile data is fully loaded and ready
     var isReady: Bool = false
     
+    /// Indicates if a logout operation is in progress
+    var isLoggingOut: Bool = false
+    
+    /// Controls the presentation of the logout confirmation alert
+    var showLogoutConfirmation: Bool = false
+    
     /// User's real name and email
     var userName: String = ""
     var userEmail: String = ""
@@ -40,13 +46,16 @@ public final class ProfileViewModel {
     
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let fetchZonesUseCase: FetchZonesUseCase
+    private let logoutUseCase: LogoutUseCase
     
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
-        fetchZonesUseCase: FetchZonesUseCase
+        fetchZonesUseCase: FetchZonesUseCase,
+        logoutUseCase: LogoutUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.fetchZonesUseCase = fetchZonesUseCase
+        self.logoutUseCase = logoutUseCase
     }
     
     // MARK: - Actions
@@ -80,5 +89,15 @@ public final class ProfileViewModel {
                     self?.isReady = true
                 }
             )
+    }
+    
+    public func logout() async {
+        isLoggingOut = true
+        do {
+            try await logoutUseCase.execute()
+        } catch {
+            print("Failed to logout: \(error)")
+        }
+        isLoggingOut = false
     }
 }
