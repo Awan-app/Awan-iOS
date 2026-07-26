@@ -19,7 +19,7 @@ struct AppRootView: View {
     private var appearanceManager
     @State private var creationSheetDetent = Self.compactCreationDetent
     private let factory: PresentationFactory
-    
+
     private var currentLayoutDirection: LayoutDirection {
         languageManager.currentLanguage == .arabic
             ? .rightToLeft
@@ -29,7 +29,7 @@ struct AppRootView: View {
     private var currentLocale: Locale {
         Locale(identifier: languageManager.currentLanguage.rawValue)
     }
-    
+
     init(factory: PresentationFactory) {
         self.factory = factory
     }
@@ -118,7 +118,7 @@ struct AppRootView: View {
             } label: {
                 Label(L10n.Home.rewards, systemImage: "gift.fill")
             }
-            
+
             Tab(value: MainTab.you) {
                 NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
                     factory.makeProfileMainView()
