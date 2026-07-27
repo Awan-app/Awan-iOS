@@ -324,7 +324,10 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
             dataSource: taskSource,
             sessionDataSource: sessionSource
         )
-        let goalRepository = DefaultGoalRepository(localDataSource: goalSource)
+        let goalRepository = DefaultGoalRepository(
+            localDataSource: goalSource,
+            remoteDataSource: GoalRemoteDataSourceTestStub(mode: .failure)
+        )
         let sessionRepository = LocalSessionRepositoryStub(dataSource: sessionSource)
         let zoneRepository = makeZoneRepository(
             zoneDataSource: zoneSource,

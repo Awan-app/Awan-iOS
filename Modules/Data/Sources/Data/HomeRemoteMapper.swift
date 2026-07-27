@@ -56,6 +56,29 @@ enum HomeRemoteMapper {
         )
     }
 
+    static func goal(_ dto: GoalInfoResponseDTO) throws -> Goal {
+        let deadline: Date?
+        if let targetDate = dto.targetDate {
+            guard let parsedDeadline = LocalDateKey.date(from: targetDate) else {
+                throw RemoteDomainMappingError.invalidValue(
+                    "goal.targetDate.\(targetDate)"
+                )
+            }
+            deadline = parsedDeadline
+        } else {
+            deadline = nil
+        }
+
+        return Goal(
+            id: dto.id,
+            name: dto.title,
+            description: dto.description,
+            status: try goalStatus(dto.status),
+            deadline: deadline,
+            createdAt: try parseISO8601Date(dto.createdAt)
+        )
+    }
+
     static func session(
         _ dto: SessionResponseDTO,
         timeZoneID: String
@@ -138,6 +161,15 @@ enum HomeRemoteMapper {
         }
     }
 
+    private static func goalStatus(_ raw: String) throws -> GoalStatus {
+        switch raw.uppercased() {
+        case "ACTIVE": .active
+        case "COMPLETED": .completed
+        case "CANCELLED": .cancelled
+        default: throw RemoteDomainMappingError.invalidValue("goal.status.\(raw)")
+        }
+    }
+
     private static func weekDay(_ raw: String) throws -> Int {
         switch raw.uppercased() {
         case "SUNDAY": 1
@@ -188,6 +220,26 @@ enum HomeRemoteMapper {
     private static func parseDateTime(_ value: String, timeZoneID: String) throws -> Date {
         guard let date = dateTimeFormatter(timeZoneID: timeZoneID).date(from: value) else {
             throw RemoteDomainMappingError.invalidValue("dateTime.\(value)")
+        }
+        return date
+    }
+
+    private static func parseISO8601Date(_ value: String) throws -> Date {
+        let fractionalFormatter = ISO8601DateFormatter()
+        fractionalFormatter.formatOptions = [
+            .withInternetDateTime,
+            .withFractionalSeconds,
+        ]
+        if let date = fractionalFormatter.date(from: value) {
+            return date
+        }
+
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        guard let date = formatter.date(from: value) else {
+            throw RemoteDomainMappingError.invalidValue(
+                "goal.createdAt.\(value)"
+            )
         }
         return date
     }

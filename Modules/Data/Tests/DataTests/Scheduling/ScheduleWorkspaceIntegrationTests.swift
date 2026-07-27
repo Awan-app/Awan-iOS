@@ -958,7 +958,10 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
             sessionDataSource: sessionSource
         )
         let sessionRepository = LocalSessionRepositoryStub(dataSource: sessionSource)
-        let goalRepository = DefaultGoalRepository(localDataSource: goalSource)
+        let goalRepository = DefaultGoalRepository(
+            localDataSource: goalSource,
+            remoteDataSource: GoalRemoteDataSourceTestStub(mode: .failure)
+        )
         let resolver = CalendarZoneWindowResolver()
         let workspaceProvider = DefaultScheduleWorkspaceProvider(
             zoneRepository: zoneRepository,

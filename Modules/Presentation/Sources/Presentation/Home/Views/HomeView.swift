@@ -2,8 +2,8 @@ import Common
 import SwiftUI
 
 struct HomeView: View {
+    @Environment(AppCoordinator.self) private var coordinator
     @State private var viewModel: HomeViewModel
-    @State private var didScrollToCurrentTime = false
 
     init(viewModel: HomeViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -61,72 +61,66 @@ struct HomeView: View {
     }
 
     private func content(_ state: HomeState, success: HomeSuccessState) -> some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(spacing: 18) {
-                    HomeHeaderView(
-                        displayName: success.displayName,
-                        selectedDay: state.selectedDay,
-                        streakCount: success.streakCount,
-                        rewardPoints: success.rewardPoints
-                    )
+        ScrollView {
+            LazyVStack(spacing: 18) {
+                HomeHeaderView(
+                    displayName: success.displayName,
+                    selectedDay: state.selectedDay,
+                    streakCount: success.streakCount,
+                    rewardPoints: success.rewardPoints,
+                    onOpenCalendar: {
+                        coordinator.mainCoordinator.push(.calendar)
+                    },
+                    onSelectToday: {
+                        viewModel.send(.selectDay(.now))
+                    }
+                )
 
-                    HomeWeekStripView(
-                        selectedDay: state.selectedDay,
-                        onSelect: { viewModel.send(.selectDay($0)) }
-                    )
+                HomeWeekStripView(
+                    selectedDay: state.selectedDay,
+                    onSelect: { viewModel.send(.selectDay($0)) }
+                )
 
-                    HomePlanSummaryView(
-                        taskCount: success.taskCount,
-                        scheduledMinutes: success.scheduledMinutes,
-                        completedCount: success.completedSessionCount,
-                        totalCount: success.totalSessionCount,
-                        taskAllocations: success.taskAllocations
-                    )
+                HomePlanSummaryView(
+                    taskCount: success.taskCount,
+                    scheduledMinutes: success.scheduledMinutes,
+                    completedCount: success.completedSessionCount,
+                    totalCount: success.totalSessionCount,
+                    taskAllocations: success.taskAllocations
+                )
 
-                    HomeDayTimelineView(
-                        window: success.timelineWindow,
-                        wakeupTime: success.timelineWakeupTime,
-                        bedtime: success.timelineBedtime,
-                        zones: success.timelineZones,
-                        items: success.timelineItems,
-                        onMove: { sessionID, points in
-                            viewModel.send(
-                                .moveSession(
-                                    sessionID: sessionID,
-                                    verticalPoints: points,
-                                    hourHeight: HomeDayTimelineView.hourHeight
-                                )
+                HomeDayTimelineView(
+                    window: success.timelineWindow,
+                    wakeupTime: success.timelineWakeupTime,
+                    bedtime: success.timelineBedtime,
+                    zones: success.timelineZones,
+                    items: success.timelineItems,
+                    onMove: { sessionID, points in
+                        viewModel.send(
+                            .moveSession(
+                                sessionID: sessionID,
+                                verticalPoints: points,
+                                hourHeight: HomeDayTimelineView.hourHeight
                             )
-                        },
-                        onSetCompletion: { sessionID, isCompleted in
-                            viewModel.send(
-                                .setSessionCompletion(
-                                    sessionID: sessionID,
-                                    isCompleted: isCompleted
-                                )
+                        )
+                    },
+                    onSetCompletion: { sessionID, isCompleted in
+                        viewModel.send(
+                            .setSessionCompletion(
+                                sessionID: sessionID,
+                                isCompleted: isCompleted
                             )
-                        },
-                        onTap: { viewModel.send(.presentSession($0))}
-                    )
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .padding(.bottom, 24)
+                        )
+                    },
+                    onTap: { viewModel.send(.presentSession($0))}
+                )
             }
-            .scrollDismissesKeyboard(.interactively)
-            .refreshable { viewModel.send(.refresh) }
-            .task(id: success.timelineWindow) {
-                guard !didScrollToCurrentTime,
-                      Date.now >= success.timelineWindow.start,
-                      Date.now < success.timelineWindow.end else {
-                    return
-                }
-                await Task.yield()
-                proxy.scrollTo(HomeTimelineScrollAnchor.currentTime, anchor: .center)
-                didScrollToCurrentTime = true
-            }
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 24)
         }
+        .scrollDismissesKeyboard(.interactively)
+        .refreshable { viewModel.send(.refresh) }
     }
 
     private var failureView: some View {

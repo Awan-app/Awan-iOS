@@ -78,12 +78,6 @@ struct HomeDayTimelineView: View {
                     hourHeight: displayedHourHeight
                 )
 
-                if Date.now >= window.start, Date.now < window.end {
-                    Color.clear
-                        .frame(width: 1, height: 1)
-                        .offset(y: yPosition(for: .now))
-                        .id(HomeTimelineScrollAnchor.currentTime)
-                }
             }
             .offset(y: verticalInset)
         }

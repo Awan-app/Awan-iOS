@@ -190,11 +190,12 @@ public struct DefaultShiftGoalDependencyChainUseCase: ShiftGoalDependencyChainUs
         }
 
         if let goal = try await goalRepository.fetchGoals()
-            .first(where: { $0.id == request.goalID }) {
+            .first(where: { $0.id == request.goalID }),
+           let currentDeadline = goal.deadline {
             guard let deadline = calendar.date(
                 byAdding: .day,
                 value: 1,
-                to: goal.deadline
+                to: currentDeadline
             ) else {
                 throw SchedulingError.invalidTimeRange
             }

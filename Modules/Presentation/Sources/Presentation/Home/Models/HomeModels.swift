@@ -11,10 +11,6 @@ struct HomeTimelineWindow: Equatable {
     }
 }
 
-enum HomeTimelineScrollAnchor: Hashable {
-    case currentTime
-}
-
 struct HomeTimelineItem: Identifiable, Hashable {
     let id: UUID
     let taskID: UUID
