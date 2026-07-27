@@ -55,24 +55,7 @@ public final class HomeViewModel {
             deleteSession(id: id)
         case .dismissError:
             state.failure = nil
-        case .presentAddTask:
-            state.isAddTaskPresented = true
-        case .dismissAddTask:
-            state.isAddTaskPresented = false
-        case .dismissNudge:
-            state.activeNudge = nil
-        case let .createTask(title, description, durationMinutes, zoneID, isSplittable, mandatory, startsAt):
-            createTask(
-                title: title,
-                description: description,
-                durationMinutes: durationMinutes,
-                zoneID: zoneID,
-                isSplittable: isSplittable,
-                mandatory: mandatory,
-                startsAt: startsAt
-            )
-        case let .createAITask(title, description):
-            createAITask(title: title, description: description)
+      
         }
     }
 
@@ -119,65 +102,6 @@ public final class HomeViewModel {
         if let selectedID = state.selectedSessionID,
            !updated.timelineItems.contains(where: { $0.id == selectedID }) {
             state.selectedSessionID = nil
-        }
-    }
-
-    private func createTask(
-        title: String,
-        description: String?,
-        durationMinutes: Int,
-        zoneID: UUID?,
-        isSplittable: Bool,
-        mandatory: Bool,
-        startsAt: Date
-    ) {
-        state.isMutating = true
-        state.failure = nil
-
-        Task { [weak self] in
-            guard let self else { return }
-            defer { state.isMutating = false }
-            do {
-                let request = CreateTaskRequest(
-                    title: title,
-                    description: description,
-                    durationMinutes: durationMinutes,
-                    zoneID: zoneID,
-                    isSplittable: isSplittable,
-                    mandatory: mandatory,
-                    estimatedPoints: 10,
-                    startsAt: startsAt,
-                    selectedDay: state.selectedDay,
-                    timeZone: timeZone
-                )
-                let result = try await useCases.createTask.execute(request)
-                if let nudge = result.nudge {
-                    state.activeNudge = nudge
-                }
-                state.isAddTaskPresented = false
-            } catch is CancellationError {
-            } catch {
-                state.failure = HomeFailureState(message: error.localizedDescription)
-            }
-        }
-    }
-
-    private func createAITask(title: String, description: String?) {
-        guard !state.isAITaskCreating else { return }
-        state.isAITaskCreating = true
-        state.aiTaskResult = nil
-
-        Task { [weak self] in
-            guard let self else { return }
-            defer { state.isAITaskCreating = false }
-            do {
-                let request = CreateAITaskRequest(title: title, description: description)
-                let task = try await useCases.createAITask.execute(request)
-                state.aiTaskResult = .created(title: task.title)
-            } catch is CancellationError {
-            } catch {
-                state.aiTaskResult = .failed(message: error.localizedDescription)
-            }
         }
     }
 }

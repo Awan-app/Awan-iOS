@@ -2,6 +2,12 @@ import Domain
 import Foundation
 import Observation
 
+public enum CreateTaskPhase: Equatable {
+    case composer
+    case aiLoading
+    case aiResult(AITaskSheetItem)
+}
+
 @Observable
 @MainActor
 public final class CreateTaskViewModel {
@@ -11,9 +17,7 @@ public final class CreateTaskViewModel {
     public private(set) var errorMessage: String?
     public private(set) var didCreateTask = false
     public private(set) var activeNudge: ScheduleNudge?
-    /// Drives `GoalCreationLoadingView` sheet presentation.
-    private(set) var isShowingAILoading = false
-    /// Drives `AITaskResultSheet` presentation once the AI call completes.
+    private(set) var phase: CreateTaskPhase = .composer
     private(set) var pendingAITaskItem: AITaskSheetItem?
     var quickText = ""
     var isAwanSchedulingEnabled = true
@@ -147,10 +151,9 @@ public final class CreateTaskViewModel {
         guard !isSubmitting else { return }
         isSubmitting = true
         errorMessage = nil
-        isShowingAILoading = true
+        phase = .aiLoading
         defer {
             isSubmitting = false
-            isShowingAILoading = false
         }
 
         let startTime = Date()
@@ -159,14 +162,16 @@ public final class CreateTaskViewModel {
             let aiTask = try await useCases.createAITask.execute(
                 CreateAITaskRequest(title: prompt)
             )
-            pendingAITaskItem = AITaskSheetItem(task: aiTask, startTime: startTime)
+            let item = AITaskSheetItem(task: aiTask, startTime: startTime)
+            pendingAITaskItem = item
+            phase = .aiResult(item)
         } catch is CancellationError {
-            // User cancelled — abort silently.
+            phase = .composer
         } catch {
             // TODO: Remove once backend is stable. Fall back to mock data so the
             // UI flow is always testable end-to-end during development.
             print("[CreateTaskViewModel] AI endpoint failed (\(error)). Using mock data.")
-            pendingAITaskItem = AITaskSheetItem(
+            let item = AITaskSheetItem(
                 task: AwanTask(
                     id: UUID(),
                     title: prompt,
@@ -183,6 +188,8 @@ public final class CreateTaskViewModel {
                 ),
                 startTime: startTime
             )
+            pendingAITaskItem = item
+            phase = .aiResult(item)
         }
     }
 
@@ -200,6 +207,7 @@ public final class CreateTaskViewModel {
 
     func dismissAITaskResult() {
         pendingAITaskItem = nil
+        phase = .composer
     }
 
     func beginRecording() async {
