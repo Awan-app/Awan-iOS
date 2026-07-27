@@ -129,3 +129,11 @@ struct ThemePreferenceRowView: View {
             .contentShape(Rectangle())
     }
 }
+
+
+#Preview {
+    ThemePreferenceRowView(icon: "moon", title: "Theme")
+        .padding()
+        .environment(AppearanceManager())
+}
+

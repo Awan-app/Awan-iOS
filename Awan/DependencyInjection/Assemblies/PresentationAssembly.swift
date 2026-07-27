@@ -82,7 +82,7 @@ struct PresentationAssembly: Assembly {
                     setLock: Self.resolve(SetSessionLockUseCase.self, from: resolver),
                     setCompletion: Self.resolve(SetSessionCompletionUseCase.self, from: resolver),
                     delete: Self.resolve(DeleteSessionUseCase.self, from: resolver)
-                )
+                ),
             )
         }
 
@@ -91,6 +91,7 @@ struct PresentationAssembly: Assembly {
                 fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
                 createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
                 createTaskWithAwan: EmptyCreateTaskWithAwanUseCase(),
+                createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver),
                 userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 goalDecomposition: GoalDecompositionUseCases(
                     sendMessage: Self.resolve(
@@ -133,10 +134,16 @@ struct PresentationAssembly: Assembly {
 
         container.register(ProfileViewModel.self) { resolver in
             let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
+            let updateSessionDurationUseCase = Self.resolve(UpdateSessionDurationUseCase.self, from: resolver)
+            let updateTimezoneUseCase = Self.resolve(UpdateTimezoneUseCase.self, from: resolver)
+            let updateSleepScheduleUseCase = Self.resolve(UpdateSleepScheduleUseCase.self, from: resolver)
             let fetchZonesUseCase = Self.resolve(FetchZonesUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 ProfileViewModel(
                     getUserProfileUseCase: useCase,
+                    updateSessionDurationUseCase: updateSessionDurationUseCase,
+                    updateTimezoneUseCase: updateTimezoneUseCase,
+                    updateSleepScheduleUseCase: updateSleepScheduleUseCase,
                     fetchZonesUseCase: fetchZonesUseCase
                 )
             }

@@ -300,17 +300,3 @@ public final class OnboardingViewModel: ZoneManaging {
         ]
     }
 }
-
-#if DEBUG
-import Domain
-
-extension OnboardingViewModel {
-    public static var preview: OnboardingViewModel {
-        OnboardingViewModel(
-            completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
-            createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
-            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
-        )
-    }
-}
-#endif

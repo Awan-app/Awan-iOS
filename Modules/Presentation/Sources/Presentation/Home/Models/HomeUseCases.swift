@@ -86,7 +86,7 @@ public struct HomeUseCases: Sendable {
 
     public init(
         reads: HomeReadUseCases,
-        sessions: HomeSessionUseCases
+        sessions: HomeSessionUseCases,
     ) {
         self.reads = reads
         self.sessions = sessions

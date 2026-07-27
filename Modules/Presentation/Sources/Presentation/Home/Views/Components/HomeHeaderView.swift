@@ -85,3 +85,11 @@ private struct HomeStatChip: View {
         .shadow(color: color.opacity(0.28), radius: 0, y: 3)
     }
 }
+
+
+#Preview {
+    HomeHeaderView(displayName: "Andrew", selectedDay: Date(), streakCount: 5, rewardPoints: 100)
+        .padding()
+        .environment(LanguageManager())
+}
+

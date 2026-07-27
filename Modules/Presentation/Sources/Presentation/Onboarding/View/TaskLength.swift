@@ -7,6 +7,7 @@
 
 import Common
 import SwiftUI
+import Domain
 
 struct TaskLength: View {
     @Bindable var viewModel: OnboardingViewModel
@@ -80,5 +81,12 @@ private struct TaskLengthExplanation: View {
 }
 
 #Preview {
-    TaskLength(viewModel: .preview, onContinue: {})
+    TaskLength(
+        viewModel: OnboardingViewModel(
+            completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
+            createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
+        ),
+        onContinue: {}
+    )
 }

@@ -224,3 +224,4 @@ struct LoginView: View {
         generator.impactOccurred()
     }
 }
+

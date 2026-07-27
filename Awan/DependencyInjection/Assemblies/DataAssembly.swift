@@ -158,6 +158,18 @@ struct DataAssembly: Assembly {
             )
         }
         .inObjectScope(.container)
+
+        container.register(AiTaskRemoteDataSource.self) { resolver in
+            DefaultAiTaskRemoteDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+
+        container.register(AiTaskRepository.self) { resolver in
+            DefaultAiTaskRepository(
+                remoteDataSource: Self.resolve(AiTaskRemoteDataSource.self, from: resolver)
+            )
+        }
     }
 
     private func registerSchedulingDataSources(in container: Container) {

@@ -7,6 +7,7 @@
 
 import Common
 import SwiftUI
+import Domain
 
 struct OnboardingWakeSleepView: View {
     @Bindable var viewModel: OnboardingViewModel
@@ -131,5 +132,12 @@ struct OnboardingWakeSleepView: View {
 }
 
 #Preview {
-    OnboardingWakeSleepView(viewModel: .preview, onContinue: {})
+    OnboardingWakeSleepView(
+        viewModel: OnboardingViewModel(
+            completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
+            createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
+        ),
+        onContinue: {}
+    )
 }

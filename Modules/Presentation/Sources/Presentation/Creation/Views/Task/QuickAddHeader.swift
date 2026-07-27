@@ -66,3 +66,10 @@ struct QuickAddHeader: View {
             : L10n.Home.manualAddCaption
     }
 }
+
+
+#Preview {
+    QuickAddHeader(isAwanSchedulingEnabled: true)
+        .padding()
+}
+

@@ -55,3 +55,10 @@ struct ZoneTimePickers: View {
         }
     }
 }
+
+
+#Preview {
+    ZoneTimePickers(startTime: .constant(Date()), endTime: .constant(Date()), isHorizontal: true, onChange: {})
+        .padding()
+}
+

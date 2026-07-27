@@ -111,3 +111,10 @@ private struct CreationModeButtonStyle: ButtonStyle {
             .animation(.snappy(duration: 0.18), value: isSelected)
     }
 }
+
+
+#Preview {
+    CreationModeSwitcher(selectedMode: .constant(.task))
+        .padding()
+}
+

@@ -117,3 +117,10 @@ private struct ComposerActionButtonStyle: ButtonStyle {
             .animation(.snappy(duration: 0.18), value: configuration.isPressed)
     }
 }
+
+
+#Preview {
+    QuickTaskComposer(text: .constant(""), isRecording: false, onSend: {}, onRecordingStarted: {}, onRecordingEnded: {})
+        .padding()
+}
+

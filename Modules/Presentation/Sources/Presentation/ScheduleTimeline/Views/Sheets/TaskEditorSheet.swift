@@ -186,3 +186,10 @@ struct TaskEditorSheet: View {
         return zone.color
     }
 }
+
+
+import Domain
+#Preview {
+    TaskEditorSheet(task: nil, zones: [], selectedDay: Date(), onSave: { _, _, _, _, _ in }, onDelete: {})
+}
+
