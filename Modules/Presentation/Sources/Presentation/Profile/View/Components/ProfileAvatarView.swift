@@ -33,3 +33,10 @@ struct ProfileAvatarView: View {
         )
     }
 }
+
+
+#Preview {
+    ProfileAvatarView(image: nil)
+        .padding()
+}
+

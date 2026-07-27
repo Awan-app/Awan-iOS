@@ -1,4 +1,5 @@
 import Common
+import Domain
 import SwiftUI
 
 struct CreateTaskView: View {
@@ -19,6 +20,54 @@ struct CreateTaskView: View {
     var body: some View {
         @Bindable var bindableViewModel = viewModel
 
+        Group {
+            switch viewModel.phase {
+            case .composer:
+                composerView(bindableViewModel: $bindableViewModel)
+            case .aiLoading:
+                GoalCreationLoadingView(message: L10n.Home.aiCreatingTask)
+            case .aiResult(let item):
+                AITaskResultSheet(
+                    item: item,
+                    onAdd: { finalDuration in
+                        Task {
+                            await viewModel.confirmAndAddAITask(
+                                item: item,
+                                finalDurationMinutes: finalDuration
+                            )
+                        }
+                    },
+                    onDismiss: {
+                        viewModel.dismissAITaskResult()
+                    }
+                )
+            }
+        }
+        .background(AppColors.screenBackground.ignoresSafeArea())
+        .task {
+            await viewModel.loadCreationData()
+        }
+        .onDisappear {
+            viewModel.cancelRecording()
+        }
+        .onChange(of: viewModel.didCreateTask) { _, didCreateTask in
+            if didCreateTask {
+                onCreated()
+            }
+        }
+        .onChange(of: viewModel.isAwanSchedulingEnabled) { _, isEnabled in
+            onSchedulingModeChanged(isEnabled)
+        }
+        .alert(L10n.Home.errorTitle, isPresented: errorBinding) {
+            Button(L10n.Common.gotIt) {
+                viewModel.dismissError()
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? L10n.Common.pleaseTryAgain)
+        }
+    }
+
+    private func composerView(bindableViewModel: Bindable<CreateTaskViewModel>) -> some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 16) {
                 QuickAddHeader(
@@ -26,20 +75,20 @@ struct CreateTaskView: View {
                 )
 
                 AwanSchedulingToggle(
-                    isOn: $bindableViewModel.isAwanSchedulingEnabled
+                    isOn: bindableViewModel.isAwanSchedulingEnabled
                 )
 
                 if !viewModel.isAwanSchedulingEnabled {
                     ManualScheduleControls(
                         zones: viewModel.zones,
-                        startsAt: $bindableViewModel.startsAt,
-                        durationMinutes: $bindableViewModel.durationMinutes,
-                        selectedZoneID: $bindableViewModel.selectedZoneID
+                        startsAt: bindableViewModel.startsAt,
+                        durationMinutes: bindableViewModel.durationMinutes,
+                        selectedZoneID: bindableViewModel.selectedZoneID
                     )
                 }
 
                 QuickTaskComposer(
-                    text: $bindableViewModel.quickText,
+                    text: bindableViewModel.quickText,
                     isRecording: viewModel.isRecording,
                     onSend: {
                         Task {
@@ -66,10 +115,9 @@ struct CreateTaskView: View {
                 value: viewModel.isAwanSchedulingEnabled
             )
         }
-        .background(AppColors.screenBackground.ignoresSafeArea())
         .disabled(viewModel.isSubmitting)
         .overlay {
-            if viewModel.isLoadingZones || viewModel.isSubmitting {
+            if viewModel.isLoadingZones {
                 ProgressView()
                     .controlSize(.large)
                     .padding(22)
@@ -78,27 +126,6 @@ struct CreateTaskView: View {
                         in: RoundedRectangle(cornerRadius: 20)
                     )
             }
-        }
-        .task {
-            await viewModel.loadCreationData()
-        }
-        .onDisappear {
-            viewModel.cancelRecording()
-        }
-        .onChange(of: viewModel.didCreateTask) { _, didCreateTask in
-            if didCreateTask {
-                onCreated()
-            }
-        }
-        .onChange(of: viewModel.isAwanSchedulingEnabled) { _, isEnabled in
-            onSchedulingModeChanged(isEnabled)
-        }
-        .alert(L10n.Home.errorTitle, isPresented: errorBinding) {
-            Button(L10n.Common.gotIt) {
-                viewModel.dismissError()
-            }
-        } message: {
-            Text(viewModel.errorMessage ?? L10n.Common.pleaseTryAgain)
         }
     }
 

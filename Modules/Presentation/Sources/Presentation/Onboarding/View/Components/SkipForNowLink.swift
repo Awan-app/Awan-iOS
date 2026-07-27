@@ -20,3 +20,10 @@ struct SkipForNowLink: View {
         SkipForNowLink {}
     }
 }
+
+
+#Preview {
+    SkipForNowLink(action: {})
+        .padding()
+}
+

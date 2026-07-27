@@ -41,3 +41,10 @@ struct ZoneWarningsView: View {
         }
     }
 }
+
+
+#Preview {
+    ZoneWarningsView(showOverlapError: true, showOutsideHoursWarning: false)
+        .padding()
+}
+

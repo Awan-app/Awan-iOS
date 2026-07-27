@@ -127,3 +127,10 @@ struct TaskPreviewCard: View {
             .padding()
     }
 }
+
+
+#Preview {
+    TaskPreviewCard(tasks: [])
+        .padding()
+}
+

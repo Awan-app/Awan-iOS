@@ -103,3 +103,11 @@ struct HomeDayTimelineView: View {
         (item.laneCount * 1_000) + item.lane
     }
 }
+
+
+import Domain
+#Preview {
+    HomeDayTimelineView(window: HomeTimelineWindow(start: Date(), end: Date().addingTimeInterval(3600)), zones: [], items: [], onMove: { _, _ in }, onSetCompletion: { _, _ in }, onTap: { _ in })
+        .padding()
+}
+

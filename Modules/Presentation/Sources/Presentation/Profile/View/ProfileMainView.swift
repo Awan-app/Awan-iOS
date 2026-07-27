@@ -15,6 +15,9 @@ struct ProfileMainView: View {
     @State private var viewModel: ProfileViewModel
     var dailyZonesViewModel: DailyZonesViewModel
     @State private var isLanguageSheetPresented = false
+    @State private var isSessionTimeSheetPresented = false
+    @State private var isTimeZoneSheetPresented = false
+    @State private var isSleepScheduleSheetPresented = false
     
     init(viewModel: ProfileViewModel, dailyZonesViewModel: DailyZonesViewModel) {
         self.viewModel = viewModel
@@ -27,7 +30,7 @@ struct ProfileMainView: View {
     }
 
     private var formattedSleepSchedule: String {
-        guard let wake = viewModel.sleepTime, let sleep = viewModel.wakeupTime else { return "" }
+        guard let wake = viewModel.wakeupTime, let sleep = viewModel.sleepTime else { return "" }
         
         let formatter = DateFormatter()
         formatter.timeStyle = .short
@@ -94,13 +97,13 @@ struct ProfileMainView: View {
                         // Preferences
                         PreferencesCard(preferences: [
                             PreferenceItem(icon: "clock", title: L10n.Profile.sessionTime, value: formattedSessionTime, onTap: {
-                                //go to session time view
+                                isSessionTimeSheetPresented = true
                             }),
                             PreferenceItem(icon: "globe", title: L10n.Profile.timeZone, value: viewModel.timeZone, onTap: {
-                                //go to time zone view
+                                isTimeZoneSheetPresented = true
                             }),
                             PreferenceItem(icon: "moon", title: L10n.Profile.sleepSchedule, value: formattedSleepSchedule, onTap: {
-                                //go to sleep schedule view
+                                isSleepScheduleSheetPresented = true
                             })
                         ])
 
@@ -121,15 +124,75 @@ struct ProfileMainView: View {
         .sheet(isPresented: $isLanguageSheetPresented) {
             LanguageSelectionView()
         }
+        .sheet(isPresented: $isSessionTimeSheetPresented) {
+            SessionTimeSheet(
+                initialDuration: viewModel.sessionTime > 0 ? viewModel.sessionTime : 60,
+                onSave: { newDuration in
+                    Task {
+                        await viewModel.updateSessionTime(newDuration)
+                    }
+                    isSessionTimeSheetPresented = false
+                },
+                onDismiss: {
+                    isSessionTimeSheetPresented = false
+                }
+            )
+            .presentationDetents([.height(360)])
+            .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $isTimeZoneSheetPresented) {
+            TimeZoneSheet(
+                currentTimeZone: viewModel.timeZone,
+                onSave: { newTimezone in
+                    Task {
+                        await viewModel.updateTimezone(newTimezone)
+                    }
+                    isTimeZoneSheetPresented = false
+                },
+                onDismiss: {
+                    isTimeZoneSheetPresented = false
+                }
+            )
+            .presentationDetents([.height(500)])
+            .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $isSleepScheduleSheetPresented) {
+            SleepScheduleSheet(
+                initialWakeUpTime: viewModel.wakeupTime,
+                initialSleepTime: viewModel.sleepTime,
+                onSave: { wakeUpTime, sleepTime in
+                    Task {
+                        await viewModel.updateSleepSchedule(wakeUpTime: wakeUpTime, sleepTime: sleepTime)
+                    }
+                    isSleepScheduleSheetPresented = false
+                },
+                onDismiss: {
+                    isSleepScheduleSheetPresented = false
+                }
+            )
+            .presentationDetents([.height(360)])
+            .presentationDragIndicator(.visible)
+        }
         .task {
             await viewModel.fetchUserProfile()
         }
     }
 }
 
-//#Preview {
-//    ProfileMainView(viewModel: ProfileViewModel(
-//        getUserProfileUseCase: MockGetUserProfileUseCase(),
-//        fetchZonesUseCase: MockFetchZonesUseCase()
-//    ))
-//}
+#Preview {
+    ProfileMainView(
+        viewModel: ProfileViewModel(
+            getUserProfileUseCase: MockGetUserProfileUseCase(),
+            updateSessionDurationUseCase: MockUpdateSessionDurationUseCase(),
+            updateTimezoneUseCase: MockUpdateTimezoneUseCase(),
+            updateSleepScheduleUseCase: MockUpdateSleepScheduleUseCase(),
+            fetchZonesUseCase: MockFetchZonesUseCase()
+        ),
+        dailyZonesViewModel: DailyZonesViewModel(
+            fetchTemplatesUseCase: MockFetchTemplatesUseCase(),
+            updateTemplateUseCase: MockUpdateTemplateUseCase(),
+            getUserProfileUseCase: MockGetUserProfileUseCase(),
+            manageDailyZoneScheduleUseCase: DefaultManageDailyZoneScheduleUseCase()
+        )
+    )
+}

@@ -5,9 +5,9 @@
 //  Created by AndrewMagdy on 19/07/2026.
 //
 
+import SwiftUI
 import Common
 import Domain
-import SwiftUI
 
 struct AddRealTask: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -91,6 +91,12 @@ struct AddRealTask: View {
 }
 
 #Preview {
-    AddRealTask(viewModel: .preview)
-        .environment(AppCoordinator())
+    AddRealTask(
+        viewModel: OnboardingViewModel(
+            completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
+            createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
+        )
+    )
+    .environment(AppCoordinator())
 }

@@ -47,3 +47,11 @@ struct HomeWeekStripView: View {
         }
     }
 }
+
+
+#Preview {
+    HomeWeekStripView(selectedDay: Date(), onSelect: { _ in })
+        .padding()
+        .environment(LanguageManager())
+}
+

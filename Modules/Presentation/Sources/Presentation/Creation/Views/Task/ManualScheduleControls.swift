@@ -193,3 +193,10 @@ struct ManualScheduleControls: View {
         return AppColors.runtime(hex: zone.color.hex)
     }
 }
+
+
+#Preview {
+    ManualScheduleControls(zones: [], startsAt: .constant(Date()), durationMinutes: .constant(60), selectedZoneID: .constant(nil))
+        .padding()
+}
+

@@ -80,6 +80,22 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(UserProfileRepository.self, from: resolver)
             )
         }
+
+        container.register(UpdateSessionDurationUseCase.self) { resolver in
+            DefaultUpdateSessionDurationUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTimezoneUseCase.self) { resolver in
+            DefaultUpdateTimezoneUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateSleepScheduleUseCase.self) { resolver in
+            DefaultUpdateSleepScheduleUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
         container.register(RescheduleSessionUseCase.self) { resolver in
             DefaultRescheduleSessionUseCase(
                 repository: Self.resolve(SessionRepository.self, from: resolver)
@@ -109,6 +125,11 @@ struct DomainAssembly: Assembly {
             DefaultCreateTaskUseCase(
                 taskRepository: Self.resolve(TaskRepository.self, from: resolver),
                 reconciler: Self.resolve(TaskScheduleReconciling.self, from: resolver)
+            )
+        }
+        container.register(CreateAITaskUseCase.self) { resolver in
+            DefaultCreateAITaskUseCase(
+                repository: Self.resolve(AiTaskRepository.self, from: resolver)
             )
         }
         container.register(UpdateTaskUseCase.self) { resolver in

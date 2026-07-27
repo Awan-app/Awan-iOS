@@ -31,3 +31,10 @@ struct TypingDotsView: View {
         }
     }
 }
+
+
+#Preview {
+    TypingDotsView()
+        .padding()
+}
+

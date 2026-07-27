@@ -25,3 +25,8 @@ struct DailyZonesStatusBadge: View {
             }
     }
 }
+
+#Preview {
+    DailyZonesStatusBadge(title: "Ready")
+        .padding()
+}

@@ -16,3 +16,10 @@ struct AuthCloudLogoView: View {
             }
     }
 }
+
+
+#Preview {
+    AuthCloudLogoView()
+        .padding()
+}
+

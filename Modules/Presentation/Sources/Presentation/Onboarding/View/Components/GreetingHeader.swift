@@ -31,3 +31,10 @@ struct GreetingHeader: View {
         .padding()
         .background(AppColors.screenBackground)
 }
+
+
+#Preview {
+    GreetingHeader(name: "Andrew", zoneCount: 3)
+        .padding()
+}
+

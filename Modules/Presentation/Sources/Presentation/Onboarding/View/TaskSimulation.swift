@@ -1,5 +1,6 @@
 import Common
 import SwiftUI
+import Domain
 import UIKit
 
 struct TaskSimulation: View {
@@ -138,5 +139,12 @@ struct TaskSimulation: View {
     }
 
 #Preview {
-    TaskSimulation(viewModel: .preview, onContinue: {})
+    TaskSimulation(
+        viewModel: OnboardingViewModel(
+            completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
+            createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
+        ),
+        onContinue: {}
+    )
 }

@@ -34,3 +34,11 @@ struct DailyZonesCenterStack: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
+
+
+import Domain
+#Preview {
+    DailyZonesCenterStack(zones: Zone.mockDailyZones, isReady: true)
+        .padding()
+}
+

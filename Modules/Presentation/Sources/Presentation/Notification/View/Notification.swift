@@ -1,5 +1,6 @@
 import Common
 import SwiftUI
+import Domain
 
 private struct ReasonItem: Identifiable {
     let id = UUID()
@@ -76,7 +77,11 @@ struct NotificationView: View {
 
 #Preview {
     NotificationView(
-        viewModel: .preview,
+        viewModel: OnboardingViewModel(
+            completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
+            createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
+        ),
         onContinue: {},
         onSkipNotifications: {}
     )

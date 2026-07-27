@@ -19,6 +19,7 @@ public struct AwanTask: Identifiable, Hashable, Sendable {
     public let mandatory: Bool
     public let estimatedPoints: Int
     public let dependencyIDs: Set<UUID>
+    public let category: TaskCategory?
 
     public init(
         id: UUID,
@@ -31,7 +32,8 @@ public struct AwanTask: Identifiable, Hashable, Sendable {
         isSplittable: Bool,
         mandatory: Bool = true,
         estimatedPoints: Int = 0,
-        dependencyIDs: Set<UUID> = []
+        dependencyIDs: Set<UUID> = [],
+        category: TaskCategory? = nil
     ) {
         self.id = id
         self.title = title
@@ -44,5 +46,6 @@ public struct AwanTask: Identifiable, Hashable, Sendable {
         self.mandatory = mandatory
         self.estimatedPoints = estimatedPoints
         self.dependencyIDs = dependencyIDs
+        self.category = category
     }
 }

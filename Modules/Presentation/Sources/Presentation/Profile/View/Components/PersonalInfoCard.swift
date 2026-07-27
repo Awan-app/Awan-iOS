@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Common
+import Domain
 
 // MARK: - PersonalInfoCard
 
@@ -37,8 +38,8 @@ struct PersonalInfoCard: View {
 #Preview("PersonalInfoCard – Light") {
     PersonalInfoCard(
         avatarImage: nil,
-        name: "Sam Rivera",
-        email: "sam@awan.app",
+        name: UserProfile.mock.firstName,
+        email: UserProfile.mock.email,
         onEdit: {}
     )
     .padding()
@@ -49,8 +50,8 @@ struct PersonalInfoCard: View {
 #Preview("PersonalInfoCard – Dark") {
     PersonalInfoCard(
         avatarImage: nil,
-        name: "Sam Rivera",
-        email: "sam@awan.app",
+        name: UserProfile.mock.firstName,
+        email: UserProfile.mock.email,
         onEdit: {}
     )
     .padding()

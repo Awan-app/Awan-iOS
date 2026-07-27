@@ -2,6 +2,12 @@ import Domain
 import Foundation
 import Observation
 
+public enum CreateTaskPhase: Equatable {
+    case composer
+    case aiLoading
+    case aiResult(AITaskSheetItem)
+}
+
 @Observable
 @MainActor
 public final class CreateTaskViewModel {
@@ -11,6 +17,8 @@ public final class CreateTaskViewModel {
     public private(set) var errorMessage: String?
     public private(set) var didCreateTask = false
     public private(set) var activeNudge: ScheduleNudge?
+    private(set) var phase: CreateTaskPhase = .composer
+    private(set) var pendingAITaskItem: AITaskSheetItem?
     var quickText = ""
     var isAwanSchedulingEnabled = true
     var durationMinutes = 60
@@ -143,23 +151,63 @@ public final class CreateTaskViewModel {
         guard !isSubmitting else { return }
         isSubmitting = true
         errorMessage = nil
-        defer { isSubmitting = false }
+        phase = .aiLoading
+        defer {
+            isSubmitting = false
+        }
+
+        let startTime = Date()
 
         do {
-            let result = try await useCases.createTaskWithAwan.execute(
-                CreateTaskWithAwanRequest(
-                    prompt: prompt,
-                    selectedDay: selectedDay,
-                    timeZone: timeZone
-                )
+            let aiTask = try await useCases.createAITask.execute(
+                CreateAITaskRequest(title: prompt)
             )
-            if result != nil {
-                didCreateTask = true
-            }
+            let item = AITaskSheetItem(task: aiTask, startTime: startTime)
+            pendingAITaskItem = item
+            phase = .aiResult(item)
         } catch is CancellationError {
+            phase = .composer
         } catch {
-            errorMessage = error.localizedDescription
+            // TODO: Remove once backend is stable. Fall back to mock data so the
+            // UI flow is always testable end-to-end during development.
+            print("[CreateTaskViewModel] AI endpoint failed (\(error)). Using mock data.")
+            let item = AITaskSheetItem(
+                task: AwanTask(
+                    id: UUID(),
+                    title: prompt,
+                    description: nil,
+                    status: .pending,
+                    goalID: nil,
+                    zoneID: nil,
+                    duration: try! TaskDuration(minutes: 60),
+                    isSplittable: false,
+                    mandatory: true,
+                    estimatedPoints: 20,
+                    dependencyIDs: [],
+                    category: TaskCategory(id: UUID(), name: "Study")
+                ),
+                startTime: startTime
+            )
+            pendingAITaskItem = item
+            phase = .aiResult(item)
         }
+    }
+
+    func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
+        await createTask(
+            title: item.task.title,
+            description: item.task.description,
+            durationMinutes: finalDurationMinutes,
+            zoneID: nil,
+            isSplittable: item.task.isSplittable,
+            mandatory: item.task.mandatory,
+            startsAt: item.startTime
+        )
+    }
+
+    func dismissAITaskResult() {
+        pendingAITaskItem = nil
+        phase = .composer
     }
 
     func beginRecording() async {
@@ -199,9 +247,6 @@ public final class CreateTaskViewModel {
         let taskText = transcription.isEmpty
             ? pendingTranscription.trimmingCharacters(in: .whitespacesAndNewlines)
             : transcription
-        #if DEBUG
-        print("Speech transcription result: \(taskText)")
-        #endif
         if !taskText.isEmpty {
             quickText = taskText
         }

@@ -55,6 +55,7 @@ public final class HomeViewModel {
             deleteSession(id: id)
         case .dismissError:
             state.failure = nil
+      
         }
     }
 
@@ -103,5 +104,4 @@ public final class HomeViewModel {
             state.selectedSessionID = nil
         }
     }
-
 }
