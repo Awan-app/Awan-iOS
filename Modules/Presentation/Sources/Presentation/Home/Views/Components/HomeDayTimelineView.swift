@@ -3,20 +3,35 @@ import SwiftUI
 
 struct HomeDayTimelineView: View {
     static let hourHeight: CGFloat = 80
+    private static let minimumZoomScale: CGFloat = 0.75
+    private static let maximumZoomScale: CGFloat = 4
 
     let window: HomeTimelineWindow
+    let wakeupTime: Date
+    let bedtime: Date
     let zones: [HomeTimelineZoneItem]
     let items: [HomeTimelineItem]
     let onMove: (UUID, CGFloat) -> Void
     let onSetCompletion: (UUID, Bool) -> Void
     let onTap: (UUID) -> Void
 
+    @State private var zoomScale: CGFloat = 1
+    @GestureState private var gestureScale: CGFloat = 1
+
+    private var displayedZoomScale: CGFloat {
+        clampedZoomScale(zoomScale * gestureScale)
+    }
+
+    private var displayedHourHeight: CGFloat {
+        Self.hourHeight * displayedZoomScale
+    }
+
     private var totalHeight: CGFloat {
-        CGFloat(window.durationMinutes) / 60 * Self.hourHeight + (verticalInset * 2)
+        CGFloat(window.durationMinutes) / 60 * displayedHourHeight + (verticalInset * 2)
     }
 
     private var verticalInset: CGFloat {
-        Self.hourHeight / 4
+        displayedHourHeight / 4
     }
 
     var body: some View {
@@ -30,7 +45,7 @@ struct HomeDayTimelineView: View {
                     zones: zones,
                     labelWidth: labelWidth,
                     plotWidth: plotWidth,
-                    hourHeight: Self.hourHeight
+                    hourHeight: displayedHourHeight
                 )
 
                 ForEach(items) { item in
@@ -40,6 +55,15 @@ struct HomeDayTimelineView: View {
                         plotWidth: plotWidth
                     )
                 }
+
+                HomeTimelineDayMarkersView(
+                    window: window,
+                    wakeupTime: wakeupTime,
+                    bedtime: bedtime,
+                    width: geometry.size.width,
+                    labelWidth: labelWidth,
+                    hourHeight: displayedHourHeight
+                )
 
                 if items.isEmpty {
 //                    HomeTimelineEmptyStateView()
@@ -51,12 +75,15 @@ struct HomeDayTimelineView: View {
                     window: window,
                     width: geometry.size.width,
                     labelWidth: labelWidth,
-                    hourHeight: Self.hourHeight
+                    hourHeight: displayedHourHeight
                 )
+
             }
             .offset(y: verticalInset)
         }
         .frame(height: totalHeight)
+        .contentShape(Rectangle())
+        .simultaneousGesture(zoomGesture)
         .background(AppColors.surface, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
@@ -75,17 +102,17 @@ struct HomeDayTimelineView: View {
         let lanes = CGFloat(max(1, item.laneCount))
         let cardWidth = max(0, (plotWidth - 16 - (lanes - 1) * spacing) / lanes)
         let x = labelWidth + 8 + CGFloat(item.lane) * (cardWidth + spacing)
-        let scheduledHeight = CGFloat(item.durationMinutes) / 60 * Self.hourHeight
+        let scheduledHeight = CGFloat(item.durationMinutes) / 60 * displayedHourHeight
 
         return HomeTimelineSessionCard(
             item: item,
-            onMove: { onMove(item.id, $0) },
+            onMove: { onMove(item.id, $0 / displayedZoomScale) },
             onSetCompletion: { onSetCompletion(item.id, $0) },
             onTap: { onTap(item.id) }
         )
         .frame(
             width: cardWidth,
-            height: max(34, scheduledHeight - 8)
+            height: max(16, scheduledHeight - 8)
         )
         .offset(x: x)
         .animation(
@@ -96,18 +123,43 @@ struct HomeDayTimelineView: View {
     }
 
     private func yPosition(for date: Date) -> CGFloat {
-        CGFloat(date.timeIntervalSince(window.start) / 3600) * Self.hourHeight
+        CGFloat(date.timeIntervalSince(window.start) / 3600) * displayedHourHeight
     }
 
     private func laneAnimationKey(for item: HomeTimelineItem) -> Int {
         (item.laneCount * 1_000) + item.lane
+    }
+
+    private var zoomGesture: some Gesture {
+        MagnifyGesture(minimumScaleDelta: 0.01)
+            .updating($gestureScale) { value, state, _ in
+                state = value.magnification
+            }
+            .onEnded { value in
+                zoomScale = clampedZoomScale(zoomScale * value.magnification)
+            }
+    }
+
+    private func clampedZoomScale(_ scale: CGFloat) -> CGFloat {
+        min(max(scale, Self.minimumZoomScale), Self.maximumZoomScale)
     }
 }
 
 
 import Domain
 #Preview {
-    HomeDayTimelineView(window: HomeTimelineWindow(start: Date(), end: Date().addingTimeInterval(3600)), zones: [], items: [], onMove: { _, _ in }, onSetCompletion: { _, _ in }, onTap: { _ in })
+    HomeDayTimelineView(
+        window: HomeTimelineWindow(
+            start: Date(),
+            end: Date().addingTimeInterval(3600)
+        ),
+        wakeupTime: Date(),
+        bedtime: Date().addingTimeInterval(3600),
+        zones: [],
+        items: [],
+        onMove: { _, _ in },
+        onSetCompletion: { _, _ in },
+        onTap: { _ in }
+    )
         .padding()
 }
-

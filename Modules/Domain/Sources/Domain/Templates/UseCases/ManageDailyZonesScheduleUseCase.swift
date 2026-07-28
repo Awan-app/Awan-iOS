@@ -32,8 +32,8 @@ public struct DefaultManageDailyZoneScheduleUseCase: ManageDailyZoneScheduleUseC
         let timeSlots = zones.map { (start: $0.startTime, end: $0.endTime) }
         updated.swapAt(sourceIndex, destinationIndex)
 
-        updated[sourceIndex] = Zone(id: updated[sourceIndex].id, name: updated[sourceIndex].name, color: updated[sourceIndex].color, startTime: timeSlots[sourceIndex].start, endTime: timeSlots[sourceIndex].end)
-        updated[destinationIndex] = Zone(id: updated[destinationIndex].id, name: updated[destinationIndex].name, color: updated[destinationIndex].color, startTime: timeSlots[destinationIndex].start, endTime: timeSlots[destinationIndex].end)
+        updated[sourceIndex] = Zone(id: updated[sourceIndex].id, name: updated[sourceIndex].name, color: updated[sourceIndex].color, startTime: timeSlots[sourceIndex].start, endTime: timeSlots[sourceIndex].end, category: updated[sourceIndex].category)
+        updated[destinationIndex] = Zone(id: updated[destinationIndex].id, name: updated[destinationIndex].name, color: updated[destinationIndex].color, startTime: timeSlots[destinationIndex].start, endTime: timeSlots[destinationIndex].end, category: updated[destinationIndex].category)
         return updated
     }
 
@@ -148,7 +148,7 @@ public struct DefaultManageDailyZoneScheduleUseCase: ManageDailyZoneScheduleUseC
         updated.insert(contentsOf: elements, at: adjustedDestination)
 
         for index in updated.indices {
-            updated[index] = Zone(id: updated[index].id, name: updated[index].name, color: updated[index].color, startTime: timeSlots[index].start, endTime: timeSlots[index].end)
+            updated[index] = Zone(id: updated[index].id, name: updated[index].name, color: updated[index].color, startTime: timeSlots[index].start, endTime: timeSlots[index].end, category: updated[index].category)
         }
         return updated
     }

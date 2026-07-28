@@ -17,6 +17,7 @@ public enum MainTab: Hashable, Sendable {
 
 public enum MainRoute: Hashable, Identifiable, Sendable {
     case home
+    case calendar
     case userInfo
     case add
     case dailyZones

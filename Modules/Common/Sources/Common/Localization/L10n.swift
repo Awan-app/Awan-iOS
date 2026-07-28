@@ -254,11 +254,17 @@ public enum L10n {
             String(format: L10n.currentBundle.localizedString(forKey: "schedule.duration_minutes", value: nil, table: "Localizable"), minutes)
         }
         public static var zone: String { L10n.currentBundle.localizedString(forKey: "schedule.zone", value: nil, table: "Localizable") }
+        public static var category: String {
+            L10n.currentBundle.localizedString(forKey: "schedule.category", value: nil, table: "Localizable")
+        }
         public static var standalone: String {
             L10n.currentBundle.localizedString(forKey: "schedule.standalone", value: nil, table: "Localizable")
         }
         public static var chooseZone: String {
             L10n.currentBundle.localizedString(forKey: "schedule.choose_zone", value: nil, table: "Localizable")
+        }
+        public static var chooseCategory: String {
+            L10n.currentBundle.localizedString(forKey: "schedule.choose_category", value: nil, table: "Localizable")
         }
         public static var canSplit: String {
             L10n.currentBundle.localizedString(forKey: "schedule.can_split", value: nil, table: "Localizable")
@@ -569,6 +575,9 @@ public enum L10n {
         public static var buildItYourWay: String {
             L10n.currentBundle.localizedString(forKey: "home.build_it_your_way", value: nil, table: "Localizable")
         }
+        public static var bedtime: String {
+            L10n.currentBundle.localizedString(forKey: "home.bedtime", value: nil, table: "Localizable")
+        }
 
         public static var estimatedDuration: String {
             L10n.currentBundle.localizedString(forKey: "home.estimated_duration", value: nil, table: "Localizable")
@@ -584,6 +593,9 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "home.load_failed", value: nil, table: "Localizable")
         }
         public static var retry: String { L10n.currentBundle.localizedString(forKey: "home.retry", value: nil, table: "Localizable") }
+        public static var wakeUp: String {
+            L10n.currentBundle.localizedString(forKey: "home.wake_up", value: nil, table: "Localizable")
+        }
         public static var startTime: String {
             L10n.currentBundle.localizedString(forKey: "home.start_time", value: nil, table: "Localizable")
         }
@@ -655,6 +667,96 @@ public enum L10n {
         public static var calendar: String { L10n.currentBundle.localizedString(forKey: "home.calendar", value: nil, table: "Localizable") }
         public static var rewards: String { L10n.currentBundle.localizedString(forKey: "home.rewards", value: nil, table: "Localizable") }
         public static var you: String { L10n.currentBundle.localizedString(forKey: "home.you", value: nil, table: "Localizable") }
+    }
+
+    public enum CalendarScreen {
+        public static var activeGoals: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.active_goals",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var back: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.back",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var emptyTitle: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.empty_title",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var emptyMessage: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.empty_message",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var hasDeadline: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.has_deadline",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var dueToday: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.due_today",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var oneDayLeft: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.one_day_left",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static func daysLeft(_ formattedCount: String) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: "calendar.days_left",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                formattedCount
+            )
+        }
+        public static var noDeadline: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.no_deadline",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var jumpToPresent: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.jump_to_present",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var previousMonth: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.previous_month",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var nextMonth: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.next_month",
+                value: nil,
+                table: "Localizable"
+            )
+        }
     }
 
     public enum Profile {

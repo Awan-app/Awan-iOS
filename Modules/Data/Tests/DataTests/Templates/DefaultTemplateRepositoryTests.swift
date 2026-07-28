@@ -33,6 +33,7 @@ final class DefaultTemplateRepositoryTests: XCTestCase {
                     startTime: "09:00:00",
                     endTime: "17:00:00",
                     color: draftZone.color.hex,
+                    category: CategoryResponseDTO(id: UUID(), name: "Work"),
                     templateId: remoteTemplateID,
                     templateOverrideId: nil
                 )
@@ -91,6 +92,13 @@ private struct RemoteTemplateDataSourceStub: RemoteTemplateDataSourceProtocol {
     func getZones(templateID: UUID) async throws -> [ZoneResponseDTO] {
         throw TestError.unimplemented
     }
+
+    func bulkUpdate(
+        templateID: UUID,
+        request: BulkUpdateZonesRequestDTO
+    ) async throws -> [ZoneResponseDTO] {
+        throw TestError.unimplemented
+    }
 }
 
 private actor LocalTemplateDataSourceSpy: LocalTemplateDataSource {
@@ -106,6 +114,14 @@ private actor LocalTemplateDataSourceSpy: LocalTemplateDataSource {
 
     func addTemplate(_ template: TemplateData) async throws {
         addedTemplate = template
+    }
+
+    func upsertTemplate(_ template: TemplateData) async throws {
+        addedTemplate = template
+    }
+
+    func replaceTemplates(_ templates: [TemplateData]) async throws {
+        addedTemplate = templates.first
     }
 
     func updateTemplate(_ template: TemplateData) async throws {}

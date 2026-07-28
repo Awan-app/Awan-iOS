@@ -90,7 +90,6 @@ struct PresentationAssembly: Assembly {
             CreationUseCases(
                 fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
                 createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
-                createTaskWithAwan: EmptyCreateTaskWithAwanUseCase(),
                 createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver),
                 userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 goalDecomposition: GoalDecompositionUseCases(
@@ -114,6 +113,14 @@ struct PresentationAssembly: Assembly {
             let useCases = Self.resolve(HomeUseCases.self, from: resolver)
             return MainActor.assumeIsolated {
                 HomeViewModel(useCases: useCases)
+            }
+        }
+        .inObjectScope(.container)
+
+        container.register(CalendarViewModel.self) { resolver in
+            let useCase = Self.resolve(FetchGoalsUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                CalendarViewModel(fetchGoalsUseCase: useCase)
             }
         }
         .inObjectScope(.container)
@@ -183,6 +190,7 @@ struct PresentationAssembly: Assembly {
             let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
             let loginViewModel = Self.resolve(LoginViewModel.self, from: resolver)
             let homeViewModel = Self.resolve(HomeViewModel.self, from: resolver)
+            let calendarViewModel = Self.resolve(CalendarViewModel.self, from: resolver)
             let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
             let creationUseCases = Self.resolve(CreationUseCases.self, from: resolver)
             let onboardingViewModel = Self.resolve(OnboardingViewModel.self, from: resolver)
@@ -195,6 +203,7 @@ struct PresentationAssembly: Assembly {
                     authenticationState: authenticationState,
                     loginViewModel: loginViewModel,
                     homeViewModel: homeViewModel,
+                    calendarViewModel: calendarViewModel,
                     scheduleViewModel: scheduleViewModel,
                     creationUseCases: creationUseCases,
                     makeOtpViewModel: { context in

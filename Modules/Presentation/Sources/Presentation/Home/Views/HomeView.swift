@@ -2,6 +2,7 @@ import Common
 import SwiftUI
 
 struct HomeView: View {
+    @Environment(AppCoordinator.self) private var coordinator
     @State private var viewModel: HomeViewModel
 
     init(viewModel: HomeViewModel) {
@@ -66,7 +67,13 @@ struct HomeView: View {
                     displayName: success.displayName,
                     selectedDay: state.selectedDay,
                     streakCount: success.streakCount,
-                    rewardPoints: success.rewardPoints
+                    rewardPoints: success.rewardPoints,
+                    onOpenCalendar: {
+                        coordinator.mainCoordinator.push(.calendar)
+                    },
+                    onSelectToday: {
+                        viewModel.send(.selectDay(.now))
+                    }
                 )
 
                 HomeWeekStripView(
@@ -84,6 +91,8 @@ struct HomeView: View {
 
                 HomeDayTimelineView(
                     window: success.timelineWindow,
+                    wakeupTime: success.timelineWakeupTime,
+                    bedtime: success.timelineBedtime,
                     zones: success.timelineZones,
                     items: success.timelineItems,
                     onMove: { sessionID, points in

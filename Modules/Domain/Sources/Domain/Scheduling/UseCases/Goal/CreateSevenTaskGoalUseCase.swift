@@ -45,6 +45,12 @@ public struct DefaultCreateSevenTaskGoalUseCase: CreateSevenTaskGoalUseCase {
             name: request.name,
             deadline: deadline
         )
+        let initialWorkspace = try await workspaceProvider.load(for: request.startDay)
+        guard let selectedZone = initialWorkspace.zones.first(
+            where: { $0.id == request.zoneID }
+        ) else {
+            throw SchedulingError.entityNotFound(id: request.zoneID)
+        }
         var tasks: [AwanTask] = []
         for index in 0..<7 {
             let dependencyIDs = tasks.last.map { Set([$0.id]) } ?? []
@@ -53,10 +59,10 @@ public struct DefaultCreateSevenTaskGoalUseCase: CreateSevenTaskGoalUseCase {
                     id: idGenerator.makeUUID(),
                     title: "\(request.name) · Step \(index + 1)",
                     goalID: goal.id,
-                    zoneID: request.zoneID,
                     duration: TaskDuration(minutes: request.taskDurationMinutes),
                     isSplittable: true,
-                    dependencyIDs: dependencyIDs
+                    dependencyIDs: dependencyIDs,
+                    category: selectedZone.category
                 )
             )
         }
@@ -65,6 +71,7 @@ public struct DefaultCreateSevenTaskGoalUseCase: CreateSevenTaskGoalUseCase {
         for task in tasks {
             _ = try await taskRepository.addTask(
                 task,
+                sessionZoneID: nil,
                 startsAt: nil,
                 durationMinutes: request.taskDurationMinutes,
                 timeZoneID: request.timeZone.identifier

@@ -77,6 +77,12 @@ Awan app composition root
 
 Use SwiftUI with the Observation framework.
 
+- Use the Common design-system depth primitives for the app's raised 3D treatment:
+  `AppDepthSurface` for static cards and chips, `AppDepthButtonStyle` for custom
+  pressable controls, and `AppButton` for standard titled actions.
+- Do not recreate this treatment with feature-local button styles, duplicated offset
+  shapes, or blurred `.shadow` modifiers. The canonical depth is a crisp solid-color
+  offset layer, and layouts must preserve bottom clearance for that layer.
 - View models use `@Observable`, are marked `@MainActor`, and expose UI state as observable stored properties.
 - Views own injected observable reference types with `@State`, derive bindings with `@Bindable`, and share app-wide observable dependencies through `@Environment` when appropriate.
 - Views remain declarative and render view-model state.

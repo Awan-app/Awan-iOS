@@ -27,9 +27,6 @@ public struct DefaultScheduleEngine: ScheduleEngine {
     }
 
     public func makePlan(for snapshot: SchedulingSnapshot) throws -> SchedulingResult {
-        let zonesByID = Dictionary(uniqueKeysWithValues: snapshot.zones.map { ($0.id, $0) })
-        try validateZoneReferences(tasks: snapshot.tasks, zonesByID: zonesByID)
-
         let orderedTasks = try dependencyOrdering.order(snapshot.tasks)
         let activeSessions = snapshot.sessions.filter(\.occupiesTime)
         let workSessions = snapshot.sessions.filter(\.contributesScheduledWork)
@@ -65,7 +62,10 @@ public struct DefaultScheduleEngine: ScheduleEngine {
                 continue
             }
 
-            guard let zoneID = task.zoneID else {
+            guard let categoryID = task.category?.id,
+                  let zone = snapshot.zones
+                    .filter({ $0.category?.id == categoryID })
+                    .min(by: { $0.startTime < $1.startTime }) else {
                 issues.append(
                     SchedulingIssue(
                         taskID: task.id,
@@ -76,10 +76,6 @@ public struct DefaultScheduleEngine: ScheduleEngine {
                     )
                 )
                 continue
-            }
-
-            guard let zone = zonesByID[zoneID] else {
-                throw SchedulingError.missingZone(taskID: task.id, zoneID: zoneID)
             }
 
             let earliestAllowedStart = task.dependencyIDs
@@ -100,7 +96,7 @@ public struct DefaultScheduleEngine: ScheduleEngine {
                 let end = range.start.addingTimeInterval(TimeInterval(remainingMinutes * 60))
                 let draft = SessionDraft(
                     taskID: task.id,
-                    zoneID: zoneID,
+                    zoneID: zone.id,
                     timeRange: try TimeRange(start: range.start, end: end)
                 )
                 todayDrafts.append(draft)
@@ -136,17 +132,6 @@ public struct DefaultScheduleEngine: ScheduleEngine {
         }
 
         return SchedulingResult(todaySessionDrafts: todayDrafts, issues: issues)
-    }
-
-    private func validateZoneReferences(
-        tasks: [AwanTask],
-        zonesByID: [UUID: Zone]
-    ) throws {
-        for task in tasks {
-            if let zoneID = task.zoneID, zonesByID[zoneID] == nil {
-                throw SchedulingError.missingZone(taskID: task.id, zoneID: zoneID)
-            }
-        }
     }
 
     private func existingCompletionTimes(
