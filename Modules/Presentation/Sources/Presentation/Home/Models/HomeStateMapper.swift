@@ -103,20 +103,26 @@ struct HomeStateMapper {
         tasks: [AwanTask],
         zones: [Zone]
     ) -> [HomeTaskAllocationItem] {
-        let knownZoneIDs = Set(zones.map(\.id))
-        var allocations = zones.compactMap { zone -> HomeTaskAllocationItem? in
-            let count = tasks.filter { $0.zoneID == zone.id }.count
+        var emittedCategoryIDs = Set<UUID>()
+        let categorizedZones = zones.filter { zone in
+            guard let categoryID = zone.category?.id else { return false }
+            return emittedCategoryIDs.insert(categoryID).inserted
+        }
+        let knownCategoryIDs = Set(categorizedZones.compactMap(\.category?.id))
+        var allocations = categorizedZones.compactMap { zone -> HomeTaskAllocationItem? in
+            guard let categoryID = zone.category?.id else { return nil }
+            let count = tasks.filter { $0.category?.id == categoryID }.count
             guard count > 0 else { return nil }
             return HomeTaskAllocationItem(
-                id: .zone(zone.id),
+                id: .category(categoryID),
                 color: AppColors.runtime(hex: zone.color.hex),
                 taskCount: count
             )
         }
 
         let fallbackCount = tasks.filter { task in
-            guard let zoneID = task.zoneID else { return true }
-            return !knownZoneIDs.contains(zoneID)
+            guard let categoryID = task.category?.id else { return true }
+            return !knownCategoryIDs.contains(categoryID)
         }.count
         if fallbackCount > 0 {
             allocations.append(

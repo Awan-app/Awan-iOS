@@ -45,7 +45,7 @@ struct HomeTimelineZoneItem: Identifiable, Hashable {
 }
 
 enum HomeTaskAllocationID: Hashable {
-    case zone(UUID)
+    case category(UUID)
     case fallback
 }
 
