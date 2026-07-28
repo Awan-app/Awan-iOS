@@ -30,7 +30,6 @@ private extension TaskInfoResponseDTO {
             description: description,
             status: mappedStatus(from: status),
             goalID: goalID,
-            zoneID: nil,
             duration: try! TaskDuration(minutes: max(1, estimatedDuration ?? 60)),
             isSplittable: isSplittable,
             mandatory: mandatory,

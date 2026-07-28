@@ -38,7 +38,6 @@ enum HomeRemoteMapper {
 
     static func task(
         _ dto: TaskInfoResponseDTO,
-        zoneID: UUID?,
         defaultDuration: Int
     ) throws -> AwanTask {
         try AwanTask(
@@ -47,12 +46,14 @@ enum HomeRemoteMapper {
             description: dto.description,
             status: taskStatus(dto.status),
             goalID: dto.goalID,
-            zoneID: zoneID,
             duration: TaskDuration(minutes: dto.estimatedDuration ?? defaultDuration),
             isSplittable: dto.isSplittable,
             mandatory: dto.mandatory,
             estimatedPoints: dto.estimatedPoints,
-            dependencyIDs: Set(dto.dependencyIDs)
+            dependencyIDs: Set(dto.dependencyIDs),
+            category: dto.category.map {
+                TaskCategory(id: $0.id, name: $0.name)
+            }
         )
     }
 
@@ -102,7 +103,8 @@ enum HomeRemoteMapper {
             name: dto.name,
             color: ZoneColor(hex: dto.color ?? "#6C63FF"),
             startTime: parseTime(dto.startTime),
-            endTime: parseTime(dto.endTime)
+            endTime: parseTime(dto.endTime),
+            category: TaskCategory(id: dto.category.id, name: dto.category.name)
         )
     }
 

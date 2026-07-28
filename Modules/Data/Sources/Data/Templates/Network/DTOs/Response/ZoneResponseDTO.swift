@@ -13,6 +13,7 @@ public struct ZoneResponseDTO: Decodable, Sendable {
     public let startTime: String
     public let endTime: String
     public let color: String?
+    public let category: CategoryResponseDTO
     public let templateId: UUID?
     public let templateOverrideId: UUID?
 
@@ -22,6 +23,7 @@ public struct ZoneResponseDTO: Decodable, Sendable {
         startTime: String,
         endTime: String,
         color: String?,
+        category: CategoryResponseDTO,
         templateId: UUID?,
         templateOverrideId: UUID?
     ) {
@@ -30,6 +32,7 @@ public struct ZoneResponseDTO: Decodable, Sendable {
         self.startTime = startTime
         self.endTime = endTime
         self.color = color
+        self.category = category
         self.templateId = templateId
         self.templateOverrideId = templateOverrideId
     }
