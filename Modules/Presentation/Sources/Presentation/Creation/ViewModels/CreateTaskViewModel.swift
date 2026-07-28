@@ -12,6 +12,17 @@ public enum CreateTaskPhase: Equatable {
 @MainActor
 public final class CreateTaskViewModel {
     public private(set) var zones: [Zone] = []
+    public var categories: [TaskCategory] {
+        var seen = Set<UUID>()
+        return zones.compactMap { zone in
+            guard let category = zone.category,
+                  seen.insert(category.id).inserted
+            else {
+                return nil
+            }
+            return category
+        }
+    }
     public private(set) var isLoadingZones = false
     public private(set) var isSubmitting = false
     public private(set) var errorMessage: String?
@@ -23,7 +34,7 @@ public final class CreateTaskViewModel {
     var isAwanSchedulingEnabled = true
     var durationMinutes = 60
     var startsAt: Date
-    var selectedZoneID: UUID?
+    var selectedCategoryID: UUID?
     private(set) var isRecording = false
 
     let selectedDay: Date
@@ -59,8 +70,8 @@ public final class CreateTaskViewModel {
 
         do {
             zones = try await useCases.fetchZones.execute(for: selectedDay)
-            if selectedZoneID == nil {
-                selectedZoneID = zones.first?.id
+            if selectedCategoryID == nil {
+                selectedCategoryID = categories.first?.id
             }
         } catch is CancellationError {
             didLoadZones = false
@@ -98,7 +109,7 @@ public final class CreateTaskViewModel {
                 title: title,
                 description: nil,
                 durationMinutes: durationMinutes,
-                zoneID: selectedZoneID,
+                categoryID: selectedCategoryID,
                 isSplittable: false,
                 mandatory: true,
                 startsAt: startsAt
@@ -110,7 +121,7 @@ public final class CreateTaskViewModel {
         title: String,
         description: String?,
         durationMinutes: Int,
-        zoneID: UUID?,
+        categoryID: UUID?,
         isSplittable: Bool,
         mandatory: Bool,
         startsAt: Date
@@ -126,7 +137,7 @@ public final class CreateTaskViewModel {
                     title: title,
                     description: description,
                     durationMinutes: durationMinutes,
-                    zoneID: zoneID,
+                    categoryID: categoryID,
                     isSplittable: isSplittable,
                     mandatory: mandatory,
                     estimatedPoints: 10,
@@ -178,7 +189,6 @@ public final class CreateTaskViewModel {
                     description: nil,
                     status: .pending,
                     goalID: nil,
-                    zoneID: nil,
                     duration: try! TaskDuration(minutes: 60),
                     isSplittable: false,
                     mandatory: true,
@@ -198,7 +208,7 @@ public final class CreateTaskViewModel {
             title: item.task.title,
             description: item.task.description,
             durationMinutes: finalDurationMinutes,
-            zoneID: nil,
+            categoryID: nil,
             isSplittable: item.task.isSplittable,
             mandatory: item.task.mandatory,
             startsAt: item.startTime

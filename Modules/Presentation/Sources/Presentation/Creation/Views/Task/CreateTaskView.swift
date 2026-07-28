@@ -80,10 +80,11 @@ struct CreateTaskView: View {
 
                 if !viewModel.isAwanSchedulingEnabled {
                     ManualScheduleControls(
+                        categories: viewModel.categories,
                         zones: viewModel.zones,
                         startsAt: bindableViewModel.startsAt,
                         durationMinutes: bindableViewModel.durationMinutes,
-                        selectedZoneID: bindableViewModel.selectedZoneID
+                        selectedCategoryID: bindableViewModel.selectedCategoryID
                     )
                 }
 

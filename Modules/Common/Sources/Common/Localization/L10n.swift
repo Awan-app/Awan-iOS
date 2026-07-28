@@ -254,11 +254,17 @@ public enum L10n {
             String(format: L10n.currentBundle.localizedString(forKey: "schedule.duration_minutes", value: nil, table: "Localizable"), minutes)
         }
         public static var zone: String { L10n.currentBundle.localizedString(forKey: "schedule.zone", value: nil, table: "Localizable") }
+        public static var category: String {
+            L10n.currentBundle.localizedString(forKey: "schedule.category", value: nil, table: "Localizable")
+        }
         public static var standalone: String {
             L10n.currentBundle.localizedString(forKey: "schedule.standalone", value: nil, table: "Localizable")
         }
         public static var chooseZone: String {
             L10n.currentBundle.localizedString(forKey: "schedule.choose_zone", value: nil, table: "Localizable")
+        }
+        public static var chooseCategory: String {
+            L10n.currentBundle.localizedString(forKey: "schedule.choose_category", value: nil, table: "Localizable")
         }
         public static var canSplit: String {
             L10n.currentBundle.localizedString(forKey: "schedule.can_split", value: nil, table: "Localizable")
