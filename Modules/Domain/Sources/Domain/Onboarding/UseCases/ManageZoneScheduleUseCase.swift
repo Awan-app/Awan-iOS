@@ -48,7 +48,8 @@ public final class ManageZoneScheduleUseCaseImpl: ManageZoneScheduleUseCase {
             name: result[firstIdx].name,
             color: result[firstIdx].color,
             startTime: initialStartTime,
-            endTime: newFirstEnd
+            endTime: newFirstEnd,
+            category: result[firstIdx].category
         )
 
         let newSecondEnd = addMinutes(duration1, to: newFirstEnd)
@@ -57,7 +58,8 @@ public final class ManageZoneScheduleUseCaseImpl: ManageZoneScheduleUseCase {
             name: result[secondIdx].name,
             color: result[secondIdx].color,
             startTime: newFirstEnd,
-            endTime: newSecondEnd
+            endTime: newSecondEnd,
+            category: result[secondIdx].category
         )
 
         return result

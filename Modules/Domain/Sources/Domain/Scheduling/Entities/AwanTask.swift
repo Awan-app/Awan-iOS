@@ -13,7 +13,6 @@ public struct AwanTask: Identifiable, Hashable, Sendable {
     public let description: String?
     public let status: TaskStatus
     public let goalID: UUID?
-    public let zoneID: UUID?
     public let duration: TaskDuration
     public let isSplittable: Bool
     public let mandatory: Bool
@@ -27,7 +26,6 @@ public struct AwanTask: Identifiable, Hashable, Sendable {
         description: String? = nil,
         status: TaskStatus = .pending,
         goalID: UUID? = nil,
-        zoneID: UUID? = nil,
         duration: TaskDuration,
         isSplittable: Bool,
         mandatory: Bool = true,
@@ -40,7 +38,6 @@ public struct AwanTask: Identifiable, Hashable, Sendable {
         self.description = description
         self.status = status
         self.goalID = goalID
-        self.zoneID = zoneID
         self.duration = duration
         self.isSplittable = isSplittable
         self.mandatory = mandatory
