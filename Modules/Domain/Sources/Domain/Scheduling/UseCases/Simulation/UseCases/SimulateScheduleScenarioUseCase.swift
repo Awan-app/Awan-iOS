@@ -61,16 +61,18 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
         in timeZone: TimeZone
     ) async throws -> ScheduleOperationResult {
         let workZone = try await requiredWorkZone(on: day)
-        let first = try demoTask(title: "Deep work", zoneID: workZone.id, minutes: 90)
-        let second = try demoTask(title: "Team sync", zoneID: workZone.id, minutes: 90)
+        let first = try demoTask(title: "Deep work", zone: workZone, minutes: 90)
+        let second = try demoTask(title: "Team sync", zone: workZone, minutes: 90)
         _ = try await taskRepository.addTask(
             first,
+            sessionZoneID: nil,
             startsAt: nil,
             durationMinutes: 90,
             timeZoneID: timeZone.identifier
         )
         _ = try await taskRepository.addTask(
             second,
+            sessionZoneID: nil,
             startsAt: nil,
             durationMinutes: 90,
             timeZoneID: timeZone.identifier
@@ -121,24 +123,26 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
         in timeZone: TimeZone
     ) async throws -> ScheduleOperationResult {
         let workZone = try await requiredWorkZone(on: day)
-        let filler = try demoTask(title: "Launch sprint", zoneID: workZone.id, minutes: 450)
+        let filler = try demoTask(title: "Launch sprint", zone: workZone, minutes: 450)
         let overflow = try AwanTask(
             id: idGenerator.makeUUID(),
             title: "Prepare presentation",
             goalID: nil,
-            zoneID: workZone.id,
             duration: TaskDuration(minutes: 60),
             isSplittable: true,
-            dependencyIDs: []
+            dependencyIDs: [],
+            category: workZone.category
         )
         _ = try await taskRepository.addTask(
             filler,
+            sessionZoneID: nil,
             startsAt: nil,
             durationMinutes: 450,
             timeZoneID: timeZone.identifier
         )
         _ = try await taskRepository.addTask(
             overflow,
+            sessionZoneID: nil,
             startsAt: nil,
             durationMinutes: 60,
             timeZoneID: timeZone.identifier
@@ -226,7 +230,7 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
         let previous = try await requiredWorkZone(on: day)
         let task = try demoTask(
             title: "Morning planning",
-            zoneID: previous.id,
+            zone: previous,
             minutes: 60
         )
         let session = Session(
@@ -245,6 +249,7 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
         )
         _ = try await taskRepository.addTask(
             task,
+            sessionZoneID: nil,
             startsAt: nil,
             durationMinutes: 60,
             timeZoneID: timeZone.identifier
@@ -255,7 +260,8 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
             name: previous.name,
             color: previous.color,
             startTime: try LocalTime(hour: 10, minute: 0),
-            endTime: try LocalTime(hour: 16, minute: 0)
+            endTime: try LocalTime(hour: 16, minute: 0),
+            category: previous.category
         )
         try await zoneRepository.updateZone(updated)
         return ScheduleOperationResult(
@@ -278,17 +284,17 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
 
     private func demoTask(
         title: String,
-        zoneID: UUID,
+        zone: Zone,
         minutes: Int
     ) throws -> AwanTask {
         try AwanTask(
             id: idGenerator.makeUUID(),
             title: title,
             goalID: nil,
-            zoneID: zoneID,
             duration: TaskDuration(minutes: minutes),
             isSplittable: true,
-            dependencyIDs: []
+            dependencyIDs: [],
+            category: zone.category
         )
     }
 

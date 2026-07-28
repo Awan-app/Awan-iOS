@@ -295,12 +295,12 @@ public struct DefaultMakeTaskIndependentUseCase: MakeTaskIndependentUseCase {
                 description: task.description,
                 status: task.status,
                 goalID: task.goalID,
-                zoneID: task.zoneID,
                 duration: task.duration,
                 isSplittable: task.isSplittable,
                 mandatory: task.mandatory,
                 estimatedPoints: task.estimatedPoints,
-                dependencyIDs: task.dependencyIDs.subtracting([request.dependencyID])
+                dependencyIDs: task.dependencyIDs.subtracting([request.dependencyID]),
+                category: task.category
             )
         )
         return ScheduleOperationResult(
