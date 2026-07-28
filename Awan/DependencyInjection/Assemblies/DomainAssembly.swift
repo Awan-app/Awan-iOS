@@ -129,7 +129,10 @@ struct DomainAssembly: Assembly {
         container.register(CreateTaskUseCase.self) { resolver in
             DefaultCreateTaskUseCase(
                 taskRepository: Self.resolve(TaskRepository.self, from: resolver),
-                reconciler: Self.resolve(TaskScheduleReconciling.self, from: resolver)
+                workspaceProvider: Self.resolve(
+                    ScheduleWorkspaceProviding.self,
+                    from: resolver
+                )
             )
         }
         container.register(CreateAITaskUseCase.self) { resolver in
@@ -140,9 +143,7 @@ struct DomainAssembly: Assembly {
         container.register(UpdateTaskUseCase.self) { resolver in
             DefaultUpdateTaskUseCase(
                 workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),
-                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
-                sessionRepository: Self.resolve(SessionRepository.self, from: resolver),
-                reconciler: Self.resolve(TaskScheduleReconciling.self, from: resolver)
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver)
             )
         }
         container.register(DeleteTaskUseCase.self) { resolver in
@@ -319,6 +320,7 @@ struct DomainAssembly: Assembly {
         }
         container.register(RestoreTaskZoneUseCase.self) { resolver in
             DefaultRestoreTaskZoneUseCase(
+                workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),
                 taskRepository: Self.resolve(TaskRepository.self, from: resolver),
                 sessionRepository: Self.resolve(SessionRepository.self, from: resolver),
                 reconciler: Self.resolve(TaskScheduleReconciling.self, from: resolver)
