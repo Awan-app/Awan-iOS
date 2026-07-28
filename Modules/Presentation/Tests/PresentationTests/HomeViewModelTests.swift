@@ -234,11 +234,16 @@ final class HomeViewModelTests: XCTestCase {
         )
     }
 
-    private func waitUntil(_ condition: @escaping @MainActor () -> Bool) async {
-        for _ in 0..<100 {
+    private func waitUntil(
+        _ condition: @escaping @MainActor () -> Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async {
+        for _ in 0..<500 {
             if condition() { return }
             try? await Task.sleep(for: .milliseconds(10))
         }
+        XCTFail("Timed out waiting for the expected Home state.", file: file, line: line)
     }
 
     private func date(day: Int = 22, hour: Int = 0, minute: Int = 0) -> Date {

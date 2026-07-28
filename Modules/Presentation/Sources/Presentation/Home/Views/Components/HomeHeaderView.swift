@@ -217,8 +217,14 @@ private struct HomeStatChip: View {
 
 
 #Preview {
-    HomeHeaderView(displayName: "Andrew", selectedDay: Date(), streakCount: 5, rewardPoints: 100)
+    HomeHeaderView(
+        displayName: "Andrew",
+        selectedDay: Date(),
+        streakCount: 5,
+        rewardPoints: 100,
+        onOpenCalendar: {},
+        onSelectToday: {}
+    )
         .padding()
         .environment(LanguageManager())
 }
-

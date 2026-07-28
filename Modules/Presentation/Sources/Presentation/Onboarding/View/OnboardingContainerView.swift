@@ -64,8 +64,6 @@ struct OnboardingContainerView: View {
                             Task { await viewModel.completeOnboarding() }
                         }
                     )
-                default:
-                    EmptyView()  // .addRealTask is pushed externally, never matched here
                 }
             }
             .id(coordinator.onboardingCoordinator.containerStep)
@@ -145,5 +143,4 @@ struct OnboardingContainerView: View {
         }
     }
 }
-
 

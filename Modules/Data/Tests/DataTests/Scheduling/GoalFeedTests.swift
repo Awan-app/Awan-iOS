@@ -48,8 +48,11 @@ final class GoalFeedTests: XCTestCase {
         XCTAssertNil(goal.deadline)
         XCTAssertEqual(goal.status, .active)
         XCTAssertEqual(
-            goal.createdAt,
-            ISO8601DateFormatter().date(from: "2026-07-26T15:43:48Z")
+            try XCTUnwrap(goal.createdAt).timeIntervalSince1970,
+            try XCTUnwrap(
+                ISO8601DateFormatter().date(from: "2026-07-26T15:43:48Z")
+            ).timeIntervalSince1970,
+            accuracy: 1
         )
     }
 

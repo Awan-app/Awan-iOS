@@ -148,7 +148,18 @@ struct HomeDayTimelineView: View {
 
 import Domain
 #Preview {
-    HomeDayTimelineView(window: HomeTimelineWindow(start: Date(), end: Date().addingTimeInterval(3600)), zones: [], items: [], onMove: { _, _ in }, onSetCompletion: { _, _ in }, onTap: { _ in })
+    HomeDayTimelineView(
+        window: HomeTimelineWindow(
+            start: Date(),
+            end: Date().addingTimeInterval(3600)
+        ),
+        wakeupTime: Date(),
+        bedtime: Date().addingTimeInterval(3600),
+        zones: [],
+        items: [],
+        onMove: { _, _ in },
+        onSetCompletion: { _, _ in },
+        onTap: { _ in }
+    )
         .padding()
 }
-
