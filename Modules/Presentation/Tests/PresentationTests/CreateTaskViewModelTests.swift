@@ -13,8 +13,23 @@ final class CreateTaskViewModelTests: XCTestCase {
         await viewModel.loadZones()
 
         XCTAssertEqual(viewModel.zones, [zone])
+        let category = try XCTUnwrap(zone.category)
+        XCTAssertEqual(viewModel.categories, [category])
         XCTAssertFalse(viewModel.isLoadingZones)
         XCTAssertNil(viewModel.errorMessage)
+    }
+
+    func testLoadZonesPublishesEachSharedCategoryOnce() async throws {
+        let category = TaskCategory(id: UUID(), name: "Work")
+        let morning = try makeZone(name: "Morning Work", category: category)
+        let afternoon = try makeZone(name: "Afternoon Work", category: category)
+        let stub = CreateTaskUseCaseStub(zones: [morning, afternoon])
+        let viewModel = makeViewModel(stub: stub)
+
+        await viewModel.loadZones()
+
+        XCTAssertEqual(viewModel.categories, [category])
+        XCTAssertEqual(viewModel.selectedCategoryID, category.id)
     }
 
     func testLoadCreationDataUsesPreferredSessionDuration() async {
@@ -27,7 +42,8 @@ final class CreateTaskViewModelTests: XCTestCase {
     }
 
     func testManualSubmissionUsesSelectedStartAndPreferredDuration() async {
-        let stub = CreateTaskUseCaseStub(zones: [])
+        let zone = try? makeZone()
+        let stub = CreateTaskUseCaseStub(zones: zone.map { [$0] } ?? [])
         let viewModel = makeViewModel(stub: stub)
         let startsAt = date(hour: 14)
 
@@ -35,6 +51,7 @@ final class CreateTaskViewModelTests: XCTestCase {
         viewModel.isAwanSchedulingEnabled = false
         viewModel.quickText = "Read Clean Code"
         viewModel.startsAt = startsAt
+        viewModel.selectedCategoryID = zone?.category?.id
 
         await viewModel.submitCurrentTask()
 
@@ -42,6 +59,8 @@ final class CreateTaskViewModelTests: XCTestCase {
         XCTAssertEqual(request?.title, "Read Clean Code")
         XCTAssertEqual(request?.durationMinutes, 45)
         XCTAssertEqual(request?.startsAt, startsAt)
+        XCTAssertEqual(request?.categoryID, zone?.category?.id)
+        XCTAssertNil(request?.zoneID)
     }
 
     func testCreateTaskBuildsRequestAndMarksCompletion() async throws {
@@ -58,7 +77,7 @@ final class CreateTaskViewModelTests: XCTestCase {
             title: "Read Clean Code",
             description: "Chapter one",
             durationMinutes: 60,
-            zoneID: zone.id,
+            categoryID: zone.category?.id,
             isSplittable: true,
             mandatory: true,
             startsAt: startsAt
@@ -68,7 +87,8 @@ final class CreateTaskViewModelTests: XCTestCase {
         XCTAssertEqual(request?.title, "Read Clean Code")
         XCTAssertEqual(request?.description, "Chapter one")
         XCTAssertEqual(request?.durationMinutes, 60)
-        XCTAssertEqual(request?.zoneID, zone.id)
+        XCTAssertEqual(request?.categoryID, zone.category?.id)
+        XCTAssertNil(request?.zoneID)
         XCTAssertEqual(request?.startsAt, startsAt)
         XCTAssertEqual(request?.selectedDay, selectedDay)
         XCTAssertEqual(request?.estimatedPoints, 10)
@@ -85,7 +105,7 @@ final class CreateTaskViewModelTests: XCTestCase {
             title: "Retry me",
             description: nil,
             durationMinutes: 30,
-            zoneID: nil,
+            categoryID: nil,
             isSplittable: false,
             mandatory: true,
             startsAt: date(hour: 9)
@@ -142,6 +162,7 @@ final class CreateTaskViewModelTests: XCTestCase {
                 fetchZones: stub,
                 createTask: stub,
                 createTaskWithAwan: EmptyCreateTaskWithAwanUseCase(),
+                createAITask: MockCreateAITaskUseCase(),
                 userProfile: UserProfileUseCaseStub(),
                 goalDecomposition: GoalDecompositionUseCases(
                     sendMessage: GoalMessageUseCaseStub(),
@@ -155,13 +176,17 @@ final class CreateTaskViewModelTests: XCTestCase {
         )
     }
 
-    private func makeZone() throws -> Zone {
+    private func makeZone(
+        name: String = "Learning",
+        category: TaskCategory? = TaskCategory(id: UUID(), name: "Learning")
+    ) throws -> Zone {
         try Zone(
             id: UUID(),
-            name: "Learning",
+            name: name,
             color: ZoneColor(hex: "#58CC02"),
             startTime: LocalTime(hour: 8, minute: 0),
-            endTime: LocalTime(hour: 12, minute: 0)
+            endTime: LocalTime(hour: 12, minute: 0),
+            category: category
         )
     }
 
@@ -186,8 +211,7 @@ private struct GoalMessageUseCaseStub: SendGoalDecompositionMessageUseCase {
         GoalDecompositionResponse(
             sessionID: UUID(),
             blocks: [],
-            hasProposal: false,
-            timestamp: Date()
+            hasProposal: false
         )
     }
 }

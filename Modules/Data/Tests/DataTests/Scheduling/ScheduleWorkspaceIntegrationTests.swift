@@ -36,7 +36,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                 taskID: task.id,
                 title: "Polish timeline",
                 minutes: 210,
-                zoneID: task.zoneID,
+                zoneID: workZone.id,
                 isSplittable: true,
                 day: selectedDay
             )
@@ -722,7 +722,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                 timeZone: undoTimeZone
             )
         )
-        XCTAssertEqual(restored.workspace.tasks.first?.zoneID, undoWorkZone.id)
+        XCTAssertEqual(restored.workspace.tasks.first?.category, undoWorkZone.category)
         XCTAssertEqual(restored.workspace.sessions.first?.zoneID, undoWorkZone.id)
         XCTAssertEqual(restored.workspace.sessions.first?.timeRange, undoSession.timeRange)
     }
@@ -994,11 +994,12 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
             loadUseCase: DefaultLoadScheduleWorkspaceUseCase(
                 workspaceProvider: workspaceProvider
             ),
-            createTaskUseCase: DefaultCreateTaskUseCase(
+            createTaskUseCase: LegacyLocalCreateTaskUseCase(
+                workspaceProvider: workspaceProvider,
                 taskRepository: taskRepository,
                 reconciler: reconciler
             ),
-            updateTaskUseCase: DefaultUpdateTaskUseCase(
+            updateTaskUseCase: LegacyLocalUpdateTaskUseCase(
                 workspaceProvider: workspaceProvider,
                 taskRepository: taskRepository,
                 sessionRepository: sessionRepository,
@@ -1071,6 +1072,7 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                 reconciler: reconciler
             ),
             restoreTaskZoneUseCase: DefaultRestoreTaskZoneUseCase(
+                workspaceProvider: workspaceProvider,
                 taskRepository: taskRepository,
                 sessionRepository: sessionRepository,
                 reconciler: reconciler
@@ -1091,28 +1093,32 @@ final class ScheduleWorkspaceIntegrationTests: XCTestCase {
                 name: "Morning",
                 color: ZoneColor(hex: "#F4B942"),
                 startTime: LocalTime(hour: 7, minute: 0),
-                endTime: LocalTime(hour: 9, minute: 0)
+                endTime: LocalTime(hour: 9, minute: 0),
+                category: TaskCategory(id: UUID(), name: "Morning")
             ),
             try Zone(
                 id: UUID(),
                 name: "Work",
                 color: ZoneColor(hex: "#4A90E2"),
                 startTime: LocalTime(hour: 9, minute: 0),
-                endTime: LocalTime(hour: 17, minute: 0)
+                endTime: LocalTime(hour: 17, minute: 0),
+                category: TaskCategory(id: UUID(), name: "Work")
             ),
             try Zone(
                 id: UUID(),
                 name: "Study",
                 color: ZoneColor(hex: "#8E5BD9"),
                 startTime: LocalTime(hour: 18, minute: 0),
-                endTime: LocalTime(hour: 21, minute: 0)
+                endTime: LocalTime(hour: 21, minute: 0),
+                category: TaskCategory(id: UUID(), name: "Study")
             ),
             try Zone(
                 id: UUID(),
                 name: "Personal",
                 color: ZoneColor(hex: "#EF6C8F"),
                 startTime: LocalTime(hour: 21, minute: 0),
-                endTime: LocalTime(hour: 0, minute: 0)
+                endTime: LocalTime(hour: 0, minute: 0),
+                category: TaskCategory(id: UUID(), name: "Personal")
             ),
         ]
     }

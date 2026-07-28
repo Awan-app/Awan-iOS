@@ -268,14 +268,15 @@ private struct HomeFixture {
             name: "Work",
             color: ZoneColor(hex: "#58CC02"),
             startTime: LocalTime(hour: 8, minute: 0),
-            endTime: LocalTime(hour: 1, minute: 0)
+            endTime: LocalTime(hour: 1, minute: 0),
+            category: TaskCategory(id: UUID(), name: "Work")
         )
         let task = try AwanTask(
             id: UUID(),
             title: "Focus",
-            zoneID: zone.id,
             duration: TaskDuration(minutes: 60),
-            isSplittable: false
+            isSplittable: false,
+            category: zone.category
         )
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? .gmt
