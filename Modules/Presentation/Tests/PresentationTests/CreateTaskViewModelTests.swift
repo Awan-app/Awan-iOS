@@ -10,13 +10,13 @@ final class CreateTaskViewModelTests: XCTestCase {
         let stub = CreateTaskUseCaseStub(zones: [zone])
         let viewModel = makeViewModel(stub: stub)
 
-        await viewModel.loadZones()
+        await viewModel.loadCreationData()
 
-        XCTAssertEqual(viewModel.zones, [zone])
+        XCTAssertEqual(viewModel.state.zones, [zone])
         let category = try XCTUnwrap(zone.category)
-        XCTAssertEqual(viewModel.categories, [category])
-        XCTAssertFalse(viewModel.isLoadingZones)
-        XCTAssertNil(viewModel.errorMessage)
+        XCTAssertEqual(viewModel.state.categories, [category])
+        XCTAssertFalse(viewModel.state.isLoadingZones)
+        XCTAssertNil(viewModel.state.errorMessage)
     }
 
     func testLoadZonesPublishesEachSharedCategoryOnce() async throws {
@@ -26,10 +26,10 @@ final class CreateTaskViewModelTests: XCTestCase {
         let stub = CreateTaskUseCaseStub(zones: [morning, afternoon])
         let viewModel = makeViewModel(stub: stub)
 
-        await viewModel.loadZones()
+        await viewModel.loadCreationData()
 
-        XCTAssertEqual(viewModel.categories, [category])
-        XCTAssertEqual(viewModel.selectedCategoryID, category.id)
+        XCTAssertEqual(viewModel.state.categories, [category])
+        XCTAssertEqual(viewModel.state.selectedCategoryID, category.id)
     }
 
     func testLoadCreationDataUsesPreferredSessionDuration() async {
@@ -38,7 +38,7 @@ final class CreateTaskViewModelTests: XCTestCase {
 
         await viewModel.loadCreationData()
 
-        XCTAssertEqual(viewModel.durationMinutes, 45)
+        XCTAssertEqual(viewModel.state.durationMinutes, 45)
     }
 
     func testManualSubmissionUsesSelectedStartAndPreferredDuration() async {
@@ -48,10 +48,10 @@ final class CreateTaskViewModelTests: XCTestCase {
         let startsAt = date(hour: 14)
 
         await viewModel.loadCreationData()
-        viewModel.isAwanSchedulingEnabled = false
-        viewModel.quickText = "Read Clean Code"
-        viewModel.startsAt = startsAt
-        viewModel.selectedCategoryID = zone?.category?.id
+        viewModel.state.isAwanSchedulingEnabled = false
+        viewModel.state.quickText = "Read Clean Code"
+        viewModel.state.startsAt = startsAt
+        viewModel.state.selectedCategoryID = zone?.category?.id
 
         await viewModel.submitCurrentTask()
 
@@ -92,9 +92,9 @@ final class CreateTaskViewModelTests: XCTestCase {
         XCTAssertEqual(request?.startsAt, startsAt)
         XCTAssertEqual(request?.selectedDay, selectedDay)
         XCTAssertEqual(request?.estimatedPoints, 10)
-        XCTAssertTrue(viewModel.didCreateTask)
-        XCTAssertFalse(viewModel.isSubmitting)
-        XCTAssertNil(viewModel.errorMessage)
+        XCTAssertTrue(viewModel.state.didCreateTask)
+        XCTAssertFalse(viewModel.state.isSubmitting)
+        XCTAssertNil(viewModel.state.errorMessage)
     }
 
     func testCreateFailureKeepsSheetStateAvailableForRetry() async throws {
@@ -111,9 +111,9 @@ final class CreateTaskViewModelTests: XCTestCase {
             startsAt: date(hour: 9)
         )
 
-        XCTAssertFalse(viewModel.didCreateTask)
-        XCTAssertFalse(viewModel.isSubmitting)
-        XCTAssertNotNil(viewModel.errorMessage)
+        XCTAssertFalse(viewModel.state.didCreateTask)
+        XCTAssertFalse(viewModel.state.isSubmitting)
+        XCTAssertNotNil(viewModel.state.errorMessage)
     }
 
     func testReleasingRecordingPublishesTranscribedTaskText() async throws {
@@ -125,12 +125,12 @@ final class CreateTaskViewModelTests: XCTestCase {
         )
 
         await viewModel.beginRecording()
-        XCTAssertTrue(viewModel.isRecording)
+        XCTAssertTrue(viewModel.state.isRecording)
 
         await viewModel.finishRecording()
 
-        XCTAssertFalse(viewModel.isRecording)
-        XCTAssertEqual(viewModel.quickText, "Read Clean Code")
+        XCTAssertFalse(viewModel.state.isRecording)
+        XCTAssertEqual(viewModel.state.quickText, "Read Clean Code")
         XCTAssertEqual(speechStub.startCallCount, 1)
         XCTAssertEqual(speechStub.stopCallCount, 1)
     }
@@ -149,7 +149,7 @@ final class CreateTaskViewModelTests: XCTestCase {
         await viewModel.beginRecording()
         await viewModel.finishRecording()
 
-        XCTAssertEqual(viewModel.quickText, "Read Clean Code")
+        XCTAssertEqual(viewModel.state.quickText, "Read Clean Code")
     }
 
     private func makeViewModel(
@@ -161,7 +161,6 @@ final class CreateTaskViewModelTests: XCTestCase {
             useCases: CreationUseCases(
                 fetchZones: stub,
                 createTask: stub,
-                createTaskWithAwan: EmptyCreateTaskWithAwanUseCase(),
                 createAITask: MockCreateAITaskUseCase(),
                 userProfile: UserProfileUseCaseStub(),
                 goalDecomposition: GoalDecompositionUseCases(

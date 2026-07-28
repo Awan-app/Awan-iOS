@@ -21,7 +21,7 @@ struct CreateTaskView: View {
         @Bindable var bindableViewModel = viewModel
 
         Group {
-            switch viewModel.phase {
+            switch viewModel.state.phase {
             case .composer:
                 composerView(bindableViewModel: $bindableViewModel)
             case .aiLoading:
@@ -50,12 +50,12 @@ struct CreateTaskView: View {
         .onDisappear {
             viewModel.cancelRecording()
         }
-        .onChange(of: viewModel.didCreateTask) { _, didCreateTask in
+        .onChange(of: viewModel.state.didCreateTask) { _, didCreateTask in
             if didCreateTask {
                 onCreated()
             }
         }
-        .onChange(of: viewModel.isAwanSchedulingEnabled) { _, isEnabled in
+        .onChange(of: viewModel.state.isAwanSchedulingEnabled) { _, isEnabled in
             onSchedulingModeChanged(isEnabled)
         }
         .alert(L10n.Home.errorTitle, isPresented: errorBinding) {
@@ -63,7 +63,7 @@ struct CreateTaskView: View {
                 viewModel.dismissError()
             }
         } message: {
-            Text(viewModel.errorMessage ?? L10n.Common.pleaseTryAgain)
+            Text(viewModel.state.errorMessage ?? L10n.Common.pleaseTryAgain)
         }
     }
 
@@ -71,26 +71,26 @@ struct CreateTaskView: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 16) {
                 QuickAddHeader(
-                    isAwanSchedulingEnabled: viewModel.isAwanSchedulingEnabled
+                    isAwanSchedulingEnabled: viewModel.state.isAwanSchedulingEnabled
                 )
 
                 AwanSchedulingToggle(
-                    isOn: bindableViewModel.isAwanSchedulingEnabled
+                    isOn: bindableViewModel.state.isAwanSchedulingEnabled
                 )
 
-                if !viewModel.isAwanSchedulingEnabled {
+                if !viewModel.state.isAwanSchedulingEnabled {
                     ManualScheduleControls(
-                        categories: viewModel.categories,
-                        zones: viewModel.zones,
-                        startsAt: bindableViewModel.startsAt,
-                        durationMinutes: bindableViewModel.durationMinutes,
-                        selectedCategoryID: bindableViewModel.selectedCategoryID
+                        categories: viewModel.state.categories,
+                        zones: viewModel.state.zones,
+                        startsAt: bindableViewModel.state.startsAt,
+                        durationMinutes: bindableViewModel.state.durationMinutes,
+                        selectedCategoryID: bindableViewModel.state.selectedCategoryID
                     )
                 }
 
                 QuickTaskComposer(
-                    text: bindableViewModel.quickText,
-                    isRecording: viewModel.isRecording,
+                    text: bindableViewModel.state.quickText,
+                    isRecording: viewModel.state.isRecording,
                     onSend: {
                         Task {
                             await viewModel.submitCurrentTask()
@@ -113,12 +113,12 @@ struct CreateTaskView: View {
             .padding(.bottom, 28)
             .animation(
                 .spring(response: 0.32, dampingFraction: 0.8),
-                value: viewModel.isAwanSchedulingEnabled
+                value: viewModel.state.isAwanSchedulingEnabled
             )
         }
-        .disabled(viewModel.isSubmitting)
+        .disabled(viewModel.state.isSubmitting)
         .overlay {
-            if viewModel.isLoadingZones {
+            if viewModel.state.isLoadingZones {
                 ProgressView()
                     .controlSize(.large)
                     .padding(22)
@@ -132,7 +132,7 @@ struct CreateTaskView: View {
 
     private var errorBinding: Binding<Bool> {
         Binding(
-            get: { viewModel.errorMessage != nil },
+            get: { viewModel.state.errorMessage != nil },
             set: { if !$0 { viewModel.dismissError() } }
         )
     }

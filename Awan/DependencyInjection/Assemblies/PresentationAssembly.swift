@@ -90,7 +90,6 @@ struct PresentationAssembly: Assembly {
             CreationUseCases(
                 fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
                 createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
-                createTaskWithAwan: EmptyCreateTaskWithAwanUseCase(),
                 createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver),
                 userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 goalDecomposition: GoalDecompositionUseCases(
