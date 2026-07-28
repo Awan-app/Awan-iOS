@@ -29,6 +29,14 @@ public struct DefaultZoneRepository: ZoneRepository {
     }
 
     public func fetchZones(for date: Date) async throws -> [Zone] {
+        let cached = try await cachedZones(for: date)
+        guard !cached.isEmpty, cached.allSatisfy({ $0.category != nil }) else {
+            return try await loadRemoteZones(for: date)
+        }
+        return cached
+    }
+
+    private func cachedZones(for date: Date) async throws -> [Zone] {
         try await zoneDataSource.validateOwnership()
         let profile = try await profileDataSource.fetchProfile()
         let timeZoneID = profile?.preferences.timezone ?? TimeZone.current.identifier
@@ -42,7 +50,8 @@ public struct DefaultZoneRepository: ZoneRepository {
     }
 
     public func observeZones(for date: Date) -> AnyPublisher<[Zone], Error> {
-        let cached = AsyncValuePublisher.make { try await fetchZones(for: date) }
+        let cached = AsyncValuePublisher.make { try await cachedZones(for: date) }
+            .map { $0.filter { $0.category != nil } }
             .catch { _ in Empty<[Zone], Error>() }
             .eraseToAnyPublisher()
         let remote = AsyncValuePublisher.make { try await loadRemoteZones(for: date) }
@@ -70,7 +79,7 @@ public struct DefaultZoneRepository: ZoneRepository {
             templateOverrides
         )
         try await zoneDataSource.removeOrphanedZones()
-        return try await fetchZones(for: date)
+        return try await cachedZones(for: date)
     }
 
     public func updateZone(_ zone: Zone) async throws {

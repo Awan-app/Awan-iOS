@@ -82,7 +82,6 @@ struct DataAssembly: Assembly {
         container.register(SessionRepository.self) { resolver in
             DefaultSessionRepository(
                 localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver),
-                localTaskDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver),
                 localProfileDataSource: Self.resolve(
                     LocalUserProfileDataSource.self,
                     from: resolver
