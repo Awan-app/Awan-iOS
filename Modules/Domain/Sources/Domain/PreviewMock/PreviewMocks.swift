@@ -88,6 +88,13 @@ public struct MockUpdateTemplateUseCase: UpdateTemplateUseCase {
     }
 }
 
+public struct MockUpdateTemplateDetailsUseCase: UpdateTemplateDetailsUseCase {
+    public init() {}
+    public func execute(id: UUID, name: String, daysOfWeek: [String]) async throws -> Template {
+        fatalError("Not implemented in preview mock")
+    }
+}
+
 public extension Zone {
     static var mockDailyZones: [Zone] {
         do {

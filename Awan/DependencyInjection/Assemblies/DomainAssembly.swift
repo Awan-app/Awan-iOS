@@ -228,7 +228,12 @@ struct DomainAssembly: Assembly {
             )
         }
         container.register(UpdateTemplateUseCase.self) { resolver in
-            DefaultUpdateTemplateUseCase(
+            DefaultBulkUpdateTemplateUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTemplateDetailsUseCase.self) { resolver in
+            DefaultUpdateTemplateDetailsUseCase(
                 repository: Self.resolve(TemplateRepository.self, from: resolver)
             )
         }
