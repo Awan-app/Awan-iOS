@@ -102,6 +102,13 @@ public struct MockDeleteTemplateUseCase: DeleteTemplateUseCase {
     }
 }
 
+public struct MockDeleteTemplateOverrideUseCase: DeleteTemplateOverrideUseCase {
+    public init() {}
+    public func execute(id: UUID) async throws {
+        fatalError("Not implemented in preview mock")
+    }
+}
+
 public extension Zone {
     static var mockDailyZones: [Zone] {
         do {
