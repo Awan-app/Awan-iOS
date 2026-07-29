@@ -84,4 +84,9 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
         try await localDataSource.upsertTemplate(localTemplate)
         return template
     }
+
+    public func deleteTemplate(id: UUID) async throws {
+        try await remoteDataSource.deleteTemplate(templateID: id)
+        try await localDataSource.deleteTemplate(id: id)
+    }
 }

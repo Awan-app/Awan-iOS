@@ -242,6 +242,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
             )
         }
+        container.register(DeleteTemplateUseCase.self) { resolver in
+            DefaultDeleteTemplateUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
         container.register(ManageZoneScheduleUseCase.self) { _ in
             ManageZoneScheduleUseCaseImpl()
         }
