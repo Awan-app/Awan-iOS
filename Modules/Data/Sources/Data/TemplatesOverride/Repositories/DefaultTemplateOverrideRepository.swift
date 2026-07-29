@@ -29,6 +29,14 @@ public final class DefaultTemplateOverrideRepository: TemplateOverrideRepository
         return try HomeRemoteMapper.templateOverride(response)
     }
 
+    public func updateTemplateOverride(id: UUID, name: String?, dateOfDay: String) async throws -> TemplateOverride {
+        let request = UpdateTemplateOverrideRequestDTO(name: name, dateOfDay: dateOfDay)
+        let response = try await remoteDataSource.updateOverride(overrideId: id, request: request)
+        let localData = try HomeRemoteMapper.templateOverrideData(response)
+        try await localDataSource.updateTemplateOverride(localData)
+        return try HomeRemoteMapper.templateOverride(response)
+    }
+
     public func updateBulkTemplateOverride(id: UUID, zones: [Zone]) async throws -> [Zone] {
         let zonePayloads = zones.map { zone in
             BulkUpdateOverrideZonesRequestDTO.ZonePayload(
