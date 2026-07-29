@@ -20,6 +20,7 @@ enum TemplateOverrideEndpoint: APIEndpoint {
     case deleteOverride(overrideId: UUID)
     case addZone(overrideId: UUID, AddZoneRequestDTO)
     case getZones(overrideId: UUID)
+    case bulkUpdateZones(overrideId: UUID, BulkUpdateOverrideZonesRequestDTO)
     
     var baseURL: String {
         NetworkConfiguration.apiBaseURL
@@ -31,7 +32,7 @@ enum TemplateOverrideEndpoint: APIEndpoint {
             return "/template-overrides"
         case .getOverride(let overrideId), .updateOverride(let overrideId, _), .deleteOverride(let overrideId):
             return "/template-overrides/\(overrideId.uuidString)"
-        case .addZone(let overrideId, _), .getZones(let overrideId):
+        case .addZone(let overrideId, _), .getZones(let overrideId), .bulkUpdateZones(let overrideId, _):
             return "/template-overrides/\(overrideId.uuidString)/zones"
         }
     }
@@ -42,7 +43,7 @@ enum TemplateOverrideEndpoint: APIEndpoint {
             return .post
         case .listOverrides, .getOverride, .getZones:
             return .get
-        case .updateOverride:
+        case .updateOverride, .bulkUpdateZones:
             return .put
         case .deleteOverride:
             return .delete
@@ -60,6 +61,8 @@ enum TemplateOverrideEndpoint: APIEndpoint {
         case .updateOverride(_, let request):
             return request
         case .addZone(_, let request):
+            return request
+        case .bulkUpdateZones(_, let request):
             return request
         default:
             return nil

@@ -16,4 +16,5 @@ public protocol RemoteTemplateOverrideDataSourceProtocol: Sendable {
     func deleteOverride(overrideId: UUID) async throws
     func addZone(overrideId: UUID, request: AddZoneRequestDTO) async throws -> ZoneResponseDTO
     func getZones(overrideId: UUID) async throws -> [ZoneResponseDTO]
+    func updateBulkTemplateOverride(overrideId: UUID, request: BulkUpdateOverrideZonesRequestDTO) async throws -> [ZoneResponseDTO]
 }
