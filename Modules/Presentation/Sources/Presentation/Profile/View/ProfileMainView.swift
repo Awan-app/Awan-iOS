@@ -146,6 +146,7 @@ struct ProfileMainView: View {
             }
         } message: {
             Text("Are you sure you want to log out?")
+        }
         .sheet(isPresented: $isSessionTimeSheetPresented) {
             SessionTimeSheet(
                 initialDuration: viewModel.sessionTime > 0 ? viewModel.sessionTime : 60,
