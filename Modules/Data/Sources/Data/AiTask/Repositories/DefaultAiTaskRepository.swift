@@ -13,41 +13,34 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
         self.remoteDataSource = remoteDataSource
     }
 
-    public func createAITask(title: String, description: String?) async throws -> AwanTask {
+    public func createAITask(title: String, description: String?) async throws -> AITaskSheetItem {
         let request = CreateAITaskRequestDTO(title: title, description: description)
         let response = try await remoteDataSource.createAITask(request)
-        return response.toDomain()
+        return try response.toDomain(timeZoneID: TimeZone.current.identifier)
     }
 }
 
 // MARK: - Mapping
 
-private extension TaskInfoResponseDTO {
-    func toDomain() -> AwanTask {
-        AwanTask(
-            id: id,
-            title: title,
-            description: description,
-            status: mappedStatus(from: status),
-            goalID: goalID,
+private extension CreateAiTaskResponseDTO {
+    func toDomain(timeZoneID: String) throws -> AITaskSheetItem {
+        let mappedTask = AwanTask(
+            id: UUID(),
+            title: task.title,
+            description: task.description,
+            status: .pending,
+            goalID: task.goalId,
             zoneID: nil,
-            duration: try! TaskDuration(minutes: max(1, estimatedDuration ?? 60)),
-            isSplittable: isSplittable,
-            mandatory: mandatory,
-            estimatedPoints: estimatedPoints,
-            dependencyIDs: Set(dependencyIDs),
-            category: category?.toDomain()
+            duration: try! TaskDuration(minutes: max(1, task.estimatedDuration ?? 60)),
+            isSplittable: task.allowTaskSplitting ?? false,
+            mandatory: task.mandatory ?? false,
+            estimatedPoints: task.estimatedPoints ?? 0,
+            dependencyIDs: [],
+            category: task.categoryId.map { TaskCategory(id: $0, name: "") }
         )
-    }
-
-    private func mappedStatus(from raw: String) -> TaskStatus {
-        switch raw.uppercased() {
-        case "SCHEDULED", "PENDING": .pending
-        case "IN_PROGRESS": .inProgress
-        case "COMPLETED": .completed
-        case "CANCELLED": .cancelled
-        default: .pending
-        }
+        let mappedSessions = try sessions.map { try HomeRemoteMapper.session($0, timeZoneID: timeZoneID) }
+        let startTime = mappedSessions.first?.timeRange.start ?? Date()
+        return AITaskSheetItem(task: mappedTask, startTime: startTime, sessions: mappedSessions)
     }
 }
 

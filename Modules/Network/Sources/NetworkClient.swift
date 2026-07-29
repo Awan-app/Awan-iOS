@@ -95,6 +95,25 @@ public final class NetworkClient: NetworkServiceProtocol, @unchecked Sendable {
             do {
                 return try jsonDecoder.decode(T.self, from: data)
             } catch {
+                if let rawJSONString = String(data: data, encoding: .utf8) {
+                    print("📥 [NetworkClient] Raw Response Data:\n\(rawJSONString)")
+                }
+                if let decodingError = error as? DecodingError {
+                    switch decodingError {
+                    case .typeMismatch(let type, let context):
+                        print("❌ [NetworkClient] DecodingError.typeMismatch: expected \(type) at path '\(context.codingPath.map(\.stringValue).joined(separator: "."))': \(context.debugDescription)")
+                    case .valueNotFound(let type, let context):
+                        print("❌ [NetworkClient] DecodingError.valueNotFound: missing \(type) at path '\(context.codingPath.map(\.stringValue).joined(separator: "."))': \(context.debugDescription)")
+                    case .keyNotFound(let key, let context):
+                        print("❌ [NetworkClient] DecodingError.keyNotFound: key '\(key.stringValue)' not found at path '\(context.codingPath.map(\.stringValue).joined(separator: "."))': \(context.debugDescription)")
+                    case .dataCorrupted(let context):
+                        print("❌ [NetworkClient] DecodingError.dataCorrupted at path '\(context.codingPath.map(\.stringValue).joined(separator: "."))': \(context.debugDescription)")
+                    @unknown default:
+                        print("❌ [NetworkClient] DecodingError: \(error)")
+                    }
+                } else {
+                    print("❌ [NetworkClient] Error: \(error)")
+                }
                 throw NetworkError.decodingFailed(error)
             }
 

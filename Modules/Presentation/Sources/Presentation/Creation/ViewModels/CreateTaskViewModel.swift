@@ -159,37 +159,16 @@ public final class CreateTaskViewModel {
         let startTime = Date()
 
         do {
-            let aiTask = try await useCases.createAITask.execute(
+            let aiTaskItem = try await useCases.createAITask.execute(
                 CreateAITaskRequest(title: prompt)
             )
-            let item = AITaskSheetItem(task: aiTask, startTime: startTime)
-            pendingAITaskItem = item
-            phase = .aiResult(item)
+            pendingAITaskItem = aiTaskItem
+            phase = .aiResult(aiTaskItem)
         } catch is CancellationError {
             phase = .composer
         } catch {
-            // TODO: Remove once backend is stable. Fall back to mock data so the
-            // UI flow is always testable end-to-end during development.
-            print("[CreateTaskViewModel] AI endpoint failed (\(error)). Using mock data.")
-            let item = AITaskSheetItem(
-                task: AwanTask(
-                    id: UUID(),
-                    title: prompt,
-                    description: nil,
-                    status: .pending,
-                    goalID: nil,
-                    zoneID: nil,
-                    duration: try! TaskDuration(minutes: 60),
-                    isSplittable: false,
-                    mandatory: true,
-                    estimatedPoints: 20,
-                    dependencyIDs: [],
-                    category: TaskCategory(id: UUID(), name: "Study")
-                ),
-                startTime: startTime
-            )
-            pendingAITaskItem = item
-            phase = .aiResult(item)
+            errorMessage = error.localizedDescription
+            phase = .composer
         }
     }
 

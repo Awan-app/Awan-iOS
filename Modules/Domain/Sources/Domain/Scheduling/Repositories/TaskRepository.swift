@@ -14,6 +14,7 @@ public protocol TaskRepository: Sendable {
     func fetchDependencies(taskID: UUID) async throws -> [AwanTask]
     func fetchDependents(taskID: UUID) async throws -> [AwanTask]
     func addTask(_ task: AwanTask, startsAt: Date?, durationMinutes: Int, timeZoneID: String) async throws -> (task: AwanTask, sessions: [Session])
+
 }
 
 public extension TaskRepository {
