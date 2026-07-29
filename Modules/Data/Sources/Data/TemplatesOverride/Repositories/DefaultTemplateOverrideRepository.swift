@@ -13,6 +13,22 @@ public final class DefaultTemplateOverrideRepository: TemplateOverrideRepository
         self.localDataSource = localDataSource
     }
 
+    public func createTemplateOverride(name: String?, dateOfDay: String, zones: [Zone]?) async throws -> TemplateOverride {
+        let zoneDTOs = zones?.map { zone in
+            AddZoneRequestDTO(
+                name: zone.name,
+                startTime: String(format: "%02d:%02d:00", zone.startTime.hour, zone.startTime.minute),
+                endTime: String(format: "%02d:%02d:00", zone.endTime.hour, zone.endTime.minute),
+                color: zone.color.hex
+            )
+        }
+        let request = CreateTemplateOverrideRequestDTO(name: name, dateOfDay: dateOfDay, zones: zoneDTOs)
+        let response = try await remoteDataSource.createOverride(request: request)
+        let localData = try HomeRemoteMapper.templateOverrideData(response)
+        try await localDataSource.addTemplateOverride(localData)
+        return try HomeRemoteMapper.templateOverride(response)
+    }
+
     public func updateBulkTemplateOverride(id: UUID, zones: [Zone]) async throws -> [Zone] {
         let zonePayloads = zones.map { zone in
             BulkUpdateOverrideZonesRequestDTO.ZonePayload(
