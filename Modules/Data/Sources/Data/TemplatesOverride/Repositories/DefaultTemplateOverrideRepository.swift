@@ -3,9 +3,14 @@ import Domain
 
 public final class DefaultTemplateOverrideRepository: TemplateOverrideRepository, Sendable {
     private let remoteDataSource: any RemoteTemplateOverrideDataSourceProtocol
+    private let localDataSource: any LocalTemplateOverrideDataSource
 
-    public init(remoteDataSource: any RemoteTemplateOverrideDataSourceProtocol) {
+    public init(
+        remoteDataSource: any RemoteTemplateOverrideDataSourceProtocol,
+        localDataSource: any LocalTemplateOverrideDataSource
+    ) {
         self.remoteDataSource = remoteDataSource
+        self.localDataSource = localDataSource
     }
 
     public func updateBulkTemplateOverride(id: UUID, zones: [Zone]) async throws -> [Zone] {
@@ -23,6 +28,13 @@ public final class DefaultTemplateOverrideRepository: TemplateOverrideRepository
 
         let responses = try await remoteDataSource.updateBulkTemplateOverride(overrideId: id, request: request)
         
+        // Ensure local cache gets updated if necessary (skipped if local data source does not have bulk save yet)
+        
         return try responses.compactMap { try HomeRemoteMapper.zone($0) }
+    }
+    
+    public func deleteTemplateOverride(id: UUID) async throws {
+        try await remoteDataSource.deleteOverride(overrideId: id)
+        try await localDataSource.deleteTemplateOverride(id: id)
     }
 }
