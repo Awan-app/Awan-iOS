@@ -26,7 +26,7 @@ struct ProfileMainView: View {
 
     private var formattedSessionTime: String {
         guard viewModel.sessionTime > 0 else { return "" }
-        return "\(viewModel.sessionTime) min"
+        return L10n.Home.minutesShort(viewModel.sessionTime)
     }
 
     private var formattedSleepSchedule: String {
@@ -137,15 +137,15 @@ struct ProfileMainView: View {
         .sheet(isPresented: $isLanguageSheetPresented) {
             LanguageSelectionView()
         }
-        .alert("Logout", isPresented: Bindable(viewModel).showLogoutConfirmation) {
-            Button("Cancel", role: .cancel) {}
-            Button("Log Out", role: .destructive) {
+        .alert(L10n.Profile.logout, isPresented: Bindable(viewModel).showLogoutConfirmation) {
+            Button(L10n.Common.cancel, role: .cancel) {}
+            Button(L10n.Profile.logout, role: .destructive) {
                 Task {
                     await viewModel.logout()
                 }
             }
         } message: {
-            Text("Are you sure you want to log out?")
+            Text(L10n.Profile.logoutConfirmationMessage)
         }
         .sheet(isPresented: $isSessionTimeSheetPresented) {
             SessionTimeSheet(
@@ -206,10 +206,11 @@ struct ProfileMainView: View {
     ProfileMainView(
         viewModel: ProfileViewModel(
             getUserProfileUseCase: MockGetUserProfileUseCase(),
+            fetchZonesUseCase: MockFetchZonesUseCase(),
+            logoutUseCase: LogoutUseCase(repository: MockAuthRepository()),
             updateSessionDurationUseCase: MockUpdateSessionDurationUseCase(),
             updateTimezoneUseCase: MockUpdateTimezoneUseCase(),
-            updateSleepScheduleUseCase: MockUpdateSleepScheduleUseCase(),
-            fetchZonesUseCase: MockFetchZonesUseCase()
+            updateSleepScheduleUseCase: MockUpdateSleepScheduleUseCase()
         ),
         dailyZonesViewModel: DailyZonesViewModel(
             fetchTemplatesUseCase: MockFetchTemplatesUseCase(),

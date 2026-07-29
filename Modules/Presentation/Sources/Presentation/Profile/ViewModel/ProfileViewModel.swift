@@ -54,11 +54,10 @@ public final class ProfileViewModel {
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
         fetchZonesUseCase: FetchZonesUseCase,
-        logoutUseCase: LogoutUseCase
+        logoutUseCase: LogoutUseCase,
         updateSessionDurationUseCase: any UpdateSessionDurationUseCase,
         updateTimezoneUseCase: any UpdateTimezoneUseCase,
         updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase,
-        fetchZonesUseCase: FetchZonesUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.updateSessionDurationUseCase = updateSessionDurationUseCase

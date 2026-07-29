@@ -150,11 +150,10 @@ struct PresentationAssembly: Assembly {
                 ProfileViewModel(
                     getUserProfileUseCase: useCase,
                     fetchZonesUseCase: fetchZonesUseCase,
-                    logoutUseCase: logoutUseCase
+                    logoutUseCase: logoutUseCase,
                     updateSessionDurationUseCase: updateSessionDurationUseCase,
                     updateTimezoneUseCase: updateTimezoneUseCase,
                     updateSleepScheduleUseCase: updateSleepScheduleUseCase,
-                    fetchZonesUseCase: fetchZonesUseCase
                 )
             }
         }
