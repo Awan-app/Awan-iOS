@@ -6,6 +6,7 @@ public struct PresentationFactory {
     private let authenticationState: AuthenticationState
     private let loginViewModel: LoginViewModel
     private let homeViewModel: HomeViewModel
+    private let calendarViewModel: CalendarViewModel
     private let scheduleViewModel: ScheduleTimelineViewModel
     private let creationUseCases: CreationUseCases
     private let makeOtpViewModel: (OtpVerificationContext) -> OtpVerificationViewModel
@@ -19,6 +20,7 @@ public struct PresentationFactory {
         authenticationState: AuthenticationState,
         loginViewModel: LoginViewModel,
         homeViewModel: HomeViewModel,
+        calendarViewModel: CalendarViewModel,
         scheduleViewModel: ScheduleTimelineViewModel,
         creationUseCases: CreationUseCases,
         makeOtpViewModel: @escaping (OtpVerificationContext) -> OtpVerificationViewModel,
@@ -31,6 +33,7 @@ public struct PresentationFactory {
         self.authenticationState = authenticationState
         self.loginViewModel = loginViewModel
         self.homeViewModel = homeViewModel
+        self.calendarViewModel = calendarViewModel
         self.scheduleViewModel = scheduleViewModel
         self.creationUseCases = creationUseCases
         self.makeOtpViewModel = makeOtpViewModel
@@ -83,7 +86,12 @@ public struct PresentationFactory {
     }
 
     func makeCalendarView() -> some View {
-        CalendarView()
+        CalendarView(
+            viewModel: calendarViewModel,
+            onSelectDate: { date in
+                homeViewModel.send(.selectDay(date))
+            }
+        )
     }
 
     func makeRewardsView() -> some View {

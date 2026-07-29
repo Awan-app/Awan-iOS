@@ -80,3 +80,11 @@ struct ScenarioControlsView: View {
         }
     }
 }
+
+
+import Domain
+#Preview {
+    ScenarioControlsView(onScenario: { _ in }, onReset: {})
+        .padding()
+}
+

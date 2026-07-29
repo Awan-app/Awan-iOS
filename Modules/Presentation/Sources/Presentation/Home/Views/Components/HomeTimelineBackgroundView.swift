@@ -11,13 +11,14 @@ struct HomeTimelineBackgroundView: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             zoneBands
+            zoneRail
             hourGrid
         }
     }
 
     private var zoneBands: some View {
         ForEach(zones) { zone in
-            let height = CGFloat(zone.end.timeIntervalSince(zone.start) / 3600) * hourHeight
+            let height = yPosition(for: zone.end) - yPosition(for: zone.start)
             ZStack(alignment: .topLeading) {
                 Rectangle()
                     .fill(zone.color.opacity(0.09))
@@ -32,41 +33,92 @@ struct HomeTimelineBackgroundView: View {
         }
     }
 
+    private var zoneRail: some View {
+        ForEach(zones) { zone in
+            let height = yPosition(for: zone.end) - yPosition(for: zone.start)
+
+            Rectangle()
+                .fill(zone.color)
+                .frame(width: 4, height: height)
+                .shadow(color: zone.color.opacity(0.55), radius: 3)
+                .offset(x: labelWidth - 2, y: yPosition(for: zone.start))
+        }
+    }
+
     private var hourGrid: some View {
-        ForEach(Array(hourMarkers.enumerated()), id: \.offset) { index, date in
+        ForEach(Array(timeMarkers.enumerated()), id: \.offset) { index, marker in
+            let date = marker.date
             let y = yPosition(for: date)
-            Text(hourLabel(for: date))
+            Text(timeLabel(for: marker))
                 .font(AppFonts.hourLabel)
-                .foregroundStyle(AppColors.textSecondary)
+                .foregroundStyle(
+                    AppColors.textSecondary.opacity(marker.isMajorHour ? 1 : 0.72)
+                )
                 .frame(width: labelWidth - 10, alignment: .trailing)
                 .offset(y: index == 0 ? 7 : y - 7)
 
             Rectangle()
-                .fill(AppColors.textPrimary.opacity(0.08))
-                .frame(width: plotWidth, height: 1)
+                .fill(
+                    AppColors.textPrimary.opacity(marker.isMajorHour ? 0.10 : 0.045)
+                )
+                .frame(width: plotWidth, height: marker.isMajorHour ? 1 : 0.5)
                 .offset(x: labelWidth, y: y)
         }
     }
 
-    private var hourMarkers: [Date] {
-        let wholeHours = window.durationMinutes / 60
-        var markers = (0...wholeHours).map {
-            window.start.addingTimeInterval(Double($0) * 60 * 60)
+    private var timeMarkers: [HomeTimelineGridMarker] {
+        let interval = markerIntervalMinutes
+        var minuteOffsets = Array(stride(
+            from: 0,
+            through: window.durationMinutes,
+            by: interval
+        ))
+        if minuteOffsets.last != window.durationMinutes {
+            minuteOffsets.append(window.durationMinutes)
         }
-        if window.durationMinutes.isMultiple(of: 60) == false {
-            markers.append(window.end)
+
+        return minuteOffsets.map { minutes in
+            HomeTimelineGridMarker(
+                date: window.start.addingTimeInterval(Double(minutes) * 60),
+                isMajorHour: minutes.isMultiple(of: 60)
+            )
         }
-        return markers
+    }
+
+    private var markerIntervalMinutes: Int {
+        switch hourHeight {
+        case 240...:
+            return 5
+        case 140..<240:
+            return 15
+        case 100..<140:
+            return 30
+        default:
+            return 60
+        }
     }
 
     private func yPosition(for date: Date) -> CGFloat {
         CGFloat(date.timeIntervalSince(window.start) / 3600) * hourHeight
     }
 
-    private func hourLabel(for date: Date) -> String {
-        date.formatted(date: .omitted, time: .shortened)
-            .replacingOccurrences(of: ":00", with: "")
+    private func timeLabel(for marker: HomeTimelineGridMarker) -> String {
+        if marker.isMajorHour {
+            return marker.date.formatted(date: .omitted, time: .shortened)
+                .replacingOccurrences(of: ":00", with: "")
+        }
+
+        return marker.date.formatted(
+            .dateTime
+                .hour(.defaultDigits(amPM: .omitted))
+                .minute(.twoDigits)
+        )
     }
+}
+
+private struct HomeTimelineGridMarker {
+    let date: Date
+    let isMajorHour: Bool
 }
 
 struct HomeTimelineCurrentTimeIndicator: View {
@@ -101,6 +153,69 @@ struct HomeTimelineCurrentTimeIndicator: View {
     }
 }
 
+struct HomeTimelineDayMarkersView: View {
+    let window: HomeTimelineWindow
+    let wakeupTime: Date
+    let bedtime: Date
+    let width: CGFloat
+    let labelWidth: CGFloat
+    let hourHeight: CGFloat
+
+    var body: some View {
+        Group {
+            marker(
+                at: wakeupTime,
+                title: L10n.Home.wakeUp,
+                icon: "sunrise.fill",
+                color: AppColors.warning
+            )
+            marker(
+                at: bedtime,
+                title: L10n.Home.bedtime,
+                icon: "moon.fill",
+                color: AppColors.accentPurple
+            )
+        }
+        .allowsHitTesting(false)
+    }
+
+    private func marker(
+        at date: Date,
+        title: String,
+        icon: String,
+        color: Color
+    ) -> some View {
+        ZStack(alignment: .trailing) {
+            Path { path in
+                path.move(to: CGPoint(x: labelWidth, y: 12))
+                path.addLine(to: CGPoint(x: width, y: 12))
+            }
+            .stroke(
+                color.opacity(0.75),
+                style: StrokeStyle(lineWidth: 1.5, dash: [5, 4])
+            )
+
+            Label(title, systemImage: icon)
+                .font(AppFonts.caption2Bold)
+                .foregroundStyle(color)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(AppColors.surface, in: Capsule())
+                .overlay { Capsule().stroke(color.opacity(0.45), lineWidth: 1) }
+                .padding(.trailing, 8)
+        }
+        .frame(width: width, height: 24)
+        .offset(y: yPosition(for: date) - 12)
+        .accessibilityLabel(
+            "\(title), \(date.formatted(date: .omitted, time: .shortened))"
+        )
+    }
+
+    private func yPosition(for date: Date) -> CGFloat {
+        CGFloat(date.timeIntervalSince(window.start) / 3600) * hourHeight
+    }
+}
+
 struct HomeTimelineEmptyStateView: View {
     var body: some View {
         VStack(spacing: 10) {
@@ -118,3 +233,11 @@ struct HomeTimelineEmptyStateView: View {
         .padding(.vertical, 20)
     }
 }
+
+
+import Domain
+#Preview {
+    HomeTimelineBackgroundView(window: HomeTimelineWindow(start: Date(), end: Date().addingTimeInterval(3600)), zones: [], labelWidth: 50, plotWidth: 300, hourHeight: 80)
+        .padding()
+}
+

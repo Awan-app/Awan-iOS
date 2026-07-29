@@ -98,6 +98,14 @@ struct AppRootView: View {
             Tab(value: MainTab.home) {
                 NavigationStack(path: Bindable(coordinator.mainCoordinator).homePath) {
                     factory.makeHomeView()
+                        .navigationDestination(for: MainRoute.self) { route in
+                            switch route {
+                            case .calendar:
+                                factory.makeCalendarView()
+                            default:
+                                EmptyView()
+                            }
+                        }
                 }
             } label: {
                 Label(L10n.Home.today, systemImage: "sun.max.fill")
@@ -147,6 +155,9 @@ struct AppRootView: View {
         }
         .id(languageManager.currentLanguage)
         .tint(AppColors.accentBlue)
+        .overlay {
+            opaqueTopSafeArea
+        }
         .onChange(of: coordinator.mainCoordinator.selectedTab) { oldValue, newValue in
             guard newValue == .add else { return }
             creationSheetDetent = Self.compactCreationDetent
@@ -187,9 +198,23 @@ struct AppRootView: View {
                     selection: $creationSheetDetent
                 )
                 .presentationDragIndicator(.visible)
-            case .home, .userInfo, .dailyZones:
+            case .home, .calendar, .userInfo, .dailyZones:
                 EmptyView()
             }
         }
+    }
+
+    private var opaqueTopSafeArea: some View {
+        GeometryReader { proxy in
+            VStack(spacing: 0) {
+                AppColors.screenBackground
+                    .frame(height: proxy.safeAreaInsets.top)
+
+                Spacer(minLength: 0)
+            }
+            .ignoresSafeArea()
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }

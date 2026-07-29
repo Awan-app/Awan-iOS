@@ -3,11 +3,13 @@ import Domain
 import SwiftUI
 
 struct ManualScheduleControls: View {
+    let categories: [TaskCategory]
     let zones: [Zone]
 
     @Binding var startsAt: Date
     @Binding var durationMinutes: Int
-    @Binding var selectedZoneID: UUID?
+    @Binding var selectedCategoryID: UUID?
+    @State private var isCategoryPickerPresented = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -50,49 +52,22 @@ struct ManualScheduleControls: View {
                 }
             }
 
-            if !zones.isEmpty {
+            if !categories.isEmpty {
                 Divider()
                     .overlay(AppColors.accentBlue.opacity(0.14))
                     .padding(.leading, 46)
 
                 controlRow(
                     icon: "square.grid.2x2.fill",
-                    title: L10n.Schedule.zone
+                    title: L10n.Schedule.category
                 ) {
-                    Menu {
-                        Button {
-                            selectedZoneID = nil
-                        } label: {
-                            Label {
-                                Text(L10n.Schedule.standalone)
-                            } icon: {
-                                Image(systemName: "circle.fill")
-                                    .symbolRenderingMode(.palette)
-                                    .foregroundStyle(AppColors.runtimeFallback)
-                            }
-                        }
-                        ForEach(zones) { zone in
-                            Button {
-                                selectedZoneID = zone.id
-                            } label: {
-                                Label {
-                                    Text(zone.name)
-                                } icon: {
-                                    Image(systemName: "circle.fill")
-                                        .symbolRenderingMode(.palette)
-                                        .foregroundStyle(
-                                            AppColors.runtime(hex: zone.color.hex)
-                                        )
-                                }
-                            }
-                        }
+                    Button {
+                        isCategoryPickerPresented = true
                     } label: {
                         HStack(spacing: 7) {
-                            Circle()
-                                .fill(selectedZoneColor)
-                                .frame(width: 10, height: 10)
+                            selectedCategoryIndicator
 
-                            Text(selectedZoneName)
+                            Text(selectedCategoryName)
                                 .font(AppFonts.subheadlineHeavy)
                                 .foregroundStyle(AppColors.brandDarkBlue)
                                 .lineLimit(1)
@@ -101,6 +76,17 @@ struct ManualScheduleControls: View {
                                 .font(.system(size: 10, weight: .bold))
                                 .foregroundStyle(AppColors.textSecondary)
                         }
+                    }
+                    .buttonStyle(.plain)
+                    .popover(isPresented: $isCategoryPickerPresented, arrowEdge: .bottom) {
+                        CategoryPickerPopover(
+                            options: categoryOptions,
+                            selectedCategoryID: selectedCategoryID
+                        ) { categoryID in
+                            selectedCategoryID = categoryID
+                            isCategoryPickerPresented = false
+                        }
+                        .presentationCompactAdaptation(.popover)
                     }
                 }
             }
@@ -176,20 +162,157 @@ struct ManualScheduleControls: View {
         return L10n.Home.minutesShort(durationMinutes)
     }
 
-    private var selectedZoneName: String {
-        guard let selectedZoneID else {
+    private var selectedCategoryName: String {
+        guard let selectedCategoryID else {
             return L10n.Schedule.standalone
         }
-        return zones.first(where: { $0.id == selectedZoneID })?.name
-            ?? L10n.Schedule.chooseZone
+        return categories
+            .first(where: { $0.id == selectedCategoryID })?
+            .name
+            ?? L10n.Schedule.chooseCategory
     }
 
-    private var selectedZoneColor: Color {
-        guard let selectedZoneID,
-              let zone = zones.first(where: { $0.id == selectedZoneID })
-        else {
-            return AppColors.runtimeFallback
+    private var categoryOptions: [ManualCategoryOption] {
+        categories.map {
+            ManualCategoryOption(
+                category: $0,
+                colors: zoneColors(for: $0.id)
+            )
         }
-        return AppColors.runtime(hex: zone.color.hex)
     }
+
+    @ViewBuilder
+    private var selectedCategoryIndicator: some View {
+        if let selectedCategoryID {
+            ZoneColorSwatches(colors: zoneColors(for: selectedCategoryID))
+        } else {
+            Circle()
+                .fill(AppColors.runtimeFallback)
+                .frame(width: 10, height: 10)
+        }
+    }
+
+    private func zoneColors(for categoryID: UUID) -> [ZoneColor] {
+        var seen = Set<ZoneColor>()
+        return zones.compactMap { zone in
+            guard zone.category?.id == categoryID,
+                  seen.insert(zone.color).inserted
+            else {
+                return nil
+            }
+            return zone.color
+        }
+    }
+}
+
+private struct ManualCategoryOption: Identifiable {
+    let category: TaskCategory
+    let colors: [ZoneColor]
+
+    var id: UUID { category.id }
+}
+
+private struct CategoryPickerPopover: View {
+    let options: [ManualCategoryOption]
+    let selectedCategoryID: UUID?
+    let onSelect: (UUID?) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            categoryButton(
+                title: L10n.Schedule.standalone,
+                colors: [],
+                isSelected: selectedCategoryID == nil
+            ) {
+                onSelect(nil)
+            }
+
+            Divider()
+                .overlay(AppColors.accentBlue.opacity(0.14))
+
+            ForEach(options) { option in
+                categoryButton(
+                    title: option.category.name,
+                    colors: option.colors,
+                    isSelected: selectedCategoryID == option.id
+                ) {
+                    onSelect(option.id)
+                }
+            }
+        }
+        .padding(10)
+        .frame(minWidth: 220)
+        .background(AppColors.surface)
+    }
+
+    private func categoryButton(
+        title: String,
+        colors: [ZoneColor],
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                if colors.isEmpty {
+                    Circle()
+                        .fill(AppColors.runtimeFallback)
+                        .frame(width: 10, height: 10)
+                } else {
+                    ZoneColorSwatches(colors: colors)
+                }
+
+                Text(title)
+                    .font(AppFonts.subheadlineHeavy)
+                    .foregroundStyle(AppColors.brandDarkBlue)
+                    .lineLimit(1)
+
+                Spacer(minLength: 12)
+
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(AppColors.accentBlue)
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 9)
+            .background(
+                isSelected ? AppColors.infoSurface : Color.clear,
+                in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct ZoneColorSwatches: View {
+    let colors: [ZoneColor]
+
+    var body: some View {
+        HStack(spacing: 3) {
+            if colors.isEmpty {
+                Circle()
+                    .fill(AppColors.accentBlue)
+                    .frame(width: 10, height: 10)
+            } else {
+                ForEach(colors, id: \.self) { color in
+                    Circle()
+                        .fill(AppColors.runtime(hex: color.hex))
+                        .frame(width: 10, height: 10)
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    ManualScheduleControls(
+        categories: [],
+        zones: [],
+        startsAt: .constant(Date()),
+        durationMinutes: .constant(60),
+        selectedCategoryID: .constant(nil)
+    )
+        .padding()
 }

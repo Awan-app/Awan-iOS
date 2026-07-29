@@ -190,11 +190,12 @@ public struct DefaultShiftGoalDependencyChainUseCase: ShiftGoalDependencyChainUs
         }
 
         if let goal = try await goalRepository.fetchGoals()
-            .first(where: { $0.id == request.goalID }) {
+            .first(where: { $0.id == request.goalID }),
+           let currentDeadline = goal.deadline {
             guard let deadline = calendar.date(
                 byAdding: .day,
                 value: 1,
-                to: goal.deadline
+                to: currentDeadline
             ) else {
                 throw SchedulingError.invalidTimeRange
             }
@@ -294,12 +295,12 @@ public struct DefaultMakeTaskIndependentUseCase: MakeTaskIndependentUseCase {
                 description: task.description,
                 status: task.status,
                 goalID: task.goalID,
-                zoneID: task.zoneID,
                 duration: task.duration,
                 isSplittable: task.isSplittable,
                 mandatory: task.mandatory,
                 estimatedPoints: task.estimatedPoints,
-                dependencyIDs: task.dependencyIDs.subtracting([request.dependencyID])
+                dependencyIDs: task.dependencyIDs.subtracting([request.dependencyID]),
+                category: task.category
             )
         )
         return ScheduleOperationResult(

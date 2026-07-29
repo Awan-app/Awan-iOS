@@ -23,3 +23,8 @@ struct DailyZonesTitleRow: View {
         }
     }
 }
+
+#Preview {
+    DailyZonesTitleRow(isReady: true)
+        .padding()
+}

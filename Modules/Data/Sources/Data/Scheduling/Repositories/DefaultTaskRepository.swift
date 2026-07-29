@@ -82,15 +82,10 @@ public struct DefaultTaskRepository: TaskRepository {
         dayKey: String,
         profile: UserProfile
     ) async throws -> [AwanTask] {
-        let cachedByID = Dictionary(
-            uniqueKeysWithValues: try await fetchTasks().map { ($0.id, $0) }
-        )
         let responses = try await remoteTaskDataSource.getTasks(date: dayKey)
         let tasks = try responses.map { response in
             try HomeRemoteMapper.task(
                 response.task,
-                zoneID: response.sessions.compactMap(\.zoneId).first
-                    ?? cachedByID[response.task.id]?.zoneID,
                 defaultDuration: profile.preferences.preferredSessionDuration
             )
         }
@@ -139,13 +134,19 @@ public struct DefaultTaskRepository: TaskRepository {
         return profile
     }
 
-    public func addTask(_ task: AwanTask, startsAt: Date?, durationMinutes: Int, timeZoneID: String) async throws -> (task: AwanTask, sessions: [Session]) {
+    public func addTask(
+        _ task: AwanTask,
+        sessionZoneID: UUID?,
+        startsAt: Date?,
+        durationMinutes: Int,
+        timeZoneID: String
+    ) async throws -> (task: AwanTask, sessions: [Session]) {
         let sessionPayloads: [CreateTaskWithSessionsRequestDTO.SessionPayload]?
         if let start = startsAt {
             let end = start.addingTimeInterval(TimeInterval(durationMinutes * 60))
             sessionPayloads = [
                 CreateTaskWithSessionsRequestDTO.SessionPayload(
-                    zoneId: task.zoneID,
+                    zoneId: sessionZoneID,
                     start: HomeRemoteMapper.formatDateTime(start, timeZoneID: timeZoneID),
                     end: HomeRemoteMapper.formatDateTime(end, timeZoneID: timeZoneID),
                     status: "SCHEDULED"
@@ -163,7 +164,8 @@ public struct DefaultTaskRepository: TaskRepository {
                 mandatory: task.mandatory,
                 estimatedPoints: task.estimatedPoints,
                 allowTaskSplitting: task.isSplittable,
-                goalId: task.goalID
+                goalId: task.goalID,
+                categoryId: task.category?.id
             ),
             sessions: sessionPayloads
         )
@@ -171,7 +173,6 @@ public struct DefaultTaskRepository: TaskRepository {
         let response = try await remoteSessionDataSource.createTaskWithSessions(request: request)
         let acceptedTask = try HomeRemoteMapper.task(
             response.task,
-            zoneID: task.zoneID,
             defaultDuration: durationMinutes
         )
         let acceptedSessions = try response.sessions.map {
@@ -199,15 +200,27 @@ public struct DefaultTaskRepository: TaskRepository {
                 status: remoteStatus(task.status),
                 mandatory: task.mandatory,
                 estimatedPoints: task.estimatedPoints,
-                isSplittable: task.isSplittable
+                isSplittable: task.isSplittable,
+                categoryID: task.category?.id
             )
         )
         let accepted = try HomeRemoteMapper.task(
             response,
-            zoneID: task.zoneID,
             defaultDuration: task.duration.minutes
         )
         try await localDataSource.updateTask(accepted)
+        let profile = try await requireProfile()
+        let sessions = try await remoteSessionDataSource.getTaskSessions(taskID: task.id)
+            .map {
+                try HomeRemoteMapper.session(
+                    $0,
+                    timeZoneID: profile.preferences.timezone
+                )
+            }
+        try await localSessionDataSource.deleteSessions(taskID: task.id)
+        for session in sessions {
+            try await localSessionDataSource.addSession(session)
+        }
     }
     public func deleteTask(id: UUID) async throws {
         try await remoteTaskDataSource.deleteTask(taskID: id, cascade: true)
@@ -258,12 +271,12 @@ public struct DefaultTaskRepository: TaskRepository {
             description: task.description,
             status: task.status,
             goalID: task.goalID,
-            zoneID: task.zoneID,
             duration: task.duration,
             isSplittable: task.isSplittable,
             mandatory: task.mandatory,
             estimatedPoints: task.estimatedPoints,
-            dependencyIDs: dependencyIDs
+            dependencyIDs: dependencyIDs,
+            category: task.category
         )
     }
 }

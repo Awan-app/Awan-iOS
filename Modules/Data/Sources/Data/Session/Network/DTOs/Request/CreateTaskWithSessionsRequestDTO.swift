@@ -24,6 +24,7 @@ public struct CreateTaskWithSessionsRequestDTO: Encodable, Sendable {
         public let estimatedPoints: Int?
         public let allowTaskSplitting: Bool?
         public let goalId: UUID?
+        public let categoryId: UUID?
 
         public init(
             title: String,
@@ -32,7 +33,8 @@ public struct CreateTaskWithSessionsRequestDTO: Encodable, Sendable {
             mandatory: Bool? = nil,
             estimatedPoints: Int? = nil,
             allowTaskSplitting: Bool? = nil,
-            goalId: UUID? = nil
+            goalId: UUID? = nil,
+            categoryId: UUID? = nil
         ) {
             self.title = title
             self.description = description
@@ -41,6 +43,30 @@ public struct CreateTaskWithSessionsRequestDTO: Encodable, Sendable {
             self.estimatedPoints = estimatedPoints
             self.allowTaskSplitting = allowTaskSplitting
             self.goalId = goalId
+            self.categoryId = categoryId
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case title
+            case description
+            case estimatedDuration
+            case mandatory
+            case estimatedPoints
+            case allowTaskSplitting
+            case goalId
+            case categoryId
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(title, forKey: .title)
+            try container.encodeIfPresent(description, forKey: .description)
+            try container.encodeIfPresent(estimatedDuration, forKey: .estimatedDuration)
+            try container.encodeIfPresent(mandatory, forKey: .mandatory)
+            try container.encodeIfPresent(estimatedPoints, forKey: .estimatedPoints)
+            try container.encodeIfPresent(allowTaskSplitting, forKey: .allowTaskSplitting)
+            try container.encodeIfPresent(goalId, forKey: .goalId)
+            try container.encode(categoryId, forKey: .categoryId)
         }
     }
 
@@ -60,6 +86,21 @@ public struct CreateTaskWithSessionsRequestDTO: Encodable, Sendable {
             self.start = start
             self.end = end
             self.status = status
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case zoneId
+            case start
+            case end
+            case status
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(zoneId, forKey: .zoneId)
+            try container.encode(start, forKey: .start)
+            try container.encode(end, forKey: .end)
+            try container.encodeIfPresent(status, forKey: .status)
         }
     }
 }

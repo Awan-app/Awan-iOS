@@ -70,3 +70,10 @@ struct HomePlanSummaryView: View {
         return L10n.Home.hoursMinutesShort(hours, minutes)
     }
 }
+
+
+#Preview {
+    HomePlanSummaryView(taskCount: 5, scheduledMinutes: 120, completedCount: 2, totalCount: 5, taskAllocations: [])
+        .padding()
+}
+

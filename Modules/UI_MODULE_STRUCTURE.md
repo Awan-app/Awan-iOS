@@ -50,6 +50,7 @@ App-wide visual tokens and generic SwiftUI primitives belong in Common:
 - Use `AppFonts` instead of declaring system fonts directly in feature views.
 - Use `AppMaterials` for shared material surfaces.
 - Put only feature-independent components such as `AppButton` and `AppCard` in Common. Headers, timelines, nudges, and other feature-specific views remain in Presentation.
+- Use `AppDepthSurface` for raised cards and chips and `AppDepthButtonStyle` for custom pressable controls. Their solid offset layer is the canonical 3D treatment; do not replace it with feature-local styles or blurred shadows.
 - Every Common SwiftUI view must provide named light- and dark-mode `#Preview` configurations in its source file.
 
 Presentation must not contain hard-coded hex literals, direct SwiftUI named colors such as `.white` or `.secondary`, feature-local color parsers, or direct system-font declarations. Opacity and gradients may be applied to values obtained from `AppColors`.

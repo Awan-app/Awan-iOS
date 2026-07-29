@@ -45,7 +45,7 @@ struct HomeTimelineZoneItem: Identifiable, Hashable {
 }
 
 enum HomeTaskAllocationID: Hashable {
-    case zone(UUID)
+    case category(UUID)
     case fallback
 }
 
@@ -62,6 +62,7 @@ struct HomeState {
     var selectedDay: Date
     var selectedSessionID: UUID?
     var isMutating: Bool
+   
 
     var selectedSession: HomeSessionDetail? {
         guard let success,
@@ -79,7 +80,7 @@ struct HomeState {
             failure: nil,
             selectedDay: selectedDay,
             selectedSessionID: nil,
-            isMutating: false
+            isMutating: false,
         )
     }
 }
@@ -102,6 +103,8 @@ struct HomeSuccessState {
     let totalSessionCount: Int
     let taskAllocations: [HomeTaskAllocationItem]
     let timelineWindow: HomeTimelineWindow
+    let timelineWakeupTime: Date
+    let timelineBedtime: Date
     let timelineZones: [HomeTimelineZoneItem]
     let timelineItems: [HomeTimelineItem]
 }

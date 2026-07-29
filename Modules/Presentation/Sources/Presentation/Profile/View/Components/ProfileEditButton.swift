@@ -43,3 +43,10 @@ private struct ProfileEditDepthButtonStyle: ButtonStyle {
             .animation(.snappy(duration: 0.18), value: configuration.isPressed)
     }
 }
+
+
+#Preview {
+    ProfileEditButton(onTap: {})
+        .padding()
+}
+

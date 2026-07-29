@@ -91,8 +91,10 @@ public struct DefaultTaskScheduleReconciler: TaskScheduleReconciling {
 
         if request.pendingZoneChange != nil,
            !request.ignoresFixedZoneMismatch,
-           let zoneID = task.zoneID,
-           let zone = workspace.zones.first(where: { $0.id == zoneID }) {
+           let categoryID = task.category?.id,
+           let zone = workspace.zones
+            .filter({ $0.category?.id == categoryID })
+            .min(by: { $0.startTime < $1.startTime }) {
             let affectedSessionIDs = try plannedFixedSessions.compactMap { session in
                 let window = try zoneWindowResolver.window(
                     for: zone,
@@ -109,7 +111,7 @@ public struct DefaultTaskScheduleReconciler: TaskScheduleReconciling {
                     nudge: .fixedSessionsOutsideTaskZone(
                         taskID: request.taskID,
                         previousZoneID: request.pendingZoneChange?.previousZoneID,
-                        zoneID: zoneID,
+                        zoneID: zone.id,
                         sessionIDs: affectedSessionIDs,
                         selectedDay: request.selectedDay,
                         timeZone: request.timeZone
@@ -118,7 +120,7 @@ public struct DefaultTaskScheduleReconciler: TaskScheduleReconciling {
             }
         }
 
-        guard task.zoneID != nil else {
+        guard task.category != nil else {
             return ScheduleOperationResult(workspace: workspace, nudge: nil)
         }
 

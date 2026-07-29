@@ -14,6 +14,7 @@ Key conventions:
 - Put the same Jira key in the commit subject and pull request title.
 - Feature pull requests target `development` and are ready for review unless explicitly requested as drafts.
 - Use SwiftUI with the Observation framework: `@Observable` view models plus `@State`, `@Bindable`, and `@Environment` at view ownership boundaries.
+- Use Common's `AppDepthSurface`, `AppDepthButtonStyle`, and `AppButton` for raised 3D UI; do not duplicate the treatment or use blurred shadows for depth.
 - View models coordinate use-case calls and UI state only. They must never contain business rules, domain validation, persistence policy, or networking logic.
 - Preserve dependency direction and do not leak DTOs, persistence models, or concrete repositories across layers.
 - Use constructor injection, Swift concurrency, minimal public APIs, and focused verification.

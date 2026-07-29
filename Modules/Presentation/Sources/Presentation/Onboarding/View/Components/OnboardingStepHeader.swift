@@ -49,3 +49,10 @@ struct OnboardingStepHeader: View {
     )
     .padding()
 }
+
+
+#Preview {
+    OnboardingStepHeader(currentStep: 1, totalSteps: 4, onSkip: {}, onBack: {})
+        .padding()
+}
+

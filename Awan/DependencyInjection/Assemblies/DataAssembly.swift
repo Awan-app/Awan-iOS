@@ -64,7 +64,11 @@ struct DataAssembly: Assembly {
         }
         container.register(GoalRepository.self) { resolver in
             DefaultGoalRepository(
-                localDataSource: Self.resolve(LocalGoalDataSource.self, from: resolver)
+                localDataSource: Self.resolve(LocalGoalDataSource.self, from: resolver),
+                remoteDataSource: Self.resolve(
+                    RemoteGoalDataSource.self,
+                    from: resolver
+                )
             )
         }
         container.register(GoalDecompositionRepository.self) { resolver in
@@ -78,7 +82,6 @@ struct DataAssembly: Assembly {
         container.register(SessionRepository.self) { resolver in
             DefaultSessionRepository(
                 localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver),
-                localTaskDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver),
                 localProfileDataSource: Self.resolve(
                     LocalUserProfileDataSource.self,
                     from: resolver
@@ -158,6 +161,18 @@ struct DataAssembly: Assembly {
             )
         }
         .inObjectScope(.container)
+
+        container.register(AiTaskRemoteDataSource.self) { resolver in
+            DefaultAiTaskRemoteDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+
+        container.register(AiTaskRepository.self) { resolver in
+            DefaultAiTaskRepository(
+                remoteDataSource: Self.resolve(AiTaskRemoteDataSource.self, from: resolver)
+            )
+        }
     }
 
     private func registerSchedulingDataSources(in container: Container) {

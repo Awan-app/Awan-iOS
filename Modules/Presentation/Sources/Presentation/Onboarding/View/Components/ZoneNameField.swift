@@ -42,3 +42,10 @@ struct ZoneNameField: View {
         }
     }
 }
+
+
+#Preview {
+    ZoneNameField(zoneName: .constant(""))
+        .padding()
+}
+

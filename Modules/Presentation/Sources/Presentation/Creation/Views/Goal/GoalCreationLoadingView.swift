@@ -27,3 +27,12 @@ struct GoalCreationLoadingView: View {
         .padding(.horizontal, 32)
     }
 }
+#Preview{
+    GoalCreationLoadingView(message: "")
+}
+
+
+#Preview {
+    GoalCreationLoadingView(message: "Loading...")
+}
+

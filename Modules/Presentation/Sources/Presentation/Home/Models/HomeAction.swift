@@ -12,4 +12,6 @@ enum HomeAction {
     case setSessionCompletion(sessionID: UUID, isCompleted: Bool)
     case deleteSession(UUID)
     case dismissError
+   
 }
+

@@ -43,6 +43,13 @@ struct TaskLengthFeelSection: View {
     }
 }
 
-//#Preview {
-//    TaskLengthFeelSection()
-//}
+#Preview {
+    TaskLengthFeelSection(focusDurationIndex: .constant(2))
+}
+
+
+#Preview {
+    TaskLengthFeelSection(focusDurationIndex: .constant(0))
+        .padding()
+}
+

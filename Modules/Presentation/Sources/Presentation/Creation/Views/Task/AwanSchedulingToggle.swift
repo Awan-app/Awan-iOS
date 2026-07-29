@@ -80,3 +80,10 @@ struct AwanSchedulingToggle: View {
         .accessibilityValue(isOn ? L10n.Home.yes : L10n.Home.no)
     }
 }
+
+
+#Preview {
+    AwanSchedulingToggle(isOn: .constant(true))
+        .padding()
+}
+

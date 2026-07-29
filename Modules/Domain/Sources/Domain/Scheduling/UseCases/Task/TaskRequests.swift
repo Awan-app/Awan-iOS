@@ -4,6 +4,7 @@ public struct CreateTaskRequest: Hashable, Sendable {
     public let title: String
     public let description: String?
     public let durationMinutes: Int
+    public let categoryID: UUID?
     public let zoneID: UUID?
     public let isSplittable: Bool
     public let mandatory: Bool
@@ -16,7 +17,8 @@ public struct CreateTaskRequest: Hashable, Sendable {
         title: String,
         description: String? = nil,
         durationMinutes: Int,
-        zoneID: UUID?,
+        categoryID: UUID? = nil,
+        zoneID: UUID? = nil,
         isSplittable: Bool,
         mandatory: Bool = true,
         estimatedPoints: Int = 0,
@@ -27,6 +29,7 @@ public struct CreateTaskRequest: Hashable, Sendable {
         self.title = title
         self.description = description
         self.durationMinutes = durationMinutes
+        self.categoryID = categoryID
         self.zoneID = zoneID
         self.isSplittable = isSplittable
         self.mandatory = mandatory

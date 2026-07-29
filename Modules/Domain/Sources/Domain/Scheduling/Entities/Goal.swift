@@ -11,7 +11,7 @@ public struct Goal: Identifiable, Hashable, Sendable {
     public let name: String
     public let description: String?
     public let status: GoalStatus
-    public let deadline: Date
+    public let deadline: Date?
     public let createdAt: Date
 
     public init(
@@ -19,7 +19,7 @@ public struct Goal: Identifiable, Hashable, Sendable {
         name: String,
         description: String? = nil,
         status: GoalStatus = .active,
-        deadline: Date,
+        deadline: Date?,
         createdAt: Date = Date()
     ) {
         self.id = id

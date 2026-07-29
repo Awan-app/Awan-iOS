@@ -10,6 +10,8 @@ final class ZoneModel {
     var startMinute: Int
     var endHour: Int
     var endMinute: Int
+    var categoryID: UUID?
+    var categoryName: String?
     var templateID: UUID?
     var templateOverrideID: UUID?
 
@@ -21,6 +23,8 @@ final class ZoneModel {
         startMinute: Int,
         endHour: Int,
         endMinute: Int,
+        categoryID: UUID? = nil,
+        categoryName: String? = nil,
         templateID: UUID?,
         templateOverrideID: UUID?
     ) {
@@ -31,6 +35,8 @@ final class ZoneModel {
         self.startMinute = startMinute
         self.endHour = endHour
         self.endMinute = endMinute
+        self.categoryID = categoryID
+        self.categoryName = categoryName
         self.templateID = templateID
         self.templateOverrideID = templateOverrideID
     }

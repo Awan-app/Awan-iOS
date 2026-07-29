@@ -26,3 +26,9 @@ struct ProfileNameEmailView: View {
         }
     }
 }
+
+import Domain
+#Preview {
+    ProfileNameEmailView(name: UserProfile.mock.firstName, email: UserProfile.mock.email)
+        .padding()
+}

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Common
+import Domain
 
 struct OnboardingWelcomeView: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -89,6 +90,12 @@ struct OnboardingWelcomeView: View {
 }
 
 #Preview {
-    OnboardingWelcomeView(viewModel: .preview)
-        .environment(AppCoordinator())
+    OnboardingWelcomeView(
+        viewModel: OnboardingViewModel(
+            completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
+            createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
+        )
+    )
+    .environment(AppCoordinator())
 }

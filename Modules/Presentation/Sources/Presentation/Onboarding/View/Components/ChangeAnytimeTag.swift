@@ -30,3 +30,10 @@ struct ChangeAnytimeTag: View {
     ChangeAnytimeTag()
         .padding()
 }
+
+
+#Preview {
+    ChangeAnytimeTag()
+        .padding()
+}
+

@@ -205,3 +205,11 @@ private struct TimelineSessionCard: View {
         return "\(start)–\(end)"
     }
 }
+
+
+import Domain
+#Preview {
+    DayTimelineView(zones: [], items: [], onMove: { _, _ in }, onTap: { _ in })
+        .padding()
+}
+

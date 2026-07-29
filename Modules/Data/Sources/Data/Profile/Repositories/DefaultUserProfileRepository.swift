@@ -2,6 +2,8 @@ import Combine
 import Domain
 
 public struct DefaultUserProfileRepository: UserProfileRepository {
+   
+    
     private let localDataSource: any LocalUserProfileDataSource
     private let remoteDataSource: any RemoteProfileDataSource
 
@@ -33,6 +35,55 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
             .merge(with: remote)
             .removeDuplicates()
             .eraseToAnyPublisher()
+    }
+
+    public func updateSessionDuration(_ durationMinutes: Int) async throws -> UserProfile {
+        let request = UpdateProfilePartialRequestDTO(preferredSessionDuration: durationMinutes)
+        let response = try await remoteDataSource.updateProfilePartial(request)
+        let profile = try HomeRemoteMapper.profile(response)
+        try await localDataSource.replaceProfile(profile)
+        return profile
+    }
+
+    public func updateTimezone(_ timezone: String) async throws -> UserProfile {
+        let request = UpdateProfilePartialRequestDTO(timezone: timezone)
+        let response = try await remoteDataSource.updateProfilePartial(request)
+        let profile = try HomeRemoteMapper.profile(response)
+        try await localDataSource.replaceProfile(profile)
+        return profile
+    }
+    public func updateSleepSchedule(wakeUpTime: String, sleepTime: String) async throws -> Domain.UserProfile {
+        let currentProfile = try await fetchCurrentUser()
+        let request = UpdateProfilePartialRequestDTO(
+            firstName: currentProfile.firstName,
+            lastName: currentProfile.lastName,
+            birthDate: String(format: "%04d-%02d-%02d", currentProfile.birthDate.year, currentProfile.birthDate.month, currentProfile.birthDate.day),
+            timezone: currentProfile.preferences.timezone,
+            preferredSessionDuration: currentProfile.preferences.preferredSessionDuration,
+            bufferBetweenSessions: currentProfile.preferences.bufferBetweenSessions,
+            wakeupTime: wakeUpTime,
+            sleepTime: sleepTime
+        )
+        let response = try await remoteDataSource.updateProfilePartial(request)
+        let profile = try HomeRemoteMapper.profile(response)
+        try await localDataSource.replaceProfile(profile)
+        return profile
+    }
+
+    public func updateSleepSchedule(_ sleepTime: String) async throws -> Domain.UserProfile {
+        let request = UpdateProfilePartialRequestDTO(sleepTime: sleepTime)
+        let response = try await remoteDataSource.updateProfilePartial(request)
+        let profile = try HomeRemoteMapper.profile(response)
+        try await localDataSource.replaceProfile(profile)
+        return profile
+    }
+    
+    public func updateWakeUpSchedule(_ wakeUpTime: String) async throws -> Domain.UserProfile {
+        let request = UpdateProfilePartialRequestDTO(wakeupTime: wakeUpTime)
+        let response = try await remoteDataSource.updateProfilePartial(request)
+        let profile = try HomeRemoteMapper.profile(response)
+        try await localDataSource.replaceProfile(profile)
+        return profile
     }
 
     private func loadRemoteUser() async throws -> UserProfile {

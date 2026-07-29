@@ -28,12 +28,8 @@ public struct HomeReadUseCases: Sendable {
         zones: [Zone],
         profile: UserProfile
     ), Error> {
-        let profilePublisher = userProfile.observe()
-            .share()
-            .eraseToAnyPublisher()
-        let schedulingPublisher = profilePublisher
-            .first()
-            .flatMap { _ in
+        userProfile.observe()
+            .map { profile in
                 Publishers.CombineLatest3(
                     tasks.observe(for: date),
                     sessions.observe(for: date),
@@ -43,20 +39,13 @@ public struct HomeReadUseCases: Sendable {
                         (
                             tasks: tasks,
                             sessions: sessions,
-                            zones: zones
+                            zones: zones,
+                            profile: profile
                         )
                     }
+                    .eraseToAnyPublisher()
             }
-        return schedulingPublisher
-            .combineLatest(profilePublisher)
-            .map { scheduling, profile in
-                (
-                    tasks: scheduling.tasks,
-                    sessions: scheduling.sessions,
-                    zones: scheduling.zones,
-                    profile: profile
-                )
-            }
+            .switchToLatest()
             .eraseToAnyPublisher()
     }
 }
@@ -86,7 +75,7 @@ public struct HomeUseCases: Sendable {
 
     public init(
         reads: HomeReadUseCases,
-        sessions: HomeSessionUseCases
+        sessions: HomeSessionUseCases,
     ) {
         self.reads = reads
         self.sessions = sessions
