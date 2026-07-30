@@ -55,7 +55,7 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
         return templates
     }
 
-    public func updateTemplate(id: UUID, zones: [ZoneWithoutId]) async throws -> Template {
+    public func updateBulkTemplate(id: UUID, zones: [ZoneWithoutId]) async throws -> Template {
         let zonePayloads = zones.map { zone in
             BulkUpdateZonesRequestDTO.ZonePayload(
                 name: zone.name,
@@ -74,5 +74,19 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
         let template = try HomeRemoteMapper.template(templateResponse)
         try await localDataSource.upsertTemplate(localTemplate)
         return template
+    }
+
+    public func updateTemplate(id: UUID, name: String, daysOfWeek: [String]) async throws -> Template {
+        let request = UpdateTemplateRequestDTO(name: name, daysOfWeek: daysOfWeek)
+        let response = try await remoteDataSource.updateTemplate(templateID: id, request: request)
+        let localTemplate = try HomeRemoteMapper.templateData(response)
+        let template = try HomeRemoteMapper.template(response)
+        try await localDataSource.upsertTemplate(localTemplate)
+        return template
+    }
+
+    public func deleteTemplate(id: UUID) async throws {
+        try await remoteDataSource.deleteTemplate(templateID: id)
+        try await localDataSource.deleteTemplate(id: id)
     }
 }

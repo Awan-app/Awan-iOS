@@ -228,7 +228,37 @@ struct DomainAssembly: Assembly {
             )
         }
         container.register(UpdateTemplateUseCase.self) { resolver in
-            DefaultUpdateTemplateUseCase(
+            DefaultBulkUpdateTemplateUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTemplateDetailsUseCase.self) { resolver in
+            DefaultUpdateTemplateDetailsUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateBulkTemplateOverrideUseCase.self) { resolver in
+            DefaultUpdateBulkTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(DeleteTemplateOverrideUseCase.self) { resolver in
+            DefaultDeleteTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(CreateTemplateOverrideUseCase.self) { resolver in
+            DefaultCreateTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTemplateOverrideUseCase.self) { resolver in
+            DefaultUpdateTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(DeleteTemplateUseCase.self) { resolver in
+            DefaultDeleteTemplateUseCase(
                 repository: Self.resolve(TemplateRepository.self, from: resolver)
             )
         }

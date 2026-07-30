@@ -149,6 +149,17 @@ enum HomeRemoteMapper {
         )
     }
 
+    static func templateOverride(
+        _ dto: TemplateOverrideResponseDTO
+    ) throws -> TemplateOverride {
+        return TemplateOverride(
+            id: dto.id,
+            name: dto.name,
+            dateOfDay: dto.dateOfDay,
+            zones: try dto.zones.map(zone)
+        )
+    }
+
     static func formatDateTime(_ date: Date, timeZoneID: String) -> String {
         dateTimeFormatter(timeZoneID: timeZoneID).string(from: date)
     }

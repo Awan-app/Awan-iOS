@@ -44,4 +44,8 @@ public final class RemoteTemplateOverrideDataSource: RemoteTemplateOverrideDataS
     public func getZones(overrideId: UUID) async throws -> [ZoneResponseDTO] {
         try await networkService.request(TemplateOverrideEndpoint.getZones(overrideId: overrideId))
     }
+
+    public func updateBulkTemplateOverride(overrideId: UUID, request: BulkUpdateOverrideZonesRequestDTO) async throws -> [ZoneResponseDTO] {
+        try await networkService.request(TemplateOverrideEndpoint.bulkUpdateZones(overrideId: overrideId, request))
+    }
 }
