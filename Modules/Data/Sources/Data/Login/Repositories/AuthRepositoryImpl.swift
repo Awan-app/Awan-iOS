@@ -5,13 +5,16 @@ import Foundation
 public final class AuthRepositoryImpl: AuthRepository, @unchecked Sendable {
     private let remoteDataSource: AuthDataSource
     private let sessionDataSource: AuthSessionDataSource
+    private let localDataWiper: LocalDataWiper
 
     public init(
         remoteDataSource: AuthDataSource,
-        sessionDataSource: AuthSessionDataSource
+        sessionDataSource: AuthSessionDataSource,
+        localDataWiper: LocalDataWiper
     ) {
         self.remoteDataSource = remoteDataSource
         self.sessionDataSource = sessionDataSource
+        self.localDataWiper = localDataWiper
     }
 
     public func requestOTP(email: String) async throws -> OTPRequestResult {
@@ -83,8 +86,9 @@ public final class AuthRepositoryImpl: AuthRepository, @unchecked Sendable {
 
         do {
             try sessionDataSource.clear()
+            try await localDataWiper.wipeAllData()
         } catch where remoteError == nil {
-            throw AuthError.unknown(message: "Failed to securely clear session: \(error)")
+            throw AuthError.unknown(message: "Failed to securely clear local data: \(error)")
         } catch {
             // The remote error remains the primary result, but the in-memory credential is still cleared.
         }

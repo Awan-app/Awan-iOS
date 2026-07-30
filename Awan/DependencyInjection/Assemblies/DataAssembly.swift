@@ -139,10 +139,16 @@ struct DataAssembly: Assembly {
         }
         .inObjectScope(.container)
 
+        container.register(LocalDataWiper.self) { [self] _ in
+            SwiftDataLocalDataWiper(modelContainer: self.modelContainer)
+        }
+        .inObjectScope(.container)
+
         container.register(AuthRepository.self) { resolver in
             AuthRepositoryImpl(
                 remoteDataSource: Self.resolve(AuthDataSource.self, from: resolver),
-                sessionDataSource: Self.resolve(AuthSessionDataSource.self, from: resolver)
+                sessionDataSource: Self.resolve(AuthSessionDataSource.self, from: resolver),
+                localDataWiper: Self.resolve(LocalDataWiper.self, from: resolver)
             )
         }
         .inObjectScope(.container)
