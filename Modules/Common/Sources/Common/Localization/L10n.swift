@@ -568,6 +568,66 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "home.ai_task_category", value: nil, table: "Localizable")
         }
 
+        public static var imageToTasksTitle: String {
+            L10n.currentBundle.localizedString(forKey: "home.image_to_tasks_title", value: nil, table: "Localizable")
+        }
+
+        public static var imageSourceSummaryTitle: String {
+            L10n.currentBundle.localizedString(forKey: "home.image_source_summary_title", value: nil, table: "Localizable")
+        }
+
+        public static var imageUploading: String {
+            L10n.currentBundle.localizedString(forKey: "home.image_uploading", value: nil, table: "Localizable")
+        }
+
+        public static var imageReading: String {
+            L10n.currentBundle.localizedString(forKey: "home.image_reading", value: nil, table: "Localizable")
+        }
+
+        public static var imageAnalyzing: String {
+            L10n.currentBundle.localizedString(forKey: "home.image_analyzing", value: nil, table: "Localizable")
+        }
+
+        public static var imageNoTasks: String {
+            L10n.currentBundle.localizedString(forKey: "home.image_no_tasks", value: nil, table: "Localizable")
+        }
+
+        public static var proposedTasksConfirm: String {
+            L10n.currentBundle.localizedString(forKey: "home.proposed_tasks_confirm", value: nil, table: "Localizable")
+        }
+
+        public static var proposedTaskFixedSession: String {
+            L10n.currentBundle.localizedString(forKey: "home.proposed_task_fixed_session", value: nil, table: "Localizable")
+        }
+
+        public static var proposedTaskAiSession: String {
+            L10n.currentBundle.localizedString(forKey: "home.proposed_task_ai_session", value: nil, table: "Localizable")
+        }
+
+        public static var proposedTaskReason: String {
+            L10n.currentBundle.localizedString(forKey: "home.proposed_task_reason", value: nil, table: "Localizable")
+        }
+
+        public static var proposedTaskUnassigned: String {
+            L10n.currentBundle.localizedString(forKey: "home.proposed_task_unassigned", value: nil, table: "Localizable")
+        }
+
+        public static var pickImageFromLibrary: String {
+            L10n.currentBundle.localizedString(forKey: "home.pick_image_from_library", value: nil, table: "Localizable")
+        }
+
+        public static var pickImageFromCamera: String {
+            L10n.currentBundle.localizedString(forKey: "home.pick_image_from_camera", value: nil, table: "Localizable")
+        }
+
+        public static var imageToTasksNotePlaceholder: String {
+            L10n.currentBundle.localizedString(forKey: "home.image_to_tasks_note_placeholder", value: nil, table: "Localizable")
+        }
+
+        public static func confirmAcceptCount(_ count: Int) -> String {
+            String(format: L10n.currentBundle.localizedString(forKey: "home.confirm_accept_count", value: nil, table: "Localizable"), count)
+        }
+
         public static var endTime: String {
             L10n.currentBundle.localizedString(forKey: "home.end_time", value: nil, table: "Localizable")
         }
