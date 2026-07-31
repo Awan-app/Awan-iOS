@@ -91,6 +91,8 @@ struct PresentationAssembly: Assembly {
                 fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
                 createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
                 createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver),
+                imageToTasks: Self.resolve(ImageToTasksUseCase.self, from: resolver),
+                acceptProposedTask: Self.resolve(AcceptProposedTaskUseCase.self, from: resolver),
                 userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 goalDecomposition: GoalDecompositionUseCases(
                     sendMessage: Self.resolve(

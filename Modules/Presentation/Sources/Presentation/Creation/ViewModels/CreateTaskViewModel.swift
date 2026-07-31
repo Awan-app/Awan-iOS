@@ -7,11 +7,11 @@ import Observation
 final class CreateTaskViewModel {
     var state: CreateTaskState
 
-    private let selectedDay: Date
+    let selectedDay: Date
 
     @ObservationIgnored let useCases: CreationUseCases
     @ObservationIgnored let speechTranscriber: any SpeechTranscribing
-    @ObservationIgnored private let timeZone: TimeZone
+    @ObservationIgnored let timeZone: TimeZone
     @ObservationIgnored private var didLoadZones = false
     @ObservationIgnored var wantsToRecord = false
     @ObservationIgnored var pendingTranscription = ""
@@ -151,5 +151,13 @@ final class CreateTaskViewModel {
 
     func cancelRecording() {
         resetRecording()
+    }
+
+    func processUploadedImage(imageData: Data, mimeType: String, note: String?) async {
+        await uploadImageForTasks(imageData: imageData, mimeType: mimeType, note: note)
+    }
+
+    func confirmAndAcceptProposedTasks(_ selectedTasks: [ProposedTask]) async {
+        await acceptProposedTasks(selectedTasks)
     }
 }
