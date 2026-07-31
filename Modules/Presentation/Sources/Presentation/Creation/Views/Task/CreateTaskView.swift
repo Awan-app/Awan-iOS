@@ -41,6 +41,22 @@ struct CreateTaskView: View {
                         viewModel.dismissAITaskResult()
                     }
                 )
+            case .imageUploading(let message):
+                GoalCreationLoadingView(message: message)
+            case .imageTasksResult(let response):
+                ImageToTasksResultSheet(
+                    response: response,
+                    categories: viewModel.state.categories,
+                    zones: viewModel.state.zones,
+                    onConfirm: { selectedTasks in
+                        Task {
+                            await viewModel.confirmAndAcceptProposedTasks(selectedTasks)
+                        }
+                    },
+                    onDismiss: {
+                        viewModel.dismissAITaskResult()
+                    }
+                )
             }
         }
         .background(AppColors.screenBackground.ignoresSafeArea())
@@ -104,6 +120,15 @@ struct CreateTaskView: View {
                     onRecordingEnded: {
                         Task {
                             await viewModel.finishRecording()
+                        }
+                    },
+                    onImageSelected: { data, mimeType in
+                        Task {
+                            await viewModel.processUploadedImage(
+                                imageData: data,
+                                mimeType: mimeType,
+                                note: nil
+                            )
                         }
                     }
                 )
