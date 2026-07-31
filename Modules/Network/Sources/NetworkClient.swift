@@ -51,6 +51,56 @@ public final class NetworkClient: NetworkServiceProtocol, @unchecked Sendable {
         return try decodeResponse(dataResponse)
     }
 
+    public func uploadMultipart<T: Decodable>(
+        _ endpoint: any APIEndpoint,
+        files: [MultipartFile],
+        parameters: [String: String]?
+    ) async throws -> T {
+        guard let url = endpoint.fullURL else {
+            throw NetworkError.invalidURL
+        }
+
+        let interceptor = endpoint.requiresAuthentication
+            ? authenticationInterceptor
+            : nil
+
+        var afHeaders = HTTPHeaders()
+        afHeaders.add(name: "Accept", value: "application/json")
+        for (key, value) in endpoint.headers {
+            afHeaders.add(name: key, value: value)
+        }
+
+        let dataResponse = await session
+            .upload(
+                multipartFormData: { multipartFormData in
+                    for file in files {
+                        multipartFormData.append(
+                            file.data,
+                            withName: file.name,
+                            fileName: file.fileName,
+                            mimeType: file.mimeType
+                        )
+                    }
+                    if let parameters {
+                        for (key, value) in parameters {
+                            if let data = value.data(using: .utf8) {
+                                multipartFormData.append(data, withName: key)
+                            }
+                        }
+                    }
+                },
+                to: url,
+                method: Alamofire.HTTPMethod(rawValue: endpoint.method.rawValue),
+                headers: afHeaders,
+                interceptor: interceptor
+            )
+            .validate(statusCode: 200..<300)
+            .serializingData()
+            .response
+
+        return try decodeResponse(dataResponse)
+    }
+
     private func buildURLRequest(from endpoint: any APIEndpoint) throws -> URLRequest {
         guard let url = endpoint.fullURL else {
             throw NetworkError.invalidURL
@@ -79,7 +129,6 @@ public final class NetworkClient: NetworkServiceProtocol, @unchecked Sendable {
 
         return urlRequest
     }
-
 
     private func decodeResponse<T: Decodable>(_ response: DataResponse<Data, AFError>) throws -> T {
         switch response.result {

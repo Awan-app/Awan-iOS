@@ -16,10 +16,10 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
     }
 
     public func fetchCurrentUser() async throws -> UserProfile {
-        guard let profile = try await localDataSource.fetchProfile() else {
-            throw RemoteDomainMappingError.missingField("cachedProfile")
+        if let profile = try await localDataSource.fetchProfile() {
+            return profile
         }
-        return profile
+        return try await loadRemoteUser()
     }
 
     public func observeCurrentUser() -> AnyPublisher<UserProfile, Error> {

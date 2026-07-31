@@ -22,27 +22,27 @@ public struct DefaultSessionRepository: SessionRepository {
     }
 
     public func fetchSessions(for date: Date) async throws -> [Session] {
-        let profile = try await requireProfile()
+        let timeZoneID = await getTimeZoneID()
         let dayKey = LocalDateKey.value(
             for: date,
-            timeZoneID: profile.preferences.timezone
+            timeZoneID: timeZoneID
         )
         return try await localDataSource.fetchSessions()
             .filter {
                 LocalDateKey.value(
                     for: $0.timeRange.start,
-                    timeZoneID: profile.preferences.timezone
+                    timeZoneID: timeZoneID
                 ) == dayKey
             }
             .sorted(by: sessionOrder)
     }
 
     public func observeSessions(for date: Date) -> AnyPublisher<[Session], Error> {
-        AsyncValuePublisher.make { try await requireProfile() }
-            .flatMap { profile -> AnyPublisher<[Session], Error> in
+        AsyncValuePublisher.make { await getTimeZoneID() }
+            .flatMap { timeZoneID -> AnyPublisher<[Session], Error> in
                 let dayKey = LocalDateKey.value(
                     for: date,
-                    timeZoneID: profile.preferences.timezone
+                    timeZoneID: timeZoneID
                 )
                 let local = localDataSource.observeSessions()
                     .map { sessions in
@@ -50,7 +50,7 @@ public struct DefaultSessionRepository: SessionRepository {
                             .filter {
                                 LocalDateKey.value(
                                     for: $0.timeRange.start,
-                                    timeZoneID: profile.preferences.timezone
+                                    timeZoneID: timeZoneID
                                 ) == dayKey
                             }
                             .sorted(by: sessionOrder)
@@ -59,7 +59,7 @@ public struct DefaultSessionRepository: SessionRepository {
                 let remote = AsyncValuePublisher.make {
                     try await loadRemoteSessions(
                         dayKey: dayKey,
-                        profile: profile
+                        timeZoneID: timeZoneID
                     )
                 }
                 .catch { _ in Empty<[Session], Error>() }
@@ -74,29 +74,26 @@ public struct DefaultSessionRepository: SessionRepository {
 
     private func loadRemoteSessions(
         dayKey: String,
-        profile: UserProfile
+        timeZoneID: String
     ) async throws -> [Session] {
         let sessions = try await remoteDataSource.getSessions(date: dayKey)
             .map {
                 try HomeRemoteMapper.session(
                     $0,
-                    timeZoneID: profile.preferences.timezone
+                    timeZoneID: timeZoneID
                 )
             }
             .sorted(by: sessionOrder)
         try await localDataSource.replaceSessions(
             sessions,
             forDay: dayKey,
-            timeZoneID: profile.preferences.timezone
+            timeZoneID: timeZoneID
         )
         return sessions
     }
 
-    private func requireProfile() async throws -> UserProfile {
-        guard let profile = try await localProfileDataSource.fetchProfile() else {
-            throw RemoteDomainMappingError.missingField("cachedProfile")
-        }
-        return profile
+    private func getTimeZoneID() async -> String {
+        (try? await localProfileDataSource.fetchProfile())?.preferences.timezone ?? TimeZone.current.identifier
     }
 
     private func sessionOrder(_ lhs: Session, _ rhs: Session) -> Bool {
@@ -109,14 +106,11 @@ public struct DefaultSessionRepository: SessionRepository {
         try await localDataSource.addSession(session)
     }
     public func updateSession(_ session: Session) async throws {
-        guard let profile = try await localProfileDataSource.fetchProfile() else {
-            throw RemoteDomainMappingError.missingField("cachedProfile")
-        }
+        let timeZoneID = await getTimeZoneID()
         guard let original = try await localDataSource.fetchSessions()
             .first(where: { $0.id == session.id }) else {
             throw SchedulingError.entityNotFound(id: session.id)
         }
-        let timeZoneID = profile.preferences.timezone
         let timeChanged = original.timeRange != session.timeRange
         let statusChanged = original.status != session.status
         let lockChanged = original.blocking != session.blocking

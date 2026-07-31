@@ -231,6 +231,9 @@ enum HomeRemoteMapper {
     }
 
     private static func parseDateTime(_ value: String, timeZoneID: String) throws -> Date {
+        if let date = try? parseISO8601Date(value) {
+            return date
+        }
         guard let date = dateTimeFormatter(timeZoneID: timeZoneID).date(from: value) else {
             throw RemoteDomainMappingError.invalidValue("dateTime.\(value)")
         }
