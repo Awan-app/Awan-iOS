@@ -6,14 +6,11 @@
 import Foundation
 
 public struct CreateAITaskRequestDTO: Encodable, Sendable {
-    public let title: String
-    public let description: String?
+    public let text: String
 
     public init(
-        title: String,
-        description: String? = nil
+        text: String,
     ) {
-        self.title = title
-        self.description = description
+        self.text = text
     }
 }

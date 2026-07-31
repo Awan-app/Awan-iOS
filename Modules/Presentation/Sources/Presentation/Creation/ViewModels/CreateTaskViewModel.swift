@@ -5,7 +5,7 @@ import Observation
 public enum CreateTaskPhase: Equatable {
     case composer
     case aiLoading
-    case aiResult(AITaskSheetItem)
+    case aiResult([AITaskSheetItem])
 }
 
 @Observable
@@ -18,7 +18,7 @@ public final class CreateTaskViewModel {
     public private(set) var didCreateTask = false
     public private(set) var activeNudge: ScheduleNudge?
     private(set) var phase: CreateTaskPhase = .composer
-    private(set) var pendingAITaskItem: AITaskSheetItem?
+    private(set) var pendingAITaskItems: [AITaskSheetItem] = []
     var quickText = ""
     var isAwanSchedulingEnabled = true
     var durationMinutes = 60
@@ -156,14 +156,12 @@ public final class CreateTaskViewModel {
             isSubmitting = false
         }
 
-        let startTime = Date()
-
         do {
-            let aiTaskItem = try await useCases.createAITask.execute(
-                CreateAITaskRequest(title: prompt)
+            let aiTaskItems = try await useCases.createAITask.execute(
+                CreateAITaskRequest(text: prompt)
             )
-            pendingAITaskItem = aiTaskItem
-            phase = .aiResult(aiTaskItem)
+            pendingAITaskItems = aiTaskItems
+            phase = .aiResult(aiTaskItems)
         } catch is CancellationError {
             phase = .composer
         } catch {
@@ -173,19 +171,35 @@ public final class CreateTaskViewModel {
     }
 
     func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
-        await createTask(
-            title: item.task.title,
-            description: item.task.description,
-            durationMinutes: finalDurationMinutes,
-            zoneID: nil,
-            isSplittable: item.task.isSplittable,
-            mandatory: item.task.mandatory,
-            startsAt: item.startTime
-        )
+        guard !isSubmitting else { return }
+        isSubmitting = true
+        errorMessage = nil
+        defer { isSubmitting = false }
+
+        do {
+            let result = try await useCases.createTask.execute(
+                CreateTaskRequest(
+                    title: item.task.title,
+                    description: item.task.description,
+                    durationMinutes: finalDurationMinutes,
+                    zoneID: item.task.zoneID,
+                    isSplittable: item.task.isSplittable,
+                    mandatory: item.task.mandatory,
+                    estimatedPoints: item.task.estimatedPoints,
+                    startsAt: item.startTime,
+                    selectedDay: selectedDay,
+                    timeZone: timeZone
+                )
+            )
+            activeNudge = result.nudge
+        } catch is CancellationError {
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     func dismissAITaskResult() {
-        pendingAITaskItem = nil
+        pendingAITaskItems = []
         phase = .composer
     }
 

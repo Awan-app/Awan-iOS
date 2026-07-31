@@ -26,10 +26,10 @@ struct CreateTaskView: View {
                 composerView(bindableViewModel: $bindableViewModel)
             case .aiLoading:
                 GoalCreationLoadingView(message: L10n.Home.aiCreatingTask)
-            case .aiResult(let item):
+            case .aiResult(let items):
                 AITaskResultSheet(
-                    item: item,
-                    onAdd: { finalDuration in
+                    items: items,
+                    onAdd: { item, finalDuration in
                         Task {
                             await viewModel.confirmAndAddAITask(
                                 item: item,

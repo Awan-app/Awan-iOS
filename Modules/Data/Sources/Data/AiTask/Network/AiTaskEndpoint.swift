@@ -29,10 +29,8 @@ enum AiTaskEndpoint: APIEndpoint {
     }
 
     var queryParameters: [String: String]? {
-        switch self {
-        case .createAITask:
-            return ["persist": "false"]
-        }
+        return nil
+       
     }
 
     var body: (any Encodable)? {

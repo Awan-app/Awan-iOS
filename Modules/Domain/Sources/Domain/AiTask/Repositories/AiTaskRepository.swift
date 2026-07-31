@@ -6,5 +6,5 @@
 import Foundation
 
 public protocol AiTaskRepository: Sendable {
-    func createAITask(title: String, description: String?) async throws -> AITaskSheetItem
+    func createAITask(text: String) async throws -> [AITaskSheetItem]
 }
