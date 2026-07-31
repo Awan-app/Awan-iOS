@@ -3623,6 +3623,23 @@
         }
       }
     },
+    "profile.logout": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تسجيل الخروج"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log Out"
+          }
+        }
+      }
+    },
     "profile.system": {
       "extractionState": "manual",
       "localizations": {
@@ -4469,6 +4486,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Edit profile"
+          }
+        }
+      }
+    },
+    "profile.logout_confirmation_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to log out?"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
           }
         }
       }

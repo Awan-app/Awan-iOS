@@ -24,6 +24,12 @@ public final class ProfileViewModel {
     /// Indicates if the profile data is fully loaded and ready
     var isReady: Bool = false
     
+    /// Indicates if a logout operation is in progress
+    var isLoggingOut: Bool = false
+    
+    /// Controls the presentation of the logout confirmation alert
+    var showLogoutConfirmation: Bool = false
+    
     /// User's real name and email
     var userName: String = ""
     var userEmail: String = ""
@@ -43,18 +49,21 @@ public final class ProfileViewModel {
     private let updateTimezoneUseCase: any UpdateTimezoneUseCase
     private let updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase
     private let fetchZonesUseCase: FetchZonesUseCase
+    private let logoutUseCase: LogoutUseCase
     
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
+        fetchZonesUseCase: FetchZonesUseCase,
+        logoutUseCase: LogoutUseCase,
         updateSessionDurationUseCase: any UpdateSessionDurationUseCase,
         updateTimezoneUseCase: any UpdateTimezoneUseCase,
         updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase,
-        fetchZonesUseCase: FetchZonesUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.updateSessionDurationUseCase = updateSessionDurationUseCase
         self.updateTimezoneUseCase = updateTimezoneUseCase
         self.fetchZonesUseCase = fetchZonesUseCase
+        self.logoutUseCase = logoutUseCase
         self.updateSleepScheduleUseCase = updateSleepScheduleUseCase
     }
     
@@ -143,5 +152,15 @@ public final class ProfileViewModel {
                     self?.isReady = true
                 }
             )
+    }
+    
+    public func logout() async {
+        isLoggingOut = true
+        do {
+            try await logoutUseCase.execute()
+        } catch {
+            print("Failed to logout: \(error)")
+        }
+        isLoggingOut = false
     }
 }

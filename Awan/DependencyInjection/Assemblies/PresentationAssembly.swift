@@ -145,13 +145,15 @@ struct PresentationAssembly: Assembly {
             let updateTimezoneUseCase = Self.resolve(UpdateTimezoneUseCase.self, from: resolver)
             let updateSleepScheduleUseCase = Self.resolve(UpdateSleepScheduleUseCase.self, from: resolver)
             let fetchZonesUseCase = Self.resolve(FetchZonesUseCase.self, from: resolver)
+            let logoutUseCase = Self.resolve(LogoutUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 ProfileViewModel(
                     getUserProfileUseCase: useCase,
+                    fetchZonesUseCase: fetchZonesUseCase,
+                    logoutUseCase: logoutUseCase,
                     updateSessionDurationUseCase: updateSessionDurationUseCase,
                     updateTimezoneUseCase: updateTimezoneUseCase,
                     updateSleepScheduleUseCase: updateSleepScheduleUseCase,
-                    fetchZonesUseCase: fetchZonesUseCase
                 )
             }
         }
