@@ -2,44 +2,6 @@ import Domain
 import Foundation
 
 extension CreateTaskViewModel {
-    func generateAITask(prompt: String) async {
-        guard !state.isSubmitting else { return }
-        state.isSubmitting = true
-        state.errorMessage = nil
-        state.phase = .aiLoading
-        defer { state.isSubmitting = false }
-
-        let startTime = Date()
-
-        do {
-            let aiTask = try await useCases.createAITask.execute(
-                CreateAITaskRequest(title: prompt)
-            )
-            showAIResult(task: aiTask, startTime: startTime)
-        } catch is CancellationError {
-            state.phase = .composer
-        } catch {
-            // TODO: Remove once backend is stable. Fall back to mock data so the
-            // UI flow is always testable end-to-end during development.
-            print("[CreateTaskViewModel] AI endpoint failed (\(error)). Using mock data.")
-            showAIResult(
-                task: AwanTask(
-                    id: UUID(),
-                    title: prompt,
-                    description: nil,
-                    status: .pending,
-                    goalID: nil,
-                    duration: try! TaskDuration(minutes: 60),
-                    isSplittable: false,
-                    mandatory: true,
-                    estimatedPoints: 20,
-                    dependencyIDs: [],
-                    category: TaskCategory(id: UUID(), name: "Study")
-                ),
-                startTime: startTime
-            )
-        }
-    }
 
     func startRecording() async {
         guard state.quickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
@@ -108,9 +70,5 @@ extension CreateTaskViewModel {
             second: 0,
             of: selectedDay
         ) ?? selectedDay
-    }
-
-    private func showAIResult(task: AwanTask, startTime: Date) {
-        state.phase = .aiResult(AITaskSheetItem(task: task, startTime: startTime))
     }
 }

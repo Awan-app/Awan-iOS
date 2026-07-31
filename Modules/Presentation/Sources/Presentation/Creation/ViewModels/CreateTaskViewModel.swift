@@ -6,29 +6,7 @@ import Observation
 @MainActor
 final class CreateTaskViewModel {
     var state: CreateTaskState
-public enum CreateTaskPhase: Equatable {
-    case composer
-    case aiLoading
-    case aiResult([AITaskSheetItem])
-}
-
-@Observable
-@MainActor
-public final class CreateTaskViewModel {
-    public private(set) var zones: [Zone] = []
-    public private(set) var isLoadingZones = false
-    public private(set) var isSubmitting = false
-    public private(set) var errorMessage: String?
-    public private(set) var didCreateTask = false
-    public private(set) var activeNudge: ScheduleNudge?
-    private(set) var phase: CreateTaskPhase = .composer
-    private(set) var pendingAITaskItems: [AITaskSheetItem] = []
-    var quickText = ""
-    var isAwanSchedulingEnabled = true
-    var durationMinutes = 60
-    var startsAt: Date
-    var selectedZoneID: UUID?
-    private(set) var isRecording = false
+    private(set) var activeNudge: ScheduleNudge?
 
     private let selectedDay: Date
 
@@ -94,7 +72,7 @@ public final class CreateTaskViewModel {
         guard !title.isEmpty else { return }
 
         if state.isAwanSchedulingEnabled {
-            await generateAITask(prompt: title)
+            await createTaskWithAwan(prompt: title)
         } else {
             await createTask(
                 title: title,
@@ -144,61 +122,31 @@ public final class CreateTaskViewModel {
         }
     }
 
-    func dismissError() {
-        state.errorMessage = nil
-    }
-
-    func beginRecording() async {
-        guard quickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-              !wantsToRecord else {
-            return
-        }
-    func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
-        await createTask(
-            title: item.task.title,
-            description: item.task.description,
-            durationMinutes: finalDurationMinutes,
-            categoryID: nil,
-            isSplittable: item.task.isSplittable,
-            mandatory: item.task.mandatory,
-            startsAt: item.startTime
-        )
-    }
-
-        wantsToRecord = true
-        pendingTranscription = ""
-        errorMessage = nil
-    func dismissAITaskResult() {
-        state.phase = .composer
-
-    private func createTaskWithAwan(prompt: String) async {
-        guard !isSubmitting else { return }
-        isSubmitting = true
-        errorMessage = nil
-        phase = .aiLoading
-        defer {
-            isSubmitting = false
-        }
+    func createTaskWithAwan(prompt: String) async {
+        guard !state.isSubmitting else { return }
+        state.startAILoading()
 
         do {
             let aiTaskItems = try await useCases.createAITask.execute(
                 CreateAITaskRequest(text: prompt)
             )
-            pendingAITaskItems = aiTaskItems
-            phase = .aiResult(aiTaskItems)
+            state.setAIResult(aiTaskItems)
         } catch is CancellationError {
-            phase = .composer
+            state.cancelAI()
         } catch {
-            errorMessage = error.localizedDescription
-            phase = .composer
+            state.setAIError(error.localizedDescription)
         }
     }
 
+    func generateAITask(prompt: String) async {
+        await createTaskWithAwan(prompt: prompt)
+    }
+
     func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
-        guard !isSubmitting else { return }
-        isSubmitting = true
-        errorMessage = nil
-        defer { isSubmitting = false }
+        guard !state.isSubmitting else { return }
+        state.isSubmitting = true
+        state.errorMessage = nil
+        defer { state.isSubmitting = false }
 
         do {
             let result = try await useCases.createTask.execute(
@@ -206,7 +154,7 @@ public final class CreateTaskViewModel {
                     title: item.task.title,
                     description: item.task.description,
                     durationMinutes: finalDurationMinutes,
-                    zoneID: item.task.zoneID,
+                    categoryID: item.task.category?.id,
                     isSplittable: item.task.isSplittable,
                     mandatory: item.task.mandatory,
                     estimatedPoints: item.task.estimatedPoints,
@@ -215,16 +163,20 @@ public final class CreateTaskViewModel {
                     timeZone: timeZone
                 )
             )
+            state.didCreateTask = true
             activeNudge = result.nudge
         } catch is CancellationError {
         } catch {
-            errorMessage = error.localizedDescription
+            state.errorMessage = error.localizedDescription
         }
     }
 
     func dismissAITaskResult() {
-        pendingAITaskItems = []
-        phase = .composer
+        state.dismissAITaskResult()
+    }
+
+    func dismissError() {
+        state.errorMessage = nil
     }
 
     func beginRecording() async {
@@ -239,3 +191,4 @@ public final class CreateTaskViewModel {
         resetRecording()
     }
 }
+

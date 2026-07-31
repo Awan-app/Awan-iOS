@@ -16,7 +16,6 @@ extension CreateAiTaskResponseDTO {
                 description: taskPayload.description,
                 status: .pending,
                 goalID: taskPayload.goalId,
-                zoneID: nil,
                 duration: try! TaskDuration(minutes: max(1, taskPayload.estimatedDuration ?? 60)),
                 isSplittable: taskPayload.allowTaskSplitting ?? false,
                 mandatory: taskPayload.mandatory ?? false,

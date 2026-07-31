@@ -152,8 +152,37 @@ final class CreateTaskViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.state.quickText, "Read Clean Code")
     }
 
+    func testCreateTaskWithAwanUpdatesPhaseAndItemsInState() async throws {
+        let stub = CreateTaskUseCaseStub(zones: [])
+        let aiItem = AITaskSheetItem.mock
+        let aiUseCase = CreateAITaskUseCaseStub(items: [aiItem])
+        let viewModel = makeViewModel(stub: stub, aiUseCase: aiUseCase)
+
+        await viewModel.createTaskWithAwan(prompt: "Study math")
+
+        XCTAssertEqual(viewModel.state.pendingAITaskItems, [aiItem])
+        XCTAssertEqual(viewModel.state.phase, .aiResult([aiItem]))
+        XCTAssertFalse(viewModel.state.isSubmitting)
+    }
+
+    func testDismissAITaskResultResetsState() async throws {
+        let stub = CreateTaskUseCaseStub(zones: [])
+        let aiItem = AITaskSheetItem.mock
+        let aiUseCase = CreateAITaskUseCaseStub(items: [aiItem])
+        let viewModel = makeViewModel(stub: stub, aiUseCase: aiUseCase)
+
+        await viewModel.createTaskWithAwan(prompt: "Study math")
+        XCTAssertEqual(viewModel.state.phase, .aiResult([aiItem]))
+
+        viewModel.dismissAITaskResult()
+
+        XCTAssertEqual(viewModel.state.pendingAITaskItems, [])
+        XCTAssertEqual(viewModel.state.phase, .composer)
+    }
+
     private func makeViewModel(
         stub: CreateTaskUseCaseStub,
+        aiUseCase: CreateAITaskUseCase? = nil,
         selectedDay: Date? = nil,
         speechTranscriber: SpeechTranscriberStub? = nil
     ) -> CreateTaskViewModel {
@@ -161,7 +190,7 @@ final class CreateTaskViewModelTests: XCTestCase {
             useCases: CreationUseCases(
                 fetchZones: stub,
                 createTask: stub,
-                createAITask: MockCreateAITaskUseCase(),
+                createAITask: aiUseCase ?? MockCreateAITaskUseCase(),
                 userProfile: UserProfileUseCaseStub(),
                 goalDecomposition: GoalDecompositionUseCases(
                     sendMessage: GoalMessageUseCaseStub(),
@@ -315,5 +344,12 @@ private actor CreateTaskUseCaseStub: FetchZonesUseCase, CreateTaskUseCase {
 
     func createdRequest() -> CreateTaskRequest? {
         request
+    }
+}
+
+private struct CreateAITaskUseCaseStub: CreateAITaskUseCase {
+    let items: [AITaskSheetItem]
+    func execute(_ request: CreateAITaskRequest) async throws -> [AITaskSheetItem] {
+        items
     }
 }
