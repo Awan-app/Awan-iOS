@@ -88,6 +88,41 @@ public struct MockUpdateTemplateUseCase: UpdateTemplateUseCase {
     }
 }
 
+public struct MockUpdateTemplateDetailsUseCase: UpdateTemplateDetailsUseCase {
+    public init() {}
+    public func execute(id: UUID, name: String, daysOfWeek: [String]) async throws -> Template {
+        fatalError("Not implemented in preview mock")
+    }
+}
+
+public struct MockDeleteTemplateUseCase: DeleteTemplateUseCase {
+    public init() {}
+    public func execute(id: UUID) async throws {
+        fatalError("Not implemented in preview mock")
+    }
+}
+
+public struct MockDeleteTemplateOverrideUseCase: DeleteTemplateOverrideUseCase {
+    public init() {}
+    public func execute(id: UUID) async throws {
+        fatalError("Not implemented in preview mock")
+    }
+}
+
+public struct MockCreateTemplateOverrideUseCase: CreateTemplateOverrideUseCase {
+    public init() {}
+    public func execute(name: String?, dateOfDay: String, zones: [Zone]?) async throws -> TemplateOverride {
+        fatalError("Not implemented in preview mock")
+    }
+}
+
+public struct MockUpdateTemplateOverrideUseCase: UpdateTemplateOverrideUseCase {
+    public init() {}
+    public func execute(id: UUID, name: String?, dateOfDay: String) async throws -> TemplateOverride {
+        fatalError("Not implemented in preview mock")
+    }
+}
+
 public extension Zone {
     static var mockDailyZones: [Zone] {
         do {
@@ -246,7 +281,6 @@ public extension AwanTask {
             description: "Mock Task Description",
             status: .inProgress,
             goalID: nil,
-            zoneID: nil,
             duration: try! TaskDuration(minutes: 60),
             isSplittable: false,
             mandatory: false,
@@ -264,7 +298,6 @@ public extension AITaskSheetItem {
                 description: "Create a login page with email and password fields",
                 status: .pending,
                 goalID: UUID(),
-                zoneID: nil,
                 duration: try! TaskDuration(minutes: 60),
                 isSplittable: false,
                 mandatory: true,

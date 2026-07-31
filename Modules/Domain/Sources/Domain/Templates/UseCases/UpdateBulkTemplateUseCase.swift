@@ -4,7 +4,7 @@ public protocol UpdateTemplateUseCase: Sendable {
     func execute(id: UUID, zones: [Zone]) async throws -> Template
 }
 
-public struct DefaultUpdateTemplateUseCase: UpdateTemplateUseCase {
+public struct DefaultBulkUpdateTemplateUseCase: UpdateTemplateUseCase {
     private let repository: any TemplateRepository
 
     public init(repository: any TemplateRepository) {
@@ -20,6 +20,6 @@ public struct DefaultUpdateTemplateUseCase: UpdateTemplateUseCase {
                 endTime: $0.endTime
             )
         }
-        return try await repository.updateTemplate(id: id, zones: payload)
+        return try await repository.updateBulkTemplate(id: id, zones: payload)
     }
 }

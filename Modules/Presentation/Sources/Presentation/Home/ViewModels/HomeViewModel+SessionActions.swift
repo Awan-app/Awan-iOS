@@ -8,7 +8,9 @@ extension HomeViewModel {
             return
         }
         let rawMinutes = verticalPoints / hourHeight * 60
-        let snappedMinutes = Int((rawMinutes / 15).rounded()) * 15
+        let snapIntervalMinutes: CGFloat = 5
+        let snappedMinutes = Int((rawMinutes / snapIntervalMinutes).rounded())
+            * Int(snapIntervalMinutes)
         guard snappedMinutes != 0 else { return }
 
         let start = item.start.addingTimeInterval(Double(snappedMinutes) * 60)

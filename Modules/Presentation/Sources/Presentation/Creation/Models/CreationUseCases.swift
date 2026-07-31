@@ -3,7 +3,6 @@ import Domain
 public struct CreationUseCases: Sendable {
     public let fetchZones: any FetchZonesUseCase
     public let createTask: any CreateTaskUseCase
-    public let createTaskWithAwan: any CreateTaskWithAwanUseCase
     public let createAITask: any CreateAITaskUseCase
     public let userProfile: any GetUserProfileUseCase
     public let goalDecomposition: GoalDecompositionUseCases
@@ -11,14 +10,12 @@ public struct CreationUseCases: Sendable {
     public init(
         fetchZones: any FetchZonesUseCase,
         createTask: any CreateTaskUseCase,
-        createTaskWithAwan: any CreateTaskWithAwanUseCase,
         createAITask: any CreateAITaskUseCase,
         userProfile: any GetUserProfileUseCase,
         goalDecomposition: GoalDecompositionUseCases
     ) {
         self.fetchZones = fetchZones
         self.createTask = createTask
-        self.createTaskWithAwan = createTaskWithAwan
         self.createAITask = createAITask
         self.userProfile = userProfile
         self.goalDecomposition = goalDecomposition

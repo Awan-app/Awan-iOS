@@ -63,7 +63,6 @@ final class HomeRepositoryWriteTests: XCTestCase {
         )
         let repository = DefaultSessionRepository(
             localDataSource: sessions,
-            localTaskDataSource: tasks,
             localProfileDataSource: profiles,
             remoteDataSource: remote
         )
@@ -142,7 +141,12 @@ final class HomeRepositoryWriteTests: XCTestCase {
             localDataSource: tasks,
             localSessionDataSource: sessions,
             localProfileDataSource: profiles,
-            remoteTaskDataSource: UnavailableRemoteTaskDataSource()
+            remoteTaskDataSource: UnavailableRemoteTaskDataSource(),
+            remoteGoalDataSource: GoalRemoteDataSourceTestStub(mode: .failure),
+            remoteSessionDataSource: TestRemoteSessionDataSource(
+                sessions: [],
+                deleteFails: false
+            )
         )
 
         let selected = try await repository.fetchTasks(for: date(day: 22, hour: 0))
@@ -175,7 +179,6 @@ final class HomeRepositoryWriteTests: XCTestCase {
         let remote = TestRemoteSessionDataSource(sessions: [], deleteFails: true)
         let repository = DefaultSessionRepository(
             localDataSource: sessions,
-            localTaskDataSource: tasks,
             localProfileDataSource: profiles,
             remoteDataSource: remote
         )
@@ -191,6 +194,200 @@ final class HomeRepositoryWriteTests: XCTestCase {
         XCTAssertEqual(cachedSessions, [session])
         let deletedIDs = await remote.deletedSessionIDs()
         XCTAssertEqual(deletedIDs, [session.id])
+    }
+
+    func testTaskCreationSendsCategoryOnTaskAndZoneOnSession() async throws {
+        let category = TaskCategory(id: UUID(), name: "Morning Focus")
+        let zoneID = UUID()
+        let taskID = UUID()
+        let sessionID = UUID()
+        let task = try AwanTask(
+            id: UUID(),
+            title: "Prepare presentation",
+            description: "Create slides and rehearse",
+            duration: TaskDuration(minutes: 120),
+            isSplittable: false,
+            category: category
+        )
+        let response = TaskWithSessionsResponseDTO(
+            task: taskResponse(id: taskID, category: category),
+            sessions: [
+                SessionResponseDTO(
+                    id: sessionID,
+                    start: "2026-07-29T09:00:00",
+                    end: "2026-07-29T11:00:00",
+                    status: "SCHEDULED",
+                    locked: false,
+                    zoneId: zoneID,
+                    taskID: taskID
+                )
+            ]
+        )
+        let container = try makeContainer()
+        let remoteSessions = TestRemoteSessionDataSource(
+            sessions: [],
+            deleteFails: false,
+            createResponse: response
+        )
+        let repository = DefaultTaskRepository(
+            localDataSource: SwiftDataTaskDataSource(modelContainer: container),
+            localSessionDataSource: SwiftDataSessionDataSource(modelContainer: container),
+            localProfileDataSource: SwiftDataUserProfileDataSource(modelContainer: container),
+            remoteTaskDataSource: UnavailableRemoteTaskDataSource(),
+            remoteGoalDataSource: GoalRemoteDataSourceTestStub(mode: .failure),
+            remoteSessionDataSource: remoteSessions
+        )
+
+        _ = try await repository.addTask(
+            task,
+            sessionZoneID: zoneID,
+            startsAt: date(day: 29, hour: 9),
+            durationMinutes: 120,
+            timeZoneID: "UTC"
+        )
+
+        let requests = await remoteSessions.createdRequests()
+        let request = try XCTUnwrap(requests.first)
+        XCTAssertEqual(request.task.categoryId, category.id)
+        XCTAssertEqual(request.sessions?.first?.zoneId, zoneID)
+    }
+
+    func testStandaloneCreationEncodesNullCategoryAndZone() throws {
+        let request = CreateTaskWithSessionsRequestDTO(
+            task: .init(title: "Standalone", categoryId: nil),
+            sessions: [
+                .init(
+                    zoneId: nil,
+                    start: "2026-07-29T09:00:00",
+                    end: "2026-07-29T10:00:00",
+                    status: "SCHEDULED"
+                )
+            ]
+        )
+        let object = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: JSONEncoder().encode(request))
+                as? [String: Any]
+        )
+        let task = try XCTUnwrap(object["task"] as? [String: Any])
+        let session = try XCTUnwrap((object["sessions"] as? [[String: Any]])?.first)
+
+        XCTAssertTrue(task["categoryId"] is NSNull)
+        XCTAssertTrue(session["zoneId"] is NSNull)
+    }
+
+    func testCategoryCreationEncodesCategoryAndResolvedZone() throws {
+        let categoryID = UUID()
+        let zoneID = UUID()
+        let request = CreateTaskWithSessionsRequestDTO(
+            task: .init(title: "Prepare presentation", categoryId: categoryID),
+            sessions: [
+                .init(
+                    zoneId: zoneID,
+                    start: "2026-07-29T09:00:00",
+                    end: "2026-07-29T10:00:00",
+                    status: "SCHEDULED"
+                )
+            ]
+        )
+        let object = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: JSONEncoder().encode(request))
+                as? [String: Any]
+        )
+        let task = try XCTUnwrap(object["task"] as? [String: Any])
+        let session = try XCTUnwrap((object["sessions"] as? [[String: Any]])?.first)
+
+        XCTAssertEqual(task["categoryId"] as? String, categoryID.uuidString)
+        XCTAssertEqual(session["zoneId"] as? String, zoneID.uuidString)
+    }
+
+    func testTaskUpdateSendsCategoryAndReplacesCachedSessions() async throws {
+        let category = TaskCategory(id: UUID(), name: "Evening Review")
+        let zoneID = UUID()
+        let taskID = UUID()
+        let updatedTask = try AwanTask(
+            id: taskID,
+            title: "Updated",
+            duration: TaskDuration(minutes: 60),
+            isSplittable: false,
+            category: category
+        )
+        let oldSession = Session(
+            id: UUID(),
+            taskID: taskID,
+            zoneID: UUID(),
+            timeRange: try TimeRange(
+                start: date(day: 29, hour: 9),
+                end: date(day: 29, hour: 10)
+            ),
+            blocking: false,
+            status: .planned
+        )
+        let authoritativeSessionID = UUID()
+        let remoteTasks = RecordingRemoteTaskDataSource(
+            updateResponse: taskResponse(id: taskID, category: category)
+        )
+        let remoteSessions = TestRemoteSessionDataSource(
+            sessions: [
+                SessionResponseDTO(
+                    id: authoritativeSessionID,
+                    start: "2026-07-29T18:00:00",
+                    end: "2026-07-29T19:00:00",
+                    status: "SCHEDULED",
+                    locked: false,
+                    zoneId: zoneID,
+                    taskID: taskID
+                )
+            ],
+            deleteFails: false
+        )
+        let container = try makeContainer()
+        let tasks = SwiftDataTaskDataSource(modelContainer: container)
+        let sessions = SwiftDataSessionDataSource(modelContainer: container)
+        let profiles = SwiftDataUserProfileDataSource(modelContainer: container)
+        try await tasks.addTask(updatedTask)
+        try await sessions.addSession(oldSession)
+        try await profiles.replaceProfile(profile())
+        let repository = DefaultTaskRepository(
+            localDataSource: tasks,
+            localSessionDataSource: sessions,
+            localProfileDataSource: profiles,
+            remoteTaskDataSource: remoteTasks,
+            remoteGoalDataSource: GoalRemoteDataSourceTestStub(mode: .failure),
+            remoteSessionDataSource: remoteSessions
+        )
+
+        try await repository.updateTask(updatedTask)
+
+        let capturedUpdate = await remoteTasks.lastUpdate()
+        let update = try XCTUnwrap(capturedUpdate)
+        XCTAssertEqual(update.taskID, taskID)
+        XCTAssertEqual(update.request.categoryID, category.id)
+        let requestedTaskIDs = await remoteSessions.requestedTaskIDs()
+        XCTAssertEqual(requestedTaskIDs, [taskID])
+        let cached = try await sessions.fetchSessions()
+        XCTAssertEqual(cached.map(\.id), [authoritativeSessionID])
+        XCTAssertEqual(cached.first?.zoneID, zoneID)
+    }
+
+    private func taskResponse(
+        id: UUID,
+        category: TaskCategory?
+    ) -> TaskInfoResponseDTO {
+        TaskInfoResponseDTO(
+            id: id,
+            title: "Prepare presentation",
+            description: nil,
+            status: "SCHEDULED",
+            goalID: nil,
+            estimatedDuration: 60,
+            mandatory: true,
+            estimatedPoints: 50,
+            isSplittable: false,
+            dependencyIDs: [],
+            category: category.map {
+                CategoryResponseDTO(id: $0.id, name: $0.name)
+            }
+        )
     }
 
     private func profile() throws -> UserProfile {
@@ -235,17 +432,27 @@ private enum RepositoryWriteTestError: Error {
 private actor TestRemoteSessionDataSource: RemoteSessionDataSourceProtocol {
     private var deletedIDs: [UUID] = []
     private var requestedDates: [String] = []
+    private var taskSessionIDs: [UUID] = []
+    private var createRequestsValue: [CreateTaskWithSessionsRequestDTO] = []
     private let sessions: [SessionResponseDTO]
     private let deleteFails: Bool
+    private let createResponse: TaskWithSessionsResponseDTO?
 
-    init(sessions: [SessionResponseDTO], deleteFails: Bool) {
+    init(
+        sessions: [SessionResponseDTO],
+        deleteFails: Bool,
+        createResponse: TaskWithSessionsResponseDTO? = nil
+    ) {
         self.sessions = sessions
         self.deleteFails = deleteFails
+        self.createResponse = createResponse
     }
 
     func deletedSessionIDs() -> [UUID] { deletedIDs }
 
     func requestedSessionDates() -> [String] { requestedDates }
+    func requestedTaskIDs() -> [UUID] { taskSessionIDs }
+    func createdRequests() -> [CreateTaskWithSessionsRequestDTO] { createRequestsValue }
 
     func getSessions(date: String) -> [SessionResponseDTO] {
         requestedDates.append(date)
@@ -284,9 +491,61 @@ private actor TestRemoteSessionDataSource: RemoteSessionDataSourceProtocol {
     func createTaskWithSessions(
         request: CreateTaskWithSessionsRequestDTO
     ) throws -> TaskWithSessionsResponseDTO {
+        createRequestsValue.append(request)
+        guard let createResponse else {
+            throw RepositoryWriteTestError.remoteFailure
+        }
+        return createResponse
+    }
+    func getTaskSessions(taskID: UUID) -> [SessionResponseDTO] {
+        taskSessionIDs.append(taskID)
+        return sessions
+    }
+}
+
+private actor RecordingRemoteTaskDataSource: RemoteTaskDataSource {
+    struct Update: Sendable {
+        let taskID: UUID
+        let request: UpdateTaskRequestDTO
+    }
+
+    private let updateResponse: TaskInfoResponseDTO
+    private var update: Update?
+
+    init(updateResponse: TaskInfoResponseDTO) {
+        self.updateResponse = updateResponse
+    }
+
+    func lastUpdate() -> Update? { update }
+    func getTasks(date: String) async throws -> [TaskWithSessionsResponseDTO] { [] }
+    func getTasks(
+        startDate: String,
+        endDate: String
+    ) async throws -> [String: [TaskWithSessionsResponseDTO]] { [:] }
+    func createTask(_ request: CreateTaskRequestDTO) async throws -> TaskInfoResponseDTO {
         throw RepositoryWriteTestError.remoteFailure
     }
-    func getTaskSessions(taskID: UUID) -> [SessionResponseDTO] { sessions }
+    func getTask(taskID: UUID) async throws -> TaskInfoResponseDTO {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+    func updateTask(
+        taskID: UUID,
+        request: UpdateTaskRequestDTO
+    ) async throws -> TaskInfoResponseDTO {
+        update = Update(taskID: taskID, request: request)
+        return updateResponse
+    }
+    func moveTask(
+        taskID: UUID,
+        request: MoveTaskRequestDTO
+    ) async throws -> TaskInfoResponseDTO {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+    func deleteTask(taskID: UUID, cascade: Bool) async throws {}
+    func addDependency(taskID: UUID, request: AddDependencyRequestDTO) async throws {}
+    func removeDependency(taskID: UUID, dependsOnTaskID: UUID) async throws {}
+    func listDependencies(taskID: UUID) async throws -> [TaskInfoResponseDTO] { [] }
+    func listDependents(taskID: UUID) async throws -> [TaskInfoResponseDTO] { [] }
 }
 
 private struct UnavailableRemoteTaskDataSource: RemoteTaskDataSource {

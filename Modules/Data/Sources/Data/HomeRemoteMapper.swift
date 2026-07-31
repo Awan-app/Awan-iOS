@@ -38,7 +38,6 @@ enum HomeRemoteMapper {
 
     static func task(
         _ dto: TaskInfoResponseDTO,
-        zoneID: UUID?,
         defaultDuration: Int
     ) throws -> AwanTask {
         try AwanTask(
@@ -47,12 +46,37 @@ enum HomeRemoteMapper {
             description: dto.description,
             status: taskStatus(dto.status),
             goalID: dto.goalID,
-            zoneID: zoneID,
             duration: TaskDuration(minutes: dto.estimatedDuration ?? defaultDuration),
             isSplittable: dto.isSplittable,
             mandatory: dto.mandatory,
             estimatedPoints: dto.estimatedPoints,
-            dependencyIDs: Set(dto.dependencyIDs)
+            dependencyIDs: Set(dto.dependencyIDs),
+            category: dto.category.map {
+                TaskCategory(id: $0.id, name: $0.name)
+            }
+        )
+    }
+
+    static func goal(_ dto: GoalInfoResponseDTO) throws -> Goal {
+        let deadline: Date?
+        if let targetDate = dto.targetDate {
+            guard let parsedDeadline = LocalDateKey.date(from: targetDate) else {
+                throw RemoteDomainMappingError.invalidValue(
+                    "goal.targetDate.\(targetDate)"
+                )
+            }
+            deadline = parsedDeadline
+        } else {
+            deadline = nil
+        }
+
+        return Goal(
+            id: dto.id,
+            name: dto.title,
+            description: dto.description,
+            status: try goalStatus(dto.status),
+            deadline: deadline,
+            createdAt: try parseISO8601Date(dto.createdAt)
         )
     }
 
@@ -79,7 +103,8 @@ enum HomeRemoteMapper {
             name: dto.name,
             color: ZoneColor(hex: dto.color ?? "#6C63FF"),
             startTime: parseTime(dto.startTime),
-            endTime: parseTime(dto.endTime)
+            endTime: parseTime(dto.endTime),
+            category: TaskCategory(id: dto.category.id, name: dto.category.name)
         )
     }
 
@@ -124,6 +149,17 @@ enum HomeRemoteMapper {
         )
     }
 
+    static func templateOverride(
+        _ dto: TemplateOverrideResponseDTO
+    ) throws -> TemplateOverride {
+        return TemplateOverride(
+            id: dto.id,
+            name: dto.name,
+            dateOfDay: dto.dateOfDay,
+            zones: try dto.zones.map(zone)
+        )
+    }
+
     static func formatDateTime(_ date: Date, timeZoneID: String) -> String {
         dateTimeFormatter(timeZoneID: timeZoneID).string(from: date)
     }
@@ -135,6 +171,15 @@ enum HomeRemoteMapper {
         case "COMPLETED": .completed
         case "CANCELLED": .cancelled
         default: throw RemoteDomainMappingError.invalidValue("task.status.\(raw)")
+        }
+    }
+
+    private static func goalStatus(_ raw: String) throws -> GoalStatus {
+        switch raw.uppercased() {
+        case "ACTIVE": .active
+        case "COMPLETED": .completed
+        case "CANCELLED": .cancelled
+        default: throw RemoteDomainMappingError.invalidValue("goal.status.\(raw)")
         }
     }
 
@@ -188,6 +233,26 @@ enum HomeRemoteMapper {
     private static func parseDateTime(_ value: String, timeZoneID: String) throws -> Date {
         guard let date = dateTimeFormatter(timeZoneID: timeZoneID).date(from: value) else {
             throw RemoteDomainMappingError.invalidValue("dateTime.\(value)")
+        }
+        return date
+    }
+
+    private static func parseISO8601Date(_ value: String) throws -> Date {
+        let fractionalFormatter = ISO8601DateFormatter()
+        fractionalFormatter.formatOptions = [
+            .withInternetDateTime,
+            .withFractionalSeconds,
+        ]
+        if let date = fractionalFormatter.date(from: value) {
+            return date
+        }
+
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        guard let date = formatter.date(from: value) else {
+            throw RemoteDomainMappingError.invalidValue(
+                "goal.createdAt.\(value)"
+            )
         }
         return date
     }

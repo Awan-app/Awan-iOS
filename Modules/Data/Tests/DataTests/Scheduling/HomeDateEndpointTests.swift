@@ -5,7 +5,7 @@ import XCTest
 
 final class HomeDateEndpointTests: XCTestCase {
     func testTaskDateEndpointMatchesBackendContract() throws {
-        let endpoint = TaskEndpoint.getTasksByDate("2026-07-22")
+        let endpoint = TaskEndpoint.getTasksByDate(date: "2026-07-22")
 
         XCTAssertEqual(endpoint.path, "/tasks/date/2026-07-22")
         XCTAssertEqual(endpoint.method, .get)
@@ -29,7 +29,7 @@ final class HomeDateEndpointTests: XCTestCase {
     }
 
     func testSessionDateEndpointMatchesBackendContract() {
-        let endpoint = SessionEndpoint.getSessionsByDate("2026-07-22")
+        let endpoint = SessionEndpoint.getSessionsByDate(date: "2026-07-22")
 
         XCTAssertEqual(endpoint.path, "/sessions/date/2026-07-22")
         XCTAssertEqual(endpoint.method, .get)

@@ -50,7 +50,7 @@ struct GlobalCreationSheet: View {
         }
         .background(AppColors.screenBackground.ignoresSafeArea())
         .interactiveDismissDisabled(
-            taskViewModel.isSubmitting || goalViewModel.phase == .confirming
+            taskViewModel.state.isSubmitting || goalViewModel.phase == .confirming
         )
     }
 }

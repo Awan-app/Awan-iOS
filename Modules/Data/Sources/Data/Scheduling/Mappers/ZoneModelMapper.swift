@@ -8,7 +8,10 @@ extension ZoneModel {
             name: name,
             color: ZoneColor(hex: colorHex),
             startTime: LocalTime(hour: startHour, minute: startMinute),
-            endTime: LocalTime(hour: endHour, minute: endMinute)
+            endTime: LocalTime(hour: endHour, minute: endMinute),
+            category: categoryID.flatMap { id in
+                categoryName.map { TaskCategory(id: id, name: $0) }
+            }
         )
     }
 
@@ -21,6 +24,8 @@ extension ZoneModel {
             startMinute: zone.startTime.minute,
             endHour: zone.endTime.hour,
             endMinute: zone.endTime.minute,
+            categoryID: zone.category?.id,
+            categoryName: zone.category?.name,
             templateID: templateID,
             templateOverrideID: templateOverrideID
         )
@@ -33,6 +38,8 @@ extension ZoneModel {
         startMinute = zone.startTime.minute
         endHour = zone.endTime.hour
         endMinute = zone.endTime.minute
+        categoryID = zone.category?.id
+        categoryName = zone.category?.name
     }
 
     var hasValidOwner: Bool {

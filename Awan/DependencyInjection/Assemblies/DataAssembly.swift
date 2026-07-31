@@ -64,7 +64,11 @@ struct DataAssembly: Assembly {
         }
         container.register(GoalRepository.self) { resolver in
             DefaultGoalRepository(
-                localDataSource: Self.resolve(LocalGoalDataSource.self, from: resolver)
+                localDataSource: Self.resolve(LocalGoalDataSource.self, from: resolver),
+                remoteDataSource: Self.resolve(
+                    RemoteGoalDataSource.self,
+                    from: resolver
+                )
             )
         }
         container.register(GoalDecompositionRepository.self) { resolver in
@@ -78,7 +82,6 @@ struct DataAssembly: Assembly {
         container.register(SessionRepository.self) { resolver in
             DefaultSessionRepository(
                 localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver),
-                localTaskDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver),
                 localProfileDataSource: Self.resolve(
                     LocalUserProfileDataSource.self,
                     from: resolver
@@ -103,6 +106,12 @@ struct DataAssembly: Assembly {
             DefaultTemplateRepository(
                 remoteDataSource: Self.resolve(RemoteTemplateDataSourceProtocol.self, from: resolver),
                 localDataSource: Self.resolve(LocalTemplateDataSource.self, from: resolver)
+            )
+        }
+        container.register(TemplateOverrideRepository.self) { resolver in
+            DefaultTemplateOverrideRepository(
+                remoteDataSource: Self.resolve(RemoteTemplateOverrideDataSourceProtocol.self, from: resolver),
+                localDataSource: Self.resolve(LocalTemplateOverrideDataSource.self, from: resolver)
             )
         }
 
@@ -136,10 +145,16 @@ struct DataAssembly: Assembly {
         }
         .inObjectScope(.container)
 
+        container.register(LocalDataWiper.self) { [self] _ in
+            SwiftDataLocalDataWiper(modelContainer: self.modelContainer)
+        }
+        .inObjectScope(.container)
+
         container.register(AuthRepository.self) { resolver in
             AuthRepositoryImpl(
                 remoteDataSource: Self.resolve(AuthDataSource.self, from: resolver),
-                sessionDataSource: Self.resolve(AuthSessionDataSource.self, from: resolver)
+                sessionDataSource: Self.resolve(AuthSessionDataSource.self, from: resolver),
+                localDataWiper: Self.resolve(LocalDataWiper.self, from: resolver)
             )
         }
         .inObjectScope(.container)

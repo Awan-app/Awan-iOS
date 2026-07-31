@@ -4,18 +4,15 @@ import Foundation
 
 public struct DefaultSessionRepository: SessionRepository {
     private let localDataSource: any LocalSessionDataSource
-    private let localTaskDataSource: any LocalTaskDataSource
     private let localProfileDataSource: any LocalUserProfileDataSource
     private let remoteDataSource: any RemoteSessionDataSourceProtocol
 
     public init(
         localDataSource: any LocalSessionDataSource,
-        localTaskDataSource: any LocalTaskDataSource,
         localProfileDataSource: any LocalUserProfileDataSource,
         remoteDataSource: any RemoteSessionDataSourceProtocol
     ) {
         self.localDataSource = localDataSource
-        self.localTaskDataSource = localTaskDataSource
         self.localProfileDataSource = localProfileDataSource
         self.remoteDataSource = remoteDataSource
     }
@@ -92,18 +89,6 @@ public struct DefaultSessionRepository: SessionRepository {
             forDay: dayKey,
             timeZoneID: profile.preferences.timezone
         )
-        let sessionsByTaskID = Dictionary(grouping: sessions, by: \.taskID)
-        for taskID in sessionsByTaskID.keys {
-            guard let task = try await localTaskDataSource.fetchTask(id: taskID) else { continue }
-            let inferredZoneID = sessionsByTaskID[taskID]?
-                .sorted { $0.timeRange.start < $1.timeRange.start }
-                .compactMap(\.zoneID)
-                .first
-            guard let inferredZoneID, inferredZoneID != task.zoneID else { continue }
-            try await localTaskDataSource.updateTask(
-                replacingZone(of: task, with: inferredZoneID)
-            )
-        }
         return sessions
     }
 
@@ -212,21 +197,5 @@ public struct DefaultSessionRepository: SessionRepository {
         case .missed: "SKIPPED"
         case .cancelled: "CANCELLED"
         }
-    }
-
-    private func replacingZone(of task: AwanTask, with zoneID: UUID) -> AwanTask {
-        AwanTask(
-            id: task.id,
-            title: task.title,
-            description: task.description,
-            status: task.status,
-            goalID: task.goalID,
-            zoneID: zoneID,
-            duration: task.duration,
-            isSplittable: task.isSplittable,
-            mandatory: task.mandatory,
-            estimatedPoints: task.estimatedPoints,
-            dependencyIDs: task.dependencyIDs
-        )
     }
 }

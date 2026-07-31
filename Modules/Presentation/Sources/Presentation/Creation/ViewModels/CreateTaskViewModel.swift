@@ -2,6 +2,10 @@ import Domain
 import Foundation
 import Observation
 
+@Observable
+@MainActor
+final class CreateTaskViewModel {
+    var state: CreateTaskState
 public enum CreateTaskPhase: Equatable {
     case composer
     case aiLoading
@@ -26,16 +30,16 @@ public final class CreateTaskViewModel {
     var selectedZoneID: UUID?
     private(set) var isRecording = false
 
-    let selectedDay: Date
+    private let selectedDay: Date
 
-    @ObservationIgnored private let useCases: CreationUseCases
-    @ObservationIgnored private let speechTranscriber: any SpeechTranscribing
+    @ObservationIgnored let useCases: CreationUseCases
+    @ObservationIgnored let speechTranscriber: any SpeechTranscribing
     @ObservationIgnored private let timeZone: TimeZone
     @ObservationIgnored private var didLoadZones = false
-    @ObservationIgnored private var wantsToRecord = false
-    @ObservationIgnored private var pendingTranscription = ""
+    @ObservationIgnored var wantsToRecord = false
+    @ObservationIgnored var pendingTranscription = ""
 
-    public init(
+    init(
         useCases: CreationUseCases,
         speechTranscriber: any SpeechTranscribing,
         selectedDay: Date = Date(),
@@ -45,63 +49,61 @@ public final class CreateTaskViewModel {
         self.speechTranscriber = speechTranscriber
         self.selectedDay = selectedDay
         self.timeZone = timeZone
-        self.startsAt = Self.initialStartTime(
-            selectedDay: selectedDay,
-            timeZone: timeZone
+        self.state = CreateTaskState(
+            startsAt: Self.initialStartTime(
+                selectedDay: selectedDay,
+                timeZone: timeZone
+            )
         )
     }
 
     func loadCreationData() async {
         guard !didLoadZones else { return }
         didLoadZones = true
-        isLoadingZones = true
-        defer { isLoadingZones = false }
+        state.isLoadingZones = true
+        defer { state.isLoadingZones = false }
 
         do {
-            zones = try await useCases.fetchZones.execute(for: selectedDay)
-            if selectedZoneID == nil {
-                selectedZoneID = zones.first?.id
+            state.zones = try await useCases.fetchZones.execute(for: selectedDay)
+            if state.selectedCategoryID == nil {
+                state.selectedCategoryID = state.categories.first?.id
             }
         } catch is CancellationError {
             didLoadZones = false
         } catch {
-            errorMessage = error.localizedDescription
+            state.errorMessage = error.localizedDescription
         }
 
         do {
             let profile = try await useCases.userProfile.execute()
-            durationMinutes = min(
+            state.durationMinutes = min(
                 480,
                 max(15, profile.preferences.preferredSessionDuration)
             )
         } catch is CancellationError {
             didLoadZones = false
         } catch {
-            if errorMessage == nil {
-                errorMessage = error.localizedDescription
+            if state.errorMessage == nil {
+                state.errorMessage = error.localizedDescription
             }
         }
     }
 
-    func loadZones() async {
-        await loadCreationData()
-    }
-
     func submitCurrentTask() async {
-        let title = quickText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let title = state.quickText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !title.isEmpty else { return }
 
-        if isAwanSchedulingEnabled {
-            await createTaskWithAwan(prompt: title)
+        if state.isAwanSchedulingEnabled {
+            await generateAITask(prompt: title)
         } else {
             await createTask(
                 title: title,
                 description: nil,
-                durationMinutes: durationMinutes,
-                zoneID: selectedZoneID,
+                durationMinutes: state.durationMinutes,
+                categoryID: state.selectedCategoryID,
                 isSplittable: false,
                 mandatory: true,
-                startsAt: startsAt
+                startsAt: state.startsAt
             )
         }
     }
@@ -110,23 +112,23 @@ public final class CreateTaskViewModel {
         title: String,
         description: String?,
         durationMinutes: Int,
-        zoneID: UUID?,
+        categoryID: UUID?,
         isSplittable: Bool,
         mandatory: Bool,
         startsAt: Date
     ) async {
-        guard !isSubmitting else { return }
-        isSubmitting = true
-        errorMessage = nil
-        defer { isSubmitting = false }
+        guard !state.isSubmitting else { return }
+        state.isSubmitting = true
+        state.errorMessage = nil
+        defer { state.isSubmitting = false }
 
         do {
-            let result = try await useCases.createTask.execute(
+            _ = try await useCases.createTask.execute(
                 CreateTaskRequest(
                     title: title,
                     description: description,
                     durationMinutes: durationMinutes,
-                    zoneID: zoneID,
+                    categoryID: categoryID,
                     isSplittable: isSplittable,
                     mandatory: mandatory,
                     estimatedPoints: 10,
@@ -135,17 +137,39 @@ public final class CreateTaskViewModel {
                     timeZone: timeZone
                 )
             )
-            activeNudge = result.nudge
-            didCreateTask = true
+            state.didCreateTask = true
         } catch is CancellationError {
         } catch {
-            errorMessage = error.localizedDescription
+            state.errorMessage = error.localizedDescription
         }
     }
 
     func dismissError() {
-        errorMessage = nil
+        state.errorMessage = nil
     }
+
+    func beginRecording() async {
+        guard quickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !wantsToRecord else {
+            return
+        }
+    func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
+        await createTask(
+            title: item.task.title,
+            description: item.task.description,
+            durationMinutes: finalDurationMinutes,
+            categoryID: nil,
+            isSplittable: item.task.isSplittable,
+            mandatory: item.task.mandatory,
+            startsAt: item.startTime
+        )
+    }
+
+        wantsToRecord = true
+        pendingTranscription = ""
+        errorMessage = nil
+    func dismissAITaskResult() {
+        state.phase = .composer
 
     private func createTaskWithAwan(prompt: String) async {
         guard !isSubmitting else { return }
@@ -204,71 +228,14 @@ public final class CreateTaskViewModel {
     }
 
     func beginRecording() async {
-        guard quickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-              !wantsToRecord else {
-            return
-        }
-
-        wantsToRecord = true
-        pendingTranscription = ""
-        errorMessage = nil
-
-        do {
-            try await speechTranscriber.startTranscribing { [weak self] transcription in
-                self?.pendingTranscription = transcription
-            }
-            guard wantsToRecord else {
-                speechTranscriber.cancelTranscribing()
-                return
-            }
-            isRecording = true
-        } catch is CancellationError {
-        } catch {
-            speechTranscriber.cancelTranscribing()
-            wantsToRecord = false
-            isRecording = false
-            errorMessage = error.localizedDescription
-        }
+        await startRecording()
     }
 
     func finishRecording() async {
-        wantsToRecord = false
-        guard isRecording else { return }
-
-        isRecording = false
-        let transcription = await speechTranscriber.stopTranscribing()
-        let taskText = transcription.isEmpty
-            ? pendingTranscription.trimmingCharacters(in: .whitespacesAndNewlines)
-            : transcription
-        if !taskText.isEmpty {
-            quickText = taskText
-        }
-        pendingTranscription = ""
+        await stopRecording()
     }
 
     func cancelRecording() {
-        wantsToRecord = false
-        isRecording = false
-        pendingTranscription = ""
-        speechTranscriber.cancelTranscribing()
-    }
-
-    private static func initialStartTime(
-        selectedDay: Date,
-        timeZone: TimeZone
-    ) -> Date {
-        var calendar = Calendar.current
-        calendar.timeZone = timeZone
-        let now = Date()
-        let components = calendar.dateComponents(
-            [.hour, .minute],
-            from: now
-        )
-        return calendar.date(
-            bySettingHour: components.hour ?? 0,
-            minute: components.minute ?? 0,
-            second: 0,
-            of: selectedDay
-        ) ?? selectedDay
+        resetRecording()
     }
 }

@@ -178,7 +178,8 @@ final class ScheduleTimelineViewModelTests: XCTestCase {
             name: "Work",
             color: ZoneColor(hex: "#58CC02"),
             startTime: LocalTime(hour: 9, minute: 0),
-            endTime: LocalTime(hour: 17, minute: 0)
+            endTime: LocalTime(hour: 17, minute: 0),
+            category: TaskCategory(id: UUID(), name: "Work")
         )
         guard let taskMinutes else {
             return ScheduleWorkspace(zones: [zone], goals: [], tasks: [], sessions: [])
@@ -186,9 +187,9 @@ final class ScheduleTimelineViewModelTests: XCTestCase {
         let task = try AwanTask(
             id: UUID(uuidString: "00000000-0000-0000-0000-000000000020") ?? UUID(),
             title: title,
-            zoneID: zone.id,
             duration: TaskDuration(minutes: taskMinutes),
-            isSplittable: true
+            isSplittable: true,
+            category: zone.category
         )
         let start = date(day: 20, hour: 9)
         let session = Session(

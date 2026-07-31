@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import XCTest
 @testable import Domain
@@ -82,6 +83,165 @@ final class HomeUseCasesTests: XCTestCase {
         XCTAssertEqual(remaining, [second])
     }
 
+    func testCreateTaskUsesFirstZoneMatchingSelectedCategory() async throws {
+        let category = TaskCategory(id: UUID(), name: "Focus")
+        let morningZone = try Zone(
+            id: UUID(),
+            name: "Morning Focus",
+            color: ZoneColor(hex: "#4CAF50"),
+            startTime: LocalTime(hour: 9, minute: 0),
+            endTime: LocalTime(hour: 11, minute: 0),
+            category: category
+        )
+        let afternoonZone = try Zone(
+            id: UUID(),
+            name: "Afternoon Focus",
+            color: ZoneColor(hex: "#2196F3"),
+            startTime: LocalTime(hour: 13, minute: 0),
+            endTime: LocalTime(hour: 17, minute: 0),
+            category: category
+        )
+        let repository = TaskRepositoryStub(tasks: [])
+        let workspace = ScheduleWorkspace(
+            zones: [morningZone, afternoonZone],
+            goals: [],
+            tasks: [],
+            sessions: []
+        )
+        let start = date(hour: 14)
+        _ = try await DefaultCreateTaskUseCase(
+            taskRepository: repository,
+            workspaceProvider: ScheduleWorkspaceProviderStub(workspace: workspace)
+        ).execute(
+            CreateTaskRequest(
+                title: "Prepare presentation",
+                durationMinutes: 120,
+                categoryID: category.id,
+                isSplittable: false,
+                startsAt: start,
+                selectedDay: date(hour: 0),
+                timeZone: .gmt
+            )
+        )
+
+        let capturedAddition = await repository.lastAddition()
+        let addition = try XCTUnwrap(capturedAddition)
+        XCTAssertEqual(addition.task.category, category)
+        XCTAssertEqual(addition.sessionZoneID, morningZone.id)
+        XCTAssertEqual(addition.startsAt, start)
+    }
+
+    func testCreateTaskWithExplicitZonePassesExactSessionZone() async throws {
+        let category = TaskCategory(id: UUID(), name: "Work")
+        let morningZone = try Zone(
+            id: UUID(),
+            name: "Morning Work",
+            color: ZoneColor(hex: "#4CAF50"),
+            startTime: LocalTime(hour: 9, minute: 0),
+            endTime: LocalTime(hour: 11, minute: 0),
+            category: category
+        )
+        let repository = TaskRepositoryStub(tasks: [])
+        let workspace = ScheduleWorkspace(
+            zones: [morningZone],
+            goals: [],
+            tasks: [],
+            sessions: []
+        )
+
+        _ = try await DefaultCreateTaskUseCase(
+            taskRepository: repository,
+            workspaceProvider: ScheduleWorkspaceProviderStub(workspace: workspace)
+        ).execute(
+            CreateTaskRequest(
+                title: "Plan work",
+                durationMinutes: 60,
+                zoneID: morningZone.id,
+                isSplittable: false,
+                startsAt: date(hour: 9),
+                selectedDay: date(hour: 0),
+                timeZone: .gmt
+            )
+        )
+
+        let capturedAddition = await repository.lastAddition()
+        let addition = try XCTUnwrap(capturedAddition)
+        XCTAssertEqual(addition.task.category, category)
+        XCTAssertEqual(addition.sessionZoneID, morningZone.id)
+    }
+
+    func testCreateStandaloneTaskLeavesCategoryAndSessionZoneNil() async throws {
+        let repository = TaskRepositoryStub(tasks: [])
+        let workspace = ScheduleWorkspace(zones: [], goals: [], tasks: [], sessions: [])
+        _ = try await DefaultCreateTaskUseCase(
+            taskRepository: repository,
+            workspaceProvider: ScheduleWorkspaceProviderStub(workspace: workspace)
+        ).execute(
+            CreateTaskRequest(
+                title: "Standalone",
+                durationMinutes: 30,
+                zoneID: nil,
+                isSplittable: false,
+                startsAt: date(hour: 12),
+                selectedDay: date(hour: 0),
+                timeZone: .gmt
+            )
+        )
+
+        let capturedAddition = await repository.lastAddition()
+        let addition = try XCTUnwrap(capturedAddition)
+        XCTAssertNil(addition.task.category)
+        XCTAssertNil(addition.sessionZoneID)
+    }
+
+    func testUpdateTaskDerivesCategoryFromSelectedZone() async throws {
+        let oldCategory = TaskCategory(id: UUID(), name: "Old")
+        let newCategory = TaskCategory(id: UUID(), name: "Review")
+        let task = try AwanTask(
+            id: UUID(),
+            title: "Draft",
+            duration: TaskDuration(minutes: 60),
+            isSplittable: false,
+            category: oldCategory
+        )
+        let zone = try Zone(
+            id: UUID(),
+            name: "Evening Review",
+            color: ZoneColor(hex: "#FF9800"),
+            startTime: LocalTime(hour: 18, minute: 0),
+            endTime: LocalTime(hour: 19, minute: 0),
+            category: newCategory
+        )
+        let repository = TaskRepositoryStub(tasks: [task])
+        let workspace = ScheduleWorkspace(
+            zones: [zone],
+            goals: [],
+            tasks: [task],
+            sessions: []
+        )
+        _ = try await DefaultUpdateTaskUseCase(
+            workspaceProvider: ScheduleWorkspaceProviderStub(workspace: workspace),
+            taskRepository: repository
+        ).execute(
+            UpdateTaskRequest(
+                taskID: task.id,
+                title: "Final",
+                durationMinutes: 90,
+                zoneID: zone.id,
+                isSplittable: true,
+                blocking: false,
+                selectedDay: date(hour: 0),
+                timeZone: .gmt
+            )
+        )
+
+        let capturedUpdate = await repository.lastUpdate()
+        let updated = try XCTUnwrap(capturedUpdate)
+        XCTAssertEqual(updated.category, newCategory)
+        XCTAssertEqual(updated.title, "Final")
+        XCTAssertEqual(updated.duration.minutes, 90)
+    }
+
     private func makeTask() throws -> AwanTask {
         try AwanTask(
             id: UUID(),
@@ -158,20 +318,41 @@ private actor SessionRepositoryStub: SessionRepository {
 }
 
 private actor TaskRepositoryStub: TaskRepository {
+    struct Addition: Sendable {
+        let task: AwanTask
+        let sessionZoneID: UUID?
+        let startsAt: Date?
+    }
+
     private var tasks: [AwanTask]
+    private var addition: Addition?
+    private var updatedTask: AwanTask?
 
     init(tasks: [AwanTask]) { self.tasks = tasks }
     func fetchTasks() -> [AwanTask] { tasks }
+    nonisolated func observeTasks() -> AnyPublisher<[AwanTask], Error> {
+        Empty(completeImmediately: true).eraseToAnyPublisher()
+    }
     func addTask(
         _ task: AwanTask,
+        sessionZoneID: UUID?,
         startsAt: Date?,
         durationMinutes: Int,
         timeZoneID: String
     ) -> (task: AwanTask, sessions: [Session]) {
         tasks.append(task)
+        addition = Addition(
+            task: task,
+            sessionZoneID: sessionZoneID,
+            startsAt: startsAt
+        )
         return (task, [])
     }
-    func updateTask(_ task: AwanTask) {}
+    func updateTask(_ task: AwanTask) {
+        updatedTask = task
+    }
+    func lastAddition() -> Addition? { addition }
+    func lastUpdate() -> AwanTask? { updatedTask }
     func deleteTask(id: UUID) { tasks.removeAll { $0.id == id } }
     func deleteAllTasks() { tasks.removeAll() }
     func addDependency(taskID: UUID, dependsOnID: UUID) {}
@@ -180,8 +361,24 @@ private actor TaskRepositoryStub: TaskRepository {
     func fetchDependents(taskID: UUID) -> [AwanTask] { [] }
 }
 
+private struct ScheduleWorkspaceProviderStub: ScheduleWorkspaceProviding {
+    let workspace: ScheduleWorkspace
+
+    func load(for date: Date) async throws -> ScheduleWorkspace {
+        workspace
+    }
+}
+
 private actor UserProfileRepositoryStub: UserProfileRepository {
     let profile: UserProfile
     init(profile: UserProfile) { self.profile = profile }
     func fetchCurrentUser() -> UserProfile { profile }
+    func updateProfile(firstName: String?, lastName: String?, birthDate: String?) {}
+    func updateSessionDuration(_ durationMinutes: Int) -> UserProfile { profile }
+    func updateTimezone(_ timezone: String) -> UserProfile { profile }
+    func updateSleepSchedule(_ sleepTime: String) -> UserProfile { profile }
+    func updateWakeUpSchedule(_ wakeUpTime: String) -> UserProfile { profile }
+    func updateSleepSchedule(wakeUpTime: String, sleepTime: String) -> UserProfile {
+        profile
+    }
 }

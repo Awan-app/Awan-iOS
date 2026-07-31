@@ -8,7 +8,10 @@ final class TaskModel {
     var taskDescription: String?
     var statusRaw: String
     var goalID: UUID?
+    // Retained only so existing stores can migrate without losing cached data.
     var zoneID: UUID?
+    var categoryID: UUID?
+    var categoryName: String?
     var estimatedDurationMinutes: Int
     var allowTaskSplitting: Bool
     var mandatory: Bool
@@ -22,6 +25,8 @@ final class TaskModel {
         statusRaw: String,
         goalID: UUID?,
         zoneID: UUID?,
+        categoryID: UUID? = nil,
+        categoryName: String? = nil,
         estimatedDurationMinutes: Int,
         allowTaskSplitting: Bool,
         mandatory: Bool,
@@ -34,6 +39,8 @@ final class TaskModel {
         self.statusRaw = statusRaw
         self.goalID = goalID
         self.zoneID = zoneID
+        self.categoryID = categoryID
+        self.categoryName = categoryName
         self.estimatedDurationMinutes = estimatedDurationMinutes
         self.allowTaskSplitting = allowTaskSplitting
         self.mandatory = mandatory

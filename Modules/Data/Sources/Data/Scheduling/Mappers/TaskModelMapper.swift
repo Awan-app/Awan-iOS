@@ -11,12 +11,14 @@ extension TaskModel {
             description: taskDescription,
             status: status,
             goalID: goalID,
-            zoneID: zoneID,
             duration: TaskDuration(minutes: estimatedDurationMinutes),
             isSplittable: allowTaskSplitting,
             mandatory: mandatory,
             estimatedPoints: estimatedPoints,
-            dependencyIDs: Set(dependencyIDs)
+            dependencyIDs: Set(dependencyIDs),
+            category: categoryID.flatMap { id in
+                categoryName.map { TaskCategory(id: id, name: $0) }
+            }
         )
     }
 
@@ -27,7 +29,9 @@ extension TaskModel {
             taskDescription: task.description,
             statusRaw: task.status.rawValue,
             goalID: task.goalID,
-            zoneID: task.zoneID,
+            zoneID: nil,
+            categoryID: task.category?.id,
+            categoryName: task.category?.name,
             estimatedDurationMinutes: task.duration.minutes,
             allowTaskSplitting: task.isSplittable,
             mandatory: task.mandatory,
@@ -41,7 +45,8 @@ extension TaskModel {
         taskDescription = task.description
         statusRaw = task.status.rawValue
         goalID = task.goalID
-        zoneID = task.zoneID
+        categoryID = task.category?.id
+        categoryName = task.category?.name
         estimatedDurationMinutes = task.duration.minutes
         allowTaskSplitting = task.isSplittable
         mandatory = task.mandatory

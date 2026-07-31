@@ -26,7 +26,7 @@ struct ProfileMainView: View {
 
     private var formattedSessionTime: String {
         guard viewModel.sessionTime > 0 else { return "" }
-        return "\(viewModel.sessionTime) min"
+        return L10n.Home.minutesShort(viewModel.sessionTime)
     }
 
     private var formattedSleepSchedule: String {
@@ -60,7 +60,7 @@ struct ProfileMainView: View {
 
             VStack(spacing: 0) {
 
-                    // Header Area
+                // Header Area
                     Text(L10n.Profile.title)
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(AppColors.brandDarkBlue)
@@ -75,6 +75,7 @@ struct ProfileMainView: View {
                                 .padding(.top, 40)
                         }
 
+                ScrollView {
                     VStack(spacing: 10) {
                         PersonalInfoCard(
                             avatarImage: Image("user-avatar"), // Using actual asset
@@ -115,14 +116,36 @@ struct ProfileMainView: View {
                             }
                         )
 
+                        // Logout
+                        AppButton(
+                            title: L10n.Profile.logout,
+                            color: AppColors.destructive,
+                            onTap: {
+                                viewModel.showLogoutConfirmation = true
+                            }
+                        )
+                        .padding(.top, 24)
+                        .disabled(viewModel.isLoggingOut)
+
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 40)
                 }
+            }
         }
         .navigationBarHidden(true)
         .sheet(isPresented: $isLanguageSheetPresented) {
             LanguageSelectionView()
+        }
+        .alert(L10n.Profile.logout, isPresented: Bindable(viewModel).showLogoutConfirmation) {
+            Button(L10n.Common.cancel, role: .cancel) {}
+            Button(L10n.Profile.logout, role: .destructive) {
+                Task {
+                    await viewModel.logout()
+                }
+            }
+        } message: {
+            Text(L10n.Profile.logoutConfirmationMessage)
         }
         .sheet(isPresented: $isSessionTimeSheetPresented) {
             SessionTimeSheet(
@@ -183,10 +206,11 @@ struct ProfileMainView: View {
     ProfileMainView(
         viewModel: ProfileViewModel(
             getUserProfileUseCase: MockGetUserProfileUseCase(),
+            fetchZonesUseCase: MockFetchZonesUseCase(),
+            logoutUseCase: LogoutUseCase(repository: MockAuthRepository()),
             updateSessionDurationUseCase: MockUpdateSessionDurationUseCase(),
             updateTimezoneUseCase: MockUpdateTimezoneUseCase(),
-            updateSleepScheduleUseCase: MockUpdateSleepScheduleUseCase(),
-            fetchZonesUseCase: MockFetchZonesUseCase()
+            updateSleepScheduleUseCase: MockUpdateSleepScheduleUseCase()
         ),
         dailyZonesViewModel: DailyZonesViewModel(
             fetchTemplatesUseCase: MockFetchTemplatesUseCase(),

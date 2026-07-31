@@ -13,6 +13,7 @@ public struct UpdateTaskRequestDTO: Encodable, Sendable {
     public let mandatory: Bool?
     public let estimatedPoints: Int?
     public let isSplittable: Bool?
+    public let categoryID: UUID?
 
     private enum CodingKeys: String, CodingKey {
         case title
@@ -22,6 +23,7 @@ public struct UpdateTaskRequestDTO: Encodable, Sendable {
         case mandatory
         case estimatedPoints
         case isSplittable = "allowTaskSplitting"
+        case categoryID = "categoryId"
     }
 
     public init(
@@ -31,7 +33,8 @@ public struct UpdateTaskRequestDTO: Encodable, Sendable {
         status: String? = nil,
         mandatory: Bool? = nil,
         estimatedPoints: Int? = nil,
-        isSplittable: Bool? = nil
+        isSplittable: Bool? = nil,
+        categoryID: UUID? = nil
     ) {
         self.title = title
         self.description = description
@@ -40,5 +43,18 @@ public struct UpdateTaskRequestDTO: Encodable, Sendable {
         self.mandatory = mandatory
         self.estimatedPoints = estimatedPoints
         self.isSplittable = isSplittable
+        self.categoryID = categoryID
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(title, forKey: .title)
+        try container.encodeIfPresent(description, forKey: .description)
+        try container.encodeIfPresent(estimatedDuration, forKey: .estimatedDuration)
+        try container.encodeIfPresent(status, forKey: .status)
+        try container.encodeIfPresent(mandatory, forKey: .mandatory)
+        try container.encodeIfPresent(estimatedPoints, forKey: .estimatedPoints)
+        try container.encodeIfPresent(isSplittable, forKey: .isSplittable)
+        try container.encode(categoryID, forKey: .categoryID)
     }
 }

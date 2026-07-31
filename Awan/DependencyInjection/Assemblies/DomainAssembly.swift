@@ -65,6 +65,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(TaskRepository.self, from: resolver)
             )
         }
+        container.register(FetchGoalsUseCase.self) { resolver in
+            DefaultFetchGoalsUseCase(
+                repository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
         container.register(FetchSessionsUseCase.self) { resolver in
             DefaultFetchSessionsUseCase(
                 repository: Self.resolve(SessionRepository.self, from: resolver)
@@ -124,7 +129,10 @@ struct DomainAssembly: Assembly {
         container.register(CreateTaskUseCase.self) { resolver in
             DefaultCreateTaskUseCase(
                 taskRepository: Self.resolve(TaskRepository.self, from: resolver),
-                reconciler: Self.resolve(TaskScheduleReconciling.self, from: resolver)
+                workspaceProvider: Self.resolve(
+                    ScheduleWorkspaceProviding.self,
+                    from: resolver
+                )
             )
         }
         container.register(CreateAITaskUseCase.self) { resolver in
@@ -135,9 +143,7 @@ struct DomainAssembly: Assembly {
         container.register(UpdateTaskUseCase.self) { resolver in
             DefaultUpdateTaskUseCase(
                 workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),
-                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
-                sessionRepository: Self.resolve(SessionRepository.self, from: resolver),
-                reconciler: Self.resolve(TaskScheduleReconciling.self, from: resolver)
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver)
             )
         }
         container.register(DeleteTaskUseCase.self) { resolver in
@@ -222,7 +228,37 @@ struct DomainAssembly: Assembly {
             )
         }
         container.register(UpdateTemplateUseCase.self) { resolver in
-            DefaultUpdateTemplateUseCase(
+            DefaultBulkUpdateTemplateUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTemplateDetailsUseCase.self) { resolver in
+            DefaultUpdateTemplateDetailsUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateBulkTemplateOverrideUseCase.self) { resolver in
+            DefaultUpdateBulkTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(DeleteTemplateOverrideUseCase.self) { resolver in
+            DefaultDeleteTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(CreateTemplateOverrideUseCase.self) { resolver in
+            DefaultCreateTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTemplateOverrideUseCase.self) { resolver in
+            DefaultUpdateTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(DeleteTemplateUseCase.self) { resolver in
+            DefaultDeleteTemplateUseCase(
                 repository: Self.resolve(TemplateRepository.self, from: resolver)
             )
         }
@@ -314,6 +350,7 @@ struct DomainAssembly: Assembly {
         }
         container.register(RestoreTaskZoneUseCase.self) { resolver in
             DefaultRestoreTaskZoneUseCase(
+                workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),
                 taskRepository: Self.resolve(TaskRepository.self, from: resolver),
                 sessionRepository: Self.resolve(SessionRepository.self, from: resolver),
                 reconciler: Self.resolve(TaskScheduleReconciling.self, from: resolver)

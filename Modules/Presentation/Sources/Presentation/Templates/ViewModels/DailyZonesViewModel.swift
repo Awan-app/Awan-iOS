@@ -114,7 +114,14 @@ public final class DailyZonesViewModel: ZoneManaging {
         let eLocal = (try? LocalTime(hour: calendar.component(.hour, from: end), minute: calendar.component(.minute, from: end))) ?? (try! LocalTime(hour: 0, minute: 0))
         
         let drafts = suggestedZones.map(\.asDraft)
-        let newZone = Zone(id: id, name: name, color: color, startTime: sLocal, endTime: eLocal)
+        let newZone = Zone(
+            id: id,
+            name: name,
+            color: color,
+            startTime: sLocal,
+            endTime: eLocal,
+            category: suggestedZones.first(where: { $0.id == id })?.category
+        )
         let updated = manageDailyZoneScheduleUseCase.updatingZone(newZone, in: drafts)
         suggestedZones = updated.map(\.asSuggestedZone)
     }
