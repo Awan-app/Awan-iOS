@@ -100,6 +100,11 @@ struct ScheduleTimelineView: View {
             Text(state.errorMessage ?? L10n.Common.pleaseTryAgain)
         }
         .task { viewModel.send(.appeared) }
+        .onChange(of: state.presentedSheet) { oldValue, newValue in
+            if oldValue != nil && newValue == nil {
+                viewModel.send(.appeared)
+            }
+        }
         .sensoryFeedback(.impact(weight: .medium), trigger: state.timelineItems.count)
     }
 

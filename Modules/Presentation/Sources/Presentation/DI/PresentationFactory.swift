@@ -65,6 +65,10 @@ public struct PresentationFactory {
         ScheduleTimelineView(viewModel: scheduleViewModel)
     }
 
+    public func refreshScheduleTimeline() {
+        scheduleViewModel.send(.appeared)
+    }
+
     func makeGlobalCreationSheet(
         onDismiss: @escaping () -> Void,
         onTaskSchedulingModeChanged: @escaping (Bool) -> Void,
@@ -73,7 +77,8 @@ public struct PresentationFactory {
         GlobalCreationSheet(
             taskViewModel: CreateTaskViewModel(
                 useCases: creationUseCases,
-                speechTranscriber: LiveSpeechTranscriber()
+                speechTranscriber: LiveSpeechTranscriber(),
+                selectedDay: scheduleViewModel.state.selectedDay
             ),
             goalViewModel: CreateGoalViewModel(
                 useCases: creationUseCases.goalDecomposition,

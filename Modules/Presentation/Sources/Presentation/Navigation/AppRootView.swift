@@ -169,6 +169,7 @@ struct AppRootView: View {
             case .add:
                 factory.makeGlobalCreationSheet {
                     coordinator.mainCoordinator.dismissSheet()
+                    factory.refreshScheduleTimeline()
                 } onTaskSchedulingModeChanged: { isAwanSchedulingEnabled in
                     creationSheetDetent = isAwanSchedulingEnabled
                         ? Self.compactCreationDetent

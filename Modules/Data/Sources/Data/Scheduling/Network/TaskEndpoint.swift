@@ -9,6 +9,7 @@ import AwaNetwork
 enum TaskEndpoint: APIEndpoint {
 
     case createTask(CreateTaskRequestDTO)
+    case createTaskWithSessions(CreateTaskWithSessionsRequestDTO)
     case getTask(taskID: UUID)
     case getTasksByDate(date: String)
     case getTasksByDateRange(startDate: String, endDate: String)
@@ -28,6 +29,8 @@ enum TaskEndpoint: APIEndpoint {
         switch self {
         case .createTask:
             return "/tasks"
+        case .createTaskWithSessions:
+            return "/tasks/with-sessions"
         case .getTask(let taskID):
             return "/tasks/\(taskID.uuidString)"
         case .getTasksByDate(let date):
@@ -53,7 +56,7 @@ enum TaskEndpoint: APIEndpoint {
 
     var method: HTTPMethod {
         switch self {
-        case .createTask, .addDependency:
+        case .createTask, .createTaskWithSessions, .addDependency:
             return .post
         case .getTask, .getTasksByDate, .getTasksByDateRange, .listDependencies, .listDependents:
             return .get
@@ -81,6 +84,8 @@ enum TaskEndpoint: APIEndpoint {
     var body: (any Encodable)? {
         switch self {
         case .createTask(let request):
+            return request
+        case .createTaskWithSessions(let request):
             return request
         case .updateTask(_, let request):
             return request

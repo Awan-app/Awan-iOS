@@ -162,6 +162,8 @@ final class CreateTaskViewModelTests: XCTestCase {
                 fetchZones: stub,
                 createTask: stub,
                 createAITask: MockCreateAITaskUseCase(),
+                imageToTasks: MockImageToTasksUseCase(),
+                acceptProposedTask: MockAcceptProposedTaskUseCase(),
                 userProfile: UserProfileUseCaseStub(),
                 goalDecomposition: GoalDecompositionUseCases(
                     sendMessage: GoalMessageUseCaseStub(),
@@ -315,5 +317,29 @@ private actor CreateTaskUseCaseStub: FetchZonesUseCase, CreateTaskUseCase {
 
     func createdRequest() -> CreateTaskRequest? {
         request
+    }
+}
+
+private struct MockImageToTasksUseCase: ImageToTasksUseCase {
+    func execute(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposalResponse {
+        TaskProposalResponse(sourceSummary: "Test Summary", tasks: [], timestamp: Date())
+    }
+}
+
+private struct MockAcceptProposedTaskUseCase: AcceptProposedTaskUseCase {
+    func execute(_ draft: TaskWithSessionsDraft) async throws -> AwanTask {
+        AwanTask(
+            id: UUID(),
+            title: draft.task.title,
+            description: draft.task.description,
+            status: .pending,
+            goalID: draft.task.goalId,
+            duration: try! TaskDuration(minutes: draft.task.estimatedDuration),
+            isSplittable: draft.task.allowTaskSplitting,
+            mandatory: draft.task.mandatory,
+            estimatedPoints: draft.task.estimatedPoints,
+            dependencyIDs: [],
+            category: nil
+        )
     }
 }

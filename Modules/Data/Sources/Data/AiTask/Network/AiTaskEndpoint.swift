@@ -9,6 +9,7 @@ import AwaNetwork
 enum AiTaskEndpoint: APIEndpoint {
 
     case createAITask(CreateAITaskRequestDTO)
+    case imageToTasks
 
     var baseURL: String {
         NetworkConfiguration.apiBaseURL
@@ -18,12 +19,14 @@ enum AiTaskEndpoint: APIEndpoint {
         switch self {
         case .createAITask:
             return "/ai/task-create"
+        case .imageToTasks:
+            return "/ai/image-to-tasks"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .createAITask:
+        case .createAITask, .imageToTasks:
             return .post
         }
     }
@@ -36,6 +39,8 @@ enum AiTaskEndpoint: APIEndpoint {
         switch self {
         case .createAITask(let request):
             return request
+        case .imageToTasks:
+            return nil
         }
     }
 

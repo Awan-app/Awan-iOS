@@ -8,15 +8,50 @@ import Foundation
 
 public final class DefaultAiTaskRepository: AiTaskRepository {
     private let remoteDataSource: any AiTaskRemoteDataSource
+    private let localTaskDataSource: (any LocalTaskDataSource)?
+    private let localSessionDataSource: (any LocalSessionDataSource)?
+    private let timeZoneID: String
 
-    public init(remoteDataSource: any AiTaskRemoteDataSource) {
+    public init(
+        remoteDataSource: any AiTaskRemoteDataSource,
+        localTaskDataSource: (any LocalTaskDataSource)? = nil,
+        localSessionDataSource: (any LocalSessionDataSource)? = nil,
+        timeZoneID: String = TimeZone.current.identifier
+    ) {
         self.remoteDataSource = remoteDataSource
+        self.localTaskDataSource = localTaskDataSource
+        self.localSessionDataSource = localSessionDataSource
+        self.timeZoneID = timeZoneID
     }
 
     public func createAITask(title: String, description: String?) async throws -> AwanTask {
         let request = CreateAITaskRequestDTO(title: title, description: description)
         let response = try await remoteDataSource.createAITask(request)
         return response.toDomain()
+    }
+
+    public func imageToTasks(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposalResponse {
+        let responseDTO = try await remoteDataSource.imageToTasks(imageData: imageData, mimeType: mimeType, note: note)
+        return responseDTO.toDomain()
+    }
+
+    public func acceptTaskWithSessions(_ draft: TaskWithSessionsDraft) async throws -> AwanTask {
+        let requestDTO = CreateTaskWithSessionsRequestDTO(draft: draft)
+        let responseDTO = try await remoteDataSource.acceptTaskWithSessions(requestDTO)
+        let acceptedTask = (try? HomeRemoteMapper.task(responseDTO.task, defaultDuration: draft.task.estimatedDuration)) ?? responseDTO.task.toDomain()
+
+        if let localTaskDataSource {
+            try? await localTaskDataSource.addTask(acceptedTask)
+        }
+        if let localSessionDataSource {
+            let acceptedSessions = responseDTO.sessions.compactMap {
+                try? HomeRemoteMapper.session($0, timeZoneID: timeZoneID)
+            }
+            for session in acceptedSessions {
+                try? await localSessionDataSource.addSession(session)
+            }
+        }
+        return acceptedTask
     }
 }
 

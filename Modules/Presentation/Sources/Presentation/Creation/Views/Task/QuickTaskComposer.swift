@@ -1,4 +1,10 @@
+//
+//  QuickTaskComposer.swift
+//  Presentation
+//
+
 import Common
+import PhotosUI
 import SwiftUI
 
 struct QuickTaskComposer: View {
@@ -10,15 +16,53 @@ struct QuickTaskComposer: View {
     let onSend: () -> Void
     let onRecordingStarted: () -> Void
     let onRecordingEnded: () -> Void
+    var onPhotoItemSelected: ((PhotosPickerItem) -> Void)? = nil
+    var onCameraImageCaptured: ((Data) -> Void)? = nil
 
     @State private var isHoldingMicrophone = false
+    @State private var selectedPhotosItem: PhotosPickerItem?
+    @State private var isPhotoLibraryPresented = false
+    @State private var isCameraPresented = false
 
     private var hasText: Bool {
         !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     var body: some View {
-        HStack(alignment: .bottom, spacing: 12) {
+        HStack(alignment: .bottom, spacing: 10) {
+            // Image Attachment Menu Button
+            if onPhotoItemSelected != nil || onCameraImageCaptured != nil {
+                Menu {
+                    Button {
+                        isPhotoLibraryPresented = true
+                    } label: {
+                        Label(L10n.Home.pickImageFromLibrary, systemImage: "photo.on.rectangle")
+                    }
+
+                    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                        Button {
+                            isCameraPresented = true
+                        } label: {
+                            Label(L10n.Home.pickImageFromCamera, systemImage: "camera")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "paperclip")
+                        .font(.system(size: 20, weight: .heavy))
+                        .foregroundStyle(AppColors.accentBlue)
+                        .frame(width: 44, height: 44)
+                }
+                .buttonStyle(
+                    AppDepthButtonStyle(
+                        shape: .roundedRectangle(cornerRadius: 16),
+                        surfaceColor: AppColors.surface,
+                        borderColor: AppColors.accentBlue.opacity(0.35),
+                        depthColor: AppColors.accentBlueDepth.opacity(0.5),
+                        depthOffset: 4
+                    )
+                )
+            }
+
             AppTextField(
                 text: $text,
                 placeholder: placeholder,
@@ -50,6 +94,24 @@ struct QuickTaskComposer: View {
                 .accessibilityElement()
                 .accessibilityLabel(recordingAccessibilityLabel)
                 .accessibilityAddTraits(.isButton)
+            }
+        }
+        .photosPicker(
+            isPresented: $isPhotoLibraryPresented,
+            selection: $selectedPhotosItem,
+            matching: .images,
+            photoLibrary: .shared()
+        )
+        .onChange(of: selectedPhotosItem) { _, newItem in
+            guard let newItem else { return }
+            onPhotoItemSelected?(newItem)
+            selectedPhotosItem = nil
+        }
+        .sheet(isPresented: $isCameraPresented) {
+            CameraImagePicker { image in
+                if let data = image.jpegData(compressionQuality: 0.8) {
+                    onCameraImageCaptured?(data)
+                }
             }
         }
         .animation(.snappy(duration: 0.18), value: hasText)
@@ -117,10 +179,3 @@ private struct ComposerActionButtonStyle: ButtonStyle {
             .animation(.snappy(duration: 0.18), value: configuration.isPressed)
     }
 }
-
-
-#Preview {
-    QuickTaskComposer(text: .constant(""), isRecording: false, onSend: {}, onRecordingStarted: {}, onRecordingEnded: {})
-        .padding()
-}
-
