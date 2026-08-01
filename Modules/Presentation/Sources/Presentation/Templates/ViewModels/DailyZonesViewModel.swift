@@ -17,6 +17,9 @@ public final class DailyZonesViewModel: ZoneManaging {
     public var availableDays: [String] = []
     public var selectedDay: String?
 
+    public var templates: [Template] = []
+    public var selectedTemplateId: UUID?
+
     private let fetchTemplatesUseCase: any FetchTemplatesUseCase
     private let updateTemplateUseCase: any UpdateTemplateUseCase
     private let getUserProfileUseCase: any GetUserProfileUseCase
@@ -45,10 +48,13 @@ public final class DailyZonesViewModel: ZoneManaging {
 
             let (profile, fetchedTemplates) = try await (profileTask, templatesTask)
 
+            self.templates = fetchedTemplates
             self.availableDays = Array(Set(fetchedTemplates.flatMap(\.daysOfWeek))).sorted(by: {
                 dayValue($0) < dayValue($1)
             })
-            currentTemplate = manageDailyZoneScheduleUseCase.defaultTemplate(from: fetchedTemplates)
+            let defaultTemplate = manageDailyZoneScheduleUseCase.defaultTemplate(from: fetchedTemplates)
+            currentTemplate = defaultTemplate
+            selectedTemplateId = defaultTemplate?.id
             wakeupTime = profile.preferences.wakeupTime.toDate() ?? wakeupTime
             sleepTime = profile.preferences.sleepTime.toDate() ?? sleepTime
             refreshZones()
@@ -60,6 +66,12 @@ public final class DailyZonesViewModel: ZoneManaging {
 
     public func selectDay(_ day: String) {
         self.selectedDay = day
+        refreshZones()
+    }
+
+    public func selectTemplate(_ template: Template) {
+        selectedTemplateId = template.id
+        currentTemplate = template
         refreshZones()
     }
 
