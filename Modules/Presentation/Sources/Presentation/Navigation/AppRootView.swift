@@ -94,10 +94,7 @@ struct AppRootView: View {
     }
 
     private var mainFlow: some View {
-        ZStack {
-            // Keep all tabs alive in memory — eliminates tab switch lag
-            let selected = coordinator.mainCoordinator.selectedTab
-
+        TabView(selection: Bindable(coordinator.mainCoordinator).selectedTab) {
             NavigationStack(path: Bindable(coordinator.mainCoordinator).homePath) {
                 factory.makeHomeView()
                     .navigationDestination(for: MainRoute.self) { route in
@@ -107,20 +104,20 @@ struct AppRootView: View {
                         }
                     }
             }
-            .opacity(selected == .home ? 1 : 0)
-            .allowsHitTesting(selected == .home)
+            .tag(MainTab.home)
+            .toolbar(.hidden, for: .tabBar)
 
             NavigationStack(path: Bindable(coordinator.mainCoordinator).rewardsPath) {
                 factory.makeRewardsView()
             }
-            .opacity(selected == .rewards ? 1 : 0)
-            .allowsHitTesting(selected == .rewards)
+            .tag(MainTab.rewards)
+            .toolbar(.hidden, for: .tabBar)
 
             NavigationStack(path: Bindable(coordinator.mainCoordinator).storePath) {
                 AppColors.screenBackground.ignoresSafeArea()
             }
-            .opacity(selected == .store ? 1 : 0)
-            .allowsHitTesting(selected == .store)
+            .tag(MainTab.store)
+            .toolbar(.hidden, for: .tabBar)
 
             NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
                 factory.makeProfileMainView()
@@ -132,10 +129,9 @@ struct AppRootView: View {
                         }
                     }
             }
-            .opacity(selected == .you ? 1 : 0)
-            .allowsHitTesting(selected == .you)
+            .tag(MainTab.you)
+            .toolbar(.hidden, for: .tabBar)
         }
-        .safeAreaPadding(.bottom, 90)
         .id(languageManager.currentLanguage)
         .overlay {
             opaqueTopSafeArea
