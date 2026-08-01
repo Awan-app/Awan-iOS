@@ -51,18 +51,11 @@ struct CustomTabBar: View {
                     .fill(AppColors.surface.opacity(0.55))
             }
             .overlay {
-
+                // Uniform crisp blue border
                 RoundedRectangle(cornerRadius: 26, style: .continuous)
                     .stroke(
-                        LinearGradient(
-                            colors: [
-                                AppColors.accentBlue.opacity(0.45),
-                                AppColors.accentBlue.opacity(0.20)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.5
+                        AppColors.accentBlue.opacity(0.55),
+                        lineWidth: 1.75
                     )
             }
 
