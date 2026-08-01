@@ -16,7 +16,8 @@ struct QuickTaskComposer: View {
     let onSend: () -> Void
     let onRecordingStarted: () -> Void
     let onRecordingEnded: () -> Void
-    var onImageSelected: ((Data, String) -> Void)? = nil
+    var onPhotoItemSelected: ((PhotosPickerItem) -> Void)? = nil
+    var onCameraImageCaptured: ((Data) -> Void)? = nil
 
     @State private var isHoldingMicrophone = false
     @State private var selectedPhotosItem: PhotosPickerItem?
@@ -30,7 +31,7 @@ struct QuickTaskComposer: View {
     var body: some View {
         HStack(alignment: .bottom, spacing: 10) {
             // Image Attachment Menu Button
-            if onImageSelected != nil {
+            if onPhotoItemSelected != nil || onCameraImageCaptured != nil {
                 Menu {
                     Button {
                         isPhotoLibraryPresented = true
@@ -103,18 +104,13 @@ struct QuickTaskComposer: View {
         )
         .onChange(of: selectedPhotosItem) { _, newItem in
             guard let newItem else { return }
-            Task {
-                if let data = try? await newItem.loadTransferable(type: Data.self) {
-                    let mimeType = newItem.supportedContentTypes.first?.preferredMIMEType ?? "image/jpeg"
-                    onImageSelected?(data, mimeType)
-                }
-                selectedPhotosItem = nil
-            }
+            onPhotoItemSelected?(newItem)
+            selectedPhotosItem = nil
         }
         .sheet(isPresented: $isCameraPresented) {
             CameraImagePicker { image in
                 if let data = image.jpegData(compressionQuality: 0.8) {
-                    onImageSelected?(data, "image/jpeg")
+                    onCameraImageCaptured?(data)
                 }
             }
         }

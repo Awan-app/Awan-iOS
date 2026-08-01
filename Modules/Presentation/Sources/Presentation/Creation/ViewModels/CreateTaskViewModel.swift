@@ -1,6 +1,9 @@
+import Common
+import _PhotosUI_SwiftUI
 import Domain
 import Foundation
 import Observation
+import PhotosUI
 
 @Observable
 @MainActor
@@ -153,7 +156,17 @@ final class CreateTaskViewModel {
         resetRecording()
     }
 
-    func processUploadedImage(imageData: Data, mimeType: String, note: String?) async {
+    func processPickedPhoto(_ item: PhotosPickerItem, note: String?) async {
+        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
+        let mimeType = ImageType.from(item.supportedContentTypes.first)
+        await uploadImageForTasks(imageData: data, mimeType: mimeType, note: note)
+    }
+
+    func processCapturedImage(_ data: Data, note: String?) async {
+        await uploadImageForTasks(imageData: data, mimeType: .jpeg, note: note)
+    }
+
+    func processUploadedImage(imageData: Data, mimeType: ImageType, note: String?) async {
         await uploadImageForTasks(imageData: imageData, mimeType: mimeType, note: note)
     }
 

@@ -115,7 +115,7 @@ extension CreateTaskViewModel {
         state.phase = .aiResult(AITaskSheetItem(task: task, startTime: startTime))
     }
 
-    func uploadImageForTasks(imageData: Data, mimeType: String, note: String?) async {
+    func uploadImageForTasks(imageData: Data, mimeType: ImageType, note: String?) async {
         guard !state.isSubmitting else { return }
         state.isSubmitting = true
         state.errorMessage = nil
@@ -125,7 +125,7 @@ extension CreateTaskViewModel {
         do {
             let response = try await useCases.imageToTasks.execute(
                 imageData: imageData,
-                mimeType: mimeType,
+                mimeType: mimeType.rawValue,
                 note: note
             )
             state.phase = .imageTasksResult(response)

@@ -122,13 +122,14 @@ struct CreateTaskView: View {
                             await viewModel.finishRecording()
                         }
                     },
-                    onImageSelected: { data, mimeType in
+                    onPhotoItemSelected: { item in
                         Task {
-                            await viewModel.processUploadedImage(
-                                imageData: data,
-                                mimeType: mimeType,
-                                note: nil
-                            )
+                            await viewModel.processPickedPhoto(item, note: nil)
+                        }
+                    },
+                    onCameraImageCaptured: { data in
+                        Task {
+                            await viewModel.processCapturedImage(data, note: nil)
                         }
                     }
                 )
