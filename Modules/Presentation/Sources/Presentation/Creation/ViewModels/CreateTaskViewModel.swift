@@ -6,13 +6,13 @@ import Observation
 @MainActor
 final class CreateTaskViewModel {
     var state: CreateTaskState
-    private(set) var activeNudge: ScheduleNudge?
+    var activeNudge: ScheduleNudge?
 
-    private let selectedDay: Date
+    let selectedDay: Date
 
     @ObservationIgnored let useCases: CreationUseCases
     @ObservationIgnored let speechTranscriber: any SpeechTranscribing
-    @ObservationIgnored private let timeZone: TimeZone
+    @ObservationIgnored let timeZone: TimeZone
     @ObservationIgnored private var didLoadZones = false
     @ObservationIgnored var wantsToRecord = false
     @ObservationIgnored var pendingTranscription = ""
@@ -120,59 +120,6 @@ final class CreateTaskViewModel {
         } catch {
             state.errorMessage = error.localizedDescription
         }
-    }
-
-    func createTaskWithAwan(prompt: String) async {
-        guard !state.isSubmitting else { return }
-        state.startAILoading()
-
-        do {
-            let aiTaskItems = try await useCases.createAITask.execute(
-                CreateAITaskRequest(text: prompt)
-            )
-            state.setAIResult(aiTaskItems)
-        } catch is CancellationError {
-            state.cancelAI()
-        } catch {
-            state.setAIError(error.localizedDescription)
-        }
-    }
-
-    func generateAITask(prompt: String) async {
-        await createTaskWithAwan(prompt: prompt)
-    }
-
-    func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
-        guard !state.isSubmitting else { return }
-        state.isSubmitting = true
-        state.errorMessage = nil
-        defer { state.isSubmitting = false }
-
-        do {
-            let result = try await useCases.createTask.execute(
-                CreateTaskRequest(
-                    title: item.task.title,
-                    description: item.task.description,
-                    durationMinutes: finalDurationMinutes,
-                    categoryID: item.task.category?.id,
-                    isSplittable: item.task.isSplittable,
-                    mandatory: item.task.mandatory,
-                    estimatedPoints: item.task.estimatedPoints,
-                    startsAt: item.startTime,
-                    selectedDay: selectedDay,
-                    timeZone: timeZone
-                )
-            )
-            state.didCreateTask = true
-            activeNudge = result.nudge
-        } catch is CancellationError {
-        } catch {
-            state.errorMessage = error.localizedDescription
-        }
-    }
-
-    func dismissAITaskResult() {
-        state.dismissAITaskResult()
     }
 
     func dismissError() {
