@@ -61,7 +61,7 @@ struct ScheduleTimelineView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
-                .padding(.bottom, 28)
+                .padding(.bottom, 170)
             }
             .scrollDismissesKeyboard(.interactively)
 
@@ -76,12 +76,13 @@ struct ScheduleTimelineView: View {
                     .transition(.scale.combined(with: .opacity))
             }
         }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
+        .overlay(alignment: .bottom) {
             if let nudge = state.activeNudge {
                 GamifiedNudgeView(model: nudge) { action in
                     viewModel.send(.performNudgeAction(action.id))
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity).combined(with: .scale(scale: 0.94)))
+                .padding(.bottom, 80)
             }
         }
         .animation(

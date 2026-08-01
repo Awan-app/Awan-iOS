@@ -11,6 +11,7 @@ public enum MainTab: Hashable, Sendable {
     case home
     case calendar
     case rewards
+    case store
     case you
     case add
 }
