@@ -840,5 +840,14 @@ public enum L10n {
         public static var dailyZonesTitle: String { L10n.currentBundle.localizedString(forKey: "templates.daily_zones_title", value: nil, table: "Localizable") }
         public static func saveDay(_ day: String) -> String { String(format: L10n.currentBundle.localizedString(forKey: "templates.save_day", value: nil, table: "Localizable"), day) }
         public static var day: String { L10n.currentBundle.localizedString(forKey: "templates.day", value: nil, table: "Localizable") }
+        public static var sectionTitle: String { L10n.currentBundle.localizedString(forKey: "templates.section_title", value: nil, table: "Localizable") }
+        public static var newButton: String { L10n.currentBundle.localizedString(forKey: "templates.new_button", value: nil, table: "Localizable") }
+        public static var selectedBadge: String { L10n.currentBundle.localizedString(forKey: "templates.selected_badge", value: nil, table: "Localizable") }
+        public static var activeDaysTitle: String { L10n.currentBundle.localizedString(forKey: "templates.active_days_title", value: nil, table: "Localizable") }
+        public static var activeDaysSubtitle: String { L10n.currentBundle.localizedString(forKey: "templates.active_days_subtitle", value: nil, table: "Localizable") }
+        public static var scheduleTitle: String { L10n.currentBundle.localizedString(forKey: "templates.schedule_title", value: nil, table: "Localizable") }
+        public static func zonesCount(_ count: Int) -> String { String(format: L10n.currentBundle.localizedString(forKey: "templates.zones_count", value: nil, table: "Localizable"), count) }
+        public static func activeDaysCount(_ count: Int) -> String { String(format: L10n.currentBundle.localizedString(forKey: "templates.active_days_count", value: nil, table: "Localizable"), count) }
+        public static var saveTemplate: String { L10n.currentBundle.localizedString(forKey: "templates.save_template", value: nil, table: "Localizable") }
     }
 }
