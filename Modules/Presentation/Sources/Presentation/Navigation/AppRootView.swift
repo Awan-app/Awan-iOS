@@ -94,75 +94,63 @@ struct AppRootView: View {
     }
 
     private var mainFlow: some View {
-        TabView(selection: Bindable(coordinator.mainCoordinator).selectedTab) {
-            Tab(value: MainTab.home) {
-                NavigationStack(path: Bindable(coordinator.mainCoordinator).homePath) {
-                    factory.makeHomeView()
-                        .navigationDestination(for: MainRoute.self) { route in
-                            switch route {
-                            case .calendar:
-                                factory.makeCalendarView()
-                            default:
-                                EmptyView()
-                            }
+        ZStack {
+            // Keep all tabs alive in memory — eliminates tab switch lag
+            let selected = coordinator.mainCoordinator.selectedTab
+
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).homePath) {
+                factory.makeHomeView()
+                    .navigationDestination(for: MainRoute.self) { route in
+                        switch route {
+                        case .calendar: factory.makeCalendarView()
+                        default: EmptyView()
                         }
-                }
-            } label: {
-                Label(L10n.Home.today, systemImage: "sun.max.fill")
+                    }
             }
+            .opacity(selected == .home ? 1 : 0)
+            .allowsHitTesting(selected == .home)
 
-//            Tab(value: MainTab.calendar) {
-//                NavigationStack(path: Bindable(coordinator.mainCoordinator).calendarPath) {
-//                    factory.makeCalendarView()
-//                }
-//            } label: {
-//                Label(L10n.Home.calendar, systemImage: "calendar")
-//            }
-
-            Tab(value: MainTab.rewards) {
-                NavigationStack(path: Bindable(coordinator.mainCoordinator).rewardsPath) {
-                    factory.makeRewardsView()
-                }
-            } label: {
-                Label(L10n.Home.rewards, systemImage: "gift.fill")
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).rewardsPath) {
+                factory.makeRewardsView()
             }
+            .opacity(selected == .rewards ? 1 : 0)
+            .allowsHitTesting(selected == .rewards)
 
-            Tab(value: MainTab.you) {
-                NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
-                    factory.makeProfileMainView()
-                        .navigationDestination(for: MainRoute.self) { route in
-                            switch route {
-                            case .userInfo:
-                                factory.makeUserInfoView()
-                            case .dailyZones:
-                                factory.makeDailyZonesView()
-                                    .environment(appearanceManager)
-                            default:
-                                EmptyView()
-                            }
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).storePath) {
+                AppColors.screenBackground.ignoresSafeArea()
+            }
+            .opacity(selected == .store ? 1 : 0)
+            .allowsHitTesting(selected == .store)
+
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
+                factory.makeProfileMainView()
+                    .navigationDestination(for: MainRoute.self) { route in
+                        switch route {
+                        case .userInfo:   factory.makeUserInfoView()
+                        case .dailyZones: factory.makeDailyZonesView().environment(appearanceManager)
+                        default:          EmptyView()
                         }
-                }
-            } label: {
-                Label(L10n.Home.you, systemImage: "person.fill")
+                    }
             }
-
-            // Floats independently beside the tab bar — acts as a button, not a real destination
-            Tab(value: MainTab.add, role: .search) {
-                Color.clear
-            } label: {
-                Label("Add", systemImage: "wand.and.sparkles")
-            }
+            .opacity(selected == .you ? 1 : 0)
+            .allowsHitTesting(selected == .you)
         }
+        .safeAreaPadding(.bottom, 90)
         .id(languageManager.currentLanguage)
-        .tint(AppColors.accentBlue)
         .overlay {
             opaqueTopSafeArea
         }
-        .onChange(of: coordinator.mainCoordinator.selectedTab) { oldValue, newValue in
-            guard newValue == .add else { return }
-            creationSheetDetent = Self.compactCreationDetent
-            coordinator.mainCoordinator.presentAddItem()
-            coordinator.mainCoordinator.selectedTab = oldValue
+        .safeAreaInset(edge: .bottom) {
+            CustomTabBar(
+                selectedTab: Bindable(coordinator.mainCoordinator).selectedTab,
+                onAddTapped: {
+                    creationSheetDetent = Self.compactCreationDetent
+                    coordinator.mainCoordinator.presentAddItem()
+                }
+            )
+            .environment(\.layoutDirection, currentLayoutDirection)
+            .padding(.top, 12)
+            .padding(.bottom, 6)
         }
         .sheet(item: Bindable(coordinator.mainCoordinator).presentedSheet) { route in
             switch route {
