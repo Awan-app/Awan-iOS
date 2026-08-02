@@ -156,7 +156,10 @@ final class CreateTaskViewModel {
     }
 
     func confirmAndAcceptProposedTasks(_ selectedTasks: [ProposedTask]) async {
-        await acceptProposedTasks(selectedTasks)
+        await acceptProposedTasks(selectedTasks, destination: .schedule)
+    }
+
+    func confirmAndAddProposedTasksToInbox(_ selectedTasks: [ProposedTask]) async {
+        await acceptProposedTasks(selectedTasks, destination: .inbox)
     }
 }
-

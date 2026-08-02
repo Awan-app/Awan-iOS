@@ -10,6 +10,7 @@ enum TaskEndpoint: APIEndpoint {
 
     case createTask(CreateTaskRequestDTO)
     case createTaskWithSessions(CreateTaskWithSessionsRequestDTO)
+    case createTasksWithSessions(BulkCreateTasksWithSessionsRequestDTO)
     case getTask(taskID: UUID)
     case getTasksByDate(date: String)
     case getTasksByDateRange(startDate: String, endDate: String)
@@ -31,6 +32,8 @@ enum TaskEndpoint: APIEndpoint {
             return "/tasks"
         case .createTaskWithSessions:
             return "/tasks/with-sessions"
+        case .createTasksWithSessions:
+            return "/tasks/with-sessions/bulk"
         case .getTask(let taskID):
             return "/tasks/\(taskID.uuidString)"
         case .getTasksByDate(let date):
@@ -56,7 +59,7 @@ enum TaskEndpoint: APIEndpoint {
 
     var method: HTTPMethod {
         switch self {
-        case .createTask, .createTaskWithSessions, .addDependency:
+        case .createTask, .createTaskWithSessions, .createTasksWithSessions, .addDependency:
             return .post
         case .getTask, .getTasksByDate, .getTasksByDateRange, .listDependencies, .listDependents:
             return .get
@@ -86,6 +89,8 @@ enum TaskEndpoint: APIEndpoint {
         case .createTask(let request):
             return request
         case .createTaskWithSessions(let request):
+            return request
+        case .createTasksWithSessions(let request):
             return request
         case .updateTask(_, let request):
             return request

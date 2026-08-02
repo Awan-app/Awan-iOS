@@ -37,9 +37,11 @@ struct CreateTaskView: View {
                         }
                     },
                     onAddToInbox: { selectedTasks in
-                        // TODO: Implement inbox functionality
-                        print("Add to inbox tapped with \(selectedTasks.count) tasks")
+                        Task {
+                            await viewModel.confirmAndAddProposedTasksToInbox(selectedTasks)
+                        }
                     },
+                    defaultSessionStart: viewModel.state.startsAt,
                     onDismiss: {
                         viewModel.dismissAITaskResult()
                     }

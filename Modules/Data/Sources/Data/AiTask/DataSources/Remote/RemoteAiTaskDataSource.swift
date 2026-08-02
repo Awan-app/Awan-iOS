@@ -10,6 +10,7 @@ public protocol AiTaskRemoteDataSource: Sendable {
     func createAITask(_ request: CreateAITaskRequestDTO) async throws -> TaskProposalResponseDTO
     func imageToTasks(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposalResponseDTO
     func acceptTaskWithSessions(_ request: CreateTaskWithSessionsRequestDTO) async throws -> TaskWithSessionsResponseDTO
+    func acceptTasksWithSessions(_ request: BulkCreateTasksWithSessionsRequestDTO) async throws -> TasksWithSessionsResponseDTO
 }
 
 public final class DefaultAiTaskRemoteDataSource: AiTaskRemoteDataSource {
@@ -41,7 +42,15 @@ public final class DefaultAiTaskRemoteDataSource: AiTaskRemoteDataSource {
         )
     }
 
-    public func acceptTaskWithSessions(_ request: CreateTaskWithSessionsRequestDTO) async throws -> TaskWithSessionsResponseDTO {
+    public func acceptTaskWithSessions(
+        _ request: CreateTaskWithSessionsRequestDTO
+    ) async throws -> TaskWithSessionsResponseDTO {
         try await networkService.request(TaskEndpoint.createTaskWithSessions(request))
+    }
+
+    public func acceptTasksWithSessions(
+        _ request: BulkCreateTasksWithSessionsRequestDTO
+    ) async throws -> TasksWithSessionsResponseDTO {
+        try await networkService.request(TaskEndpoint.createTasksWithSessions(request))
     }
 }

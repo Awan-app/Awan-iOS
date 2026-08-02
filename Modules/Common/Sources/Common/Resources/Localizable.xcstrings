@@ -1515,6 +1515,76 @@
         }
       }
     },
+    "home.edit_session_schedule": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تعديل موعد الجلسة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Edit session schedule" } }
+      }
+    },
+    "home.invalid_session_time_range": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "يجب أن يكون وقت الانتهاء بعد وقت البدء." } },
+        "en": { "stringUnit": { "state": "translated", "value": "End time must be after start time." } }
+      }
+    },
+    "home.session_day": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "يوم الجلسة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Session day" } }
+      }
+    },
+    "home.schedule_selected_count": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "جدولة (%d)" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Schedule (%d)" } }
+      }
+    },
+    "home.session_end": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "وقت الانتهاء" } },
+        "en": { "stringUnit": { "state": "translated", "value": "End time" } }
+      }
+    },
+    "home.session_start": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "وقت البدء" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Start time" } }
+      }
+    },
+    "home.session_today_at": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "اليوم الساعة %@" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Today at %@" } }
+      }
+    },
+    "home.session_tomorrow_at": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "غدًا الساعة %@" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Tomorrow at %@" } }
+      }
+    },
+    "home.set_schedule": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تحديد موعد" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Set schedule" } }
+      }
+    },
+    "home.time": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "الوقت" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Time" } }
+      }
+    },
     "home.confirm_accept_count": {
       "extractionState": "manual",
       "localizations": {

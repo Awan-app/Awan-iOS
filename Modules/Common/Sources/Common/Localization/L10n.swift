@@ -628,6 +628,67 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "home.add_to_inbox", value: nil, table: "Localizable")
         }
 
+        public static var editSessionSchedule: String {
+            L10n.currentBundle.localizedString(forKey: "home.edit_session_schedule", value: nil, table: "Localizable")
+        }
+
+        public static var invalidSessionTimeRange: String {
+            L10n.currentBundle.localizedString(forKey: "home.invalid_session_time_range", value: nil, table: "Localizable")
+        }
+
+        public static func scheduleSelectedCount(_ count: Int) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: "home.schedule_selected_count",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                count
+            )
+        }
+
+        public static var sessionStart: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_start", value: nil, table: "Localizable")
+        }
+
+        public static var sessionEnd: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_end", value: nil, table: "Localizable")
+        }
+
+        public static var sessionDay: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_day", value: nil, table: "Localizable")
+        }
+
+        public static func sessionTodayAt(_ time: String) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: "home.session_today_at",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                time
+            )
+        }
+
+        public static func sessionTomorrowAt(_ time: String) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: "home.session_tomorrow_at",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                time
+            )
+        }
+
+        public static var setSchedule: String {
+            L10n.currentBundle.localizedString(forKey: "home.set_schedule", value: nil, table: "Localizable")
+        }
+
+        public static var time: String {
+            L10n.currentBundle.localizedString(forKey: "home.time", value: nil, table: "Localizable")
+        }
+
         public static func confirmAcceptCount(_ count: Int) -> String {
             String(format: L10n.currentBundle.localizedString(forKey: "home.confirm_accept_count", value: nil, table: "Localizable"), count)
         }

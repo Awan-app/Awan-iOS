@@ -15,6 +15,8 @@ struct ProposedTaskCard: View {
     let onToggleSelect: () -> Void
     let onDurationChanged: (Int) -> Void
     let onCategoryChanged: (UUID?) -> Void
+    let onEditSession: (ProposedSessionSource, ProposedSession) -> Void
+    let onAddSession: () -> Void
 
     var body: some View {
         AppCard {
@@ -94,7 +96,16 @@ struct ProposedTaskCard: View {
                 if hasSessions {
                     ProposedTaskSessionsRow(
                         fixedSessions: task.draft.sessions,
-                        aiSessions: task.aiProposedSessions
+                        aiSessions: task.aiProposedSessions,
+                        onEditSession: onEditSession
+                    )
+                } else {
+                    AppButton(
+                        title: L10n.Home.setSchedule,
+                        icon: "calendar.badge.plus",
+                        color: AppColors.accentBlue,
+                        size: .compact,
+                        onTap: onAddSession
                     )
                 }
 

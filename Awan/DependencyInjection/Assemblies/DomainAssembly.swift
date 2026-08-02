@@ -150,6 +150,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(AiTaskRepository.self, from: resolver)
             )
         }
+        container.register(AcceptProposedTasksUseCase.self) { resolver in
+            DefaultAcceptProposedTasksUseCase(
+                repository: Self.resolve(AiTaskRepository.self, from: resolver)
+            )
+        }
         container.register(UpdateTaskUseCase.self) { resolver in
             DefaultUpdateTaskUseCase(
                 workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),

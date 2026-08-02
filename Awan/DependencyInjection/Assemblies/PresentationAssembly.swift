@@ -93,6 +93,7 @@ struct PresentationAssembly: Assembly {
                 createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver),
                 imageToTasks: Self.resolve(ImageToTasksUseCase.self, from: resolver),
                 acceptProposedTask: Self.resolve(AcceptProposedTaskUseCase.self, from: resolver),
+                acceptProposedTasks: Self.resolve(AcceptProposedTasksUseCase.self, from: resolver),
                 userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 goalDecomposition: GoalDecompositionUseCases(
                     sendMessage: Self.resolve(

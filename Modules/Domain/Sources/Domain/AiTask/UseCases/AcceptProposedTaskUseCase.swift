@@ -1,8 +1,3 @@
-//
-//  AcceptProposedTaskUseCase.swift
-//  Domain
-//
-
 import Foundation
 
 public protocol AcceptProposedTaskUseCase: Sendable {

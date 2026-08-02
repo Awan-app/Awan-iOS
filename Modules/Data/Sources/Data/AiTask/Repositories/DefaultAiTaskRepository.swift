@@ -38,7 +38,39 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
     public func acceptTaskWithSessions(_ draft: TaskWithSessionsDraft) async throws -> AwanTask {
         let requestDTO = CreateTaskWithSessionsRequestDTO(draft: draft)
         let responseDTO = try await remoteDataSource.acceptTaskWithSessions(requestDTO)
-        let acceptedTask = (try? HomeRemoteMapper.task(responseDTO.task, defaultDuration: draft.task.estimatedDuration)) ?? responseDTO.task.toDomain()
+        return try await persist(
+            responseDTO,
+            defaultDuration: draft.task.estimatedDuration
+        )
+    }
+
+    public func acceptTasksWithSessions(
+        _ drafts: [TaskWithSessionsDraft]
+    ) async throws -> [AwanTask] {
+        let requestDTO = BulkCreateTasksWithSessionsRequestDTO(drafts: drafts)
+        let responseDTO = try await remoteDataSource.acceptTasksWithSessions(requestDTO)
+
+        var acceptedTasks: [AwanTask] = []
+        acceptedTasks.reserveCapacity(responseDTO.tasks.count)
+        for (index, response) in responseDTO.tasks.enumerated() {
+            let defaultDuration = drafts.indices.contains(index)
+                ? drafts[index].task.estimatedDuration
+                : 60
+            acceptedTasks.append(
+                try await persist(response, defaultDuration: defaultDuration)
+            )
+        }
+        return acceptedTasks
+    }
+
+    private func persist(
+        _ responseDTO: TaskWithSessionsResponseDTO,
+        defaultDuration: Int
+    ) async throws -> AwanTask {
+        let acceptedTask = (try? HomeRemoteMapper.task(
+            responseDTO.task,
+            defaultDuration: defaultDuration
+        )) ?? responseDTO.task.toDomain()
 
         if let localTaskDataSource {
             try? await localTaskDataSource.addTask(acceptedTask)
