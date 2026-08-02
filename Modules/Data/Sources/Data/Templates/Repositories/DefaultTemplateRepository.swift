@@ -13,51 +13,47 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
         self.localDataSource = localDataSource
     }
 
-    public func createWeeklyTemplate(zones: [Zone]) async throws {
-        // Map Domain Zones to Remote DTOs
-        let zonePayloads = zones.map { zone in
-            CreateTemplateRequestDTO.ZonePayload(
-                name: zone.name,
-                startTime: String(format: "%02d:%02d:00", zone.startTime.hour, zone.startTime.minute),
-                endTime: String(format: "%02d:%02d:00", zone.endTime.hour, zone.endTime.minute),
-                color: zone.color.hex
-            )
-        }
-
+    public func createTemplate(
+        name: String,
+        daysOfWeek: Set<TemplateWeekday>,
+        zones: [Zone]
+    ) async throws -> Template {
         let request = CreateTemplateRequestDTO(
-            name: "Weekly Zones",
-            daysOfWeek: [
-                "MONDAY",
-                "TUESDAY",
-                "WEDNESDAY",
-                "THURSDAY",
-                "FRIDAY",
-                "SATURDAY",
-                "SUNDAY"
-            ],
-            zones: zonePayloads
+            name: name,
+            daysOfWeek: orderedRawDays(daysOfWeek),
+            zones: zones.map(createPayload)
         )
 
-        // 1. Create Remotely
-        let response = try await remoteDataSource.createTemplate(request: request)
-
-        // 2. Cache the server-created aggregate so remote identifiers remain authoritative.
-        try await localDataSource.upsertTemplate(
-            HomeRemoteMapper.templateData(response)
-        )
+        do {
+            let response = try await remoteDataSource.createTemplate(request: request)
+            let localTemplate = try HomeRemoteMapper.templateData(response)
+            let template = try HomeRemoteMapper.template(response)
+            try await localDataSource.upsertTemplate(localTemplate)
+            return template
+        } catch {
+            throw TemplateManagementErrorMapper.map(error)
+        }
     }
 
     public func listTemplates() async throws -> [Template] {
-        let responses = try await remoteDataSource.listTemplates()
-        let localTemplates = try responses.map(HomeRemoteMapper.templateData)
-        let templates = try responses.map(HomeRemoteMapper.template)
-        try await localDataSource.replaceTemplates(localTemplates)
-        return templates
+        do {
+            let responses = try await remoteDataSource.listTemplates()
+            let localTemplates = try responses.map(HomeRemoteMapper.templateData)
+            let templates = try responses.map(HomeRemoteMapper.template)
+            try await localDataSource.replaceTemplates(localTemplates)
+            return templates
+        } catch {
+            throw TemplateManagementErrorMapper.map(error)
+        }
     }
 
-    public func updateBulkTemplate(id: UUID, zones: [ZoneWithoutId]) async throws -> Template {
+    public func updateBulkTemplate(
+        id: UUID,
+        zones: [TemplateZoneMutation]
+    ) async throws -> Template {
         let zonePayloads = zones.map { zone in
             BulkUpdateZonesRequestDTO.ZonePayload(
+                id: zone.id?.uuidString,
                 name: zone.name,
                 startTime: String(format: "%02d:%02d:00", zone.startTime.hour, zone.startTime.minute),
                 endTime: String(format: "%02d:%02d:00", zone.endTime.hour, zone.endTime.minute),
@@ -67,26 +63,61 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
 
         let request = BulkUpdateZonesRequestDTO(zones: zonePayloads)
 
-        _ = try await remoteDataSource.bulkUpdate(templateID: id, request: request)
-        
-        let templateResponse = try await remoteDataSource.getTemplate(templateID: id)
-        let localTemplate = try HomeRemoteMapper.templateData(templateResponse)
-        let template = try HomeRemoteMapper.template(templateResponse)
-        try await localDataSource.upsertTemplate(localTemplate)
-        return template
+        do {
+            _ = try await remoteDataSource.bulkUpdate(templateID: id, request: request)
+            let response = try await remoteDataSource.getTemplate(templateID: id)
+            let localTemplate = try HomeRemoteMapper.templateData(response)
+            let template = try HomeRemoteMapper.template(response)
+            try await localDataSource.upsertTemplate(localTemplate)
+            return template
+        } catch {
+            throw TemplateManagementErrorMapper.map(error)
+        }
     }
 
-    public func updateTemplate(id: UUID, name: String, daysOfWeek: [String]) async throws -> Template {
-        let request = UpdateTemplateRequestDTO(name: name, daysOfWeek: daysOfWeek)
-        let response = try await remoteDataSource.updateTemplate(templateID: id, request: request)
-        let localTemplate = try HomeRemoteMapper.templateData(response)
-        let template = try HomeRemoteMapper.template(response)
-        try await localDataSource.upsertTemplate(localTemplate)
-        return template
+    public func updateTemplate(
+        id: UUID,
+        name: String,
+        daysOfWeek: Set<TemplateWeekday>
+    ) async throws -> Template {
+        let request = UpdateTemplateRequestDTO(
+            name: name,
+            daysOfWeek: orderedRawDays(daysOfWeek)
+        )
+        do {
+            let response = try await remoteDataSource.updateTemplate(templateID: id, request: request)
+            let localTemplate = try HomeRemoteMapper.templateData(response)
+            let template = try HomeRemoteMapper.template(response)
+            try await localDataSource.upsertTemplate(localTemplate)
+            return template
+        } catch {
+            throw TemplateManagementErrorMapper.map(error)
+        }
     }
 
     public func deleteTemplate(id: UUID) async throws {
-        try await remoteDataSource.deleteTemplate(templateID: id)
-        try await localDataSource.deleteTemplate(id: id)
+        do {
+            try await remoteDataSource.deleteTemplate(templateID: id)
+            try await localDataSource.deleteTemplate(id: id)
+        } catch {
+            throw TemplateManagementErrorMapper.map(error)
+        }
+    }
+
+    private func createPayload(_ zone: Zone) -> CreateTemplateRequestDTO.ZonePayload {
+        CreateTemplateRequestDTO.ZonePayload(
+            name: zone.name,
+            startTime: formatted(zone.startTime),
+            endTime: formatted(zone.endTime),
+            color: zone.color.hex
+        )
+    }
+
+    private func orderedRawDays(_ days: Set<TemplateWeekday>) -> [String] {
+        TemplateWeekday.allCases.filter(days.contains).map(\.rawValue)
+    }
+
+    private func formatted(_ time: LocalTime) -> String {
+        String(format: "%02d:%02d:00", time.hour, time.minute)
     }
 }
