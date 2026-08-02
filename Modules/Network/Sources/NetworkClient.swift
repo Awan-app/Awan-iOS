@@ -19,15 +19,15 @@ public final class NetworkClient: NetworkServiceProtocol, @unchecked Sendable {
 
     private init() {
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 30
-        configuration.timeoutIntervalForResource = 60
+        configuration.timeoutIntervalForRequest = 90
+        configuration.timeoutIntervalForResource = 90
 
         session = Session(configuration: configuration,
         eventMonitors: [NetworkLogger()])
         authenticationInterceptor = AuthenticationInterceptor(
             authenticator: AuthSessionAuthenticator(),
             credential: AuthSessionStore.session,
-            refreshWindow: .init(interval: 60, maximumAttempts: 1)
+            refreshWindow: .init(interval: 90, maximumAttempts: 1)
         )
         jsonDecoder = JSONDecoder()
     }
