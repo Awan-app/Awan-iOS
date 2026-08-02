@@ -4,7 +4,7 @@ import Foundation
 enum CreateTaskPhase: Equatable {
     case composer
     case aiLoading
-    case aiTasksResult(TaskProposalResponse)
+    case aiTasksResult(TaskProposal)
     case imageUploading(String)
 }
 
@@ -41,7 +41,7 @@ struct CreateTaskState {
         phase = .aiLoading
     }
 
-    mutating func setAIResult(_ response: TaskProposalResponse) {
+    mutating func setAIResult(_ response: TaskProposal) {
         phase = .aiTasksResult(response)
         isSubmitting = false
     }

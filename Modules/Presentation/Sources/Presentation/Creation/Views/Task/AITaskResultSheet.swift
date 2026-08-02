@@ -5,6 +5,7 @@ import SwiftUI
 struct AITaskResultSheet: View {
     let items: [AITaskSheetItem]
     let onAdd: (AITaskSheetItem, Int) -> Void
+    let onAddToInbox: ([AITaskSheetItem]) -> Void
     let onDismiss: () -> Void
 
     @State private var editedDurationMinutes: [UUID: Int]
@@ -14,10 +15,12 @@ struct AITaskResultSheet: View {
     init(
         items: [AITaskSheetItem],
         onAdd: @escaping (AITaskSheetItem, Int) -> Void,
+        onAddToInbox: @escaping ([AITaskSheetItem]) -> Void,
         onDismiss: @escaping () -> Void
     ) {
         self.items = items
         self.onAdd = onAdd
+        self.onAddToInbox = onAddToInbox
         self.onDismiss = onDismiss
 
         var initialEditedDurations: [UUID: Int] = [:]
@@ -214,27 +217,43 @@ struct AITaskResultSheet: View {
 
                 Divider()
 
-                // Add button
-                AppButton(
-                    title: isAdded ? L10n.Home.btnAddManualTask : L10n.Home.btnAddManualTask,
-                    icon: isAdded ? "checkmark.circle.fill" : "plus.circle.fill",
-                    color: isAdded ? AppColors.buttonDisabled : AppColors.accentBlue,
-                    size: .large,
-                    onTap: {
-                        guard !isAdded else { return }
-                        let finalDuration: Int
-                        if item.sessions.isEmpty {
-                            finalDuration = editedDurationMinutes[item.id] ?? itemDuration
-                        } else {
-                            finalDuration = item.sessions.enumerated().reduce(0) { total, pair in
-                                total + (sessionDurations[item.id]?[pair.offset] ?? pair.element.timeRange.durationMinutes)
-                            }
+                // Action buttons
+                HStack(spacing: 12) {
+                    AppButton(
+                        title: L10n.Home.addToInbox,
+                        icon: "tray.fill",
+                        color: AppColors.accentPurple,
+                        foregroundColor: AppColors.otpWhite,
+                        borderColor: AppColors.divider,
+                        size: .large,
+                        useGradient: false,
+                        onTap: {
+                            
                         }
-                        addedTaskIDs.insert(item.id)
-                        onAdd(item, finalDuration)
-                    }
-                )
-                .disabled(isAdded)
+                    )
+                    .disabled(isAdded)
+
+                    AppButton(
+                        title: isAdded ? L10n.Home.btnAddManualTask : L10n.Home.btnAddManualTask,
+                        icon: isAdded ? "checkmark.circle.fill" : "plus.circle.fill",
+                        color: isAdded ? AppColors.buttonDisabled : AppColors.accentBlue,
+                        size: .large,
+                        onTap: {
+                            guard !isAdded else { return }
+                            let finalDuration: Int
+                            if item.sessions.isEmpty {
+                                finalDuration = editedDurationMinutes[item.id] ?? itemDuration
+                            } else {
+                                finalDuration = item.sessions.enumerated().reduce(0) { total, pair in
+                                    total + (sessionDurations[item.id]?[pair.offset] ?? pair.element.timeRange.durationMinutes)
+                                }
+                            }
+                            addedTaskIDs.insert(item.id)
+                            onAdd(item, finalDuration)
+                        }
+                    )
+                    .disabled(isAdded)
+                }
             }
         }
         .opacity(isAdded ? 0.6 : 1.0)
@@ -270,5 +289,5 @@ struct AITaskResultSheet: View {
 }
 
 #Preview {
-    AITaskResultSheet(items: [.mock], onAdd: { _, _ in }, onDismiss: {})
+    AITaskResultSheet(items: [.mock], onAdd: { _, _ in }, onAddToInbox: { _ in }, onDismiss: {})
 }

@@ -7,26 +7,29 @@ import Domain
 import SwiftUI
 
 struct ImageToTasksResultSheet: View {
-    let response: TaskProposalResponse
+    let response: TaskProposal
     let categories: [TaskCategory]
     let zones: [Zone]
     let onConfirm: ([ProposedTask]) -> Void
+    let onAddToInbox: ([ProposedTask]) -> Void
     let onDismiss: () -> Void
 
     @State private var tasks: [ProposedTask]
     @State private var selectedTaskIDs: Set<UUID>
 
     init(
-        response: TaskProposalResponse,
+        response: TaskProposal,
         categories: [TaskCategory],
         zones: [Zone],
         onConfirm: @escaping ([ProposedTask]) -> Void,
+        onAddToInbox: @escaping ([ProposedTask]) -> Void,
         onDismiss: @escaping () -> Void
     ) {
         self.response = response
         self.categories = categories
         self.zones = zones
         self.onConfirm = onConfirm
+        self.onAddToInbox = onAddToInbox
         self.onDismiss = onDismiss
         _tasks = State(initialValue: response.tasks)
         _selectedTaskIDs = State(initialValue: Set(response.tasks.map { $0.id }))
@@ -40,7 +43,7 @@ struct ImageToTasksResultSheet: View {
         VStack(spacing: 0) {
             // Top Navigation Bar
             HStack {
-                Text(L10n.Home.imageToTasksTitle)
+                Text(L10n.Home.aiTaskResultTitle)
                     .font(AppFonts.title3Black)
                     .foregroundStyle(AppColors.textPrimary)
 
@@ -102,10 +105,25 @@ struct ImageToTasksResultSheet: View {
 
             // Bottom Confirm Button
             if !tasks.isEmpty {
-                VStack {
+                HStack(spacing: 12) {
+                    AppButton(
+                        title: L10n.Home.addToInbox,
+                        icon: "tray.fill",
+                        color: AppColors.accentPurple,
+                        foregroundColor: AppColors.otpWhite,
+                        borderColor: AppColors.divider,
+                        size: .large,
+                        useGradient: false,
+                        onTap: {
+                            guard !selectedTasks.isEmpty else { return }
+                            onAddToInbox(selectedTasks)
+                        }
+                    )
+                    .disabled(selectedTasks.isEmpty)
+
                     AppButton(
                         title: L10n.Home.confirmAcceptCount(selectedTasks.count),
-                        icon: "checkmark.circle.fill",
+                        icon: "calendar.badge.plus",
                         color: selectedTasks.isEmpty ? AppColors.buttonDisabled : AppColors.accentBlue,
                         size: .large,
                         onTap: {

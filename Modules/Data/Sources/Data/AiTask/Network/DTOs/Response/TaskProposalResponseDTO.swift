@@ -11,7 +11,7 @@ public struct TaskProposalResponseDTO: Decodable, Sendable {
     public let tasks: [ProposedTaskDTO]
     public let timestamp: String?
 
-    public func toDomain() -> TaskProposalResponse {
+    public func toDomain() -> TaskProposal {
         let parsedTimestamp: Date
         if let timestampStr = timestamp, let date = ISO8601Helper.parse(timestampStr) {
             parsedTimestamp = date
@@ -19,7 +19,7 @@ public struct TaskProposalResponseDTO: Decodable, Sendable {
             parsedTimestamp = Date()
         }
 
-        return TaskProposalResponse(
+        return TaskProposal(
             sourceSummary: sourceSummary,
             tasks: tasks.map { $0.toDomain() },
             timestamp: parsedTimestamp

@@ -154,7 +154,7 @@ final class CreateTaskViewModelTests: XCTestCase {
 
     func testCreateTaskWithAwanUpdatesPhaseAndItemsInState() async throws {
         let stub = CreateTaskUseCaseStub(zones: [])
-        let aiResponse = TaskProposalResponse(sourceSummary: nil, tasks: [], timestamp: Date())
+        let aiResponse = TaskProposal(sourceSummary: nil, tasks: [], timestamp: Date())
         let aiUseCase = CreateAITaskUseCaseStub(response: aiResponse)
         let viewModel = makeViewModel(stub: stub, aiUseCase: aiUseCase)
 
@@ -166,7 +166,7 @@ final class CreateTaskViewModelTests: XCTestCase {
 
     func testDismissAITaskResultResetsState() async throws {
         let stub = CreateTaskUseCaseStub(zones: [])
-        let aiResponse = TaskProposalResponse(sourceSummary: nil, tasks: [], timestamp: Date())
+        let aiResponse = TaskProposal(sourceSummary: nil, tasks: [], timestamp: Date())
         let aiUseCase = CreateAITaskUseCaseStub(response: aiResponse)
         let viewModel = makeViewModel(stub: stub, aiUseCase: aiUseCase)
 
@@ -348,8 +348,8 @@ private actor CreateTaskUseCaseStub: FetchZonesUseCase, CreateTaskUseCase {
 }
 
 private struct MockImageToTasksUseCase: ImageToTasksUseCase {
-    func execute(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposalResponse {
-        TaskProposalResponse(sourceSummary: "Test Summary", tasks: [], timestamp: Date())
+    func execute(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposal {
+        TaskProposal(sourceSummary: "Test Summary", tasks: [], timestamp: Date())
     }
 }
 
@@ -371,8 +371,8 @@ private struct MockAcceptProposedTaskUseCase: AcceptProposedTaskUseCase {
     }
 }
 private struct CreateAITaskUseCaseStub: CreateAITaskUseCase {
-    let response: TaskProposalResponse
-    func execute(_ request: CreateAITaskRequest) async throws -> TaskProposalResponse {
+    let response: TaskProposal
+    func execute(_ request: CreateAITaskRequest) async throws -> TaskProposal {
         response
     }
 }

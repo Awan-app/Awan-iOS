@@ -1498,19 +1498,36 @@
         }
       }
     },
+    "home.add_to_inbox": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أضف إلى صندوق الوارد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to Inbox"
+          }
+        }
+      }
+    },
     "home.confirm_accept_count": {
       "extractionState": "manual",
       "localizations": {
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "تأكيد قبول %d مهام"
+            "value": "جدولة"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Confirm %d Tasks"
+            "value": "Schedule"
           }
         }
       }

@@ -178,12 +178,12 @@ extension CreateTaskViewModel {
             aiProposedSessions: [],
             reason: ""
         )
-        let response = TaskProposalResponse(
+        let response = TaskProposal(
             sourceSummary: nil,
             tasks: [proposedTask],
             timestamp: Date()
         )
-        state.setAIResult(response)
+        state.phase = .aiTasksResult(response)
     }
 
     func uploadImageForTasks(imageData: Data, mimeType: ImageType, note: String?) async {

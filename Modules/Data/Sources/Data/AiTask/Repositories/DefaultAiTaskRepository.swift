@@ -24,13 +24,13 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
         self.timeZoneID = timeZoneID
     }
 
-    public func createAITask(text: String) async throws -> TaskProposalResponse {
+    public func createAITask(text: String) async throws -> TaskProposal {
          let request = CreateAITaskRequestDTO(text: text)
         let response = try await remoteDataSource.createAITask(request)
         return response.toDomain()
     }
 
-    public func imageToTasks(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposalResponse {
+    public func imageToTasks(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposal {
         let responseDTO = try await remoteDataSource.imageToTasks(imageData: imageData, mimeType: mimeType, note: note)
         return responseDTO.toDomain()
     }
