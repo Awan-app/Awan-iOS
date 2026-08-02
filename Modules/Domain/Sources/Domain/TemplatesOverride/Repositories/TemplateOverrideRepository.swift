@@ -1,8 +1,20 @@
 import Foundation
 
 public protocol TemplateOverrideRepository: Sendable {
-    func createTemplateOverride(name: String?, dateOfDay: String, zones: [Zone]?) async throws -> TemplateOverride
-    func updateTemplateOverride(id: UUID, name: String?, dateOfDay: String) async throws -> TemplateOverride
-    func updateBulkTemplateOverride(id: UUID, zones: [Zone]) async throws -> [Zone]
+    func createTemplateOverride(
+        name: String,
+        dateOfDay: TemplateOverrideDate,
+        zones: [Zone]?
+    ) async throws -> TemplateOverride
+    func listTemplateOverrides() async throws -> [TemplateOverride]
+    func updateTemplateOverride(
+        id: UUID,
+        name: String,
+        dateOfDay: TemplateOverrideDate
+    ) async throws -> TemplateOverride
+    func updateBulkTemplateOverride(
+        id: UUID,
+        zones: [TemplateZoneMutation]
+    ) async throws -> TemplateOverride
     func deleteTemplateOverride(id: UUID) async throws
 }

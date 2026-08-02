@@ -1,14 +1,14 @@
 import Foundation
 
-public protocol UpdateTemplateDetailsUseCase: Sendable {
+public protocol CreateTemplateUseCase: Sendable {
     func execute(
-        id: UUID,
         name: String,
-        daysOfWeek: Set<TemplateWeekday>
+        daysOfWeek: Set<TemplateWeekday>,
+        zones: [Zone]
     ) async throws -> Template
 }
 
-public struct DefaultUpdateTemplateDetailsUseCase: UpdateTemplateDetailsUseCase {
+public struct DefaultCreateTemplateUseCase: CreateTemplateUseCase {
     private let repository: any TemplateRepository
 
     public init(repository: any TemplateRepository) {
@@ -16,9 +16,9 @@ public struct DefaultUpdateTemplateDetailsUseCase: UpdateTemplateDetailsUseCase 
     }
 
     public func execute(
-        id: UUID,
         name: String,
-        daysOfWeek: Set<TemplateWeekday>
+        daysOfWeek: Set<TemplateWeekday>,
+        zones: [Zone]
     ) async throws -> Template {
         let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else {
@@ -27,6 +27,10 @@ public struct DefaultUpdateTemplateDetailsUseCase: UpdateTemplateDetailsUseCase 
         guard !daysOfWeek.isEmpty else {
             throw TemplateManagementError.templateWeekdayRequired
         }
-        return try await repository.updateTemplate(id: id, name: name, daysOfWeek: daysOfWeek)
+        return try await repository.createTemplate(
+            name: name,
+            daysOfWeek: daysOfWeek,
+            zones: zones
+        )
     }
 }

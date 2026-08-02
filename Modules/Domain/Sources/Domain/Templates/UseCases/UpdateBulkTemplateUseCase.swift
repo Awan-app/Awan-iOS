@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol UpdateTemplateUseCase: Sendable {
-    func execute(id: UUID, zones: [Zone]) async throws -> Template
+    func execute(id: UUID, zones: [TemplateZoneMutation]) async throws -> Template
 }
 
 public struct DefaultBulkUpdateTemplateUseCase: UpdateTemplateUseCase {
@@ -11,15 +11,7 @@ public struct DefaultBulkUpdateTemplateUseCase: UpdateTemplateUseCase {
         self.repository = repository
     }
 
-    public func execute(id: UUID, zones: [Zone]) async throws -> Template {
-        let payload = zones.map {
-            ZoneWithoutId(
-                name: $0.name,
-                color: $0.color,
-                startTime: $0.startTime,
-                endTime: $0.endTime
-            )
-        }
-        return try await repository.updateBulkTemplate(id: id, zones: payload)
+    public func execute(id: UUID, zones: [TemplateZoneMutation]) async throws -> Template {
+        try await repository.updateBulkTemplate(id: id, zones: zones)
     }
 }

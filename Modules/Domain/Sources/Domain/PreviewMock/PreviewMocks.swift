@@ -81,16 +81,36 @@ public struct MockFetchTemplatesUseCase: FetchTemplatesUseCase {
     }
 }
 
+public struct MockFetchTemplateOverridesUseCase: FetchTemplateOverridesUseCase {
+    public init() {}
+    public func execute() async throws -> [TemplateOverride] { [] }
+}
+
+public struct MockCreateTemplateUseCase: CreateTemplateUseCase {
+    public init() {}
+    public func execute(
+        name: String,
+        daysOfWeek: Set<TemplateWeekday>,
+        zones: [Zone]
+    ) async throws -> Template {
+        fatalError("Not implemented in preview mock")
+    }
+}
+
 public struct MockUpdateTemplateUseCase: UpdateTemplateUseCase {
     public init() {}
-    public func execute(id: UUID, zones: [Zone]) async throws -> Template {
+    public func execute(id: UUID, zones: [TemplateZoneMutation]) async throws -> Template {
         fatalError("Not implemented in preview mock")
     }
 }
 
 public struct MockUpdateTemplateDetailsUseCase: UpdateTemplateDetailsUseCase {
     public init() {}
-    public func execute(id: UUID, name: String, daysOfWeek: [String]) async throws -> Template {
+    public func execute(
+        id: UUID,
+        name: String,
+        daysOfWeek: Set<TemplateWeekday>
+    ) async throws -> Template {
         fatalError("Not implemented in preview mock")
     }
 }
@@ -111,14 +131,34 @@ public struct MockDeleteTemplateOverrideUseCase: DeleteTemplateOverrideUseCase {
 
 public struct MockCreateTemplateOverrideUseCase: CreateTemplateOverrideUseCase {
     public init() {}
-    public func execute(name: String?, dateOfDay: String, zones: [Zone]?) async throws -> TemplateOverride {
+    public func execute(
+        name: String,
+        dateOfDay: TemplateOverrideDate,
+        minimumDate: TemplateOverrideDate,
+        zones: [Zone]?
+    ) async throws -> TemplateOverride {
         fatalError("Not implemented in preview mock")
     }
 }
 
 public struct MockUpdateTemplateOverrideUseCase: UpdateTemplateOverrideUseCase {
     public init() {}
-    public func execute(id: UUID, name: String?, dateOfDay: String) async throws -> TemplateOverride {
+    public func execute(
+        id: UUID,
+        name: String,
+        dateOfDay: TemplateOverrideDate,
+        minimumDate: TemplateOverrideDate
+    ) async throws -> TemplateOverride {
+        fatalError("Not implemented in preview mock")
+    }
+}
+
+public struct MockUpdateBulkTemplateOverrideUseCase: UpdateBulkTemplateOverrideUseCase {
+    public init() {}
+    public func execute(
+        id: UUID,
+        zones: [TemplateZoneMutation]
+    ) async throws -> TemplateOverride {
         fatalError("Not implemented in preview mock")
     }
 }
