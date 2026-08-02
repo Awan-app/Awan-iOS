@@ -16,40 +16,37 @@ struct DayTimelineView: View {
     }
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            GeometryReader { geometry in
-                let labelWidth: CGFloat = 51
-                let plotWidth = max(0, geometry.size.width - labelWidth)
+        GeometryReader { geometry in
+            let labelWidth: CGFloat = 51
+            let plotWidth = max(0, geometry.size.width - labelWidth)
 
-                ZStack(alignment: .topLeading) {
-                    zoneBands(labelWidth: labelWidth, plotWidth: plotWidth)
-                    hourGrid(labelWidth: labelWidth)
+            ZStack(alignment: .topLeading) {
+                zoneBands(labelWidth: labelWidth, plotWidth: plotWidth)
+                hourGrid(labelWidth: labelWidth)
 
-                    ForEach(items) { item in
-                        let spacing: CGFloat = 6
-                        let lanes = CGFloat(max(1, item.laneCount))
-                        let cardWidth = (plotWidth - 16 - (lanes - 1) * spacing) / lanes
-                        let x = labelWidth + 8 + CGFloat(item.lane) * (cardWidth + spacing)
-                        let y = yPosition(forMinutes: item.startMinutes)
-                        TimelineSessionCard(item: item) { points in
-                            onMove(item.id, points)
-                        } onTap: {
-                            onTap(item.taskID)
-                        }
-                        .frame(width: cardWidth, height: max(46, CGFloat(item.durationMinutes) / 60 * Self.hourHeight - 4))
-                        .offset(x: x, y: y + 2)
-                        .zIndex(item.blocking ? 3 : 2)
+                ForEach(items) { item in
+                    let spacing: CGFloat = 6
+                    let lanes = CGFloat(max(1, item.laneCount))
+                    let cardWidth = (plotWidth - 16 - (lanes - 1) * spacing) / lanes
+                    let x = labelWidth + 8 + CGFloat(item.lane) * (cardWidth + spacing)
+                    let y = yPosition(forMinutes: item.startMinutes)
+                    TimelineSessionCard(item: item) { points in
+                        onMove(item.id, points)
+                    } onTap: {
+                        onTap(item.taskID)
                     }
+                    .frame(width: cardWidth, height: max(46, CGFloat(item.durationMinutes) / 60 * Self.hourHeight - 4))
+                    .offset(x: x, y: y + 2)
+                    .zIndex(item.blocking ? 3 : 2)
+                }
 
-                    if items.isEmpty {
-                        emptyState(plotWidth: plotWidth)
-                            .offset(x: labelWidth + 10, y: Self.hourHeight * 2.1)
-                    }
+                if items.isEmpty {
+                    emptyState(plotWidth: plotWidth)
+                        .offset(x: labelWidth + 10, y: Self.hourHeight * 2.1)
                 }
             }
-            .frame(height: totalHeight)
         }
-        .frame(minHeight: 520)
+        .frame(height: totalHeight)
         .background(
             AppColors.surface,
             in: RoundedRectangle(cornerRadius: 26, style: .continuous)

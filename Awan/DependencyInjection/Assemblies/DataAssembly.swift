@@ -182,7 +182,9 @@ struct DataAssembly: Assembly {
 
         container.register(AiTaskRepository.self) { resolver in
             DefaultAiTaskRepository(
-                remoteDataSource: Self.resolve(AiTaskRemoteDataSource.self, from: resolver)
+                remoteDataSource: Self.resolve(AiTaskRemoteDataSource.self, from: resolver),
+                localTaskDataSource: resolver.resolve(LocalTaskDataSource.self),
+                localSessionDataSource: resolver.resolve(LocalSessionDataSource.self)
             )
         }
     }

@@ -15,6 +15,7 @@ public final class MainCoordinator: Coordinating {
     public var homePath = NavigationPath()
     public var calendarPath = NavigationPath()
     public var rewardsPath = NavigationPath()
+    public var storePath = NavigationPath()
     public var youPath = NavigationPath()
     public var presentedSheet: MainRoute?
 
@@ -64,6 +65,8 @@ public final class MainCoordinator: Coordinating {
             mutation(&calendarPath)
         case .rewards:
             mutation(&rewardsPath)
+        case .store:
+            mutation(&storePath)
         case .you:
             mutation(&youPath)
         case .add:

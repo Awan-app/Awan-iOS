@@ -23,6 +23,7 @@ public struct DefaultScheduleWorkspaceProvider: ScheduleWorkspaceProviding {
     }
 
     public func load(for date: Date) async throws -> ScheduleWorkspace {
+        _ = try? await taskRepository.fetchTasks(for: date)
         async let zones = zoneRepository.fetchZones(for: date)
         async let goals = goalRepository.fetchGoals()
         async let tasks = taskRepository.fetchTasks()

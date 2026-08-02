@@ -5,6 +5,8 @@ enum CreateTaskPhase: Equatable {
     case composer
     case aiLoading
     case aiResult([AITaskSheetItem])
+    case imageUploading(String)
+    case imageTasksResult(TaskProposalResponse)
 }
 
 struct CreateTaskState {

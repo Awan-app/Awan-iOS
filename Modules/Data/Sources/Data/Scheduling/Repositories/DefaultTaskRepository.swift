@@ -34,38 +34,43 @@ public struct DefaultTaskRepository: TaskRepository {
         localDataSource.observeTasks()
     }
     public func fetchTasks(for date: Date) async throws -> [AwanTask] {
-        let profile = try await requireProfile()
+        let timeZoneID = await getTimeZoneID()
+        let dayKey = LocalDateKey.value(
+            for: date,
+            timeZoneID: timeZoneID
+        )
+        let synced = try? await loadRemoteTasks(dayKey: dayKey, timeZoneID: timeZoneID)
+        if let synced {
+            return synced
+        }
         return try await cachedTasks(
-            forDay: LocalDateKey.value(
-                for: date,
-                timeZoneID: profile.preferences.timezone
-            ),
-            timeZoneID: profile.preferences.timezone
+            forDay: dayKey,
+            timeZoneID: timeZoneID
         )
     }
 
     public func observeTasks(for date: Date) -> AnyPublisher<[AwanTask], Error> {
-        AsyncValuePublisher.make { try await requireProfile() }
-            .flatMap { profile -> AnyPublisher<[AwanTask], Error> in
+        AsyncValuePublisher.make { await self.getTimeZoneID() }
+            .flatMap { timeZoneID -> AnyPublisher<[AwanTask], Error> in
                 let dayKey = LocalDateKey.value(
                     for: date,
-                    timeZoneID: profile.preferences.timezone
+                    timeZoneID: timeZoneID
                 )
-                let local = localDataSource.observeTasks()
-                    .combineLatest(localSessionDataSource.observeSessions())
+                let local = self.localDataSource.observeTasks()
+                    .combineLatest(self.localSessionDataSource.observeSessions())
                     .map { tasks, sessions in
-                        tasksForDay(
+                        self.tasksForDay(
                             tasks,
                             sessions: sessions,
                             dayKey: dayKey,
-                            timeZoneID: profile.preferences.timezone
+                            timeZoneID: timeZoneID
                         )
                     }
                     .eraseToAnyPublisher()
                 let remote = AsyncValuePublisher.make {
-                    try await loadRemoteTasks(
+                    try await self.loadRemoteTasks(
                         dayKey: dayKey,
-                        profile: profile
+                        timeZoneID: timeZoneID
                     )
                 }
                 .catch { _ in Empty<[AwanTask], Error>() }
@@ -80,18 +85,39 @@ public struct DefaultTaskRepository: TaskRepository {
 
     private func loadRemoteTasks(
         dayKey: String,
-        profile: UserProfile
+        timeZoneID: String
     ) async throws -> [AwanTask] {
         let responses = try await remoteTaskDataSource.getTasks(date: dayKey)
+        let preferredDuration = await getPreferredSessionDuration()
+
+        // Persist tasks
         let tasks = try responses.map { response in
             try HomeRemoteMapper.task(
                 response.task,
-                defaultDuration: profile.preferences.preferredSessionDuration
+                defaultDuration: preferredDuration
             )
         }
         .sorted { $0.id.uuidString < $1.id.uuidString }
         try await localDataSource.upsertTasks(tasks)
-        return tasks
+
+        // Persist sessions returned alongside tasks so tasksForDay can find them.
+        let sessions = try responses.flatMap { response in
+            try response.sessions.map {
+                try HomeRemoteMapper.session($0, timeZoneID: timeZoneID)
+            }
+        }
+        try await localSessionDataSource.replaceSessions(
+            sessions,
+            forDay: dayKey,
+            timeZoneID: timeZoneID
+        )
+
+        return tasksForDay(
+            tasks,
+            sessions: sessions,
+            dayKey: dayKey,
+            timeZoneID: timeZoneID
+        )
     }
 
     private func cachedTasks(
@@ -127,11 +153,12 @@ public struct DefaultTaskRepository: TaskRepository {
             .sorted { $0.id.uuidString < $1.id.uuidString }
     }
 
-    private func requireProfile() async throws -> UserProfile {
-        guard let profile = try await localProfileDataSource.fetchProfile() else {
-            throw RemoteDomainMappingError.missingField("cachedProfile")
-        }
-        return profile
+    private func getTimeZoneID() async -> String {
+        (try? await localProfileDataSource.fetchProfile())?.preferences.timezone ?? TimeZone.current.identifier
+    }
+
+    private func getPreferredSessionDuration() async -> Int {
+        (try? await localProfileDataSource.fetchProfile())?.preferences.preferredSessionDuration ?? 30
     }
 
     public func addTask(
@@ -209,12 +236,12 @@ public struct DefaultTaskRepository: TaskRepository {
             defaultDuration: task.duration.minutes
         )
         try await localDataSource.updateTask(accepted)
-        let profile = try await requireProfile()
+        let timeZoneID = await getTimeZoneID()
         let sessions = try await remoteSessionDataSource.getTaskSessions(taskID: task.id)
             .map {
                 try HomeRemoteMapper.session(
                     $0,
-                    timeZoneID: profile.preferences.timezone
+                    timeZoneID: timeZoneID
                 )
             }
         try await localSessionDataSource.deleteSessions(taskID: task.id)
