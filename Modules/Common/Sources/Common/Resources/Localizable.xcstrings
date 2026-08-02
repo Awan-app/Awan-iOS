@@ -1515,6 +1515,13 @@
         }
       }
     },
+    "home.add_schedule": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "إضافة موعد" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Add schedule" } }
+      }
+    },
     "home.edit_session_schedule": {
       "extractionState": "manual",
       "localizations": {

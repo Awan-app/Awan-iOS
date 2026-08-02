@@ -628,6 +628,10 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "home.add_to_inbox", value: nil, table: "Localizable")
         }
 
+        public static var addSchedule: String {
+            L10n.currentBundle.localizedString(forKey: "home.add_schedule", value: nil, table: "Localizable")
+        }
+
         public static var editSessionSchedule: String {
             L10n.currentBundle.localizedString(forKey: "home.edit_session_schedule", value: nil, table: "Localizable")
         }

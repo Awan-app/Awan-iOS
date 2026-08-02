@@ -89,6 +89,7 @@ struct CreateTaskView: View {
                     ManualScheduleControls(
                         categories: viewModel.state.categories,
                         zones: viewModel.state.zones,
+                        isSchedulingEnabled: bindableViewModel.state.isManualSchedulingEnabled,
                         startsAt: bindableViewModel.state.startsAt,
                         durationMinutes: bindableViewModel.state.durationMinutes,
                         selectedCategoryID: bindableViewModel.state.selectedCategoryID

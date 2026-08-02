@@ -32,7 +32,7 @@ final class CreateTaskViewModel {
         self.timeZone = timeZone
         self.state = CreateTaskState(
             startsAt: Self.initialStartTime(
-                selectedDay: selectedDay,
+                selectedDay: Date(),
                 timeZone: timeZone
             )
         )
@@ -84,7 +84,9 @@ final class CreateTaskViewModel {
                 categoryID: state.selectedCategoryID,
                 isSplittable: false,
                 mandatory: true,
-                startsAt: state.startsAt
+                startsAt: state.isManualSchedulingEnabled
+                    ? state.startsAt
+                    : nil
             )
         }
     }
@@ -96,7 +98,7 @@ final class CreateTaskViewModel {
         categoryID: UUID?,
         isSplittable: Bool,
         mandatory: Bool,
-        startsAt: Date
+        startsAt: Date?
     ) async {
         guard !state.isSubmitting else { return }
         state.isSubmitting = true
@@ -114,7 +116,7 @@ final class CreateTaskViewModel {
                     mandatory: mandatory,
                     estimatedPoints: 10,
                     startsAt: startsAt,
-                    selectedDay: selectedDay,
+                    selectedDay: startsAt ?? selectedDay,
                     timeZone: timeZone
                 )
             )

@@ -6,6 +6,7 @@ struct ManualScheduleControls: View {
     let categories: [TaskCategory]
     let zones: [Zone]
 
+    @Binding var isSchedulingEnabled: Bool
     @Binding var startsAt: Date
     @Binding var durationMinutes: Int
     @Binding var selectedCategoryID: UUID?
@@ -14,16 +15,48 @@ struct ManualScheduleControls: View {
     var body: some View {
         VStack(spacing: 0) {
             controlRow(
-                icon: "clock.fill",
-                title: L10n.Home.fieldStartsAt
+                icon: "calendar.badge.plus",
+                title: L10n.Home.addSchedule
             ) {
-                DatePicker(
-                    "",
-                    selection: $startsAt,
-                    displayedComponents: [.hourAndMinute]
-                )
+                Toggle("", isOn: $isSchedulingEnabled)
                 .labelsHidden()
                 .tint(AppColors.accentBlue)
+            }
+
+            if isSchedulingEnabled {
+                Divider()
+                    .overlay(AppColors.accentBlue.opacity(0.14))
+                    .padding(.leading, 46)
+
+                controlRow(
+                    icon: "calendar",
+                    title: L10n.Home.sessionDay
+                ) {
+                    DatePicker(
+                        L10n.Home.sessionDay,
+                        selection: $startsAt,
+                        displayedComponents: .date
+                    )
+                    .labelsHidden()
+                    .tint(AppColors.accentBlue)
+                }
+
+                Divider()
+                    .overlay(AppColors.accentBlue.opacity(0.14))
+                    .padding(.leading, 46)
+
+                controlRow(
+                    icon: "clock.fill",
+                    title: L10n.Home.startTime
+                ) {
+                    DatePicker(
+                        L10n.Home.startTime,
+                        selection: $startsAt,
+                        displayedComponents: .hourAndMinute
+                    )
+                    .labelsHidden()
+                    .tint(AppColors.accentBlue)
+                }
             }
 
             Divider()
@@ -107,6 +140,7 @@ struct ManualScheduleControls: View {
         }
         .padding(.bottom, 5)
         .transition(.move(edge: .top).combined(with: .opacity))
+        .animation(.snappy(duration: 0.2), value: isSchedulingEnabled)
     }
 
     private func controlRow<Content: View>(
@@ -310,6 +344,7 @@ private struct ZoneColorSwatches: View {
     ManualScheduleControls(
         categories: [],
         zones: [],
+        isSchedulingEnabled: .constant(false),
         startsAt: .constant(Date()),
         durationMinutes: .constant(60),
         selectedCategoryID: .constant(nil)
