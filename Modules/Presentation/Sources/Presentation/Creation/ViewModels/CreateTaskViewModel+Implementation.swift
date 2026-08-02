@@ -4,58 +4,91 @@ import Foundation
 
 extension CreateTaskViewModel {
     func createTaskWithAwan(prompt: String) async {
-        guard !state.isSubmitting else { return }
-        state.startAILoading()
+            guard !state.isSubmitting else { return }
+            state.startAILoading()
 
-        do {
-            let aiTaskItems = try await useCases.createAITask.execute(
-                CreateAITaskRequest(text: prompt)
-            )
-            state.setAIResult(aiTaskItems)
-        } catch is CancellationError {
-            state.cancelAI()
-        } catch {
-            state.setAIError(error.localizedDescription)
+            do {
+                let aiTaskItems = try await useCases.createAITask.execute(
+                    CreateAITaskRequest(text: prompt)
+                )
+                state.setAIResult(aiTaskItems)
+            } catch is CancellationError {
+                state.cancelAI()
+            } catch {
+                state.setAIError(error.localizedDescription)
+            }
         }
-    }
+    func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
+            guard !state.isSubmitting else { return }
+            state.isSubmitting = true
+            state.errorMessage = nil
+            defer { state.isSubmitting = false }
+
+            do {
+                let result = try await useCases.createTask.execute(
+                    CreateTaskRequest(
+                        title: item.task.title,
+                        description: item.task.description,
+                        durationMinutes: finalDurationMinutes,
+                        categoryID: item.task.category?.id,
+                        isSplittable: item.task.isSplittable,
+                        mandatory: item.task.mandatory,
+                        estimatedPoints: item.task.estimatedPoints,
+                        startsAt: item.startTime,
+                        selectedDay: selectedDay,
+                        timeZone: timeZone
+                    )
+                )
+                state.didCreateTask = true
+                activeNudge = result.nudge
+            } catch is CancellationError {
+            } catch {
+                state.errorMessage = error.localizedDescription
+            }
+        }
+    func dismissAITaskResult() {
+          state.dismissAITaskResult()
+      }
 
     func generateAITask(prompt: String) async {
-        await createTaskWithAwan(prompt: prompt)
-    }
-
-    func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
         guard !state.isSubmitting else { return }
         state.isSubmitting = true
         state.errorMessage = nil
+        state.phase = .aiLoading
         defer { state.isSubmitting = false }
 
+
+        let startTime = Date()
+
         do {
-            let result = try await useCases.createTask.execute(
-                CreateTaskRequest(
-                    title: item.task.title,
-                    description: item.task.description,
-                    durationMinutes: finalDurationMinutes,
-                    categoryID: item.task.category?.id,
-                    isSplittable: item.task.isSplittable,
-                    mandatory: item.task.mandatory,
-                    estimatedPoints: item.task.estimatedPoints,
-                    startsAt: item.startTime,
-                    selectedDay: selectedDay,
-                    timeZone: timeZone
-                )
+            let items = try await useCases.createAITask.execute(
+                CreateAITaskRequest(text: prompt)
             )
-            state.didCreateTask = true
-            activeNudge = result.nudge
+            state.setAIResult(items)
         } catch is CancellationError {
+            state.phase = .composer
         } catch {
-            state.errorMessage = error.localizedDescription
+            // TODO: Remove once backend is stable. Fall back to mock data so the
+            // UI flow is always testable end-to-end during development.
+            print("[CreateTaskViewModel] AI endpoint failed (\(error)). Using mock data.")
+            showAIResult(
+                task: AwanTask(
+                    id: UUID(),
+                    title: prompt,
+                    description: nil,
+                    status: .pending,
+                    goalID: nil,
+                    duration: try! TaskDuration(minutes: 60),
+                    isSplittable: false,
+                    mandatory: true,
+                    estimatedPoints: 20,
+                    dependencyIDs: [],
+                    category: TaskCategory(id: UUID(), name: "Study")
+                ),
+                startTime: startTime
+            )
         }
     }
-
-    func dismissAITaskResult() {
-        state.dismissAITaskResult()
-    }
-
 
     func startRecording() async {
         guard state.quickText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
@@ -127,7 +160,30 @@ extension CreateTaskViewModel {
     }
 
     private func showAIResult(task: AwanTask, startTime: Date) {
-        state.phase = .aiResult(AITaskSheetItem(task: task, startTime: startTime))
+        let proposedTask = ProposedTask(
+            id: task.id,
+            draft: TaskWithSessionsDraft(
+                task: ProposedTaskDetails(
+                    title: task.title,
+                    description: task.description,
+                    estimatedDuration: task.duration.minutes,
+                    mandatory: task.mandatory,
+                    estimatedPoints: task.estimatedPoints,
+                    allowTaskSplitting: task.isSplittable,
+                    goalId: task.goalID,
+                    categoryId: task.category?.id
+                ),
+                sessions: []
+            ),
+            aiProposedSessions: [],
+            reason: ""
+        )
+        let response = TaskProposalResponse(
+            sourceSummary: nil,
+            tasks: [proposedTask],
+            timestamp: Date()
+        )
+        state.setAIResult(response)
     }
 
     func uploadImageForTasks(imageData: Data, mimeType: ImageType, note: String?) async {
@@ -143,7 +199,7 @@ extension CreateTaskViewModel {
                 mimeType: mimeType.rawValue,
                 note: note
             )
-            state.phase = .imageTasksResult(response)
+            state.phase = .aiTasksResult(response)
         } catch is CancellationError {
             state.phase = .composer
         } catch {

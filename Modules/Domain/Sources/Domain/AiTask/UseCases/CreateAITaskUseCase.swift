@@ -6,7 +6,7 @@
 import Foundation
 
 public protocol CreateAITaskUseCase: Sendable {
-    func execute(_ request: CreateAITaskRequest) async throws -> [AITaskSheetItem]
+    func execute(_ request: CreateAITaskRequest) async throws -> TaskProposalResponse
 }
 
 public struct DefaultCreateAITaskUseCase: CreateAITaskUseCase {
@@ -16,7 +16,7 @@ public struct DefaultCreateAITaskUseCase: CreateAITaskUseCase {
         self.repository = repository
     }
 
-    public func execute(_ request: CreateAITaskRequest) async throws -> [AITaskSheetItem] {
+    public func execute(_ request: CreateAITaskRequest) async throws -> TaskProposalResponse {
         try await repository.createAITask(
             text: request.text
         )

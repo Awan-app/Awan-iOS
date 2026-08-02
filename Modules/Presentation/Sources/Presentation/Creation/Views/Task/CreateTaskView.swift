@@ -26,24 +26,7 @@ struct CreateTaskView: View {
                 composerView(bindableViewModel: $bindableViewModel)
             case .aiLoading:
                 GoalCreationLoadingView(message: L10n.Home.aiCreatingTask)
-            case .aiResult(let items):
-                AITaskResultSheet(
-                    items: items,
-                    onAdd: { item, finalDuration in
-                        Task {
-                            await viewModel.confirmAndAddAITask(
-                                item: item,
-                                finalDurationMinutes: finalDuration
-                            )
-                        }
-                    },
-                    onDismiss: {
-                        viewModel.dismissAITaskResult()
-                    }
-                )
-            case .imageUploading(let message):
-                GoalCreationLoadingView(message: message)
-            case .imageTasksResult(let response):
+            case .aiTasksResult(let response):
                 ImageToTasksResultSheet(
                     response: response,
                     categories: viewModel.state.categories,
@@ -57,6 +40,8 @@ struct CreateTaskView: View {
                         viewModel.dismissAITaskResult()
                     }
                 )
+            case .imageUploading(let message):
+                GoalCreationLoadingView(message: message)
             }
         }
         .background(AppColors.screenBackground.ignoresSafeArea())

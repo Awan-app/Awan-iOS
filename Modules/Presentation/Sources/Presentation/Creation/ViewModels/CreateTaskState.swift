@@ -4,9 +4,8 @@ import Foundation
 enum CreateTaskPhase: Equatable {
     case composer
     case aiLoading
-    case aiResult([AITaskSheetItem])
+    case aiTasksResult(TaskProposalResponse)
     case imageUploading(String)
-    case imageTasksResult(TaskProposalResponse)
 }
 
 struct CreateTaskState {
@@ -16,7 +15,7 @@ struct CreateTaskState {
     var errorMessage: String?
     var didCreateTask = false
     var phase: CreateTaskPhase = .composer
-    var pendingAITaskItems: [AITaskSheetItem] = []
+    var pendingAITaskItems: [AITaskSheetItem] = [] // Keeping untouched per user's non-destructive instructions
     var quickText = ""
     var isAwanSchedulingEnabled = true
     var durationMinutes = 60
@@ -42,9 +41,8 @@ struct CreateTaskState {
         phase = .aiLoading
     }
 
-    mutating func setAIResult(_ items: [AITaskSheetItem]) {
-        pendingAITaskItems = items
-        phase = .aiResult(items)
+    mutating func setAIResult(_ response: TaskProposalResponse) {
+        phase = .aiTasksResult(response)
         isSubmitting = false
     }
 

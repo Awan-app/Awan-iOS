@@ -7,7 +7,7 @@ import Foundation
 import AwaNetwork
 
 public protocol AiTaskRemoteDataSource: Sendable {
-    func createAITask(_ request: CreateAITaskRequestDTO) async throws -> CreateAiTaskResponseDTO
+    func createAITask(_ request: CreateAITaskRequestDTO) async throws -> TaskProposalResponseDTO
     func imageToTasks(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposalResponseDTO
     func acceptTaskWithSessions(_ request: CreateTaskWithSessionsRequestDTO) async throws -> TaskWithSessionsResponseDTO
 }
@@ -18,7 +18,7 @@ public final class DefaultAiTaskRemoteDataSource: AiTaskRemoteDataSource {
         self.networkService = networkService
     }
 
-    public func createAITask(_ request: CreateAITaskRequestDTO) async throws -> CreateAiTaskResponseDTO {
+    public func createAITask(_ request: CreateAITaskRequestDTO) async throws -> TaskProposalResponseDTO {
         try await networkService.request(AiTaskEndpoint.createAITask(request))
     }
 

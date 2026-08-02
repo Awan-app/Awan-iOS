@@ -154,29 +154,27 @@ final class CreateTaskViewModelTests: XCTestCase {
 
     func testCreateTaskWithAwanUpdatesPhaseAndItemsInState() async throws {
         let stub = CreateTaskUseCaseStub(zones: [])
-        let aiItem = AITaskSheetItem.mock
-        let aiUseCase = CreateAITaskUseCaseStub(items: [aiItem])
+        let aiResponse = TaskProposalResponse(sourceSummary: nil, tasks: [], timestamp: Date())
+        let aiUseCase = CreateAITaskUseCaseStub(response: aiResponse)
         let viewModel = makeViewModel(stub: stub, aiUseCase: aiUseCase)
 
         await viewModel.createTaskWithAwan(prompt: "Study math")
 
-        XCTAssertEqual(viewModel.state.pendingAITaskItems, [aiItem])
-        XCTAssertEqual(viewModel.state.phase, .aiResult([aiItem]))
+        XCTAssertEqual(viewModel.state.phase, .aiTasksResult(aiResponse))
         XCTAssertFalse(viewModel.state.isSubmitting)
     }
 
     func testDismissAITaskResultResetsState() async throws {
         let stub = CreateTaskUseCaseStub(zones: [])
-        let aiItem = AITaskSheetItem.mock
-        let aiUseCase = CreateAITaskUseCaseStub(items: [aiItem])
+        let aiResponse = TaskProposalResponse(sourceSummary: nil, tasks: [], timestamp: Date())
+        let aiUseCase = CreateAITaskUseCaseStub(response: aiResponse)
         let viewModel = makeViewModel(stub: stub, aiUseCase: aiUseCase)
 
         await viewModel.createTaskWithAwan(prompt: "Study math")
-        XCTAssertEqual(viewModel.state.phase, .aiResult([aiItem]))
+        XCTAssertEqual(viewModel.state.phase, .aiTasksResult(aiResponse))
 
         viewModel.dismissAITaskResult()
 
-        XCTAssertEqual(viewModel.state.pendingAITaskItems, [])
         XCTAssertEqual(viewModel.state.phase, .composer)
     }
 
@@ -370,9 +368,11 @@ private struct MockAcceptProposedTaskUseCase: AcceptProposedTaskUseCase {
             dependencyIDs: [],
             category: nil
         )
+    }
+}
 private struct CreateAITaskUseCaseStub: CreateAITaskUseCase {
-    let items: [AITaskSheetItem]
-    func execute(_ request: CreateAITaskRequest) async throws -> [AITaskSheetItem] {
-        items
+    let response: TaskProposalResponse
+    func execute(_ request: CreateAITaskRequest) async throws -> TaskProposalResponse {
+        response
     }
 }

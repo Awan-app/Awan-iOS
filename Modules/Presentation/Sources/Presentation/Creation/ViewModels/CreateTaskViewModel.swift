@@ -75,7 +75,7 @@ final class CreateTaskViewModel {
         guard !title.isEmpty else { return }
 
         if state.isAwanSchedulingEnabled {
-            await createTaskWithAwan(prompt: title)
+            await generateAITask(prompt: title)
         } else {
             await createTask(
                 title: title,
