@@ -2,7 +2,7 @@ import Combine
 import Domain
 import Foundation
 
-public struct DefaultTaskRepository: TaskRepository {
+public struct DefaultTaskRepository: TaskRepository {    
     private let localDataSource: any LocalTaskDataSource
     private let localSessionDataSource: any LocalSessionDataSource
     private let localProfileDataSource: any LocalUserProfileDataSource

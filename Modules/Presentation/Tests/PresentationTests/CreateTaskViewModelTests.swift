@@ -152,8 +152,35 @@ final class CreateTaskViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.state.quickText, "Read Clean Code")
     }
 
+    func testCreateTaskWithAwanUpdatesPhaseAndItemsInState() async throws {
+        let stub = CreateTaskUseCaseStub(zones: [])
+        let aiResponse = TaskProposal(sourceSummary: nil, tasks: [], timestamp: Date())
+        let aiUseCase = CreateAITaskUseCaseStub(response: aiResponse)
+        let viewModel = makeViewModel(stub: stub, aiUseCase: aiUseCase)
+
+        await viewModel.createTaskWithAwan(prompt: "Study math")
+
+        XCTAssertEqual(viewModel.state.phase, .aiTasksResult(aiResponse))
+        XCTAssertFalse(viewModel.state.isSubmitting)
+    }
+
+    func testDismissAITaskResultResetsState() async throws {
+        let stub = CreateTaskUseCaseStub(zones: [])
+        let aiResponse = TaskProposal(sourceSummary: nil, tasks: [], timestamp: Date())
+        let aiUseCase = CreateAITaskUseCaseStub(response: aiResponse)
+        let viewModel = makeViewModel(stub: stub, aiUseCase: aiUseCase)
+
+        await viewModel.createTaskWithAwan(prompt: "Study math")
+        XCTAssertEqual(viewModel.state.phase, .aiTasksResult(aiResponse))
+
+        viewModel.dismissAITaskResult()
+
+        XCTAssertEqual(viewModel.state.phase, .composer)
+    }
+
     private func makeViewModel(
         stub: CreateTaskUseCaseStub,
+        aiUseCase: CreateAITaskUseCase? = nil,
         selectedDay: Date? = nil,
         speechTranscriber: SpeechTranscriberStub? = nil
     ) -> CreateTaskViewModel {
@@ -161,7 +188,7 @@ final class CreateTaskViewModelTests: XCTestCase {
             useCases: CreationUseCases(
                 fetchZones: stub,
                 createTask: stub,
-                createAITask: MockCreateAITaskUseCase(),
+                createAITask: aiUseCase ?? MockCreateAITaskUseCase(),
                 imageToTasks: MockImageToTasksUseCase(),
                 acceptProposedTask: MockAcceptProposedTaskUseCase(),
                 userProfile: UserProfileUseCaseStub(),
@@ -321,8 +348,8 @@ private actor CreateTaskUseCaseStub: FetchZonesUseCase, CreateTaskUseCase {
 }
 
 private struct MockImageToTasksUseCase: ImageToTasksUseCase {
-    func execute(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposalResponse {
-        TaskProposalResponse(sourceSummary: "Test Summary", tasks: [], timestamp: Date())
+    func execute(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposal {
+        TaskProposal(sourceSummary: "Test Summary", tasks: [], timestamp: Date())
     }
 }
 
@@ -341,5 +368,11 @@ private struct MockAcceptProposedTaskUseCase: AcceptProposedTaskUseCase {
             dependencyIDs: [],
             category: nil
         )
+    }
+}
+private struct CreateAITaskUseCaseStub: CreateAITaskUseCase {
+    let response: TaskProposal
+    func execute(_ request: CreateAITaskRequest) async throws -> TaskProposal {
+        response
     }
 }

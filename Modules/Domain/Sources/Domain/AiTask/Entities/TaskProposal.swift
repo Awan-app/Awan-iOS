@@ -1,11 +1,11 @@
 //
-//  TaskProposalResponse.swift
+//  TaskProposal.swift
 //  Domain
 //
 
 import Foundation
 
-public struct TaskProposalResponse: Sendable, Hashable {
+public struct TaskProposal: Sendable, Hashable {
     public let sourceSummary: String?
     public let tasks: [ProposedTask]
     public let timestamp: Date

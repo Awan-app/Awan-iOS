@@ -144,6 +144,7 @@ public final class NetworkClient: NetworkServiceProtocol, @unchecked Sendable {
             do {
                 return try jsonDecoder.decode(T.self, from: data)
             } catch {
+               
                 throw NetworkError.decodingFailed(error)
             }
 

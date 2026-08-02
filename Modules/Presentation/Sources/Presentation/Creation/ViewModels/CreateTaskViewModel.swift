@@ -9,6 +9,7 @@ import PhotosUI
 @MainActor
 final class CreateTaskViewModel {
     var state: CreateTaskState
+    var activeNudge: ScheduleNudge?
 
     let selectedDay: Date
 
@@ -128,22 +129,6 @@ final class CreateTaskViewModel {
         state.errorMessage = nil
     }
 
-    func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
-        await createTask(
-            title: item.task.title,
-            description: item.task.description,
-            durationMinutes: finalDurationMinutes,
-            categoryID: nil,
-            isSplittable: item.task.isSplittable,
-            mandatory: item.task.mandatory,
-            startsAt: item.startTime
-        )
-    }
-
-    func dismissAITaskResult() {
-        state.phase = .composer
-    }
-
     func beginRecording() async {
         await startRecording()
     }
@@ -174,3 +159,4 @@ final class CreateTaskViewModel {
         await acceptProposedTasks(selectedTasks)
     }
 }
+

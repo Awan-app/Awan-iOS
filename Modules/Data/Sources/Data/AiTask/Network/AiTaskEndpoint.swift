@@ -33,6 +33,7 @@ enum AiTaskEndpoint: APIEndpoint {
 
     var queryParameters: [String: String]? {
         return nil
+       
     }
 
     var body: (any Encodable)? {

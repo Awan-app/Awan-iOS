@@ -6,7 +6,7 @@
 import Foundation
 
 public protocol ImageToTasksUseCase: Sendable {
-    func execute(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposalResponse
+    func execute(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposal
 }
 
 public struct DefaultImageToTasksUseCase: ImageToTasksUseCase {
@@ -16,7 +16,7 @@ public struct DefaultImageToTasksUseCase: ImageToTasksUseCase {
         self.repository = repository
     }
 
-    public func execute(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposalResponse {
+    public func execute(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposal {
         try await repository.imageToTasks(imageData: imageData, mimeType: mimeType, note: note)
     }
 }

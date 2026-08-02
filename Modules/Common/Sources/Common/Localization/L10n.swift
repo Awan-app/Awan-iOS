@@ -624,6 +624,10 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "home.image_to_tasks_note_placeholder", value: nil, table: "Localizable")
         }
 
+        public static var addToInbox: String {
+            L10n.currentBundle.localizedString(forKey: "home.add_to_inbox", value: nil, table: "Localizable")
+        }
+
         public static func confirmAcceptCount(_ count: Int) -> String {
             String(format: L10n.currentBundle.localizedString(forKey: "home.confirm_accept_count", value: nil, table: "Localizable"), count)
         }
