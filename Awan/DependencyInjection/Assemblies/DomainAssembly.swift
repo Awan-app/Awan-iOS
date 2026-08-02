@@ -237,6 +237,16 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(TemplateRepository.self, from: resolver)
             )
         }
+        container.register(FetchTemplateOverridesUseCase.self) { resolver in
+            DefaultFetchTemplateOverridesUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(CreateTemplateUseCase.self) { resolver in
+            DefaultCreateTemplateUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
         container.register(UpdateTemplateUseCase.self) { resolver in
             DefaultBulkUpdateTemplateUseCase(
                 repository: Self.resolve(TemplateRepository.self, from: resolver)
@@ -271,6 +281,9 @@ struct DomainAssembly: Assembly {
             DefaultDeleteTemplateUseCase(
                 repository: Self.resolve(TemplateRepository.self, from: resolver)
             )
+        }
+        container.register(ResolveTemplateWeekdayAvailabilityUseCase.self) { _ in
+            DefaultResolveTemplateWeekdayAvailabilityUseCase()
         }
         container.register(ManageZoneScheduleUseCase.self) { _ in
             ManageZoneScheduleUseCaseImpl()

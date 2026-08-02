@@ -214,10 +214,21 @@ struct ProfileMainView: View {
             updateSleepScheduleUseCase: MockUpdateSleepScheduleUseCase()
         ),
         dailyZonesViewModel: DailyZonesViewModel(
-            fetchTemplatesUseCase: MockFetchTemplatesUseCase(),
-            updateTemplateUseCase: MockUpdateTemplateUseCase(),
-            getUserProfileUseCase: MockGetUserProfileUseCase(),
-            manageDailyZoneScheduleUseCase: DefaultManageDailyZoneScheduleUseCase()
+            useCases: DailyZonesUseCases(
+                fetchTemplates: MockFetchTemplatesUseCase(),
+                fetchOverrides: MockFetchTemplateOverridesUseCase(),
+                createTemplate: MockCreateTemplateUseCase(),
+                updateTemplateZones: MockUpdateTemplateUseCase(),
+                updateTemplateDetails: MockUpdateTemplateDetailsUseCase(),
+                deleteTemplate: MockDeleteTemplateUseCase(),
+                createOverride: MockCreateTemplateOverrideUseCase(),
+                updateOverrideZones: MockUpdateBulkTemplateOverrideUseCase(),
+                updateOverrideDetails: MockUpdateTemplateOverrideUseCase(),
+                deleteOverride: MockDeleteTemplateOverrideUseCase(),
+                getUserProfile: MockGetUserProfileUseCase(),
+                manageSchedule: DefaultManageDailyZoneScheduleUseCase(),
+                resolveWeekdays: DefaultResolveTemplateWeekdayAvailabilityUseCase()
+            )
         )
     )
 }

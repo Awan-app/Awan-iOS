@@ -31,6 +31,11 @@ struct AppRootView: View {
         Locale(identifier: languageManager.currentLanguage.rawValue)
     }
 
+    private var shouldShowCustomTabBar: Bool {
+        coordinator.mainCoordinator.selectedTab != .you
+            || coordinator.mainCoordinator.youPath.isEmpty
+    }
+
     init(factory: PresentationFactory) {
         self.factory = factory
     }
@@ -133,25 +138,30 @@ struct AppRootView: View {
             .tag(MainTab.you)
             .toolbar(.hidden, for: .tabBar)
         }
-        .safeAreaPadding(.bottom, Self.customTabBarContentClearance)
+        .safeAreaPadding(
+            .bottom,
+            shouldShowCustomTabBar ? Self.customTabBarContentClearance : 0
+        )
         .id(languageManager.currentLanguage)
         .overlay {
             opaqueTopSafeArea
         }
         .safeAreaInset(edge: .bottom) {
-            CustomTabBar(
-                selectedTab: Bindable(coordinator.mainCoordinator).selectedTab,
-                onAddTapped: {
-                    creationSheetDetent = Self.compactCreationDetent
-                    coordinator.mainCoordinator.presentAddItem()
+            if shouldShowCustomTabBar {
+                CustomTabBar(
+                    selectedTab: Bindable(coordinator.mainCoordinator).selectedTab,
+                    onAddTapped: {
+                        creationSheetDetent = Self.compactCreationDetent
+                        coordinator.mainCoordinator.presentAddItem()
+                    }
+                )
+                .environment(\.layoutDirection, currentLayoutDirection)
+                .padding(.top, 12)
+                .padding(.bottom, 6)
+                .background {
+                    AppColors.screenBackground
+                        .ignoresSafeArea(edges: .bottom)
                 }
-            )
-            .environment(\.layoutDirection, currentLayoutDirection)
-            .padding(.top, 12)
-            .padding(.bottom, 6)
-            .background {
-                AppColors.screenBackground
-                    .ignoresSafeArea(edges: .bottom)
             }
         }
         .sheet(item: Bindable(coordinator.mainCoordinator).presentedSheet) { route in
