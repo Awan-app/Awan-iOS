@@ -1,5 +1,6 @@
 import SwiftUI
 import Common
+import Domain
 
 public struct DailyZonesView: View {
     @Environment(\.dismiss) private var dismiss
@@ -21,22 +22,25 @@ public struct DailyZonesView: View {
                 ProgressView()
                 Spacer()
             } else {
-                GeometryReader { proxy in
-                    ScrollView {
-                        zonesListWithTimeline
-                            .padding(.horizontal, 24)
-                            .padding(.bottom, 24)
-                            .frame(minHeight: proxy.size.height)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        templatesSection
+                        templateDetailCard
+                        scheduleSection
                     }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 12)
+                    .padding(.bottom, 24)
                 }
             }
             
-            Spacer(minLength: 0)
-
             bottomButton
                 .padding(.horizontal, 24)
-                .padding(.bottom, 48) // Increased bottom padding
+                .padding(.top, 12)
+                .padding(.bottom, 16)
+                .background(AppColors.screenBackground.ignoresSafeArea(edges: .bottom))
         }
+        .toolbar(.hidden, for: .tabBar)
         .navigationTitle(L10n.Templates.dailyZonesTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
@@ -86,6 +90,137 @@ public struct DailyZonesView: View {
             }
         )
     }
+
+    // MARK: - Templates Section
+
+    private var templatesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header row: "Templates" title + "+ New" button
+            HStack {
+                Text(L10n.Templates.sectionTitle)
+                    .font(AppFonts.title2Black)
+                    .foregroundStyle(AppColors.textPrimary)
+
+                Spacer()
+
+                AppButton(
+                    title: L10n.Templates.newButton,
+                    icon: "plus",
+                    color: AppColors.accentBlue,
+                    foregroundColor: AppColors.onAccent,
+                    size: .compact,
+                    expandsHorizontally: false,
+                    onTap: {
+                        // Placeholder — new template creation flow
+                    }
+                )
+            }
+
+            // Horizontal template cards
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(viewModel.templates) { template in
+                        TemplateCardView(
+                            template: template,
+                            isSelected: template.id == viewModel.selectedTemplateId,
+                            onTap: {
+                                withAnimation(.snappy(duration: 0.25)) {
+                                    viewModel.selectTemplate(template)
+                                }
+                            }
+                        )
+                    }
+
+                    // "+" add template button at end
+                    Button {
+                        // Placeholder — new template creation flow
+                    } label: {
+                        VStack {
+                            Image(systemName: "plus")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundStyle(AppColors.accentBlue)
+                        }
+                        .frame(width: 54, height: 74)
+                    }
+                    .buttonStyle(
+                        AppDepthButtonStyle(
+                            shape: .roundedRectangle(cornerRadius: 16),
+                            surfaceColor: AppColors.surface,
+                            borderColor: AppColors.outline.opacity(0.10),
+                            depthColor: AppColors.outline.opacity(0.16),
+                            depthOffset: 4
+                        )
+                    )
+                }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 2)
+            }
+        }
+    }
+
+    // MARK: - Template Detail Card
+
+    private var templateDetailCard: some View {
+        AppDepthSurface(
+            shape: .roundedRectangle(cornerRadius: 20),
+            contentInsets: EdgeInsets(top: 16, leading: 18, bottom: 18, trailing: 18)
+        ) {
+            VStack(alignment: .leading, spacing: 14) {
+                // Template name with edit pencil
+                if let selected = viewModel.templates.first(where: { $0.id == viewModel.selectedTemplateId }) {
+                    HStack(spacing: 8) {
+                        Text(selected.name)
+                            .font(AppFonts.headlineBlack)
+                            .foregroundStyle(AppColors.textPrimary)
+
+                        Button {
+                            // Placeholder — rename template action
+                        } label: {
+                            Image(systemName: "pencil")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(AppColors.textSecondary)
+                        }
+                    }
+
+                    // Active days header
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(L10n.Templates.activeDaysTitle)
+                            .font(AppFonts.subheadlineHeavy)
+                            .foregroundStyle(AppColors.textPrimary)
+
+                        Text(L10n.Templates.activeDaysSubtitle)
+                            .font(AppFonts.caption2Bold)
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
+
+                    // Day chips
+                    ActiveDaysChipsView(activeDays: selected.daysOfWeek)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    // MARK: - Schedule Section
+
+    private var scheduleSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Schedule header with zone count
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(L10n.Templates.scheduleTitle)
+                    .font(AppFonts.title3Black)
+                    .foregroundStyle(AppColors.textPrimary)
+
+                Text(L10n.Templates.zonesCount(viewModel.suggestedZones.count))
+                    .font(AppFonts.caption2Bold)
+                    .foregroundStyle(AppColors.textSecondary)
+            }
+
+            zonesListWithTimeline
+        }
+    }
+
+    // MARK: - Zones Timeline
 
     private var zonesListWithTimeline: some View {
         VStack(spacing: 16) {
@@ -148,7 +283,7 @@ public struct DailyZonesView: View {
             HStack(alignment: .center, spacing: 10) {
                 // Empty timeline spacer
                 VStack {
-                    Text("").font(AppFonts.caption2Bold).frame(width: 45, alignment: .trailing)
+                    Text("").font(AppFonts.caption2Bold).frame(width: 58, alignment: .trailing)
                 }
                 
                 AddZoneButton(onTap: {
@@ -161,7 +296,7 @@ public struct DailyZonesView: View {
             Rectangle()
                 .fill(AppColors.accentBlue.opacity(0.3))
                 .frame(width: 2)
-                .padding(.leading, 40)
+                .padding(.leading, 53)
                 .padding(.top, 22)
                 .padding(.bottom, 30)
         }
@@ -174,20 +309,22 @@ public struct DailyZonesView: View {
         return VStack(spacing: 0) {
             Text(zone.startTime)
                 .font(AppFonts.caption2Bold)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
                 .foregroundStyle(color)
-                .frame(width: 45, alignment: .trailing)
+                .frame(width: 58, alignment: .trailing)
             
             Circle()
                 .fill(color)
                 .frame(width: 8, height: 8)
-                .padding(.leading, 37) // Align with the end of the text
+                .padding(.leading, 50)
                 .padding(.top, 4)
         }
     }
 
     private var bottomButton: some View {
         AppButton(
-            title: L10n.Schedule.saveChanges,
+            title: L10n.Templates.saveTemplate,
             icon: "checkmark.circle.fill",
             color: AppColors.accentBlue,
             foregroundColor: AppColors.onAccent,
