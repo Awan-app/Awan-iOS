@@ -11,6 +11,7 @@ import Common
 struct AppRootView: View {
     private static let compactCreationDetent = PresentationDetent.height(370)
     private static let expandedCreationDetent = PresentationDetent.height(590)
+    private static let customTabBarContentClearance: CGFloat = 90
 
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthenticationState.self) private var authenticationState
@@ -132,6 +133,7 @@ struct AppRootView: View {
             .tag(MainTab.you)
             .toolbar(.hidden, for: .tabBar)
         }
+        .safeAreaPadding(.bottom, Self.customTabBarContentClearance)
         .id(languageManager.currentLanguage)
         .overlay {
             opaqueTopSafeArea
@@ -147,6 +149,10 @@ struct AppRootView: View {
             .environment(\.layoutDirection, currentLayoutDirection)
             .padding(.top, 12)
             .padding(.bottom, 6)
+            .background {
+                AppColors.screenBackground
+                    .ignoresSafeArea(edges: .bottom)
+            }
         }
         .sheet(item: Bindable(coordinator.mainCoordinator).presentedSheet) { route in
             switch route {
