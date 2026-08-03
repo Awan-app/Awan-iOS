@@ -1,63 +1,73 @@
-import SwiftUI
 import Common
+import Domain
+import SwiftUI
 
 struct ActiveDaysChipsView: View {
-    let activeDays: [String]
-
-    private static let allDays: [(key: String, short: String)] = [
-        ("MONDAY", "Mon"),
-        ("TUESDAY", "Tue"),
-        ("WEDNESDAY", "Wed"),
-        ("THURSDAY", "Thu"),
-        ("FRIDAY", "Fri"),
-        ("SATURDAY", "Sat"),
-        ("SUNDAY", "Sun")
-    ]
+    let activeDays: Set<TemplateWeekday>
+    let today: TemplateWeekday?
+    var availability: [TemplateWeekdayAvailability] = []
+    var onToggle: ((TemplateWeekday) -> Void)?
 
     var body: some View {
-        HStack(spacing: 6) {
-            ForEach(Self.allDays, id: \.key) { day in
-                let isActive = activeDays.contains(where: { $0.uppercased() == day.key })
-                dayChip(label: localizedShortDay(day.key), isActive: isActive)
+        HStack(spacing: 5) {
+            ForEach(TemplateWeekday.allCases, id: \.self) { weekday in
+                let active = activeDays.contains(weekday)
+                let available = availability.first { $0.weekday == weekday }?.isAvailable ?? true
+                Button {
+                    onToggle?(weekday)
+                } label: {
+                    Text(weekday.localizedShortName)
+                        .font(AppFonts.caption2Bold)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.65)
+                        .foregroundStyle(active ? AppColors.onAccent : AppColors.textSecondary)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            active
+                                ? AnyShapeStyle(AppColors.accentBlue.gradient)
+                                : AnyShapeStyle(AppColors.surface),
+                            in: RoundedRectangle(cornerRadius: 9, style: .continuous)
+                        )
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 9, style: .continuous)
+                                .stroke(
+                                    weekday == today
+                                        ? AppColors.accentBlue
+                                        : AppColors.divider,
+                                    lineWidth: weekday == today ? 2 : 1.5
+                                )
+                        }
+                        .opacity(available || active ? 1 : 0.38)
+                }
+                .buttonStyle(.plain)
+                .disabled(onToggle == nil || (!available && !active))
+                .accessibilityLabel(weekday.localizedFullName)
+                .accessibilityValue(
+                    active
+                        ? L10n.Templates.accessibilitySelected
+                        : (available
+                            ? L10n.Templates.accessibilityAvailable
+                            : L10n.Templates.accessibilityUsed)
+                )
             }
         }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+extension TemplateWeekday {
+    var localizedShortName: String {
+        weekdaySymbol(full: false)
     }
 
-    private func dayChip(label: String, isActive: Bool) -> some View {
-        Text(label)
-            .font(AppFonts.caption2Bold)
-            .fixedSize(horizontal: true, vertical: false)
-            .foregroundStyle(isActive ? AppColors.onAccent : AppColors.textSecondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 8)
-            .background(
-                isActive
-                    ? AnyShapeStyle(AppColors.accentBlue.gradient)
-                    : AnyShapeStyle(Color.clear),
-                in: Capsule()
-            )
-            .overlay {
-                Capsule()
-                    .stroke(
-                        isActive ? Color.clear : AppColors.divider,
-                        lineWidth: 1.5
-                    )
-            }
+    var localizedFullName: String {
+        weekdaySymbol(full: true)
     }
 
-    private func localizedShortDay(_ day: String) -> String {
-        // Use Calendar to get locale-aware short day names
+    private func weekdaySymbol(full: Bool) -> String {
         let calendar = Calendar.current
-        let symbols = calendar.shortWeekdaySymbols // Sun, Mon, Tue, ...
-        switch day {
-        case "MONDAY": return symbols[1]
-        case "TUESDAY": return symbols[2]
-        case "WEDNESDAY": return symbols[3]
-        case "THURSDAY": return symbols[4]
-        case "FRIDAY": return symbols[5]
-        case "SATURDAY": return symbols[6]
-        case "SUNDAY": return symbols[0]
-        default: return "?"
-        }
+        let values = full ? calendar.weekdaySymbols : calendar.shortWeekdaySymbols
+        return values[calendarWeekday - 1]
     }
 }

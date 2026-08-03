@@ -18,6 +18,10 @@ public final class CreateOnboardingTemplateUseCaseImpl: CreateOnboardingTemplate
     }
 
     public func execute(zoneDrafts: [Zone]) async throws {
-        try await templateRepository.createWeeklyTemplate(zones: zoneDrafts)
+        _ = try await templateRepository.createTemplate(
+            name: "Default",
+            daysOfWeek: Set(TemplateWeekday.allCases),
+            zones: zoneDrafts
+        )
     }
 }

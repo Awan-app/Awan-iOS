@@ -208,20 +208,33 @@ extension CreateTaskViewModel {
         }
     }
 
-    func acceptProposedTasks(_ tasks: [ProposedTask]) async {
+    enum ProposedTaskDestination {
+        case schedule
+        case inbox
+    }
+
+    func acceptProposedTasks(
+        _ tasks: [ProposedTask],
+        destination: ProposedTaskDestination
+    ) async {
         guard !state.isSubmitting, !tasks.isEmpty else { return }
         state.isSubmitting = true
         state.errorMessage = nil
         defer { state.isSubmitting = false }
 
         do {
-            for task in tasks {
+            let drafts = tasks.map { task in
                 var draft = task.draft
-                if draft.sessions.isEmpty {
-                    draft.sessions = task.aiProposedSessions
+                switch destination {
+                case .schedule:
+                    draft.sessions += task.aiProposedSessions
+                case .inbox:
+                    draft.task.goalId = nil
+                    draft.sessions = []
                 }
-                _ = try await useCases.acceptProposedTask.execute(draft)
+                return draft
             }
+            _ = try await useCases.acceptProposedTasks.execute(drafts)
             state.didCreateTask = true
         } catch is CancellationError {
         } catch {

@@ -24,7 +24,7 @@ public struct TaskProposal: Sendable, Hashable {
 public struct ProposedTask: Identifiable, Sendable, Hashable {
     public let id: UUID
     public var draft: TaskWithSessionsDraft
-    public let aiProposedSessions: [ProposedSession]
+    public var aiProposedSessions: [ProposedSession]
     public let reason: String
 
     public init(
@@ -87,8 +87,8 @@ public struct ProposedTaskDetails: Sendable, Hashable {
 public struct ProposedSession: Identifiable, Sendable, Hashable {
     public let id: UUID
     public let zoneId: UUID?
-    public let start: Date
-    public let end: Date
+    public var start: Date
+    public var end: Date
     public let status: String
 
     public init(

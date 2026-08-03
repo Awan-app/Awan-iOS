@@ -12,10 +12,12 @@ struct ImageToTasksResultSheet: View {
     let zones: [Zone]
     let onConfirm: ([ProposedTask]) -> Void
     let onAddToInbox: ([ProposedTask]) -> Void
+    let defaultSessionStart: Date
     let onDismiss: () -> Void
 
     @State private var tasks: [ProposedTask]
     @State private var selectedTaskIDs: Set<UUID>
+    @State private var sessionEditor: ProposedSessionEditorContext?
 
     init(
         response: TaskProposal,
@@ -23,6 +25,7 @@ struct ImageToTasksResultSheet: View {
         zones: [Zone],
         onConfirm: @escaping ([ProposedTask]) -> Void,
         onAddToInbox: @escaping ([ProposedTask]) -> Void,
+        defaultSessionStart: Date,
         onDismiss: @escaping () -> Void
     ) {
         self.response = response
@@ -30,6 +33,7 @@ struct ImageToTasksResultSheet: View {
         self.zones = zones
         self.onConfirm = onConfirm
         self.onAddToInbox = onAddToInbox
+        self.defaultSessionStart = defaultSessionStart
         self.onDismiss = onDismiss
         _tasks = State(initialValue: response.tasks)
         _selectedTaskIDs = State(initialValue: Set(response.tasks.map { $0.id }))
@@ -37,6 +41,12 @@ struct ImageToTasksResultSheet: View {
 
     private var selectedTasks: [ProposedTask] {
         tasks.filter { selectedTaskIDs.contains($0.id) }
+    }
+
+    private var canScheduleSelectedTasks: Bool {
+        !selectedTasks.isEmpty && selectedTasks.allSatisfy {
+            !$0.draft.sessions.isEmpty || !$0.aiProposedSessions.isEmpty
+        }
     }
 
     var body: some View {
@@ -94,6 +104,23 @@ struct ImageToTasksResultSheet: View {
                                 },
                                 onCategoryChanged: { categoryID in
                                     tasks[index].draft.task.categoryId = categoryID
+                                },
+                                onEditSession: { source, session in
+                                    sessionEditor = ProposedSessionEditorContext(
+                                        taskID: task.id,
+                                        source: source,
+                                        session: session
+                                    )
+                                },
+                                onAddSession: {
+                                    sessionEditor = ProposedSessionEditorContext(
+                                        taskID: task.id,
+                                        source: .fixed,
+                                        start: defaultSessionStart,
+                                        end: defaultSessionStart.addingTimeInterval(
+                                            TimeInterval(max(1, task.draft.task.estimatedDuration) * 60)
+                                        )
+                                    )
                                 }
                             )
                         }
@@ -122,16 +149,18 @@ struct ImageToTasksResultSheet: View {
                     .disabled(selectedTasks.isEmpty)
 
                     AppButton(
-                        title: L10n.Home.confirmAcceptCount(selectedTasks.count),
+                        title: L10n.Home.scheduleSelectedCount(selectedTasks.count),
                         icon: "calendar.badge.plus",
-                        color: selectedTasks.isEmpty ? AppColors.buttonDisabled : AppColors.accentBlue,
+                        color: canScheduleSelectedTasks
+                            ? AppColors.accentBlue
+                            : AppColors.buttonDisabled,
                         size: .large,
                         onTap: {
-                            guard !selectedTasks.isEmpty else { return }
+                            guard canScheduleSelectedTasks else { return }
                             onConfirm(selectedTasks)
                         }
                     )
-                    .disabled(selectedTasks.isEmpty)
+                    .disabled(!canScheduleSelectedTasks)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
@@ -139,5 +168,46 @@ struct ImageToTasksResultSheet: View {
             }
         }
         .background(AppColors.screenBackground.ignoresSafeArea())
+        .sheet(item: $sessionEditor) { context in
+            ProposedSessionEditorSheet(
+                context: context,
+                onSave: { session in
+                    save(session, for: context)
+                    sessionEditor = nil
+                },
+                onDismiss: {
+                    sessionEditor = nil
+                }
+            )
+        }
+    }
+
+    private func save(
+        _ session: ProposedSession,
+        for context: ProposedSessionEditorContext
+    ) {
+        guard let taskIndex = tasks.firstIndex(where: { $0.id == context.taskID }) else {
+            return
+        }
+
+        switch context.source {
+        case .fixed:
+            if let sessionID = context.sessionID,
+               let sessionIndex = tasks[taskIndex].draft.sessions.firstIndex(
+                   where: { $0.id == sessionID }
+               ) {
+                tasks[taskIndex].draft.sessions[sessionIndex] = session
+            } else {
+                tasks[taskIndex].draft.sessions.append(session)
+            }
+        case .ai:
+            guard let sessionID = context.sessionID,
+                  let sessionIndex = tasks[taskIndex].aiProposedSessions.firstIndex(
+                      where: { $0.id == sessionID }
+                  ) else {
+                return
+            }
+            tasks[taskIndex].aiProposedSessions[sessionIndex] = session
+        }
     }
 }

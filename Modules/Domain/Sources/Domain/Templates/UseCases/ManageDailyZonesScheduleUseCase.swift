@@ -13,6 +13,11 @@ public protocol ManageDailyZoneScheduleUseCase: Sendable {
     func updatingZone(_ zone: Zone, in zones: [Zone]) -> [Zone]
     func movingZones(from source: IndexSet, to destination: Int, in zones: [Zone]) -> [Zone]
     func availableHours(wakeupTime: Date, sleepTime: Date) -> Int
+    func weeklyZones(
+        for date: TemplateOverrideDate,
+        timeZone: TimeZone,
+        templates: [Template]
+    ) -> [Zone]
 }
 
 public struct DefaultManageDailyZoneScheduleUseCase: ManageDailyZoneScheduleUseCase {
@@ -25,15 +30,47 @@ public struct DefaultManageDailyZoneScheduleUseCase: ManageDailyZoneScheduleUseC
     }
 
     public func swapZones(_ zones: [Zone], at sourceIndex: Int, with destinationIndex: Int) -> [Zone] {
-        guard sourceIndex != destinationIndex, zones.indices.contains(sourceIndex), zones.indices.contains(destinationIndex) else {
+        guard sourceIndex != destinationIndex,
+              zones.indices.contains(sourceIndex),
+              zones.indices.contains(destinationIndex) else {
             return zones
         }
-        var updated = zones
-        let timeSlots = zones.map { (start: $0.startTime, end: $0.endTime) }
-        updated.swapAt(sourceIndex, destinationIndex)
 
-        updated[sourceIndex] = Zone(id: updated[sourceIndex].id, name: updated[sourceIndex].name, color: updated[sourceIndex].color, startTime: timeSlots[sourceIndex].start, endTime: timeSlots[sourceIndex].end, category: updated[sourceIndex].category)
-        updated[destinationIndex] = Zone(id: updated[destinationIndex].id, name: updated[destinationIndex].name, color: updated[destinationIndex].color, startTime: timeSlots[destinationIndex].start, endTime: timeSlots[destinationIndex].end, category: updated[destinationIndex].category)
+        var updated = zones
+        let firstIndex = min(sourceIndex, destinationIndex)
+        let secondIndex = max(sourceIndex, destinationIndex)
+        let firstDuration = durationInMinutes(
+            start: updated[firstIndex].startTime,
+            end: updated[firstIndex].endTime
+        )
+        let secondDuration = durationInMinutes(
+            start: updated[secondIndex].startTime,
+            end: updated[secondIndex].endTime
+        )
+        let initialStart = updated[firstIndex].startTime
+
+        updated.swapAt(firstIndex, secondIndex)
+
+        let newFirstEnd = addMinutes(secondDuration, to: initialStart)
+        updated[firstIndex] = Zone(
+            id: updated[firstIndex].id,
+            name: updated[firstIndex].name,
+            color: updated[firstIndex].color,
+            startTime: initialStart,
+            endTime: newFirstEnd,
+            category: updated[firstIndex].category
+        )
+
+        let newSecondEnd = addMinutes(firstDuration, to: newFirstEnd)
+        updated[secondIndex] = Zone(
+            id: updated[secondIndex].id,
+            name: updated[secondIndex].name,
+            color: updated[secondIndex].color,
+            startTime: newFirstEnd,
+            endTime: newSecondEnd,
+            category: updated[secondIndex].category
+        )
+
         return updated
     }
 
@@ -168,6 +205,21 @@ public struct DefaultManageDailyZoneScheduleUseCase: ManageDailyZoneScheduleUseC
         return (sleepMinutes - wakeMinutes) / 60
     }
 
+    public func weeklyZones(
+        for date: TemplateOverrideDate,
+        timeZone: TimeZone,
+        templates: [Template]
+    ) -> [Zone] {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        guard let weekday = TemplateWeekday(
+            calendarWeekday: calendar.component(.weekday, from: date.date(in: timeZone))
+        ) else {
+            return []
+        }
+        return templates.first { $0.daysOfWeek.contains(weekday) }?.zones ?? []
+    }
+
     private func formatTime(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
@@ -190,6 +242,22 @@ public struct DefaultManageDailyZoneScheduleUseCase: ManageDailyZoneScheduleUseC
         return hour * 60 + minute
     }
 
+    private func durationInMinutes(start: LocalTime, end: LocalTime) -> Int {
+        let startMinutes = start.minutesSinceMidnight
+        var endMinutes = end.minutesSinceMidnight
+        if endMinutes < startMinutes {
+            endMinutes += 24 * 60
+        }
+        return endMinutes - startMinutes
+    }
+
+    private func addMinutes(_ minutes: Int, to time: LocalTime) -> LocalTime {
+        let totalMinutes = time.minutesSinceMidnight + minutes
+        let hour = (totalMinutes / 60) % 24
+        let minute = totalMinutes % 60
+        return (try? LocalTime(hour: hour, minute: minute)) ?? time
+    }
+
     private func date(from time: LocalTime) -> Date {
         Calendar.current.date(
             from: DateComponents(hour: time.hour, minute: time.minute)
@@ -197,19 +265,8 @@ public struct DefaultManageDailyZoneScheduleUseCase: ManageDailyZoneScheduleUseC
     }
 
     private func firstDayValue(in template: Template) -> Int {
-        template.daysOfWeek.map(dayValue).min() ?? 7
-    }
-
-    private func dayValue(_ day: String) -> Int {
-        switch day.uppercased() {
-        case "MONDAY": return 0
-        case "TUESDAY": return 1
-        case "WEDNESDAY": return 2
-        case "THURSDAY": return 3
-        case "FRIDAY": return 4
-        case "SATURDAY": return 5
-        case "SUNDAY": return 6
-        default: return 7
-        }
+        template.daysOfWeek.compactMap {
+            TemplateWeekday.allCases.firstIndex(of: $0)
+        }.min() ?? 7
     }
 }

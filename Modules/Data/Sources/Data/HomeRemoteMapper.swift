@@ -113,7 +113,7 @@ enum HomeRemoteMapper {
         return Template(
             id: data.id,
             name: data.name,
-            daysOfWeek: dto.daysOfWeek,
+            daysOfWeek: Set(try dto.daysOfWeek.map(templateWeekday)),
             zones: data.zones
         )
     }
@@ -155,7 +155,7 @@ enum HomeRemoteMapper {
         return TemplateOverride(
             id: dto.id,
             name: dto.name,
-            dateOfDay: dto.dateOfDay,
+            dateOfDay: try TemplateOverrideDate(iso8601: dto.dateOfDay),
             zones: try dto.zones.map(zone)
         )
     }
@@ -197,6 +197,15 @@ enum HomeRemoteMapper {
                 "template.daysOfWeek.\(raw)"
             )
         }
+    }
+
+    private static func templateWeekday(_ raw: String) throws -> TemplateWeekday {
+        guard let weekday = TemplateWeekday(rawValue: raw.uppercased()) else {
+            throw RemoteDomainMappingError.invalidValue(
+                "template.daysOfWeek.\(raw)"
+            )
+        }
+        return weekday
     }
 
     private static func sessionStatus(_ raw: String) throws -> Session.Status {

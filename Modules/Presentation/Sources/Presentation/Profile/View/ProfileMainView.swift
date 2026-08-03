@@ -59,21 +59,22 @@ struct ProfileMainView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-
-                // Header Area
+                ZStack {
                     Text(L10n.Profile.title)
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(AppColors.brandDarkBlue)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top, 40)
-                        .padding(.horizontal, 24)
-                        .padding(.bottom, 8)
-                        .overlay(alignment: .trailing) {
-                            GifImageView("Animated AWAN mascot")
-                                .frame(width: 80, height: 80)
-                                .padding(.trailing, 24)
-                                .padding(.top, 40)
-                        }
+
+                    HStack {
+                        Spacer()
+
+                        GifImageView("Animated AWAN mascot")
+                            .frame(width: 64, height: 64)
+                    }
+                    .padding(.horizontal, 24)
+                }
+                .frame(height: 64)
+                .background(AppColors.screenBackground)
+                .zIndex(1)
 
                 ScrollView {
                     VStack(spacing: 10) {
@@ -124,12 +125,12 @@ struct ProfileMainView: View {
                                 viewModel.showLogoutConfirmation = true
                             }
                         )
-                        .padding(.top, 24)
+                        .padding(.top, 12)
                         .disabled(viewModel.isLoggingOut)
 
                     }
                     .padding(.horizontal, 24)
-                    .padding(.bottom, 80)
+                    .padding(.bottom, 90)
                 }
             }
         }
@@ -213,10 +214,21 @@ struct ProfileMainView: View {
             updateSleepScheduleUseCase: MockUpdateSleepScheduleUseCase()
         ),
         dailyZonesViewModel: DailyZonesViewModel(
-            fetchTemplatesUseCase: MockFetchTemplatesUseCase(),
-            updateTemplateUseCase: MockUpdateTemplateUseCase(),
-            getUserProfileUseCase: MockGetUserProfileUseCase(),
-            manageDailyZoneScheduleUseCase: DefaultManageDailyZoneScheduleUseCase()
+            useCases: DailyZonesUseCases(
+                fetchTemplates: MockFetchTemplatesUseCase(),
+                fetchOverrides: MockFetchTemplateOverridesUseCase(),
+                createTemplate: MockCreateTemplateUseCase(),
+                updateTemplateZones: MockUpdateTemplateUseCase(),
+                updateTemplateDetails: MockUpdateTemplateDetailsUseCase(),
+                deleteTemplate: MockDeleteTemplateUseCase(),
+                createOverride: MockCreateTemplateOverrideUseCase(),
+                updateOverrideZones: MockUpdateBulkTemplateOverrideUseCase(),
+                updateOverrideDetails: MockUpdateTemplateOverrideUseCase(),
+                deleteOverride: MockDeleteTemplateOverrideUseCase(),
+                getUserProfile: MockGetUserProfileUseCase(),
+                manageSchedule: DefaultManageDailyZoneScheduleUseCase(),
+                resolveWeekdays: DefaultResolveTemplateWeekdayAvailabilityUseCase()
+            )
         )
     )
 }

@@ -168,7 +168,7 @@ public struct DefaultTaskRepository: TaskRepository {
         durationMinutes: Int,
         timeZoneID: String
     ) async throws -> (task: AwanTask, sessions: [Session]) {
-        let sessionPayloads: [CreateTaskWithSessionsRequestDTO.SessionPayload]?
+        let sessionPayloads: [CreateTaskWithSessionsRequestDTO.SessionPayload]
         if let start = startsAt {
             let end = start.addingTimeInterval(TimeInterval(durationMinutes * 60))
             sessionPayloads = [
@@ -180,7 +180,7 @@ public struct DefaultTaskRepository: TaskRepository {
                 )
             ]
         } else {
-            sessionPayloads = nil
+            sessionPayloads = []
         }
 
         let request = CreateTaskWithSessionsRequestDTO(

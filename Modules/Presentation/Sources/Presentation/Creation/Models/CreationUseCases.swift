@@ -6,6 +6,7 @@ public struct CreationUseCases: Sendable {
     public let createAITask: any CreateAITaskUseCase
     public let imageToTasks: any ImageToTasksUseCase
     public let acceptProposedTask: any AcceptProposedTaskUseCase
+    public let acceptProposedTasks: any AcceptProposedTasksUseCase
     public let userProfile: any GetUserProfileUseCase
     public let goalDecomposition: GoalDecompositionUseCases
 
@@ -15,6 +16,7 @@ public struct CreationUseCases: Sendable {
         createAITask: any CreateAITaskUseCase,
         imageToTasks: any ImageToTasksUseCase,
         acceptProposedTask: any AcceptProposedTaskUseCase,
+        acceptProposedTasks: any AcceptProposedTasksUseCase,
         userProfile: any GetUserProfileUseCase,
         goalDecomposition: GoalDecompositionUseCases
     ) {
@@ -23,6 +25,7 @@ public struct CreationUseCases: Sendable {
         self.createAITask = createAITask
         self.imageToTasks = imageToTasks
         self.acceptProposedTask = acceptProposedTask
+        self.acceptProposedTasks = acceptProposedTasks
         self.userProfile = userProfile
         self.goalDecomposition = goalDecomposition
     }

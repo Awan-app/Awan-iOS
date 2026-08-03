@@ -628,6 +628,71 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "home.add_to_inbox", value: nil, table: "Localizable")
         }
 
+        public static var addSchedule: String {
+            L10n.currentBundle.localizedString(forKey: "home.add_schedule", value: nil, table: "Localizable")
+        }
+
+        public static var editSessionSchedule: String {
+            L10n.currentBundle.localizedString(forKey: "home.edit_session_schedule", value: nil, table: "Localizable")
+        }
+
+        public static var invalidSessionTimeRange: String {
+            L10n.currentBundle.localizedString(forKey: "home.invalid_session_time_range", value: nil, table: "Localizable")
+        }
+
+        public static func scheduleSelectedCount(_ count: Int) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: "home.schedule_selected_count",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                count
+            )
+        }
+
+        public static var sessionStart: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_start", value: nil, table: "Localizable")
+        }
+
+        public static var sessionEnd: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_end", value: nil, table: "Localizable")
+        }
+
+        public static var sessionDay: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_day", value: nil, table: "Localizable")
+        }
+
+        public static func sessionTodayAt(_ time: String) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: "home.session_today_at",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                time
+            )
+        }
+
+        public static func sessionTomorrowAt(_ time: String) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: "home.session_tomorrow_at",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                time
+            )
+        }
+
+        public static var setSchedule: String {
+            L10n.currentBundle.localizedString(forKey: "home.set_schedule", value: nil, table: "Localizable")
+        }
+
+        public static var time: String {
+            L10n.currentBundle.localizedString(forKey: "home.time", value: nil, table: "Localizable")
+        }
+
         public static func confirmAcceptCount(_ count: Int) -> String {
             String(format: L10n.currentBundle.localizedString(forKey: "home.confirm_accept_count", value: nil, table: "Localizable"), count)
         }
@@ -913,5 +978,98 @@ public enum L10n {
         public static func zonesCount(_ count: Int) -> String { String(format: L10n.currentBundle.localizedString(forKey: "templates.zones_count", value: nil, table: "Localizable"), count) }
         public static func activeDaysCount(_ count: Int) -> String { String(format: L10n.currentBundle.localizedString(forKey: "templates.active_days_count", value: nil, table: "Localizable"), count) }
         public static var saveTemplate: String { L10n.currentBundle.localizedString(forKey: "templates.save_template", value: nil, table: "Localizable") }
+        public static var weeklyRoutine: String { text("templates.weekly_routine") }
+        public static var dateOverride: String { text("templates.date_override") }
+        public static var dateOverridesTitle: String { text("templates.date_overrides_title") }
+        public static var noWeeklyTemplates: String { text("templates.no_weekly_templates") }
+        public static var noWeeklyTemplatesMessage: String { text("templates.no_weekly_templates_message") }
+        public static var createTemplate: String { text("templates.create_template") }
+        public static var oneDayOverride: String { text("templates.one_day_override") }
+        public static var overrideExplanation: String { text("templates.override_explanation") }
+        public static var useWeeklyRoutine: String { text("templates.use_weekly_routine") }
+        public static var usingWeeklyRoutine: String { text("templates.using_weekly_routine") }
+        public static var noWeeklyCoverage: String { text("templates.no_weekly_coverage") }
+        public static var followsWeeklyRoutine: String { text("templates.follows_weekly_routine") }
+        public static var createDateOverride: String { text("templates.create_date_override") }
+        public static var noZonesYet: String { text("templates.no_zones_yet") }
+        public static var addFirstZone: String { text("templates.add_first_zone") }
+        public static var saveChanges: String { text("templates.save_changes") }
+        public static var loadingSchedules: String { text("templates.loading_schedules") }
+        public static var loadFailure: String { text("templates.load_failure") }
+        public static var retry: String { text("templates.retry") }
+        public static var unableToUpdate: String { text("templates.unable_to_update") }
+        public static var newSchedule: String { text("templates.new_schedule") }
+        public static var editOverride: String { text("templates.edit_override") }
+        public static var weeklyTemplate: String { text("templates.weekly_template") }
+        public static var templateName: String { text("templates.template_name") }
+        public static var templateNamePlaceholder: String { text("templates.template_name_placeholder") }
+        public static var overrideName: String { text("templates.override_name") }
+        public static var overrideNamePlaceholder: String { text("templates.override_name_placeholder") }
+        public static var overrideNameRequired: String { text("templates.override_name_required") }
+        public static var freeDaysHint: String { text("templates.free_days_hint") }
+        public static var overrideDate: String { text("templates.override_date") }
+        public static var saveOverride: String { text("templates.save_override") }
+        public static var createSchedule: String { text("templates.create_schedule") }
+        public static var saveTemplateDetails: String { text("templates.save_template_details") }
+        public static var deleteTemplate: String { text("templates.delete_template") }
+        public static var editTemplate: String { text("templates.edit_template") }
+        public static var edit: String { text("templates.edit") }
+        public static var delete: String { text("templates.delete") }
+        public static var applyChanges: String { text("templates.apply_changes") }
+        public static var unsavedChanges: String { text("templates.unsaved_changes") }
+        public static var discardChanges: String { text("templates.discard_changes") }
+        public static var confirm: String { text("templates.confirm") }
+        public static var noFreeDays: String { text("templates.no_free_days") }
+        public static var selectNameAndDay: String { text("templates.select_name_and_day") }
+        public static var chooseFutureDate: String { text("templates.choose_future_date") }
+        public static var duplicateOverride: String { text("templates.duplicate_override") }
+        public static var zoneOverlap: String { text("templates.zone_overlap") }
+        public static var authenticationError: String { text("templates.error_authentication") }
+        public static var dayAlreadyAssignedError: String { text("templates.error_day_already_assigned") }
+        public static var invalidZoneTimeRangeError: String { text("templates.error_invalid_zone_time_range") }
+        public static var scheduleNotFoundError: String { text("templates.error_schedule_not_found") }
+        public static var networkError: String { text("templates.error_network") }
+        public static var invalidResponseError: String { text("templates.error_invalid_response") }
+        public static var daysAssignedElsewhere: String { text("templates.days_assigned_elsewhere") }
+        public static var daysNowUnavailable: String { text("templates.days_now_unavailable") }
+        public static var applyZoneChangesConfirmation: String { text("templates.apply_zone_changes_confirmation") }
+        public static var zoneRemovalMessage: String { text("templates.zone_removal_message") }
+        public static var unsavedZoneChangesMessage: String { text("templates.unsaved_zone_changes_message") }
+        public static var deleteTemplateMessage: String { text("templates.delete_template_message") }
+        public static var useWeeklyRoutineConfirmation: String { text("templates.use_weekly_routine_confirmation") }
+        public static var useWeeklyRoutineMessage: String { text("templates.use_weekly_routine_message") }
+        public static var accessibilitySelected: String { text("templates.accessibility_selected") }
+        public static var accessibilityAvailable: String { text("templates.accessibility_available") }
+        public static var accessibilityUsed: String { text("templates.accessibility_used") }
+        public static var zoneSummaryColor: String { text("templates.zone_summary_color") }
+        public static var dragZoneHint: String { text("templates.drag_zone_hint") }
+        public static func deleteZoneConfirmation(_ name: String) -> String {
+            String(format: text("templates.delete_zone_confirmation"), name)
+        }
+        public static func deleteTemplateConfirmation(_ name: String) -> String {
+            String(format: text("templates.delete_template_confirmation"), name)
+        }
+        public static func zoneTimeRange(_ start: String, _ end: String) -> String {
+            String(format: text("templates.zone_time_range"), start, end)
+        }
+        public static func overrideShortcutAccessibility(_ name: String, date: String) -> String {
+            String(format: text("templates.override_shortcut_accessibility"), name, date)
+        }
+        public static func zoneSummaryName(from original: String, to updated: String) -> String {
+            String(format: text("templates.zone_summary_name"), original, updated)
+        }
+        public static func zoneSummaryTime(from original: String, to updated: String) -> String {
+            String(format: text("templates.zone_summary_time"), original, updated)
+        }
+        public static func occupiedDay(_ day: String, template: String) -> String {
+            String(format: text("templates.occupied_day"), day, template)
+        }
+        public static func conflictingTemplates(_ names: String) -> String {
+            String(format: text("templates.conflicting_templates"), names)
+        }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
     }
 }

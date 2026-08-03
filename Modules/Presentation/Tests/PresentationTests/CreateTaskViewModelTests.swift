@@ -191,6 +191,7 @@ final class CreateTaskViewModelTests: XCTestCase {
                 createAITask: aiUseCase ?? MockCreateAITaskUseCase(),
                 imageToTasks: MockImageToTasksUseCase(),
                 acceptProposedTask: MockAcceptProposedTaskUseCase(),
+                acceptProposedTasks: MockAcceptProposedTasksUseCase(),
                 userProfile: UserProfileUseCaseStub(),
                 goalDecomposition: GoalDecompositionUseCases(
                     sendMessage: GoalMessageUseCaseStub(),
@@ -355,20 +356,30 @@ private struct MockImageToTasksUseCase: ImageToTasksUseCase {
 
 private struct MockAcceptProposedTaskUseCase: AcceptProposedTaskUseCase {
     func execute(_ draft: TaskWithSessionsDraft) async throws -> AwanTask {
-        AwanTask(
-            id: UUID(),
-            title: draft.task.title,
-            description: draft.task.description,
-            status: .pending,
-            goalID: draft.task.goalId,
-            duration: try! TaskDuration(minutes: draft.task.estimatedDuration),
-            isSplittable: draft.task.allowTaskSplitting,
-            mandatory: draft.task.mandatory,
-            estimatedPoints: draft.task.estimatedPoints,
-            dependencyIDs: [],
-            category: nil
-        )
+        try makeAcceptedTask(from: draft)
     }
+}
+
+private struct MockAcceptProposedTasksUseCase: AcceptProposedTasksUseCase {
+    func execute(_ drafts: [TaskWithSessionsDraft]) async throws -> [AwanTask] {
+        try drafts.map(makeAcceptedTask(from:))
+    }
+}
+
+private func makeAcceptedTask(from draft: TaskWithSessionsDraft) throws -> AwanTask {
+    AwanTask(
+        id: UUID(),
+        title: draft.task.title,
+        description: draft.task.description,
+        status: .pending,
+        goalID: draft.task.goalId,
+        duration: try TaskDuration(minutes: draft.task.estimatedDuration),
+        isSplittable: draft.task.allowTaskSplitting,
+        mandatory: draft.task.mandatory,
+        estimatedPoints: draft.task.estimatedPoints,
+        dependencyIDs: [],
+        category: nil
+    )
 }
 private struct CreateAITaskUseCaseStub: CreateAITaskUseCase {
     let response: TaskProposal

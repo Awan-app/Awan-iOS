@@ -10,13 +10,8 @@ import SwiftUI
 struct ProposedTaskSessionsRow: View {
     let fixedSessions: [ProposedSession]
     let aiSessions: [ProposedSession]
-
-    private static let timeFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.timeStyle = .short
-        f.dateStyle = .none
-        return f
-    }()
+    let onEditSession: (ProposedSessionSource, ProposedSession) -> Void
+    @Environment(\.locale) private var locale
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -26,7 +21,7 @@ struct ProposedTaskSessionsRow: View {
                     label: L10n.Home.proposedTaskFixedSession,
                     color: AppColors.accentPurple,
                     sessions: fixedSessions,
-                    chipBackground: AppColors.accentPurple.opacity(0.1)
+                    source: .fixed
                 )
             }
 
@@ -36,7 +31,7 @@ struct ProposedTaskSessionsRow: View {
                     label: L10n.Home.proposedTaskAiSession,
                     color: AppColors.accentBlue,
                     sessions: aiSessions,
-                    chipBackground: AppColors.accentBlue.opacity(0.12)
+                    source: .ai
                 )
             }
         }
@@ -48,7 +43,7 @@ struct ProposedTaskSessionsRow: View {
         label: String,
         color: Color,
         sessions: [ProposedSession],
-        chipBackground: Color
+        source: ProposedSessionSource
     ) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 4) {
@@ -59,31 +54,69 @@ struct ProposedTaskSessionsRow: View {
             }
             .foregroundStyle(color)
 
-            FlowRow(spacing: 6) {
+            VStack(spacing: 8) {
                 ForEach(sessions) { session in
-                    Text("\(Self.timeFormatter.string(from: session.start)) – \(Self.timeFormatter.string(from: session.end))")
-                        .font(AppFonts.captionHeavy)
-                        .foregroundStyle(AppColors.textPrimary)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(chipBackground, in: RoundedRectangle(cornerRadius: 8))
+                    Button {
+                        onEditSession(source, session)
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "calendar")
+                                .font(AppFonts.captionIconBlack)
+                                .foregroundStyle(color)
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(formatted(session.start))
+                                Text(formatted(session.end))
+                            }
+                            .font(AppFonts.captionHeavy)
+                            .foregroundStyle(AppColors.textPrimary)
+                            .multilineTextAlignment(.leading)
+
+                            Spacer(minLength: 8)
+
+                            Image(systemName: "pencil")
+                                .font(AppFonts.caption2Bold)
+                                .foregroundStyle(AppColors.textSecondary)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .buttonStyle(
+                        AppDepthButtonStyle(
+                            shape: .roundedRectangle(cornerRadius: 12),
+                            surfaceColor: AppColors.surface,
+                            borderColor: color.opacity(0.22),
+                            depthColor: color.opacity(0.22),
+                            depthOffset: 3
+                        )
+                    )
                 }
             }
         }
     }
-}
 
-// MARK: - Simple Flow Row
+    private func formatted(_ date: Date) -> String {
+        var calendar = Calendar.current
+        calendar.locale = locale
 
-private struct FlowRow<Content: View>: View {
-    let spacing: CGFloat
-    @ViewBuilder let content: Content
+        let timeFormatter = DateFormatter()
+        timeFormatter.locale = locale
+        timeFormatter.timeStyle = .short
+        timeFormatter.dateStyle = .none
+        let time = timeFormatter.string(from: date)
 
-    var body: some View {
-        // Uses HStack with wrapping via fixedSize — simple approach
-        HStack(spacing: spacing) {
-            content
+        if calendar.isDateInToday(date) {
+            return L10n.Home.sessionTodayAt(time)
         }
-        .fixedSize(horizontal: false, vertical: true)
+        if calendar.isDateInTomorrow(date) {
+            return L10n.Home.sessionTomorrowAt(time)
+        }
+
+        let dateTimeFormatter = DateFormatter()
+        dateTimeFormatter.locale = locale
+        dateTimeFormatter.dateStyle = .medium
+        dateTimeFormatter.timeStyle = .short
+        return dateTimeFormatter.string(from: date)
     }
 }

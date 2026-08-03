@@ -93,6 +93,7 @@ struct PresentationAssembly: Assembly {
                 createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver),
                 imageToTasks: Self.resolve(ImageToTasksUseCase.self, from: resolver),
                 acceptProposedTask: Self.resolve(AcceptProposedTaskUseCase.self, from: resolver),
+                acceptProposedTasks: Self.resolve(AcceptProposedTasksUseCase.self, from: resolver),
                 userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 goalDecomposition: GoalDecompositionUseCases(
                     sendMessage: Self.resolve(
@@ -173,18 +174,23 @@ struct PresentationAssembly: Assembly {
         }
 
         container.register(DailyZonesViewModel.self) { resolver in
-            let fetchTemplatesUseCase = Self.resolve(FetchTemplatesUseCase.self, from: resolver)
-            let updateTemplateUseCase = Self.resolve(UpdateTemplateUseCase.self, from: resolver)
-            let getUserProfileUseCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
-            let manageDailyZoneScheduleUseCase = Self.resolve(ManageDailyZoneScheduleUseCase.self, from: resolver)
-            
+            let useCases = DailyZonesUseCases(
+                fetchTemplates: Self.resolve(FetchTemplatesUseCase.self, from: resolver),
+                fetchOverrides: Self.resolve(FetchTemplateOverridesUseCase.self, from: resolver),
+                createTemplate: Self.resolve(CreateTemplateUseCase.self, from: resolver),
+                updateTemplateZones: Self.resolve(UpdateTemplateUseCase.self, from: resolver),
+                updateTemplateDetails: Self.resolve(UpdateTemplateDetailsUseCase.self, from: resolver),
+                deleteTemplate: Self.resolve(DeleteTemplateUseCase.self, from: resolver),
+                createOverride: Self.resolve(CreateTemplateOverrideUseCase.self, from: resolver),
+                updateOverrideZones: Self.resolve(UpdateBulkTemplateOverrideUseCase.self, from: resolver),
+                updateOverrideDetails: Self.resolve(UpdateTemplateOverrideUseCase.self, from: resolver),
+                deleteOverride: Self.resolve(DeleteTemplateOverrideUseCase.self, from: resolver),
+                getUserProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
+                manageSchedule: Self.resolve(ManageDailyZoneScheduleUseCase.self, from: resolver),
+                resolveWeekdays: Self.resolve(ResolveTemplateWeekdayAvailabilityUseCase.self, from: resolver)
+            )
             return MainActor.assumeIsolated {
-                DailyZonesViewModel(
-                    fetchTemplatesUseCase: fetchTemplatesUseCase,
-                    updateTemplateUseCase: updateTemplateUseCase,
-                    getUserProfileUseCase: getUserProfileUseCase,
-                    manageDailyZoneScheduleUseCase: manageDailyZoneScheduleUseCase
-                )
+                DailyZonesViewModel(useCases: useCases)
             }
         }
         .inObjectScope(.container)

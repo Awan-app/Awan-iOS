@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol UpdateBulkTemplateOverrideUseCase: Sendable {
-    func execute(id: UUID, zones: [Zone]) async throws -> [Zone]
+    func execute(id: UUID, zones: [TemplateZoneMutation]) async throws -> TemplateOverride
 }
 
 public struct DefaultUpdateBulkTemplateOverrideUseCase: UpdateBulkTemplateOverrideUseCase {
@@ -11,7 +11,10 @@ public struct DefaultUpdateBulkTemplateOverrideUseCase: UpdateBulkTemplateOverri
         self.repository = repository
     }
 
-    public func execute(id: UUID, zones: [Zone]) async throws -> [Zone] {
+    public func execute(
+        id: UUID,
+        zones: [TemplateZoneMutation]
+    ) async throws -> TemplateOverride {
         try await repository.updateBulkTemplateOverride(id: id, zones: zones)
     }
 }

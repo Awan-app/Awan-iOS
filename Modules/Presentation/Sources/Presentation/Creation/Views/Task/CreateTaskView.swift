@@ -37,9 +37,11 @@ struct CreateTaskView: View {
                         }
                     },
                     onAddToInbox: { selectedTasks in
-                        // TODO: Implement inbox functionality
-                        print("Add to inbox tapped with \(selectedTasks.count) tasks")
+                        Task {
+                            await viewModel.confirmAndAddProposedTasksToInbox(selectedTasks)
+                        }
                     },
+                    defaultSessionStart: viewModel.state.startsAt,
                     onDismiss: {
                         viewModel.dismissAITaskResult()
                     }
@@ -87,6 +89,7 @@ struct CreateTaskView: View {
                     ManualScheduleControls(
                         categories: viewModel.state.categories,
                         zones: viewModel.state.zones,
+                        isSchedulingEnabled: bindableViewModel.state.isManualSchedulingEnabled,
                         startsAt: bindableViewModel.state.startsAt,
                         durationMinutes: bindableViewModel.state.durationMinutes,
                         selectedCategoryID: bindableViewModel.state.selectedCategoryID
