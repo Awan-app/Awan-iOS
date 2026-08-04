@@ -55,7 +55,7 @@ public struct CreateAiTaskResponseDTO: Decodable, Sendable {
             start: String,
             end: String,
             status: String,
-            zoneId: UUID? = nil,
+            zoneId: UUID? = nil
         ) {
             self.start = start
             self.end = end
