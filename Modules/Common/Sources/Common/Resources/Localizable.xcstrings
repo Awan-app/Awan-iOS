@@ -2952,6 +2952,40 @@
         }
       }
     },
+    "onboarding.out_of_bounds_warning_multiple": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المناطق التالية تقع خارج أوقات استيقاظك ونومك:\n%@\n\nعدّلها لتبقى ضمن يومك النشط."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The following zones fall outside your wake and sleep times:\n%@\n\nAdjust them to keep them within your active day."
+          }
+        }
+      }
+    },
+    "onboarding.out_of_bounds_warning_single": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المنطقة التالية تقع خارج أوقات استيقاظك ونومك:\n%@\n\nعدّلها لتبقى ضمن يومك النشط."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The following zone falls outside your wake and sleep times:\n%@\n\nAdjust it to keep it within your active day."
+          }
+        }
+      }
+    },
     "onboarding.preferred_focus_block": {
       "extractionState": "manual",
       "localizations": {

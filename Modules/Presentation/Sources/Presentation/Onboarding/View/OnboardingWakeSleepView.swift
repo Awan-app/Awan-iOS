@@ -23,7 +23,7 @@ struct OnboardingWakeSleepView: View {
                     if viewModel.wakeSleepTimesAreEqual {
                         sameTimeWarning
                     }
-                    if !viewModel.wakeSleepTimesAreEqual && viewModel.availableHours < 10 {
+                    if !viewModel.wakeSleepTimesAreEqual && viewModel.availableHours < 9 {
                         shortDayWarning
                     }
                     dayPreview
@@ -142,19 +142,20 @@ struct OnboardingWakeSleepView: View {
     }
 
     private var continueButton: some View {
-        AppButton(
+        let isDisabled = viewModel.wakeSleepTimesAreEqual || viewModel.availableHours < 9
+        return AppButton(
             title: L10n.Common.continue,
             icon: nil,
             color: AppColors.accentBlue,
             foregroundColor: AppColors.onAccent,
             size: .large,
             onTap: {
-                guard !viewModel.wakeSleepTimesAreEqual else { return }
+                guard !isDisabled else { return }
                 onContinue()
             }
         )
-        .disabled(viewModel.wakeSleepTimesAreEqual)
-        .opacity(viewModel.wakeSleepTimesAreEqual ? 0.5 : 1.0)
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.5 : 1.0)
     }
 }
 
