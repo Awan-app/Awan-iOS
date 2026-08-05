@@ -1072,4 +1072,39 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
         }
     }
+
+    public enum Inbox {
+        public static var title: String { text("inbox.title") }
+        public static var tabInbox: String { text("inbox.tab_inbox") }
+        public static var tabGoals: String { text("inbox.tab_goals") }
+        public static var subtitle: String { text("inbox.subtitle") }
+        public static var searchPlaceholder: String { text("inbox.search_placeholder") }
+        public static var filterAll: String { text("inbox.filter_all") }
+        public static var filterDrafted: String { text("inbox.filter_drafted") }
+        public static var filterActive: String { text("inbox.filter_active") }
+        public static var filterCompleted: String { text("inbox.filter_completed") }
+        public static var filterCancelled: String { text("inbox.filter_cancelled") }
+        public static var sessionsLabel: String { text("inbox.sessions_label") }
+        public static var sessionsAny: String { text("inbox.sessions_any") }
+        public static var sessionsActiveNow: String { text("inbox.sessions_active_now") }
+        public static var sessionsMissed: String { text("inbox.sessions_missed") }
+        public static var sessionsScheduled: String { text("inbox.sessions_scheduled") }
+        public static var sectionTitle: String { text("inbox.section_title") }
+        public static var noSessions: String { text("inbox.no_sessions") }
+        public static var oneSession: String { text("inbox.one_session") }
+        public static var derivedExplanation: String { text("inbox.derived_explanation") }
+        public static var emptyTitle: String { text("inbox.empty_title") }
+        public static var emptySubtitle: String { text("inbox.empty_subtitle") }
+        public static var errorTitle: String { text("inbox.error_title") }
+        public static var loadFailed: String { text("inbox.load_failed") }
+
+        public static func nSessions(_ count: Int) -> String {
+            String(format: text("inbox.n_sessions"), count)
+        }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
 }
+
