@@ -80,7 +80,7 @@ struct HomeState {
             failure: nil,
             selectedDay: selectedDay,
             selectedSessionID: nil,
-            isMutating: false,
+            isMutating: false
         )
     }
 }
