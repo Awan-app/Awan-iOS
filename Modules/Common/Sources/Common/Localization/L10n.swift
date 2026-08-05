@@ -62,6 +62,12 @@ public enum L10n {
         public static var wakeSleepTitle: String {
             L10n.currentBundle.localizedString(forKey: "onboarding.wake_sleep_title", value: nil, table: "Localizable")
         }
+        public static var wakeSleepSameTimeError: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.wake_sleep_same_time_error", value: nil, table: "Localizable")
+        }
+        public static var shortActiveDayWarning: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.short_active_day_warning", value: nil, table: "Localizable")
+        }
         public static var wakeLabel: String {
             L10n.currentBundle.localizedString(forKey: "onboarding.wake_label", value: nil, table: "Localizable")
         }

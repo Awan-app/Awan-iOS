@@ -9,6 +9,7 @@ import Foundation
 import Observation
 import SwiftUI
 import Domain
+import Common
 
 @Observable
 @MainActor
@@ -51,6 +52,16 @@ public final class OnboardingViewModel: ZoneManaging {
         }
 
         return (sleepMinutes - wakeMinutes) / 60
+    }
+
+    // MARK: - Wake/Sleep validation
+
+    /// `true` when wakeup and sleep represent the same hour and minute.
+    public var wakeSleepTimesAreEqual: Bool {
+        let calendar = Calendar.current
+        let wakeHM = calendar.dateComponents([.hour, .minute], from: wakeupTime)
+        let sleepHM = calendar.dateComponents([.hour, .minute], from: sleepTime)
+        return wakeHM.hour == sleepHM.hour && wakeHM.minute == sleepHM.minute
     }
 
     // MARK: - Suggested Zones
