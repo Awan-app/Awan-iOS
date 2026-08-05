@@ -66,7 +66,7 @@ struct OnboardingWakeSleepView: View {
         }
         .foregroundStyle(AppColors.warning)
         .padding(.horizontal, 12)
-        .padding(.vertical, 5)
+        //.padding(.vertical, 5)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             AppColors.warning.opacity(0.1),
