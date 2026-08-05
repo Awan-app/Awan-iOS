@@ -14,6 +14,7 @@ public struct PresentationFactory {
     private let profileViewModel: ProfileViewModel
     private let dailyZonesViewModel: DailyZonesViewModel
     private let makeUserInfoViewModel: () -> UserInfoViewModel
+    private let inboxViewModel: InboxViewModel
 
     public init(
         appCoordinator: AppCoordinator,
@@ -27,7 +28,8 @@ public struct PresentationFactory {
         onboardingViewModel: OnboardingViewModel,
         profileViewModel: ProfileViewModel,
         dailyZonesViewModel: DailyZonesViewModel,
-        makeUserInfoViewModel: @escaping () -> UserInfoViewModel
+        makeUserInfoViewModel: @escaping () -> UserInfoViewModel,
+        inboxViewModel: InboxViewModel
     ) {
         self.appCoordinator = appCoordinator
         self.authenticationState = authenticationState
@@ -41,6 +43,7 @@ public struct PresentationFactory {
         self.profileViewModel = profileViewModel
         self.dailyZonesViewModel = dailyZonesViewModel
         self.makeUserInfoViewModel = makeUserInfoViewModel
+        self.inboxViewModel = inboxViewModel
     }
 
     public func makeAppRootView() -> some View {
@@ -101,6 +104,16 @@ public struct PresentationFactory {
 
     func makeRewardsView() -> some View {
         RewardsView()
+    }
+
+    func makeInboxView() -> some View {
+        InboxView(viewModel: inboxViewModel)
+    }
+
+    func makeInboxTaskDetailView(taskID: UUID) -> some View {
+        // Placeholder until inbox task detail is implemented.
+        EmptyView()
+            .accessibilityIdentifier("inbox-task-detail-\(taskID.uuidString)")
     }
 
     func makeYouView() -> some View {
