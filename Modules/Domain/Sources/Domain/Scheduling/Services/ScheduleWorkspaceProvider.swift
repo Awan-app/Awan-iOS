@@ -24,12 +24,13 @@ public struct DefaultScheduleWorkspaceProvider: ScheduleWorkspaceProviding {
 
     public func load(for date: Date) async throws -> ScheduleWorkspace {
         _ = try? await taskRepository.fetchTasks(for: date)
-        async let zones = zoneRepository.fetchZones(for: date)
-        async let goals = goalRepository.fetchGoals()
-        async let tasks = taskRepository.fetchTasks()
-        async let sessions = sessionRepository.fetchSessions()
 
-        return try await ScheduleWorkspace(
+        let zones = (try? await zoneRepository.fetchZones(for: date)) ?? []
+        let goals = (try? await goalRepository.fetchGoals()) ?? []
+        let tasks = (try? await taskRepository.fetchTasks()) ?? []
+        let sessions = (try? await sessionRepository.fetchSessions()) ?? []
+
+        return ScheduleWorkspace(
             zones: zones.sorted { $0.startTime < $1.startTime },
             goals: goals,
             tasks: tasks,
