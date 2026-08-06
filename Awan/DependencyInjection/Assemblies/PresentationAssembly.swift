@@ -136,10 +136,28 @@ struct PresentationAssembly: Assembly {
             )
         }
 
+        container.register(GoalsUseCases.self) { resolver in
+            GoalsUseCases(
+                fetchGoalsWithTasks: Self.resolve(FetchGoalsWithTasksUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(GoalsViewModel.self) { resolver in
+            let useCases = Self.resolve(GoalsUseCases.self, from: resolver)
+            let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
+            return MainActor.assumeIsolated {
+                GoalsViewModel(useCases: useCases) { goalID in
+                    appCoordinator.mainCoordinator.push(.inboxTaskDetail(goalID))
+                }
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(InboxViewModel.self) { resolver in
             let useCases = Self.resolve(InboxUseCases.self, from: resolver)
+            let goalsVM = Self.resolve(GoalsViewModel.self, from: resolver)
             return MainActor.assumeIsolated {
-                InboxViewModel(useCases: useCases)
+                InboxViewModel(useCases: useCases, goalsViewModel: goalsVM)
             }
         }
         .inObjectScope(.container)

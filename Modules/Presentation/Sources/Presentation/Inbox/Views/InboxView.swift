@@ -104,20 +104,23 @@ public struct InboxView: View {
                         }
                     }
                 } else {
+                    if let goalsViewModel = viewModel.goalsViewModel {
+                        GoalsContentSection(viewModel: goalsViewModel)
+                    } else {
+                        VStack(spacing: 16) {
+                            AwanMascotView(state: .goal)
+                                .frame(width: 160, height: 120)
 
-                    VStack(spacing: 16) {
-                        AwanMascotView(state: .goal)
-                            .frame(width: 160, height: 120)
+                            Text(L10n.Inbox.tabGoals)
+                                .font(AppFonts.title2Black)
+                                .foregroundStyle(AppColors.textPrimary)
 
-                        Text(L10n.Inbox.tabGoals)
-                            .font(AppFonts.title2Black)
-                            .foregroundStyle(AppColors.textPrimary)
-
-                        Text("Goal management will be available here.")
-                            .font(AppFonts.subheadlineSemibold)
-                            .foregroundStyle(AppColors.textSecondary)
+                            Text("Goal management will be available here.")
+                                .font(AppFonts.subheadlineSemibold)
+                                .foregroundStyle(AppColors.textSecondary)
+                        }
+                        .padding(.top, 40)
                     }
-                    .padding(.top, 40)
                 }
             }
             .padding(.horizontal, 16)
