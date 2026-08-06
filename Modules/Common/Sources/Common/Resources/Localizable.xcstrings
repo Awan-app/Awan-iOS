@@ -3474,7 +3474,41 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Out of bounds warning"
+            "value": "Adjust this zone so it fits within your wake and sleep times."
+          }
+        }
+      }
+    },
+    "onboarding.out_of_bounds_warning_multiple" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "المناطق التالية تقع خارج أوقات استيقاظك ونومك:\n%@\n\nعدّلها لتبقى ضمن يومك النشط."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following zones fall outside your wake and sleep times:\n%@\nAdjust them to keep them within your active day."
+          }
+        }
+      }
+    },
+    "onboarding.out_of_bounds_warning_single" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "المنطقة التالية تقع خارج أوقات استيقاظك ونومك:\n%@\n\nعدّلها لتبقى ضمن يومك النشط."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following zone falls outside your wake and sleep times:\n%@\nAdjust it to keep it within your active day."
           }
         }
       }
@@ -3644,7 +3678,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "SET MANUALLY"
+            "value": "SET LATER"
           }
         }
       }

@@ -12,6 +12,7 @@ import Observation
 @MainActor
 public final class InboxViewModel {
     public var state: InboxState
+    public var goalsViewModel: GoalsViewModel?
 
     @ObservationIgnored private let useCases: InboxUseCases
     @ObservationIgnored private let mapper: InboxStateMapper
@@ -19,10 +20,12 @@ public final class InboxViewModel {
 
     public init(
         useCases: InboxUseCases,
-        mapper: InboxStateMapper = InboxStateMapper()
+        mapper: InboxStateMapper = InboxStateMapper(),
+        goalsViewModel: GoalsViewModel? = nil
     ) {
         self.useCases = useCases
         self.mapper = mapper
+        self.goalsViewModel = goalsViewModel
         self.state = InboxState()
     }
 

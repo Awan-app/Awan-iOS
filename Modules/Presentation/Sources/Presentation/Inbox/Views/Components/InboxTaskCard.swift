@@ -188,7 +188,7 @@ struct InboxTaskCard: View {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .stroke(AppColors.warning.opacity(0.5), lineWidth: 1.5)
                 )
-        case .completed, .drafted:
+        case .completed, .drafted, .cancelled:
             EmptyView()
         }
     }
