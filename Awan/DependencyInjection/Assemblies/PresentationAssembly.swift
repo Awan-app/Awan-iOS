@@ -145,11 +145,8 @@ struct PresentationAssembly: Assembly {
 
         container.register(GoalsViewModel.self) { resolver in
             let useCases = Self.resolve(GoalsUseCases.self, from: resolver)
-            let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
             return MainActor.assumeIsolated {
-                GoalsViewModel(useCases: useCases) { goalID in
-                    appCoordinator.mainCoordinator.push(.inboxTaskDetail(goalID))
-                }
+                GoalsViewModel(useCases: useCases)
             }
         }
         .inObjectScope(.container)

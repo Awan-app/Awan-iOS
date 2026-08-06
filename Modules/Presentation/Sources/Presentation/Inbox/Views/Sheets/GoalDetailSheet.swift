@@ -9,6 +9,10 @@ import SwiftUI
 
 public struct GoalDetailSheet: View {
     let goal: Goal
+    let progressFraction: Double
+    let completedCount: Int
+    let totalCount: Int
+    let breakdown: GoalTaskBreakdown?
     let onDismiss: () -> Void
 
     private static let dateFormatter: DateFormatter = {
@@ -18,9 +22,42 @@ public struct GoalDetailSheet: View {
         return formatter
     }()
 
-    public init(goal: Goal, onDismiss: @escaping () -> Void) {
+    public init(
+        goal: Goal,
+        progressFraction: Double = 0.0,
+        completedCount: Int = 0,
+        totalCount: Int = 0,
+        breakdown: GoalTaskBreakdown? = nil,
+        onDismiss: @escaping () -> Void
+    ) {
         self.goal = goal
+        self.progressFraction = progressFraction
+        self.completedCount = completedCount
+        self.totalCount = totalCount
+        self.breakdown = breakdown
         self.onDismiss = onDismiss
+    }
+
+    public init(
+        goalItem: GoalProgressItem,
+        onDismiss: @escaping () -> Void
+    ) {
+        self.goal = goalItem.rawGoal
+        self.progressFraction = goalItem.progressFraction
+        self.completedCount = goalItem.completedCount
+        self.totalCount = goalItem.totalCount
+        self.breakdown = goalItem.breakdown
+        self.onDismiss = onDismiss
+    }
+
+    private var progressColor: Color {
+        if progressFraction >= 1.0 {
+            return AppColors.accentGreen
+        } else if progressFraction > 0.0 {
+            return AppColors.accentBlue
+        } else {
+            return AppColors.textSecondary
+        }
     }
 
     public var body: some View {
@@ -31,6 +68,8 @@ public struct GoalDetailSheet: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
                         headerCard
+
+                        progressSection
 
                         if let description = goal.description, !description.isEmpty {
                             descriptionCard(description)
@@ -87,6 +126,111 @@ public struct GoalDetailSheet: View {
                 }
             }
         }
+    }
+
+    private var progressSection: some View {
+        AppCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Progress")
+                    .font(AppFonts.subheadlineHeavy)
+                    .foregroundStyle(AppColors.textSecondary)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text("\(Int(progressFraction * 100))%")
+                            .font(AppFonts.title2Black)
+                            .foregroundStyle(progressColor)
+
+                        Text("\(completedCount) of \(totalCount) tasks completed")
+                            .font(AppFonts.subheadlineSemibold)
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
+
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(AppColors.outline.opacity(0.15))
+                                .frame(height: 8)
+
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [progressColor, progressColor.opacity(0.7)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .frame(
+                                    width: max(0, geo.size.width * progressFraction),
+                                    height: 8
+                                )
+                        }
+                    }
+                    .frame(height: 8)
+                }
+
+                if let breakdown = breakdown, breakdown.total > 0 {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            if breakdown.completed > 0 {
+                                breakdownChip(
+                                    count: breakdown.completed,
+                                    label: "Completed",
+                                    icon: "checkmark.circle",
+                                    color: AppColors.accentGreen
+                                )
+                            }
+                            if breakdown.active > 0 {
+                                breakdownChip(
+                                    count: breakdown.active,
+                                    label: "Active",
+                                    icon: "circle.dotted",
+                                    color: AppColors.warning
+                                )
+                            }
+                            if breakdown.drafted > 0 {
+                                breakdownChip(
+                                    count: breakdown.drafted,
+                                    label: "Drafted",
+                                    icon: "circle.dashed",
+                                    color: AppColors.textSecondary
+                                )
+                            }
+                            if breakdown.cancelled > 0 {
+                                breakdownChip(
+                                    count: breakdown.cancelled,
+                                    label: "Cancelled",
+                                    icon: "xmark.circle",
+                                    color: AppColors.destructive
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func breakdownChip(count: Int, label: String, icon: String, color: Color) -> some View {
+        HStack(spacing: 5) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(color)
+
+            Text("\(count) \(label)")
+                .font(AppFonts.caption2Bold)
+                .foregroundStyle(AppColors.textPrimary)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(color.opacity(0.10))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(color.opacity(0.25), lineWidth: 1)
+        )
     }
 
     private var statusBadge: some View {
@@ -159,12 +303,22 @@ public struct GoalDetailSheet: View {
 
 #Preview("Goal Detail Sheet - Light") {
     GoalDetailSheet(
-        goal: Goal(
+        goalItem: GoalProgressItem(
             id: UUID(),
-            name: "Build Portfolio Website",
+            title: "Build Portfolio Website",
             description: "Design and implement personal portfolio with SwiftUI and modern web standards.",
-            status: .active,
-            deadline: Date().addingTimeInterval(86400 * 14)
+            deadlineText: "Dec 31",
+            progressFraction: 0.67,
+            completedCount: 2,
+            totalCount: 3,
+            breakdown: GoalTaskBreakdown(drafted: 0, active: 1, completed: 2, cancelled: 0),
+            rawGoal: Goal(
+                id: UUID(),
+                name: "Build Portfolio Website",
+                description: "Design and implement personal portfolio with SwiftUI and modern web standards.",
+                status: .active,
+                deadline: Date().addingTimeInterval(86400 * 14)
+            )
         ),
         onDismiss: {}
     )
@@ -172,12 +326,22 @@ public struct GoalDetailSheet: View {
 
 #Preview("Goal Detail Sheet - Dark") {
     GoalDetailSheet(
-        goal: Goal(
+        goalItem: GoalProgressItem(
             id: UUID(),
-            name: "Learn Swift Concurrency",
+            title: "Learn Swift Concurrency",
             description: "Study async/await, actors, and Sendable protocol.",
-            status: .active,
-            deadline: nil
+            deadlineText: nil,
+            progressFraction: 0.33,
+            completedCount: 1,
+            totalCount: 3,
+            breakdown: GoalTaskBreakdown(drafted: 1, active: 1, completed: 1, cancelled: 0),
+            rawGoal: Goal(
+                id: UUID(),
+                name: "Learn Swift Concurrency",
+                description: "Study async/await, actors, and Sendable protocol.",
+                status: .active,
+                deadline: nil
+            )
         ),
         onDismiss: {}
     )

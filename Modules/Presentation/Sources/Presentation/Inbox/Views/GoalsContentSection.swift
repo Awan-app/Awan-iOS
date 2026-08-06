@@ -9,6 +9,7 @@ import SwiftUI
 /// The Goals content rendered inside InboxView's LazyVStack when the Goals tab is selected.
 struct GoalsContentSection: View {
     @State private var viewModel: GoalsViewModel
+    @State private var selectedGoalForSheet: GoalProgressItem? = nil
 
     init(viewModel: GoalsViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -31,6 +32,14 @@ struct GoalsContentSection: View {
         }
         .task {
             viewModel.send(.appeared)
+        }
+        .sheet(item: $selectedGoalForSheet) { goalItem in
+            GoalDetailSheet(
+                goalItem: goalItem,
+                onDismiss: {
+                    selectedGoalForSheet = nil
+                }
+            )
         }
     }
 
@@ -61,6 +70,7 @@ struct GoalsContentSection: View {
         } else {
             ForEach(state.filteredGoals) { goal in
                 GoalCard(goal: goal) {
+                    selectedGoalForSheet = goal
                     viewModel.send(.selectGoal(goal.id))
                 }
             }

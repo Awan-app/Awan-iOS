@@ -15,7 +15,7 @@ public final class MainCoordinator: Coordinating {
     public var homePath = NavigationPath()
     public var tasksPath = NavigationPath()
     public var calendarPath = NavigationPath()
-    public var tasksPath = NavigationPath()
+    //public var tasksPath = NavigationPath()
     public var rewardsPath = NavigationPath()
     public var storePath = NavigationPath()
     public var youPath = NavigationPath()
