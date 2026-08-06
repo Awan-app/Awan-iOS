@@ -113,6 +113,20 @@ struct AppRootView: View {
             .tag(MainTab.home)
             .toolbar(.hidden, for: .tabBar)
 
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).tasksPath) {
+                factory.makeInboxView()
+                    .navigationDestination(for: MainRoute.self) { route in
+                        switch route {
+                        case let .inboxTaskDetail(taskID):
+                            factory.makeInboxTaskDetailView(taskID: taskID)
+                        default:
+                            EmptyView()
+                        }
+                    }
+            }
+            .tag(MainTab.tasks)
+            .toolbar(.hidden, for: .tabBar)
+
             NavigationStack(path: Bindable(coordinator.mainCoordinator).rewardsPath) {
                 factory.makeRewardsView()
             }
@@ -199,7 +213,7 @@ struct AppRootView: View {
                     selection: $creationSheetDetent
                 )
                 .presentationDragIndicator(.visible)
-            case .home, .calendar, .userInfo, .dailyZones:
+            case .home, .tasks, .calendar, .userInfo, .dailyZones, .inboxTaskDetail:
                 EmptyView()
             }
         }
