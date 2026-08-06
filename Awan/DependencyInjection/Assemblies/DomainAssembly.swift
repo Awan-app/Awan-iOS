@@ -81,6 +81,13 @@ struct DomainAssembly: Assembly {
                 sessionRepository: Self.resolve(SessionRepository.self, from: resolver)
             )
         }
+        container.register(FetchGoalsWithTasksUseCase.self) { resolver in
+            DefaultFetchGoalsWithTasksUseCase(
+                goalRepository: Self.resolve(GoalRepository.self, from: resolver),
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
+                sessionRepository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
         container.register(DefaultFetchInboxTasksUseCase.self) { resolver in
             DefaultFetchInboxTasksUseCase(
                 taskRepository: Self.resolve(TaskRepository.self, from: resolver),
