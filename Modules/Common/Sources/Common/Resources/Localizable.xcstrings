@@ -1518,78 +1518,188 @@
     "home.add_schedule": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "إضافة موعد" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Add schedule" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إضافة موعد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add schedule"
+          }
+        }
       }
     },
     "home.edit_session_schedule": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "تعديل موعد الجلسة" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Edit session schedule" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعديل موعد الجلسة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit session schedule"
+          }
+        }
       }
     },
     "home.invalid_session_time_range": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "يجب أن يكون وقت الانتهاء بعد وقت البدء." } },
-        "en": { "stringUnit": { "state": "translated", "value": "End time must be after start time." } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يجب أن يكون وقت الانتهاء بعد وقت البدء."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End time must be after start time."
+          }
+        }
       }
     },
     "home.session_day": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "يوم الجلسة" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Session day" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يوم الجلسة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session day"
+          }
+        }
       }
     },
     "home.schedule_selected_count": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "جدولة (%d)" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Schedule (%d)" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جدولة (%d)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schedule (%d)"
+          }
+        }
       }
     },
     "home.session_end": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "وقت الانتهاء" } },
-        "en": { "stringUnit": { "state": "translated", "value": "End time" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وقت الانتهاء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End time"
+          }
+        }
       }
     },
     "home.session_start": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "وقت البدء" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Start time" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وقت البدء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start time"
+          }
+        }
       }
     },
     "home.session_today_at": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "اليوم الساعة %@" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Today at %@" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اليوم الساعة %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today at %@"
+          }
+        }
       }
     },
     "home.session_tomorrow_at": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "غدًا الساعة %@" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Tomorrow at %@" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "غدًا الساعة %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tomorrow at %@"
+          }
+        }
       }
     },
     "home.set_schedule": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "تحديد موعد" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Set schedule" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تحديد موعد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set schedule"
+          }
+        }
       }
     },
     "home.time": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "الوقت" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Time" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الوقت"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time"
+          }
+        }
       }
     },
     "home.confirm_accept_count": {
@@ -4856,79 +4966,1247 @@
         }
       }
     },
-    "templates.weekly_routine": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"الروتين الأسبوعي"}},"en":{"stringUnit":{"state":"translated","value":"Weekly routine"}}}},
-    "templates.date_override": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"استثناء لتاريخ"}},"en":{"stringUnit":{"state":"translated","value":"Date override"}}}},
-    "templates.date_overrides_title": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"استثناءات التواريخ"}},"en":{"stringUnit":{"state":"translated","value":"Your date overrides"}}}},
-    "templates.no_weekly_templates": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"لا توجد قوالب أسبوعية"}},"en":{"stringUnit":{"state":"translated","value":"No weekly templates"}}}},
-    "templates.no_weekly_templates_message": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"أنشئ قالبًا وحدد أيام الأسبوع التي يديرها."}},"en":{"stringUnit":{"state":"translated","value":"Create a template and assign the weekdays it should manage."}}}},
-    "templates.create_template": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"إنشاء قالب"}},"en":{"stringUnit":{"state":"translated","value":"Create template"}}}},
-    "templates.one_day_override": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"استثناء ليوم واحد"}},"en":{"stringUnit":{"state":"translated","value":"One-day override"}}}},
-    "templates.override_explanation": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"هذا التاريخ فقط سيتغير. سيظل الروتين الأسبوعي كما هو."}},"en":{"stringUnit":{"state":"translated","value":"Only this date changes. The weekly routine stays the same."}}}},
-    "templates.use_weekly_routine": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"استخدام الروتين الأسبوعي"}},"en":{"stringUnit":{"state":"translated","value":"Use weekly routine"}}}},
-    "templates.using_weekly_routine": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"يستخدم الروتين الأسبوعي"}},"en":{"stringUnit":{"state":"translated","value":"Using weekly routine"}}}},
-    "templates.no_weekly_coverage": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"لا يوجد قالب أسبوعي لهذا التاريخ. أنشئ استثناءً لإضافة فترات."}},"en":{"stringUnit":{"state":"translated","value":"No weekly template covers this date. Create an override to add zones."}}}},
-    "templates.follows_weekly_routine": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"هذا التاريخ يتبع القالب الأسبوعي حاليًا."}},"en":{"stringUnit":{"state":"translated","value":"This date currently follows its weekly template."}}}},
-    "templates.create_date_override": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"إنشاء استثناء للتاريخ"}},"en":{"stringUnit":{"state":"translated","value":"Create date override"}}}},
-    "templates.no_zones_yet": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"لا توجد فترات بعد"}},"en":{"stringUnit":{"state":"translated","value":"No zones yet"}}}},
-    "templates.add_first_zone": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"أضف أول فترة زمنية لهذا الجدول."}},"en":{"stringUnit":{"state":"translated","value":"Add the first time zone for this schedule."}}}},
-    "templates.save_changes": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"حفظ التغييرات"}},"en":{"stringUnit":{"state":"translated","value":"Save changes"}}}},
-    "templates.loading_schedules": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"جارٍ تحميل الجداول…"}},"en":{"stringUnit":{"state":"translated","value":"Loading schedules…"}}}},
-    "templates.load_failure": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تعذر تحميل الفترات اليومية"}},"en":{"stringUnit":{"state":"translated","value":"Couldn’t load Daily Zones"}}}},
-    "templates.retry": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"إعادة المحاولة"}},"en":{"stringUnit":{"state":"translated","value":"Retry"}}}},
-    "templates.unable_to_update": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تعذر تحديث الجدول"}},"en":{"stringUnit":{"state":"translated","value":"Unable to update schedule"}}}},
-    "templates.new_schedule": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"جدول جديد"}},"en":{"stringUnit":{"state":"translated","value":"New schedule"}}}},
-    "templates.edit_override": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تعديل الاستثناء"}},"en":{"stringUnit":{"state":"translated","value":"Edit override"}}}},
-    "templates.weekly_template": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"قالب أسبوعي"}},"en":{"stringUnit":{"state":"translated","value":"Weekly template"}}}},
-    "templates.template_name": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"اسم القالب"}},"en":{"stringUnit":{"state":"translated","value":"Template name"}}}},
-    "templates.template_name_placeholder": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"مثال: أسبوع العمل"}},"en":{"stringUnit":{"state":"translated","value":"e.g. Work Week"}}}},
-    "templates.override_name": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"اسم الاستثناء"}},"en":{"stringUnit":{"state":"translated","value":"Override name"}}}},
-    "templates.override_name_placeholder": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"مثال: يوم خاص"}},"en":{"stringUnit":{"state":"translated","value":"e.g. Special day"}}}},
-    "templates.override_name_required": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"أدخل اسمًا للاستثناء."}},"en":{"stringUnit":{"state":"translated","value":"Enter an override name."}}}},
-    "templates.free_days_hint": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"يمكن اختيار الأيام غير المستخدمة في قالب آخر فقط."}},"en":{"stringUnit":{"state":"translated","value":"Only days not used by another template can be selected."}}}},
-    "templates.override_date": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تاريخ الاستثناء"}},"en":{"stringUnit":{"state":"translated","value":"Override date"}}}},
-    "templates.save_override": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"حفظ الاستثناء"}},"en":{"stringUnit":{"state":"translated","value":"Save override"}}}},
-    "templates.create_schedule": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"إنشاء الجدول"}},"en":{"stringUnit":{"state":"translated","value":"Create schedule"}}}},
-    "templates.save_template_details": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"حفظ تفاصيل القالب"}},"en":{"stringUnit":{"state":"translated","value":"Save template details"}}}},
-    "templates.delete_template": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"حذف القالب"}},"en":{"stringUnit":{"state":"translated","value":"Delete template"}}}},
-    "templates.edit_template": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تعديل القالب"}},"en":{"stringUnit":{"state":"translated","value":"Edit template"}}}},
-    "templates.edit": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تعديل"}},"en":{"stringUnit":{"state":"translated","value":"Edit"}}}},
-    "templates.delete": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"حذف"}},"en":{"stringUnit":{"state":"translated","value":"Delete"}}}},
-    "templates.apply_changes": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تطبيق التغييرات"}},"en":{"stringUnit":{"state":"translated","value":"Apply changes"}}}},
-    "templates.unsaved_changes": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تغييرات غير محفوظة"}},"en":{"stringUnit":{"state":"translated","value":"Unsaved changes"}}}},
-    "templates.discard_changes": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تجاهل التغييرات"}},"en":{"stringUnit":{"state":"translated","value":"Discard changes"}}}},
-    "templates.confirm": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تأكيد"}},"en":{"stringUnit":{"state":"translated","value":"Confirm"}}}},
-    "templates.no_free_days": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"كل أيام الأسبوع مستخدمة. عدّل قالبًا آخر لتحرير يوم."}},"en":{"stringUnit":{"state":"translated","value":"All weekdays are assigned. Edit another template to free a day."}}}},
-    "templates.select_name_and_day": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"أدخل اسمًا وحدد يومًا متاحًا واحدًا على الأقل."}},"en":{"stringUnit":{"state":"translated","value":"Enter a name and select at least one available day."}}}},
-    "templates.choose_future_date": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"اختر تاريخ اليوم أو تاريخًا مستقبليًا."}},"en":{"stringUnit":{"state":"translated","value":"Choose today or a future date."}}}},
-    "templates.duplicate_override": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"يوجد استثناء لهذا التاريخ بالفعل. عدّله بدلًا من إنشاء استثناء جديد."}},"en":{"stringUnit":{"state":"translated","value":"An override already exists for this date. Edit it instead."}}}},
-    "templates.zone_overlap": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"يتداخل هذا الوقت مع فترة موجودة."}},"en":{"stringUnit":{"state":"translated","value":"This time overlaps an existing zone."}}}},
-    "templates.accessibility_available": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"متاح"}},"en":{"stringUnit":{"state":"translated","value":"Available"}}}},
-    "templates.accessibility_selected": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"محدد"}},"en":{"stringUnit":{"state":"translated","value":"Selected"}}}},
-    "templates.accessibility_used": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"مستخدم"}},"en":{"stringUnit":{"state":"translated","value":"Used"}}}},
-    "templates.apply_zone_changes_confirmation": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تطبيق تغييرات الفترة؟"}},"en":{"stringUnit":{"state":"translated","value":"Apply zone changes?"}}}},
-    "templates.days_assigned_elsewhere": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تم تعيين يوم واحد أو أكثر في مكان آخر. راجع الأيام المتاحة."}},"en":{"stringUnit":{"state":"translated","value":"One or more days were assigned elsewhere. Review the available days."}}}},
-    "templates.days_now_unavailable": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"يوم واحد أو أكثر ينتمي الآن إلى قالب آخر."}},"en":{"stringUnit":{"state":"translated","value":"One or more days now belong to another template."}}}},
-    "templates.error_authentication": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"انتهت صلاحية جلستك. سجّل الدخول وحاول مرة أخرى."}},"en":{"stringUnit":{"state":"translated","value":"Your session expired. Sign in and try again."}}}},
-    "templates.error_day_already_assigned": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"يوم واحد أو أكثر من أيام الأسبوع ينتمي إلى قالب آخر."}},"en":{"stringUnit":{"state":"translated","value":"One or more weekdays belong to another template."}}}},
-    "templates.error_invalid_response": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تعذر قراءة استجابة الجدول."}},"en":{"stringUnit":{"state":"translated","value":"The schedule response could not be read."}}}},
-    "templates.error_invalid_zone_time_range": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"يجب أن تنتهي الفترة بعد أن تبدأ."}},"en":{"stringUnit":{"state":"translated","value":"A zone must end after it starts."}}}},
-    "templates.error_network": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تحقق من اتصالك وحاول مرة أخرى."}},"en":{"stringUnit":{"state":"translated","value":"Check your connection and try again."}}}},
-    "templates.error_schedule_not_found": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"لم يعد هذا الجدول موجودًا. حدّث الصفحة وحاول مرة أخرى."}},"en":{"stringUnit":{"state":"translated","value":"This schedule no longer exists. Refresh and try again."}}}},
-    "templates.delete_template_confirmation": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"حذف %@؟"}},"en":{"stringUnit":{"state":"translated","value":"Delete %@?"}}}},
-    "templates.delete_template_message": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"سيؤدي هذا أيضًا إلى حذف جميع الفترات في القالب نهائيًا."}},"en":{"stringUnit":{"state":"translated","value":"This also permanently deletes every zone in the template."}}}},
-    "templates.delete_zone_confirmation": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"حذف %@؟"}},"en":{"stringUnit":{"state":"translated","value":"Delete %@?"}}}},
-    "templates.drag_zone_hint": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"اسحب عموديًا لتبديل الفترة الزمنية مع فترة أخرى."}},"en":{"stringUnit":{"state":"translated","value":"Drag vertically to swap this zone's time slot with another zone."}}}},
-    "templates.override_shortcut_accessibility": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"%@، %@"}},"en":{"stringUnit":{"state":"translated","value":"%@, %@"}}}},
-    "templates.unsaved_zone_changes_message": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"هل تريد حفظ تغييرات الفترات قبل المتابعة؟"}},"en":{"stringUnit":{"state":"translated","value":"Save your zone changes before continuing?"}}}},
-    "templates.use_weekly_routine_confirmation": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"استخدام الروتين الأسبوعي؟"}},"en":{"stringUnit":{"state":"translated","value":"Use weekly routine?"}}}},
-    "templates.use_weekly_routine_message": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"سيعود هذا التاريخ إلى روتينه الأسبوعي المعتاد."}},"en":{"stringUnit":{"state":"translated","value":"This date will return to its normal weekly routine."}}}},
-    "templates.zone_removal_message": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"ستتم إزالة الفترة عند حفظ هذا الجدول."}},"en":{"stringUnit":{"state":"translated","value":"The zone will be removed when you save this schedule."}}}},
-    "templates.zone_summary_color": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"سيتغير اللون"}},"en":{"stringUnit":{"state":"translated","value":"Color will change"}}}},
-    "templates.zone_summary_name": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تم تغيير الاسم من %@ إلى %@"}},"en":{"stringUnit":{"state":"translated","value":"Name: %@ → %@"}}}},
-    "templates.zone_summary_time": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تم تغيير الوقت من %@ إلى %@"}},"en":{"stringUnit":{"state":"translated","value":"Time: %@ → %@"}}}},
-    "templates.zone_time_range": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"%@ – %@"}},"en":{"stringUnit":{"state":"translated","value":"%@ – %@"}}}},
-    "templates.occupied_day": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"%@ مستخدم في %@."}},"en":{"stringUnit":{"state":"translated","value":"%@ belongs to %@."}}}},
-    "templates.conflicting_templates": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"هذه الأيام مستخدمة بالفعل في %@. عدّل القالب الآخر أولًا."}},"en":{"stringUnit":{"state":"translated","value":"Those days already belong to %@. Edit the other template first."}}}},
+    "templates.weekly_routine": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الروتين الأسبوعي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly routine"
+          }
+        }
+      }
+    },
+    "templates.date_override": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "استثناء لتاريخ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date override"
+          }
+        }
+      }
+    },
+    "templates.date_overrides_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "استثناءات التواريخ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your date overrides"
+          }
+        }
+      }
+    },
+    "templates.no_weekly_templates": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد قوالب أسبوعية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No weekly templates"
+          }
+        }
+      }
+    },
+    "templates.no_weekly_templates_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أنشئ قالبًا وحدد أيام الأسبوع التي يديرها."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a template and assign the weekdays it should manage."
+          }
+        }
+      }
+    },
+    "templates.create_template": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إنشاء قالب"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create template"
+          }
+        }
+      }
+    },
+    "templates.one_day_override": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "استثناء ليوم واحد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One-day override"
+          }
+        }
+      }
+    },
+    "templates.override_explanation": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هذا التاريخ فقط سيتغير. سيظل الروتين الأسبوعي كما هو."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only this date changes. The weekly routine stays the same."
+          }
+        }
+      }
+    },
+    "templates.use_weekly_routine": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "استخدام الروتين الأسبوعي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use weekly routine"
+          }
+        }
+      }
+    },
+    "templates.using_weekly_routine": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يستخدم الروتين الأسبوعي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Using weekly routine"
+          }
+        }
+      }
+    },
+    "templates.no_weekly_coverage": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يوجد قالب أسبوعي لهذا التاريخ. أنشئ استثناءً لإضافة فترات."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No weekly template covers this date. Create an override to add zones."
+          }
+        }
+      }
+    },
+    "templates.follows_weekly_routine": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هذا التاريخ يتبع القالب الأسبوعي حاليًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This date currently follows its weekly template."
+          }
+        }
+      }
+    },
+    "templates.create_date_override": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إنشاء استثناء للتاريخ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create date override"
+          }
+        }
+      }
+    },
+    "templates.no_zones_yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد فترات بعد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No zones yet"
+          }
+        }
+      }
+    },
+    "templates.add_first_zone": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أضف أول فترة زمنية لهذا الجدول."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add the first time zone for this schedule."
+          }
+        }
+      }
+    },
+    "templates.save_changes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حفظ التغييرات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save changes"
+          }
+        }
+      }
+    },
+    "templates.loading_schedules": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جارٍ تحميل الجداول…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading schedules…"
+          }
+        }
+      }
+    },
+    "templates.load_failure": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذر تحميل الفترات اليومية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t load Daily Zones"
+          }
+        }
+      }
+    },
+    "templates.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة المحاولة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry"
+          }
+        }
+      }
+    },
+    "templates.unable_to_update": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذر تحديث الجدول"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unable to update schedule"
+          }
+        }
+      }
+    },
+    "templates.new_schedule": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جدول جديد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New schedule"
+          }
+        }
+      }
+    },
+    "templates.edit_override": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعديل الاستثناء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit override"
+          }
+        }
+      }
+    },
+    "templates.weekly_template": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قالب أسبوعي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly template"
+          }
+        }
+      }
+    },
+    "templates.template_name": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اسم القالب"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Template name"
+          }
+        }
+      }
+    },
+    "templates.template_name_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مثال: أسبوع العمل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. Work Week"
+          }
+        }
+      }
+    },
+    "templates.override_name": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اسم الاستثناء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Override name"
+          }
+        }
+      }
+    },
+    "templates.override_name_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مثال: يوم خاص"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. Special day"
+          }
+        }
+      }
+    },
+    "templates.override_name_required": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أدخل اسمًا للاستثناء."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter an override name."
+          }
+        }
+      }
+    },
+    "templates.free_days_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يمكن اختيار الأيام غير المستخدمة في قالب آخر فقط."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only days not used by another template can be selected."
+          }
+        }
+      }
+    },
+    "templates.override_date": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تاريخ الاستثناء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Override date"
+          }
+        }
+      }
+    },
+    "templates.save_override": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حفظ الاستثناء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save override"
+          }
+        }
+      }
+    },
+    "templates.create_schedule": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إنشاء الجدول"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create schedule"
+          }
+        }
+      }
+    },
+    "templates.save_template_details": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حفظ تفاصيل القالب"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save template details"
+          }
+        }
+      }
+    },
+    "templates.delete_template": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف القالب"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete template"
+          }
+        }
+      }
+    },
+    "templates.edit_template": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعديل القالب"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit template"
+          }
+        }
+      }
+    },
+    "templates.edit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعديل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        }
+      }
+    },
+    "templates.delete": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "templates.apply_changes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تطبيق التغييرات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apply changes"
+          }
+        }
+      }
+    },
+    "templates.unsaved_changes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تغييرات غير محفوظة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsaved changes"
+          }
+        }
+      }
+    },
+    "templates.discard_changes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تجاهل التغييرات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard changes"
+          }
+        }
+      }
+    },
+    "templates.confirm": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تأكيد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm"
+          }
+        }
+      }
+    },
+    "templates.no_free_days": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كل أيام الأسبوع مستخدمة. عدّل قالبًا آخر لتحرير يوم."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All weekdays are assigned. Edit another template to free a day."
+          }
+        }
+      }
+    },
+    "templates.select_name_and_day": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أدخل اسمًا وحدد يومًا متاحًا واحدًا على الأقل."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a name and select at least one available day."
+          }
+        }
+      }
+    },
+    "templates.choose_future_date": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختر تاريخ اليوم أو تاريخًا مستقبليًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose today or a future date."
+          }
+        }
+      }
+    },
+    "templates.duplicate_override": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يوجد استثناء لهذا التاريخ بالفعل. عدّله بدلًا من إنشاء استثناء جديد."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An override already exists for this date. Edit it instead."
+          }
+        }
+      }
+    },
+    "templates.zone_overlap": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يتداخل هذا الوقت مع فترة موجودة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This time overlaps an existing zone."
+          }
+        }
+      }
+    },
+    "templates.accessibility_available": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "متاح"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Available"
+          }
+        }
+      }
+    },
+    "templates.accessibility_selected": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "محدد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selected"
+          }
+        }
+      }
+    },
+    "templates.accessibility_used": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مستخدم"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Used"
+          }
+        }
+      }
+    },
+    "templates.apply_zone_changes_confirmation": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تطبيق تغييرات الفترة؟"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apply zone changes?"
+          }
+        }
+      }
+    },
+    "templates.days_assigned_elsewhere": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم تعيين يوم واحد أو أكثر في مكان آخر. راجع الأيام المتاحة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One or more days were assigned elsewhere. Review the available days."
+          }
+        }
+      }
+    },
+    "templates.days_now_unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يوم واحد أو أكثر ينتمي الآن إلى قالب آخر."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One or more days now belong to another template."
+          }
+        }
+      }
+    },
+    "templates.error_authentication": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "انتهت صلاحية جلستك. سجّل الدخول وحاول مرة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your session expired. Sign in and try again."
+          }
+        }
+      }
+    },
+    "templates.error_day_already_assigned": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يوم واحد أو أكثر من أيام الأسبوع ينتمي إلى قالب آخر."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One or more weekdays belong to another template."
+          }
+        }
+      }
+    },
+    "templates.error_invalid_response": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذر قراءة استجابة الجدول."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The schedule response could not be read."
+          }
+        }
+      }
+    },
+    "templates.error_invalid_zone_time_range": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يجب أن تنتهي الفترة بعد أن تبدأ."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A zone must end after it starts."
+          }
+        }
+      }
+    },
+    "templates.error_network": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تحقق من اتصالك وحاول مرة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check your connection and try again."
+          }
+        }
+      }
+    },
+    "templates.error_schedule_not_found": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يعد هذا الجدول موجودًا. حدّث الصفحة وحاول مرة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This schedule no longer exists. Refresh and try again."
+          }
+        }
+      }
+    },
+    "templates.delete_template_confirmation": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف %@؟"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete %@?"
+          }
+        }
+      }
+    },
+    "templates.delete_template_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سيؤدي هذا أيضًا إلى حذف جميع الفترات في القالب نهائيًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This also permanently deletes every zone in the template."
+          }
+        }
+      }
+    },
+    "templates.delete_zone_confirmation": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف %@؟"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete %@?"
+          }
+        }
+      }
+    },
+    "templates.drag_zone_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اسحب عموديًا لتبديل الفترة الزمنية مع فترة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag vertically to swap this zone's time slot with another zone."
+          }
+        }
+      }
+    },
+    "templates.override_shortcut_accessibility": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@، %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        }
+      }
+    },
+    "templates.unsaved_zone_changes_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هل تريد حفظ تغييرات الفترات قبل المتابعة؟"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save your zone changes before continuing?"
+          }
+        }
+      }
+    },
+    "templates.use_weekly_routine_confirmation": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "استخدام الروتين الأسبوعي؟"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use weekly routine?"
+          }
+        }
+      }
+    },
+    "templates.use_weekly_routine_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سيعود هذا التاريخ إلى روتينه الأسبوعي المعتاد."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This date will return to its normal weekly routine."
+          }
+        }
+      }
+    },
+    "templates.zone_removal_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ستتم إزالة الفترة عند حفظ هذا الجدول."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The zone will be removed when you save this schedule."
+          }
+        }
+      }
+    },
+    "templates.zone_summary_color": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سيتغير اللون"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color will change"
+          }
+        }
+      }
+    },
+    "templates.zone_summary_name": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم تغيير الاسم من %@ إلى %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name: %@ → %@"
+          }
+        }
+      }
+    },
+    "templates.zone_summary_time": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم تغيير الوقت من %@ إلى %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time: %@ → %@"
+          }
+        }
+      }
+    },
+    "templates.zone_time_range": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ – %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ – %@"
+          }
+        }
+      }
+    },
+    "templates.occupied_day": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ مستخدم في %@."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ belongs to %@."
+          }
+        }
+      }
+    },
+    "templates.conflicting_templates": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هذه الأيام مستخدمة بالفعل في %@. عدّل القالب الآخر أولًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Those days already belong to %@. Edit the other template first."
+          }
+        }
+      }
+    },
     "user_info.date_of_birth": {
       "extractionState": "manual",
       "localizations": {
@@ -5078,6 +6356,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "هل أنت متأكد أنك تريد تسجيل الخروج؟"
+          }
+        }
+      }
+    },
+    "onboarding.duration_minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld دقيقة"
+          }
+        }
+      }
+    },
+    "onboarding.duration_one_hour": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 hour"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ساعة واحدة"
+          }
+        }
+      }
+    },
+    "onboarding.duration_hours": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld hr"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ساعة"
+          }
+        }
+      }
+    },
+    "onboarding.duration_hours_minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld hr %lld min"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ساعة %lld دقيقة"
           }
         }
       }
