@@ -29,7 +29,11 @@ struct CategoryPickerField: View {
                         .frame(width: 12, height: 12)
                     Text(selectedName)
                         .font(AppFonts.bodyBold)
-                        .foregroundStyle(AppColors.textPrimary)
+                        .foregroundStyle(
+                            requiresCategorySelection
+                                ? AppColors.warning
+                                : AppColors.textPrimary
+                        )
                         .lineLimit(1)
                     Spacer()
                     Image(systemName: "chevron.up.chevron.down")
@@ -41,7 +45,12 @@ struct CategoryPickerField: View {
                 .background(AppColors.surface, in: RoundedRectangle(cornerRadius: 12))
                 .overlay {
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(AppColors.divider, lineWidth: 1)
+                        .stroke(
+                            requiresCategorySelection
+                                ? AppColors.warning
+                                : AppColors.divider,
+                            lineWidth: requiresCategorySelection ? 2 : 1
+                        )
                 }
             }
             .buttonStyle(.plain)
@@ -143,6 +152,10 @@ struct CategoryPickerField: View {
         guard let selectedCategoryID else { return L10n.Schedule.chooseCategory }
         return categories.first { $0.id == selectedCategoryID }?.name
             ?? L10n.Schedule.chooseCategory
+    }
+
+    private var requiresCategorySelection: Bool {
+        selectedCategoryID == nil && !allowsUnassigned
     }
 
     private var selectedColor: Color {

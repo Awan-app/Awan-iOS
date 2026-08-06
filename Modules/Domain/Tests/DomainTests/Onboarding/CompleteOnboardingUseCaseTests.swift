@@ -66,6 +66,33 @@ final class CompleteOnboardingUseCaseTests: XCTestCase {
         }
     }
 
+    func testRequestRejectsSleepTimeBeforeWakeupTime() throws {
+        XCTAssertThrowsError(
+            try makeRequest(
+                wakeupTime: LocalTime(hour: 7, minute: 0),
+                sleepTime: LocalTime(hour: 1, minute: 0)
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? OnboardingInputError,
+                .sleepTimeBeforeWakeupTime
+            )
+        }
+    }
+
+    func testRequestRejectsEqualWakeupAndSleepTimes() throws {
+        let time = try LocalTime(hour: 7, minute: 0)
+
+        XCTAssertThrowsError(
+            try makeRequest(wakeupTime: time, sleepTime: time)
+        ) { error in
+            XCTAssertEqual(
+                error as? OnboardingInputError,
+                .wakeSleepTimesAreEqual
+            )
+        }
+    }
+
     func testUseCaseForwardsRequestAndReturnsProfile() async throws {
         let request = try makeRequest()
         let expectedProfile = try makeProfile()
@@ -93,7 +120,10 @@ final class CompleteOnboardingUseCaseTests: XCTestCase {
         }
     }
 
-    private func makeRequest() throws -> CompleteOnboardingRequest {
+    private func makeRequest(
+        wakeupTime: LocalTime? = nil,
+        sleepTime: LocalTime? = nil
+    ) throws -> CompleteOnboardingRequest {
         try CompleteOnboardingRequest(
             firstName: "Awan",
             lastName: "User",
@@ -101,8 +131,8 @@ final class CompleteOnboardingUseCaseTests: XCTestCase {
             timezone: "Africa/Cairo",
             preferredSessionDuration: 30,
             bufferBetweenSessions: 10,
-            wakeupTime: LocalTime(hour: 7, minute: 30),
-            sleepTime: LocalTime(hour: 23, minute: 0)
+            wakeupTime: wakeupTime ?? LocalTime(hour: 7, minute: 30),
+            sleepTime: sleepTime ?? LocalTime(hour: 23, minute: 0)
         )
     }
 

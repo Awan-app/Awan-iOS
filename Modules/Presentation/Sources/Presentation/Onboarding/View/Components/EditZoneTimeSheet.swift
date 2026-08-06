@@ -140,6 +140,7 @@ struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
     @ViewBuilder
     private var overlapWarning: some View {
         ZoneWarningsView(
+            showCategoryRequired: selectedCategory == nil,
             showOverlapError: showOverlapError,
             showOutsideHoursWarning: showOutsideHoursWarning
         )
@@ -186,4 +187,3 @@ struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
         }
     }
 }
-

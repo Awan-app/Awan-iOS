@@ -139,6 +139,7 @@ struct AddZoneSheet<ViewModelType: ZoneManaging & Observable>: View {
     @ViewBuilder
     private var overlapWarning: some View {
         ZoneWarningsView(
+            showCategoryRequired: selectedCategory == nil,
             showOverlapError: showOverlapError,
             showOutsideHoursWarning: showOutsideHoursWarning
         )
@@ -190,4 +191,3 @@ struct AddZoneSheet<ViewModelType: ZoneManaging & Observable>: View {
         }
     }
 }
-

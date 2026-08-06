@@ -61,6 +61,9 @@ struct DailyZoneEditorSheet: View {
                         }
 
                         ZoneWarningsView(
+                            showCategoryRequired: !viewModel.state.categories.contains {
+                                $0.id == form.selectedCategoryID
+                            },
                             showOverlapError: form.overlapMessage != nil,
                             showOutsideHoursWarning: form.outsideHoursWarning
                         )

@@ -82,6 +82,9 @@ public enum L10n {
         public static var wakeSleepSameTimeError: String {
             L10n.currentBundle.localizedString(forKey: "onboarding.wake_sleep_same_time_error", value: nil, table: "Localizable")
         }
+        public static var sleepBeforeWakeError: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.sleep_before_wake_error", value: nil, table: "Localizable")
+        }
         public static var shortActiveDayWarning: String {
             L10n.currentBundle.localizedString(forKey: "onboarding.short_active_day_warning", value: nil, table: "Localizable")
         }
@@ -160,6 +163,7 @@ public enum L10n {
         public static var skipForNow: String { L10n.currentBundle.localizedString(forKey: "onboarding.skip_for_now", value: nil, table: "Localizable") }
         public static var zoneNameLabel: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_name_label", value: nil, table: "Localizable") }
         public static var zoneNamePlaceholder: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_name_placeholder", value: nil, table: "Localizable") }
+        public static var zoneCategoryRequired: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_category_required", value: nil, table: "Localizable") }
         public static func aboutMinutes(_ minutes: Int) -> String {
             String(format: L10n.currentBundle.localizedString(forKey: "onboarding.about_minutes", value: nil, table: "Localizable"), minutes)
         }

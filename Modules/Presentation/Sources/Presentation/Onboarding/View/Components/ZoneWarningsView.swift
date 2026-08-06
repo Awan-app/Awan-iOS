@@ -2,11 +2,28 @@ import SwiftUI
 import Common
 
 struct ZoneWarningsView: View {
+    let showCategoryRequired: Bool
     let showOverlapError: Bool
     let showOutsideHoursWarning: Bool
 
     var body: some View {
-        if showOverlapError {
+        if showCategoryRequired {
+            HStack(spacing: 8) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 14, weight: .bold))
+                Text(L10n.Onboarding.zoneCategoryRequired)
+                    .font(AppFonts.subheadlineBold)
+            }
+            .foregroundStyle(AppColors.warning)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                AppColors.warning.opacity(0.1),
+                in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+            )
+            .transition(.move(edge: .top).combined(with: .opacity))
+        } else if showOverlapError {
             HStack(spacing: 8) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 14, weight: .bold))
@@ -44,7 +61,10 @@ struct ZoneWarningsView: View {
 
 
 #Preview {
-    ZoneWarningsView(showOverlapError: true, showOutsideHoursWarning: false)
+    ZoneWarningsView(
+        showCategoryRequired: true,
+        showOverlapError: false,
+        showOutsideHoursWarning: true
+    )
         .padding()
 }
-
