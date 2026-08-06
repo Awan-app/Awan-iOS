@@ -682,6 +682,40 @@
         }
       }
     },
+    "home.ai_task_option_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يكمل أوان تفاصيل المهمة مما تكتبه أو تقوله."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Awan completes the task details from what you type or say."
+          }
+        }
+      }
+    },
+    "home.ai_task_option_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إنشاء باستخدام الذكاء الاصطناعي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create with AI"
+          }
+        }
+      }
+    },
     "home.can_split": {
       "extractionState": "manual",
       "localizations": {
@@ -881,7 +915,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "DURATION"
+            "value": "Duration"
           }
         }
       }

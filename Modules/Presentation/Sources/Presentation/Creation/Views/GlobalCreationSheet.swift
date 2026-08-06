@@ -7,20 +7,20 @@ struct GlobalCreationSheet: View {
     @State private var goalViewModel: CreateGoalViewModel
 
     private let onDismiss: () -> Void
-    private let onTaskSchedulingModeChanged: (Bool) -> Void
+    private let onTaskLayoutModeChanged: (Bool, Bool) -> Void
     private let onGoalFullScreenChanged: (Bool) -> Void
 
     init(
         taskViewModel: CreateTaskViewModel,
         goalViewModel: CreateGoalViewModel,
         onDismiss: @escaping () -> Void,
-        onTaskSchedulingModeChanged: @escaping (Bool) -> Void,
+        onTaskLayoutModeChanged: @escaping (Bool, Bool) -> Void,
         onGoalFullScreenChanged: @escaping (Bool) -> Void
     ) {
         _taskViewModel = State(initialValue: taskViewModel)
         _goalViewModel = State(initialValue: goalViewModel)
         self.onDismiss = onDismiss
-        self.onTaskSchedulingModeChanged = onTaskSchedulingModeChanged
+        self.onTaskLayoutModeChanged = onTaskLayoutModeChanged
         self.onGoalFullScreenChanged = onGoalFullScreenChanged
     }
 
@@ -38,7 +38,7 @@ struct GlobalCreationSheet: View {
                 CreateTaskView(
                     viewModel: taskViewModel,
                     onCreated: onDismiss,
-                    onSchedulingModeChanged: onTaskSchedulingModeChanged
+                    onLayoutModeChanged: onTaskLayoutModeChanged
                 )
             case .goal:
                 CreateGoalView(

@@ -19,7 +19,7 @@ struct CreateTaskState {
     var phase: CreateTaskPhase = .composer
     var pendingAITaskItems: [AITaskSheetItem] = [] // Keeping untouched per user's non-destructive instructions
     var quickText = ""
-    var isAwanSchedulingEnabled = true
+    var isAwanSchedulingEnabled = false
     var isManualSchedulingEnabled = false
     var durationMinutes = 60
     var startsAt: Date

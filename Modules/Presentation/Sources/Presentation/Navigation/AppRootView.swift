@@ -11,6 +11,7 @@ import Common
 struct AppRootView: View {
     private static let compactCreationDetent = PresentationDetent.height(370)
     private static let expandedCreationDetent = PresentationDetent.height(590)
+    private static let scheduledCreationDetent = PresentationDetent.height(700)
     private static let customTabBarContentClearance: CGFloat = 90
 
     @Environment(AppCoordinator.self) private var coordinator
@@ -186,10 +187,14 @@ struct AppRootView: View {
                 factory.makeGlobalCreationSheet {
                     coordinator.mainCoordinator.dismissSheet()
                     factory.refreshScheduleTimeline()
-                } onTaskSchedulingModeChanged: { isAwanSchedulingEnabled in
-                    creationSheetDetent = isAwanSchedulingEnabled
-                        ? Self.compactCreationDetent
-                        : Self.expandedCreationDetent
+                } onTaskLayoutModeChanged: { isAIEnabled, isScheduleEnabled in
+                    if isAIEnabled {
+                        creationSheetDetent = Self.compactCreationDetent
+                    } else if isScheduleEnabled {
+                        creationSheetDetent = Self.scheduledCreationDetent
+                    } else {
+                        creationSheetDetent = Self.expandedCreationDetent
+                    }
                 } onGoalFullScreenChanged: { requiresFullScreen in
                     creationSheetDetent = requiresFullScreen
                         ? .large
@@ -210,6 +215,7 @@ struct AppRootView: View {
                     [
                         Self.compactCreationDetent,
                         Self.expandedCreationDetent,
+                        Self.scheduledCreationDetent,
                         .large
                     ],
                     selection: $creationSheetDetent

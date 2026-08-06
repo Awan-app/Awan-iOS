@@ -5,16 +5,16 @@ import SwiftUI
 struct CreateTaskView: View {
     @State private var viewModel: CreateTaskViewModel
     private let onCreated: () -> Void
-    private let onSchedulingModeChanged: (Bool) -> Void
+    private let onLayoutModeChanged: (Bool, Bool) -> Void
 
     init(
         viewModel: CreateTaskViewModel,
         onCreated: @escaping () -> Void,
-        onSchedulingModeChanged: @escaping (Bool) -> Void
+        onLayoutModeChanged: @escaping (Bool, Bool) -> Void
     ) {
         _viewModel = State(initialValue: viewModel)
         self.onCreated = onCreated
-        self.onSchedulingModeChanged = onSchedulingModeChanged
+        self.onLayoutModeChanged = onLayoutModeChanged
     }
 
     var body: some View {
@@ -59,13 +59,19 @@ struct CreateTaskView: View {
         .onDisappear {
             viewModel.cancelRecording()
         }
+        .onAppear {
+            notifyLayoutModeChanged()
+        }
         .onChange(of: viewModel.state.didCreateTask) { _, didCreateTask in
             if didCreateTask {
                 onCreated()
             }
         }
         .onChange(of: viewModel.state.isAwanSchedulingEnabled) { _, isEnabled in
-            onSchedulingModeChanged(isEnabled)
+            onLayoutModeChanged(isEnabled, viewModel.state.isManualSchedulingEnabled)
+        }
+        .onChange(of: viewModel.state.isManualSchedulingEnabled) { _, isEnabled in
+            onLayoutModeChanged(viewModel.state.isAwanSchedulingEnabled, isEnabled)
         }
         .alert(L10n.Home.errorTitle, isPresented: errorBinding) {
             Button(L10n.Common.gotIt) {
@@ -156,6 +162,13 @@ struct CreateTaskView: View {
         Binding(
             get: { viewModel.state.errorMessage != nil },
             set: { if !$0 { viewModel.dismissError() } }
+        )
+    }
+
+    private func notifyLayoutModeChanged() {
+        onLayoutModeChanged(
+            viewModel.state.isAwanSchedulingEnabled,
+            viewModel.state.isManualSchedulingEnabled
         )
     }
 }

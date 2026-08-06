@@ -528,6 +528,14 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "home.chip_auto_scheduled", value: nil, table: "Localizable")
         }
 
+        public static var aiTaskOptionTitle: String {
+            L10n.currentBundle.localizedString(forKey: "home.ai_task_option_title", value: nil, table: "Localizable")
+        }
+
+        public static var aiTaskOptionHint: String {
+            L10n.currentBundle.localizedString(forKey: "home.ai_task_option_hint", value: nil, table: "Localizable")
+        }
+
         public static var btnPlanItForMe: String {
             L10n.currentBundle.localizedString(forKey: "home.btn_plan_it_for_me", value: nil, table: "Localizable")
         }
