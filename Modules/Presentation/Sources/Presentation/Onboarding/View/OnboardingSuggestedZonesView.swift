@@ -22,10 +22,10 @@ struct OnboardingSuggestedZonesView: View {
             VStack(alignment: .leading, spacing: 20) {
                 headerSection
                 infoTag
-                if viewModel.hasZoneOutsideActiveHours {
-                    outOfBoundsWarning
+                if !viewModel.zonesOutsideActiveHours.isEmpty {
+                    outOfBoundsWarning(for: viewModel.zonesOutsideActiveHours)
                 }
-                if viewModel.availableHours < 10 {
+                if viewModel.availableHours < 9 {
                     shortDayWarning
                 }
             }
@@ -78,11 +78,18 @@ struct OnboardingSuggestedZonesView: View {
         )
     }
 
-    private var outOfBoundsWarning: some View {
-        HStack(spacing: 8) {
+    private func outOfBoundsWarning(for zones: [SuggestedZone]) -> some View {
+        HStack(alignment: .top, spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 14, weight: .bold))
-            Text(L10n.Onboarding.outOfBoundsWarning)
+                .padding(.top, 2)
+            
+            let bulletList = zones.map { "• \($0.name) (\($0.startTime) – \($0.endTime))" }.joined(separator: "\n")
+            let message = zones.count == 1
+                ? L10n.Onboarding.outOfBoundsWarningSingle(bulletList)
+                : L10n.Onboarding.outOfBoundsWarningMultiple(bulletList)
+                
+            Text(message)
                 .font(AppFonts.caption2Bold)
         }
         .foregroundStyle(AppColors.warning)
@@ -192,9 +199,12 @@ struct OnboardingSuggestedZonesView: View {
                 color: AppColors.accentBlue,
                 foregroundColor: AppColors.onAccent,
                 onTap: {
+                    guard !viewModel.suggestedZones.isEmpty else { return }
                     onContinue()
                 }
             )
+            .disabled(viewModel.suggestedZones.isEmpty)
+            .opacity(viewModel.suggestedZones.isEmpty ? 0.5 : 1.0)
         }
     }
 }
