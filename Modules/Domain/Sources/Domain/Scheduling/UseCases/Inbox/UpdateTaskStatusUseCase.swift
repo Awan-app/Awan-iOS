@@ -21,19 +21,7 @@ public struct DefaultUpdateTaskStatusUseCase: UpdateTaskStatusUseCase {
         guard let task = tasks.first(where: { $0.id == taskID }) else {
             throw SchedulingError.entityNotFound(id: taskID)
         }
-        let updatedTask = AwanTask(
-            id: task.id,
-            title: task.title,
-            description: task.description,
-            status: status,
-            goalID: task.goalID,
-            duration: task.duration,
-            isSplittable: task.isSplittable,
-            mandatory: task.mandatory,
-            estimatedPoints: task.estimatedPoints,
-            dependencyIDs: task.dependencyIDs,
-            category: task.category
-        )
+        let updatedTask = task.updatingStatus(status)
         try await taskRepository.updateTask(updatedTask)
     }
 }

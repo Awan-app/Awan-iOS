@@ -37,67 +37,23 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
 
     public func acceptTaskWithSessions(_ draft: TaskWithSessionsDraft) async throws -> AwanTask {
         let requestDTO = CreateTaskWithSessionsRequestDTO(draft: draft)
-        do {
-            let responseDTO = try await remoteDataSource.acceptTaskWithSessions(requestDTO)
-            return try await persist(
-                responseDTO,
-                draft: draft
-            )
-        } catch {
-            let task = AwanTask(
-                id: UUID(),
-                title: draft.task.title,
-                description: draft.task.description,
-                status: .pending,
-                goalID: draft.task.goalId,
-                duration: (try? TaskDuration(minutes: draft.task.estimatedDuration)) ?? (try! TaskDuration(minutes: 60)),
-                isSplittable: draft.task.allowTaskSplitting,
-                mandatory: draft.task.mandatory,
-                estimatedPoints: draft.task.estimatedPoints,
-                category: nil
-            )
-            try await localTaskDataSource.addTask(task)
-            return task
-        }
+        let responseDTO = try await remoteDataSource.acceptTaskWithSessions(requestDTO)
+        return try await persist(responseDTO, draft: draft)
     }
 
     public func acceptTasksWithSessions(
         _ drafts: [TaskWithSessionsDraft]
     ) async throws -> [AwanTask] {
         let requestDTO = BulkCreateTasksWithSessionsRequestDTO(drafts: drafts)
+        let responseDTO = try await remoteDataSource.acceptTasksWithSessions(requestDTO)
 
-        do {
-            let responseDTO = try await remoteDataSource.acceptTasksWithSessions(requestDTO)
-
-            var acceptedTasks: [AwanTask] = []
-            acceptedTasks.reserveCapacity(responseDTO.tasks.count)
-            for (index, response) in responseDTO.tasks.enumerated() {
-                let draft = drafts.indices.contains(index) ? drafts[index] : nil
-                acceptedTasks.append(
-                    try await persist(response, draft: draft)
-                )
-            }
-            return acceptedTasks
-        } catch {
-            var fallbackTasks: [AwanTask] = []
-            for draft in drafts {
-                let task = AwanTask(
-                    id: UUID(),
-                    title: draft.task.title,
-                    description: draft.task.description,
-                    status: .pending,
-                    goalID: draft.task.goalId,
-                    duration: (try? TaskDuration(minutes: draft.task.estimatedDuration)) ?? (try! TaskDuration(minutes: 60)),
-                    isSplittable: draft.task.allowTaskSplitting,
-                    mandatory: draft.task.mandatory,
-                    estimatedPoints: draft.task.estimatedPoints,
-                    category: nil
-                )
-                try await localTaskDataSource.addTask(task)
-                fallbackTasks.append(task)
-            }
-            return fallbackTasks
+        var acceptedTasks: [AwanTask] = []
+        acceptedTasks.reserveCapacity(responseDTO.tasks.count)
+        for (index, response) in responseDTO.tasks.enumerated() {
+            let draft = drafts.indices.contains(index) ? drafts[index] : nil
+            acceptedTasks.append(try await persist(response, draft: draft))
         }
+        return acceptedTasks
     }
 
     private func persist(
@@ -111,19 +67,7 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
         )) ?? responseDTO.task.toDomain()
 
         if let draft {
-            acceptedTask = AwanTask(
-                id: acceptedTask.id,
-                title: acceptedTask.title,
-                description: acceptedTask.description,
-                status: acceptedTask.status,
-                goalID: draft.task.goalId,
-                duration: acceptedTask.duration,
-                isSplittable: acceptedTask.isSplittable,
-                mandatory: acceptedTask.mandatory,
-                estimatedPoints: acceptedTask.estimatedPoints,
-                dependencyIDs: acceptedTask.dependencyIDs,
-                category: acceptedTask.category
-            )
+            acceptedTask = acceptedTask.applyingDraftGoalID(draft.task.goalId)
         }
 
         try? await localTaskDataSource.addTask(acceptedTask)
