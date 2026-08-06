@@ -19,6 +19,7 @@ struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
     @State private var selectedColorIndex: Int
     @State private var startTime: Date
     @State private var endTime: Date
+    @State private var selectedCategoryID: UUID?
     @State private var showOverlapError: Bool = false
     @State private var showOutsideHoursWarning: Bool = false
     @FocusState private var isNameFocused: Bool
@@ -38,6 +39,7 @@ struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
         
         _startTime = State(initialValue: OnboardingViewModel.parseTime(zone.startTime) ?? .now)
         _endTime = State(initialValue: OnboardingViewModel.parseTime(zone.endTime) ?? .now)
+        _selectedCategoryID = State(initialValue: zone.category?.id)
     }
 
     private var selectedColor: (red: Double, green: Double, blue: Double, label: String) {
@@ -51,6 +53,7 @@ struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
     private var isFormValid: Bool {
         let trimmed = zoneName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return false }
+        guard selectedCategory != nil else { return false }
         guard !startAfterEnd else { return false }
         let start = OnboardingViewModel.formatTime(startTime)
         let end = OnboardingViewModel.formatTime(endTime)
@@ -59,6 +62,10 @@ struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
 
     private var startAfterEnd: Bool {
         startTime >= endTime
+    }
+
+    private var selectedCategory: TaskCategory? {
+        viewModel.categories.first { $0.id == selectedCategoryID }
     }
 
     var body: some View {
@@ -114,6 +121,12 @@ struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
             VStack(alignment: .leading, spacing: 20) {
                 ZoneNameField(zoneName: $zoneName)
                 ZoneColorPicker(selectedColorIndex: $selectedColorIndex)
+                CategoryPickerField(
+                    categories: viewModel.categories,
+                    selectedCategoryID: $selectedCategoryID,
+                    errorMessage: viewModel.categoryErrorMessage,
+                    onRetry: viewModel.retryCategories
+                )
                 ZoneTimePickers(
                     startTime: $startTime,
                     endTime: $endTime,
@@ -140,7 +153,7 @@ struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
             foregroundColor: AppColors.onAccent,
             shadowColor: isFormValid ? nil : AppColors.buttonDisabledDepth,
             onTap: {
-                guard isFormValid else { return }
+                guard isFormValid, let selectedCategory else { return }
                 withAnimation(.snappy(duration: 0.25)) {
                     viewModel.updateZone(
                         id: zone.id,
@@ -149,7 +162,8 @@ struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
                         colorGreen: selectedColor.green,
                         colorBlue: selectedColor.blue,
                         startTime: OnboardingViewModel.formatTime(startTime),
-                        endTime: OnboardingViewModel.formatTime(endTime)
+                        endTime: OnboardingViewModel.formatTime(endTime),
+                        category: selectedCategory
                     )
                 }
                 dismiss()
@@ -172,5 +186,4 @@ struct EditZoneTimeSheet<VM: ZoneManaging & Observable>: View {
         }
     }
 }
-
 

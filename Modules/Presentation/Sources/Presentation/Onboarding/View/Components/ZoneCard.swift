@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Common
+import Domain
 
 extension SuggestedZone {
     var uiColor: Color {
@@ -89,7 +90,8 @@ struct AddZoneButton: View {
                 endTime: "9:30 AM",
                 colorRed: 0.5,
                 colorGreen: 0.5,
-                colorBlue: 0.5
+                colorBlue: 0.5,
+                category: TaskCategory(id: UUID(), name: "Learning")
             ),
             onDelete: {}
         )
@@ -97,5 +99,3 @@ struct AddZoneButton: View {
     }
     .padding()
 }
-
-

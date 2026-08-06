@@ -2,6 +2,8 @@ import Domain
 
 public struct DailyZonesUseCases: Sendable {
     let fetchTemplates: any FetchTemplatesUseCase
+    let fetchCategories: any FetchCategoriesUseCase
+    let createCategory: any CreateCategoryUseCase
     let fetchOverrides: any FetchTemplateOverridesUseCase
     let createTemplate: any CreateTemplateUseCase
     let updateTemplateZones: any UpdateTemplateUseCase
@@ -17,6 +19,8 @@ public struct DailyZonesUseCases: Sendable {
 
     public init(
         fetchTemplates: any FetchTemplatesUseCase,
+        fetchCategories: any FetchCategoriesUseCase,
+        createCategory: any CreateCategoryUseCase,
         fetchOverrides: any FetchTemplateOverridesUseCase,
         createTemplate: any CreateTemplateUseCase,
         updateTemplateZones: any UpdateTemplateUseCase,
@@ -31,6 +35,8 @@ public struct DailyZonesUseCases: Sendable {
         resolveWeekdays: any ResolveTemplateWeekdayAvailabilityUseCase
     ) {
         self.fetchTemplates = fetchTemplates
+        self.fetchCategories = fetchCategories
+        self.createCategory = createCategory
         self.fetchOverrides = fetchOverrides
         self.createTemplate = createTemplate
         self.updateTemplateZones = updateTemplateZones

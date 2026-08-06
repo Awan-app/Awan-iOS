@@ -5507,6 +5507,20 @@
         }
       }
     },
+    "categories.create": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "إنشاء فئة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Create Category" } }
+      }
+    },
+    "categories.new_name": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "اسم الفئة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Category name" } }
+      }
+    },
     "profile.logout_confirmation_message": {
       "extractionState": "manual",
       "localizations": {

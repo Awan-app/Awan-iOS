@@ -89,6 +89,7 @@ struct PresentationAssembly: Assembly {
         container.register(CreationUseCases.self) { resolver in
             CreationUseCases(
                 fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
+                fetchCategories: Self.resolve(FetchCategoriesUseCase.self, from: resolver),
                 createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
                 createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver),
                 imageToTasks: Self.resolve(ImageToTasksUseCase.self, from: resolver),
@@ -148,11 +149,13 @@ struct PresentationAssembly: Assembly {
             let useCase = Self.resolve(CompleteOnboardingUseCase.self, from: resolver)
             let createTemplateUseCase = Self.resolve(CreateOnboardingTemplateUseCase.self, from: resolver)
             let manageZoneScheduleUseCase = Self.resolve(ManageZoneScheduleUseCase.self, from: resolver)
+            let fetchCategoriesUseCase = Self.resolve(FetchCategoriesUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 OnboardingViewModel(
                     completeOnboardingUseCase: useCase,
                     createOnboardingTemplateUseCase: createTemplateUseCase,
-                    manageZoneScheduleUseCase: manageZoneScheduleUseCase
+                    manageZoneScheduleUseCase: manageZoneScheduleUseCase,
+                    fetchCategoriesUseCase: fetchCategoriesUseCase
                 )
             }
         }
@@ -192,6 +195,8 @@ struct PresentationAssembly: Assembly {
         container.register(DailyZonesViewModel.self) { resolver in
             let useCases = DailyZonesUseCases(
                 fetchTemplates: Self.resolve(FetchTemplatesUseCase.self, from: resolver),
+                fetchCategories: Self.resolve(FetchCategoriesUseCase.self, from: resolver),
+                createCategory: Self.resolve(CreateCategoryUseCase.self, from: resolver),
                 fetchOverrides: Self.resolve(FetchTemplateOverridesUseCase.self, from: resolver),
                 createTemplate: Self.resolve(CreateTemplateUseCase.self, from: resolver),
                 updateTemplateZones: Self.resolve(UpdateTemplateUseCase.self, from: resolver),

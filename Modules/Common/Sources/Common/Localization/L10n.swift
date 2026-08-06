@@ -25,6 +25,23 @@ public enum L10n {
         public static var edit: String { L10n.currentBundle.localizedString(forKey: "common.edit", value: nil, table: "Localizable") }
     }
 
+    public enum Categories {
+        public static var create: String {
+            L10n.currentBundle.localizedString(
+                forKey: "categories.create",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var newName: String {
+            L10n.currentBundle.localizedString(
+                forKey: "categories.new_name",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+    }
+
     public enum Onboarding {
         public static var welcomeTitle: String {
             L10n.currentBundle.localizedString(forKey: "onboarding.welcome_title", value: nil, table: "Localizable")
@@ -1113,4 +1130,3 @@ public enum L10n {
         }
     }
 }
-

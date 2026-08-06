@@ -52,6 +52,7 @@ struct OnboardingSuggestedZonesView: View {
         .sheet(item: $editingZone) { zone in
             EditZoneTimeSheet(viewModel: viewModel, zone: zone)
         }
+        .task { viewModel.loadCategories() }
     }
 
     // MARK: - Sections
@@ -196,6 +197,8 @@ struct OnboardingSuggestedZonesView: View {
                 }
             )
         }
+        .disabled(!viewModel.areZonesCategorized)
+        .opacity(viewModel.areZonesCategorized ? 1 : 0.55)
     }
 }
 
@@ -205,9 +208,9 @@ struct OnboardingSuggestedZonesView: View {
         viewModel: OnboardingViewModel(
             completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
             createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
-            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl(),
+            fetchCategoriesUseCase: MockFetchCategoriesUseCase()
         ),
         onContinue: {}
     )
 }
-
