@@ -41,7 +41,11 @@ struct ImageToTasksResultSheet: View {
         self.onAddToInbox = onAddToInbox
         self.defaultSessionStart = defaultSessionStart
         self.onDismiss = onDismiss
-        _tasks = State(initialValue: response.tasks)
+        var normalizedTasks = response.tasks
+        for taskIndex in normalizedTasks.indices {
+            Self.updateSessionEnds(in: &normalizedTasks[taskIndex])
+        }
+        _tasks = State(initialValue: normalizedTasks)
         _selectedTaskIDs = State(initialValue: Set(response.tasks.map { $0.id }))
     }
 
@@ -109,6 +113,7 @@ struct ImageToTasksResultSheet: View {
                                 },
                                 onDurationChanged: { newDuration in
                                     tasks[index].draft.task.estimatedDuration = newDuration
+                                    Self.updateSessionEnds(in: &tasks[index])
                                 },
                                 onCategoryChanged: { categoryID in
                                     tasks[index].draft.task.categoryId = categoryID
@@ -117,7 +122,8 @@ struct ImageToTasksResultSheet: View {
                                     sessionEditor = ProposedSessionEditorContext(
                                         taskID: task.id,
                                         source: source,
-                                        session: session
+                                        session: session,
+                                        durationMinutes: task.draft.task.estimatedDuration
                                     )
                                 },
                                 onAddSession: {
@@ -125,9 +131,7 @@ struct ImageToTasksResultSheet: View {
                                         taskID: task.id,
                                         source: .fixed,
                                         start: defaultSessionStart,
-                                        end: defaultSessionStart.addingTimeInterval(
-                                            TimeInterval(max(1, task.draft.task.estimatedDuration) * 60)
-                                        )
+                                        durationMinutes: task.draft.task.estimatedDuration
                                     )
                                 }
                             )
@@ -216,6 +220,19 @@ struct ImageToTasksResultSheet: View {
                 return
             }
             tasks[taskIndex].aiProposedSessions[sessionIndex] = session
+        }
+    }
+
+    private static func updateSessionEnds(in task: inout ProposedTask) {
+        let duration = TimeInterval(max(1, task.draft.task.estimatedDuration) * 60)
+
+        for index in task.draft.sessions.indices {
+            task.draft.sessions[index].end = task.draft.sessions[index].start
+                .addingTimeInterval(duration)
+        }
+        for index in task.aiProposedSessions.indices {
+            task.aiProposedSessions[index].end = task.aiProposedSessions[index].start
+                .addingTimeInterval(duration)
         }
     }
 }

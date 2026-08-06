@@ -1103,6 +1103,10 @@ public enum L10n {
         public static var tabGoals: String { text("inbox.tab_goals") }
         public static var subtitle: String { text("inbox.subtitle") }
         public static var searchPlaceholder: String { text("inbox.search_placeholder") }
+        public static var hideFilters: String { text("inbox.accessibility_hide_filters") }
+        public static var showFilters: String { text("inbox.accessibility_show_filters") }
+        public static var filtersApplied: String { text("inbox.accessibility_filters_applied") }
+        public static var noFiltersApplied: String { text("inbox.accessibility_no_filters_applied") }
         public static var filterAll: String { text("inbox.filter_all") }
         public static var filterDrafted: String { text("inbox.filter_drafted") }
         public static var filterActive: String { text("inbox.filter_active") }

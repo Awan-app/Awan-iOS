@@ -2255,6 +2255,74 @@
         }
       }
     },
+    "inbox.accessibility_filters_applied": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم تطبيق عوامل التصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters applied"
+          }
+        }
+      }
+    },
+    "inbox.accessibility_hide_filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إخفاء عوامل التصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide filters"
+          }
+        }
+      }
+    },
+    "inbox.accessibility_no_filters_applied": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يتم تطبيق عوامل تصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No filters applied"
+          }
+        }
+      }
+    },
+    "inbox.accessibility_show_filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إظهار عوامل التصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show filters"
+          }
+        }
+      }
+    },
     "inbox.derived_explanation": {
       "extractionState": "manual",
       "localizations": {

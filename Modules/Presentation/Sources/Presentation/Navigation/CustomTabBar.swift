@@ -16,7 +16,7 @@ struct CustomTabBar: View {
 
     private let leading: [(MainTab, String)] = [
         (.home, "house.fill"),
-        (.tasks, "tray.fill")
+        (.tasks, "target")
     ]
     private let trailing: [(MainTab, String)] = [
         (.store, "storefront.fill"),

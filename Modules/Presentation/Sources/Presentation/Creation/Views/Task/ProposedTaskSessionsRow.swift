@@ -65,8 +65,7 @@ struct ProposedTaskSessionsRow: View {
                                 .foregroundStyle(color)
 
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(formatted(session.start))
-                                Text(formatted(session.end))
+                                Text(formattedInterval(from: session.start, to: session.end))
                             }
                             .font(AppFonts.captionHeavy)
                             .foregroundStyle(AppColors.textPrimary)
@@ -96,27 +95,27 @@ struct ProposedTaskSessionsRow: View {
         }
     }
 
-    private func formatted(_ date: Date) -> String {
+    private func formattedInterval(from start: Date, to end: Date) -> String {
         var calendar = Calendar.current
         calendar.locale = locale
 
-        let timeFormatter = DateFormatter()
+        let timeFormatter = DateIntervalFormatter()
         timeFormatter.locale = locale
         timeFormatter.timeStyle = .short
         timeFormatter.dateStyle = .none
-        let time = timeFormatter.string(from: date)
+        let timeRange = timeFormatter.string(from: start, to: end)
 
-        if calendar.isDateInToday(date) {
-            return L10n.Home.sessionTodayAt(time)
+        if calendar.isDateInToday(start) {
+            return L10n.Home.sessionTodayAt(timeRange)
         }
-        if calendar.isDateInTomorrow(date) {
-            return L10n.Home.sessionTomorrowAt(time)
+        if calendar.isDateInTomorrow(start) {
+            return L10n.Home.sessionTomorrowAt(timeRange)
         }
 
-        let dateTimeFormatter = DateFormatter()
-        dateTimeFormatter.locale = locale
-        dateTimeFormatter.dateStyle = .medium
-        dateTimeFormatter.timeStyle = .short
-        return dateTimeFormatter.string(from: date)
+        let dateFormatter = DateIntervalFormatter()
+        dateFormatter.locale = locale
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+        return dateFormatter.string(from: start, to: end)
     }
 }

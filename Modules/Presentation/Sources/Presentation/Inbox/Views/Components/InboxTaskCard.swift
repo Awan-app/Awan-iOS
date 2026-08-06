@@ -58,14 +58,12 @@ struct InboxTaskCard: View {
 
                         if let desc = taskItem.description, !desc.isEmpty {
                             Text(desc)
-                                .font(AppFonts.subheadlineSemibold)
+                                .font(AppFonts.captionHeavy)
                                 .foregroundStyle(AppColors.textSecondary)
                                 .multilineTextAlignment(.leading)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                         }
-
-                        Text(taskItem.sessionsSummary)
-                            .font(AppFonts.subheadlineSemibold)
-                            .foregroundStyle(AppColors.textSecondary.opacity(0.8))
                     }
 
                     Spacer()
@@ -105,19 +103,6 @@ struct InboxTaskCard: View {
                                 ForEach(taskItem.sessionItems) { session in
                                     InboxSessionRow(session: session)
                                 }
-
-                                HStack(spacing: 6) {
-                                    Image(systemName: "info.circle")
-                                        .font(.system(size: 13, weight: .medium))
-                                        .foregroundStyle(AppColors.textSecondary)
-
-                                    Text(L10n.Inbox.derivedExplanation)
-                                        .font(AppFonts.caption2Bold)
-                                        .foregroundStyle(AppColors.textSecondary)
-
-                                    Spacer()
-                                }
-                                .padding(.top, 4)
                             }
                             .transition(.opacity.combined(with: .move(edge: .top)))
                         }
