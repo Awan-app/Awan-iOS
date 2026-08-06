@@ -32,8 +32,14 @@ struct AppRootView: View {
     }
 
     private var shouldShowCustomTabBar: Bool {
-        coordinator.mainCoordinator.selectedTab != .you
-            || coordinator.mainCoordinator.youPath.isEmpty
+        switch coordinator.mainCoordinator.selectedTab {
+        case .home:
+            coordinator.mainCoordinator.homePath.isEmpty
+        case .you:
+            coordinator.mainCoordinator.youPath.isEmpty
+        case .tasks, .store, .add:
+            true
+        }
     }
 
     init(factory: PresentationFactory) {
@@ -170,8 +176,10 @@ struct AppRootView: View {
                     AppColors.screenBackground
                         .ignoresSafeArea(edges: .bottom)
                 }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .animation(.snappy(duration: 0.3), value: shouldShowCustomTabBar)
         .sheet(item: Bindable(coordinator.mainCoordinator).presentedSheet) { route in
             switch route {
             case .add:

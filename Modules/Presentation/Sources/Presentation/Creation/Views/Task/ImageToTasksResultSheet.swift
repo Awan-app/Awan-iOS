@@ -102,6 +102,7 @@ struct ImageToTasksResultSheet: View {
                                 categories: categories,
                                 zones: zones,
                                 categoryErrorMessage: categoryErrorMessage,
+                                categoryPopoverArrowEdge: index == tasks.startIndex ? .top : .bottom,
                                 onRetryCategories: onRetryCategories,
                                 isSelected: selectedTaskIDs.contains(task.id),
                                 onToggleSelect: {

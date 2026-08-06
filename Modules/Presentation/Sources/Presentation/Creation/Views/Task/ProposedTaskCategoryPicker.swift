@@ -14,6 +14,7 @@ struct ProposedTaskCategoryButton: View {
     let zones: [Zone]
     let selectedCategoryID: UUID?
     let errorMessage: String?
+    let popoverArrowEdge: Edge
     let onRetry: () -> Void
     let onCategoryChanged: (UUID?) -> Void
 
@@ -49,7 +50,7 @@ struct ProposedTaskCategoryButton: View {
             )
         }
         .buttonStyle(.plain)
-        .popover(isPresented: $isCategoryPickerPresented, arrowEdge: .bottom) {
+        .popover(isPresented: $isCategoryPickerPresented, arrowEdge: popoverArrowEdge) {
             ProposedCategoryPickerPopover(
                 categories: categories,
                 zones: zones,
@@ -101,26 +102,31 @@ struct ProposedCategoryPickerPopover: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            categoryButton(
-                title: L10n.Home.proposedTaskUnassigned,
-                colors: [],
-                isSelected: selectedCategoryID == nil
-            ) {
-                onSelect(nil)
-            }
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 6) {
+                    categoryButton(
+                        title: L10n.Home.proposedTaskUnassigned,
+                        colors: [],
+                        isSelected: selectedCategoryID == nil
+                    ) {
+                        onSelect(nil)
+                    }
 
-            Divider()
-                .overlay(AppColors.accentBlue.opacity(0.14))
+                    Divider()
+                        .overlay(AppColors.accentBlue.opacity(0.14))
 
-            ForEach(categories) { category in
-                categoryButton(
-                    title: category.name,
-                    colors: zoneColors(for: category.id),
-                    isSelected: selectedCategoryID == category.id
-                ) {
-                    onSelect(category.id)
+                    ForEach(categories) { category in
+                        categoryButton(
+                            title: category.name,
+                            colors: zoneColors(for: category.id),
+                            isSelected: selectedCategoryID == category.id
+                        ) {
+                            onSelect(category.id)
+                        }
+                    }
                 }
             }
+            .frame(height: optionListHeight)
 
             if let errorMessage {
                 Divider()
@@ -135,6 +141,10 @@ struct ProposedCategoryPickerPopover: View {
         .padding(10)
         .frame(minWidth: 220)
         .background(AppColors.surface)
+    }
+
+    private var optionListHeight: CGFloat {
+        min(max(CGFloat(categories.count + 1) * 44, 44), 320)
     }
 
     private func categoryButton(
