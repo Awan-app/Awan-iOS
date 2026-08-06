@@ -4,14 +4,10 @@
 //
 
 import Common
-import Domain
 import SwiftUI
 
 public struct InboxView: View {
     @State private var viewModel: InboxViewModel
-    @State private var selectedGoalForDetails: Goal? = nil
-
-    @Environment(AppCoordinator.self) private var coordinator: AppCoordinator?
 
     public init(viewModel: InboxViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -50,14 +46,6 @@ public struct InboxView: View {
             }
         } message: {
             Text(state.failureMessage ?? L10n.Inbox.loadFailed)
-        }
-        .sheet(item: $selectedGoalForDetails) { goal in
-            GoalDetailSheet(
-                goal: goal,
-                onDismiss: {
-                    selectedGoalForDetails = nil
-                }
-            )
         }
     }
 
@@ -116,17 +104,23 @@ public struct InboxView: View {
                         }
                     }
                 } else {
-                    GoalsListView(
-                        goals: state.allGoals,
-                        isLoading: state.isLoadingGoals,
-                        failureMessage: state.goalsFailureMessage,
-                        onRefresh: {
-                            viewModel.send(.goalsRefresh)
-                        },
-                        onGoalSelected: { goal in
-                            selectedGoalForDetails = goal
+                    if let goalsViewModel = viewModel.goalsViewModel {
+                        GoalsContentSection(viewModel: goalsViewModel)
+                    } else {
+                        VStack(spacing: 16) {
+                            AwanMascotView(state: .goal)
+                                .frame(width: 160, height: 120)
+
+                            Text(L10n.Inbox.tabGoals)
+                                .font(AppFonts.title2Black)
+                                .foregroundStyle(AppColors.textPrimary)
+
+                            Text("Goal management will be available here.")
+                                .font(AppFonts.subheadlineSemibold)
+                                .foregroundStyle(AppColors.textSecondary)
                         }
-                    )
+                        .padding(.top, 40)
+                    }
                 }
             }
             .padding(.horizontal, 16)
@@ -135,11 +129,7 @@ public struct InboxView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .refreshable {
-            if state.selectedTopTab == .goals {
-                viewModel.send(.goalsRefresh)
-            } else {
-                viewModel.send(.refresh)
-            }
+            viewModel.send(.refresh)
         }
     }
 

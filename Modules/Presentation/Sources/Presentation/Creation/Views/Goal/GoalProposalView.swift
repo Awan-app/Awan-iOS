@@ -31,13 +31,8 @@ struct GoalProposalView: View {
                             .font(AppFonts.captionHeavy)
                             .foregroundStyle(AppColors.accentBlue)
 
-                        ForEach(Array(proposal.tasks.enumerated()), id: \.element.id) {
-                            index,
-                            task in
-                            GoalProposalTaskCard(
-                                task: task,
-                                index: index + 1
-                            )
+                        ForEach(proposal.tasks) { task in
+                            GoalProposalTaskCard(task: task)
                         }
                     }
                 }
@@ -116,7 +111,6 @@ struct GoalProposalView: View {
 
 private struct GoalProposalTaskCard: View {
     let task: GoalTaskProposal
-    let index: Int
 
     private var sessionCount: Int {
         guard task.allowsTaskSplitting else { return 1 }
@@ -128,40 +122,59 @@ private struct GoalProposalTaskCard: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(AppColors.accentBlue.opacity(0.12))
-                Circle()
-                    .stroke(AppColors.accentBlue, lineWidth: 2)
-                Text("\(index)")
-                    .font(AppFonts.captionBlack)
-                    .foregroundStyle(AppColors.accentBlue)
-            }
-            .frame(width: 32, height: 32)
-
-            VStack(alignment: .leading, spacing: 7) {
-                HStack(alignment: .firstTextBaseline) {
+        AppCard {
+            VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(task.title)
-                        .font(AppFonts.subheadlineBlack)
-                        .foregroundStyle(AppColors.brandDarkBlue)
+                        .font(AppFonts.headlineBlack)
+                        .foregroundStyle(AppColors.textPrimary)
 
-                    Spacer(minLength: 8)
-
-                    Text("+\(task.estimatedPoints) pts")
-                        .font(AppFonts.captionHeavy)
-                        .foregroundStyle(AppColors.accentBlue)
+                    Text(task.description)
+                        .font(AppFonts.subheadlineSemibold)
+                        .foregroundStyle(AppColors.textSecondary)
                 }
 
-                Text(task.description)
-                    .font(AppFonts.subheadlineSemibold)
-                    .foregroundStyle(AppColors.textSecondary)
+                Divider()
 
-                HStack(spacing: 7) {
-                    Label(
-                        "\(task.estimatedDuration) min",
-                        systemImage: "clock.fill"
-                    )
+                HStack(spacing: 8) {
+                    if let category = task.category {
+                        Label(category.name, systemImage: "tag.fill")
+                            .font(AppFonts.captionHeavy)
+                            .foregroundStyle(AppColors.accentBlue)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(
+                                AppColors.accentBlue.opacity(0.12),
+                                in: Capsule()
+                            )
+                    }
+
+                    Spacer()
+
+                    Label("\(task.estimatedPoints) pts", systemImage: "star.fill")
+                        .font(AppFonts.captionHeavy)
+                        .foregroundStyle(AppColors.reward)
+                        .environment(\.layoutDirection, .leftToRight)
+                }
+
+                HStack {
+                    Text(L10n.Home.duration)
+                        .font(AppFonts.captionHeavy)
+                        .foregroundStyle(AppColors.textSecondary)
+
+                    Spacer()
+
+                    Text(L10n.Home.minutesShort(task.estimatedDuration))
+                        .font(AppFonts.subheadlineHeavy)
+                        .foregroundStyle(AppColors.textPrimary)
+                }
+
+                HStack {
+                    Text(L10n.GoalCreation.sessions)
+                        .font(AppFonts.captionHeavy)
+                        .foregroundStyle(AppColors.textSecondary)
+
+                    Spacer()
 
                     if sessionCount > 1 {
                         Label(
@@ -175,28 +188,9 @@ private struct GoalProposalTaskCard: View {
                         )
                     }
                 }
-                .font(AppFonts.caption2Bold)
+                .font(AppFonts.captionHeavy)
                 .foregroundStyle(AppColors.accentBlue)
             }
         }
-        .padding(14)
-        .background {
-            ZStack {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(AppColors.accentBlue)
-                    .offset(y: 4)
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(AppColors.surface)
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(AppColors.accentBlue.opacity(0.05))
-            }
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(AppColors.accentBlue.opacity(0.55), lineWidth: 1.5)
-        }
-        .padding(.bottom, 4)
     }
 }
-
-

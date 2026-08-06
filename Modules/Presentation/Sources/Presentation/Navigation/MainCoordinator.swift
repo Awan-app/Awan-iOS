@@ -13,6 +13,7 @@ import Common
 public final class MainCoordinator: Coordinating {
     public var selectedTab: MainTab = .home
     public var homePath = NavigationPath()
+    public var tasksPath = NavigationPath()
     public var calendarPath = NavigationPath()
     public var tasksPath = NavigationPath()
     public var rewardsPath = NavigationPath()
