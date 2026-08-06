@@ -8,14 +8,14 @@ import Foundation
 
 public final class DefaultAiTaskRepository: AiTaskRepository {
     private let remoteDataSource: any AiTaskRemoteDataSource
-    private let localTaskDataSource: (any LocalTaskDataSource)?
-    private let localSessionDataSource: (any LocalSessionDataSource)?
+    private let localTaskDataSource: any LocalTaskDataSource
+    private let localSessionDataSource: any LocalSessionDataSource
     private let timeZoneID: String
 
     public init(
         remoteDataSource: any AiTaskRemoteDataSource,
-        localTaskDataSource: (any LocalTaskDataSource)? = nil,
-        localSessionDataSource: (any LocalSessionDataSource)? = nil,
+        localTaskDataSource: any LocalTaskDataSource,
+        localSessionDataSource: any LocalSessionDataSource,
         timeZoneID: String = TimeZone.current.identifier
     ) {
         self.remoteDataSource = remoteDataSource
@@ -38,10 +38,7 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
     public func acceptTaskWithSessions(_ draft: TaskWithSessionsDraft) async throws -> AwanTask {
         let requestDTO = CreateTaskWithSessionsRequestDTO(draft: draft)
         let responseDTO = try await remoteDataSource.acceptTaskWithSessions(requestDTO)
-        return try await persist(
-            responseDTO,
-            defaultDuration: draft.task.estimatedDuration
-        )
+        return try await persist(responseDTO, draft: draft)
     }
 
     public func acceptTasksWithSessions(
@@ -53,35 +50,32 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
         var acceptedTasks: [AwanTask] = []
         acceptedTasks.reserveCapacity(responseDTO.tasks.count)
         for (index, response) in responseDTO.tasks.enumerated() {
-            let defaultDuration = drafts.indices.contains(index)
-                ? drafts[index].task.estimatedDuration
-                : 60
-            acceptedTasks.append(
-                try await persist(response, defaultDuration: defaultDuration)
-            )
+            let draft = drafts.indices.contains(index) ? drafts[index] : nil
+            acceptedTasks.append(try await persist(response, draft: draft))
         }
         return acceptedTasks
     }
 
     private func persist(
         _ responseDTO: TaskWithSessionsResponseDTO,
-        defaultDuration: Int
+        draft: TaskWithSessionsDraft?
     ) async throws -> AwanTask {
-        let acceptedTask = (try? HomeRemoteMapper.task(
+        let defaultDuration = draft?.task.estimatedDuration ?? 60
+        var acceptedTask = (try? HomeRemoteMapper.task(
             responseDTO.task,
             defaultDuration: defaultDuration
         )) ?? responseDTO.task.toDomain()
 
-        if let localTaskDataSource {
-            try? await localTaskDataSource.addTask(acceptedTask)
+        if let draft {
+            acceptedTask = acceptedTask.applyingDraftGoalID(draft.task.goalId)
         }
-        if let localSessionDataSource {
-            let acceptedSessions = responseDTO.sessions.compactMap {
-                try? HomeRemoteMapper.session($0, timeZoneID: timeZoneID)
-            }
-            for session in acceptedSessions {
-                try? await localSessionDataSource.addSession(session)
-            }
+
+        try? await localTaskDataSource.addTask(acceptedTask)
+        let acceptedSessions = responseDTO.sessions.compactMap {
+            try? HomeRemoteMapper.session($0, timeZoneID: timeZoneID)
+        }
+        for session in acceptedSessions {
+            try? await localSessionDataSource.addSession(session)
         }
         return acceptedTask
     }

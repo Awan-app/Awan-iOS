@@ -198,10 +198,26 @@ public struct DefaultTaskRepository: TaskRepository {
         )
 
         let response = try await remoteSessionDataSource.createTaskWithSessions(request: request)
-        let acceptedTask = try HomeRemoteMapper.task(
+        var acceptedTask = try HomeRemoteMapper.task(
             response.task,
             defaultDuration: durationMinutes
         )
+        
+        if task.goalID == nil {
+            acceptedTask = AwanTask(
+                id: acceptedTask.id,
+                title: acceptedTask.title,
+                description: acceptedTask.description,
+                status: acceptedTask.status,
+                goalID: nil,
+                duration: acceptedTask.duration,
+                isSplittable: acceptedTask.isSplittable,
+                mandatory: acceptedTask.mandatory,
+                estimatedPoints: acceptedTask.estimatedPoints,
+                dependencyIDs: acceptedTask.dependencyIDs,
+                category: acceptedTask.category
+            )
+        }
         let acceptedSessions = try response.sessions.map {
             try HomeRemoteMapper.session(
                 $0,
@@ -231,10 +247,26 @@ public struct DefaultTaskRepository: TaskRepository {
                 categoryID: task.category?.id
             )
         )
-        let accepted = try HomeRemoteMapper.task(
+        var accepted = try HomeRemoteMapper.task(
             response,
             defaultDuration: task.duration.minutes
         )
+        let finalStatus = task.status
+        if task.goalID == nil || task.status == .completed {
+            accepted = AwanTask(
+                id: accepted.id,
+                title: accepted.title,
+                description: accepted.description,
+                status: finalStatus,
+                goalID: task.goalID == nil ? nil : accepted.goalID,
+                duration: accepted.duration,
+                isSplittable: accepted.isSplittable,
+                mandatory: accepted.mandatory,
+                estimatedPoints: accepted.estimatedPoints,
+                dependencyIDs: accepted.dependencyIDs,
+                category: accepted.category
+            )
+        }
         try await localDataSource.updateTask(accepted)
         let timeZoneID = await getTimeZoneID()
         let sessions = try await remoteSessionDataSource.getTaskSessions(taskID: task.id)

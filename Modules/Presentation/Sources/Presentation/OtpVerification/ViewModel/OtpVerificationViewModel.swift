@@ -41,7 +41,7 @@ public final class OtpVerificationViewModel {
     }
 
     public var isInputDisabled: Bool {
-        state == .verifying || isResending
+        state == .verifying || state == .success || isResending
     }
 
     private let requestOTPUseCase: RequestOTPUseCase
@@ -98,6 +98,28 @@ public final class OtpVerificationViewModel {
         }
 
         return nextEmptyDigitIndex(after: lastUpdatedIndex)
+    }
+
+    /// Handles backspace on an empty digit field by clearing and focusing the previous digit.
+    /// Returns the index that should receive focus.
+    public func handleBackspace(at index: Int) -> Int? {
+        guard codeDigits.indices.contains(index), !isInputDisabled else {
+            return nil
+        }
+
+        if case .failure = state {
+            state = .idle
+        }
+
+        if !codeDigits[index].isEmpty {
+            codeDigits[index] = ""
+            return index
+        }
+
+        let previousIndex = index - 1
+        guard previousIndex >= 0 else { return index }
+        codeDigits[previousIndex] = ""
+        return previousIndex
     }
     
     public func verifyOTP() {

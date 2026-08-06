@@ -82,7 +82,7 @@ struct PresentationAssembly: Assembly {
                     setLock: Self.resolve(SetSessionLockUseCase.self, from: resolver),
                     setCompletion: Self.resolve(SetSessionCompletionUseCase.self, from: resolver),
                     delete: Self.resolve(DeleteSessionUseCase.self, from: resolver)
-                ),
+                )
             )
         }
 
@@ -128,6 +128,22 @@ struct PresentationAssembly: Assembly {
         }
         .inObjectScope(.container)
 
+        container.register(InboxUseCases.self) { resolver in
+            InboxUseCases(
+                fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver),
+                completeTask: Self.resolve(CompleteTaskSessionsUseCase.self, from: resolver),
+                deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(InboxViewModel.self) { resolver in
+            let useCases = Self.resolve(InboxUseCases.self, from: resolver)
+            return MainActor.assumeIsolated {
+                InboxViewModel(useCases: useCases)
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(OnboardingViewModel.self) { resolver in
             let useCase = Self.resolve(CompleteOnboardingUseCase.self, from: resolver)
             let createTemplateUseCase = Self.resolve(CreateOnboardingTemplateUseCase.self, from: resolver)
@@ -156,7 +172,7 @@ struct PresentationAssembly: Assembly {
                     logoutUseCase: logoutUseCase,
                     updateSessionDurationUseCase: updateSessionDurationUseCase,
                     updateTimezoneUseCase: updateTimezoneUseCase,
-                    updateSleepScheduleUseCase: updateSleepScheduleUseCase,
+                    updateSleepScheduleUseCase: updateSleepScheduleUseCase
                 )
             }
         }
@@ -206,6 +222,7 @@ struct PresentationAssembly: Assembly {
             let onboardingViewModel = Self.resolve(OnboardingViewModel.self, from: resolver)
             let profileViewModel = Self.resolve(ProfileViewModel.self, from: resolver)
             let dailyZonesViewModel = Self.resolve(DailyZonesViewModel.self, from: resolver)
+            let inboxViewModel = Self.resolve(InboxViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
@@ -228,7 +245,8 @@ struct PresentationAssembly: Assembly {
                     dailyZonesViewModel: dailyZonesViewModel,
                     makeUserInfoViewModel: {
                         Self.resolve(UserInfoViewModel.self, from: resolver)
-                    }
+                    },
+                    inboxViewModel: inboxViewModel
                 )
             }
         }
