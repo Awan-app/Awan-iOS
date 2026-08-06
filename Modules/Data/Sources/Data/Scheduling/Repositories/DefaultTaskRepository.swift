@@ -197,47 +197,40 @@ public struct DefaultTaskRepository: TaskRepository {
             sessions: sessionPayloads
         )
 
-        do {
-            let response = try await remoteSessionDataSource.createTaskWithSessions(request: request)
-            var acceptedTask = try HomeRemoteMapper.task(
-                response.task,
-                defaultDuration: durationMinutes
+        let response = try await remoteSessionDataSource.createTaskWithSessions(request: request)
+        var acceptedTask = try HomeRemoteMapper.task(
+            response.task,
+            defaultDuration: durationMinutes
+        )
+        
+        if task.goalID == nil {
+            acceptedTask = AwanTask(
+                id: acceptedTask.id,
+                title: acceptedTask.title,
+                description: acceptedTask.description,
+                status: acceptedTask.status,
+                goalID: nil,
+                duration: acceptedTask.duration,
+                isSplittable: acceptedTask.isSplittable,
+                mandatory: acceptedTask.mandatory,
+                estimatedPoints: acceptedTask.estimatedPoints,
+                dependencyIDs: acceptedTask.dependencyIDs,
+                category: acceptedTask.category
             )
-            // If the original task had no goalID (e.g. Inbox task), enforce goalID = nil
-            // regardless of what the remote server returned in its response.
-            if task.goalID == nil {
-                acceptedTask = AwanTask(
-                    id: acceptedTask.id,
-                    title: acceptedTask.title,
-                    description: acceptedTask.description,
-                    status: acceptedTask.status,
-                    goalID: nil,
-                    duration: acceptedTask.duration,
-                    isSplittable: acceptedTask.isSplittable,
-                    mandatory: acceptedTask.mandatory,
-                    estimatedPoints: acceptedTask.estimatedPoints,
-                    dependencyIDs: acceptedTask.dependencyIDs,
-                    category: acceptedTask.category
-                )
-            }
-            let acceptedSessions = try response.sessions.map {
-                try HomeRemoteMapper.session(
-                    $0,
-                    timeZoneID: timeZoneID
-                )
-            }
-
-            try await localDataSource.addTask(acceptedTask)
-            for session in acceptedSessions {
-                try await localSessionDataSource.addSession(session)
-            }
-
-            return (acceptedTask, acceptedSessions)
-        } catch {
-            // Local fallback when remote endpoint fails or offline
-            try await localDataSource.addTask(task)
-            return (task, [])
         }
+        let acceptedSessions = try response.sessions.map {
+            try HomeRemoteMapper.session(
+                $0,
+                timeZoneID: timeZoneID
+            )
+        }
+
+        try await localDataSource.addTask(acceptedTask)
+        for session in acceptedSessions {
+            try await localSessionDataSource.addSession(session)
+        }
+
+        return (acceptedTask, acceptedSessions)
     }
 
     public func updateTask(_ task: AwanTask) async throws {
