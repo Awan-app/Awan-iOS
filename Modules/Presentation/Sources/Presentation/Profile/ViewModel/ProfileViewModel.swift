@@ -57,7 +57,7 @@ public final class ProfileViewModel {
         logoutUseCase: LogoutUseCase,
         updateSessionDurationUseCase: any UpdateSessionDurationUseCase,
         updateTimezoneUseCase: any UpdateTimezoneUseCase,
-        updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase,
+        updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.updateSessionDurationUseCase = updateSessionDurationUseCase

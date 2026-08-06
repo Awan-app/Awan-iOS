@@ -62,6 +62,12 @@ public enum L10n {
         public static var wakeSleepTitle: String {
             L10n.currentBundle.localizedString(forKey: "onboarding.wake_sleep_title", value: nil, table: "Localizable")
         }
+        public static var wakeSleepSameTimeError: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.wake_sleep_same_time_error", value: nil, table: "Localizable")
+        }
+        public static var shortActiveDayWarning: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.short_active_day_warning", value: nil, table: "Localizable")
+        }
         public static var wakeLabel: String {
             L10n.currentBundle.localizedString(forKey: "onboarding.wake_label", value: nil, table: "Localizable")
         }
@@ -119,6 +125,12 @@ public enum L10n {
         }
         public static func skySetupZones(_ count: Int) -> String {
             String(format: L10n.currentBundle.localizedString(forKey: "onboarding.sky_setup_zones", value: nil, table: "Localizable"), count)
+        }
+        public static func outOfBoundsWarningSingle(_ zonesText: String) -> String {
+            String(format: L10n.currentBundle.localizedString(forKey: "onboarding.out_of_bounds_warning_single", value: nil, table: "Localizable"), zonesText)
+        }
+        public static func outOfBoundsWarningMultiple(_ zonesText: String) -> String {
+            String(format: L10n.currentBundle.localizedString(forKey: "onboarding.out_of_bounds_warning_multiple", value: nil, table: "Localizable"), zonesText)
         }
         public static var outOfBoundsWarning: String { L10n.currentBundle.localizedString(forKey: "onboarding.out_of_bounds_warning", value: nil, table: "Localizable") }
         public static var shortDayWarning: String { L10n.currentBundle.localizedString(forKey: "onboarding.short_day_warning", value: nil, table: "Localizable") }

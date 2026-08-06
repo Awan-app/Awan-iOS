@@ -35,7 +35,10 @@ struct OnboardingContainerView: View {
                 case .wakeSleep:
                     OnboardingWakeSleepView(
                         viewModel: viewModel,
-                        onContinue: { advance(to: .suggestedZones) }
+                        onContinue: {
+                            viewModel.resetSuggestedZones()
+                            advance(to: .suggestedZones)
+                        }
                     )
                 case .suggestedZones:
                     OnboardingSuggestedZonesView(

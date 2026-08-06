@@ -3355,7 +3355,41 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Out of bounds warning"
+            "value": "Adjust this zone so it fits within your wake and sleep times."
+          }
+        }
+      }
+    },
+    "onboarding.out_of_bounds_warning_multiple" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "المناطق التالية تقع خارج أوقات استيقاظك ونومك:\n%@\n\nعدّلها لتبقى ضمن يومك النشط."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following zones fall outside your wake and sleep times:\n%@\nAdjust them to keep them within your active day."
+          }
+        }
+      }
+    },
+    "onboarding.out_of_bounds_warning_single" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "المنطقة التالية تقع خارج أوقات استيقاظك ونومك:\n%@\n\nعدّلها لتبقى ضمن يومك النشط."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following zone falls outside your wake and sleep times:\n%@\nAdjust it to keep it within your active day."
           }
         }
       }
@@ -3525,7 +3559,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "SET MANUALLY"
+            "value": "SET LATER"
           }
         }
       }
@@ -3747,6 +3781,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "I usually wake up at"
+          }
+        }
+      }
+    },
+    "onboarding.wake_sleep_same_time_error": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يمكن أن يكون وقت الاستيقاظ والنوم متماثلين. اختر أوقاتًا مختلفة للمتابعة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wake-up and sleep times can't be the same. Choose different times to continue."
+          }
+        }
+      }
+    },
+    "onboarding.short_active_day_warning": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يومك النشط أقل من 10 ساعات. قد يكون لدى أوان وقت أقل لجدولة مهامك."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your active day is less than 10 hours. Awan may have less time to schedule your tasks."
           }
         }
       }
