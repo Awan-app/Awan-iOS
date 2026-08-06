@@ -72,6 +72,11 @@ public struct PresentationFactory {
         scheduleViewModel.send(.appeared)
     }
 
+    public func refreshInbox() {
+        inboxViewModel.send(.refresh)
+        inboxViewModel.send(.goalsRefresh)
+    }
+
     func makeGlobalCreationSheet(
         onDismiss: @escaping () -> Void,
         onTaskSchedulingModeChanged: @escaping (Bool) -> Void,

@@ -1118,5 +1118,24 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
         }
     }
+
+    public enum Goals {
+        public static var emptyTitle: String { text("goals.empty_title") }
+        public static var emptySubtitle: String { text("goals.empty_subtitle") }
+        public static var searchPlaceholder: String { text("goals.search_placeholder") }
+        public static var sortNewest: String { text("goals.sort_newest") }
+        public static var sortOldest: String { text("goals.sort_oldest") }
+        public static var sortNameAZ: String { text("goals.sort_name_az") }
+        public static var sortNameZA: String { text("goals.sort_name_za") }
+        public static var sortDeadline: String { text("goals.sort_deadline") }
+        public static var sortTitle: String { text("goals.sort_title") }
+        public static var sectionTitle: String { text("goals.section_title") }
+        public static var noDeadline: String { text("goals.no_deadline") }
+        public static var loadFailed: String { text("goals.load_failed") }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
 }
 

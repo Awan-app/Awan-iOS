@@ -9,6 +9,8 @@ import SwiftUI
 public struct InboxView: View {
     @State private var viewModel: InboxViewModel
 
+    @Environment(AppCoordinator.self) private var coordinator: AppCoordinator?
+
     public init(viewModel: InboxViewModel) {
         _viewModel = State(initialValue: viewModel)
     }
@@ -104,20 +106,17 @@ public struct InboxView: View {
                         }
                     }
                 } else {
-
-                    VStack(spacing: 16) {
-                        AwanMascotView(state: .goal)
-                            .frame(width: 160, height: 120)
-
-                        Text(L10n.Inbox.tabGoals)
-                            .font(AppFonts.title2Black)
-                            .foregroundStyle(AppColors.textPrimary)
-
-                        Text("Goal management will be available here.")
-                            .font(AppFonts.subheadlineSemibold)
-                            .foregroundStyle(AppColors.textSecondary)
-                    }
-                    .padding(.top, 40)
+                    GoalsListView(
+                        goals: state.allGoals,
+                        isLoading: state.isLoadingGoals,
+                        failureMessage: state.goalsFailureMessage,
+                        onRefresh: {
+                            viewModel.send(.goalsRefresh)
+                        },
+                        onGoalSelected: { _ in
+                            // TODO: Present Goal details
+                        }
+                    )
                 }
             }
             .padding(.horizontal, 16)
@@ -126,7 +125,11 @@ public struct InboxView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .refreshable {
-            viewModel.send(.refresh)
+            if state.selectedTopTab == .goals {
+                viewModel.send(.goalsRefresh)
+            } else {
+                viewModel.send(.refresh)
+            }
         }
     }
 
