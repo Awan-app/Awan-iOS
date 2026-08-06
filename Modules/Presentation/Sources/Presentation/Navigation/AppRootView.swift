@@ -127,12 +127,6 @@ struct AppRootView: View {
             .tag(MainTab.tasks)
             .toolbar(.hidden, for: .tabBar)
 
-            NavigationStack(path: Bindable(coordinator.mainCoordinator).rewardsPath) {
-                factory.makeRewardsView()
-            }
-            .tag(MainTab.rewards)
-            .toolbar(.hidden, for: .tabBar)
-
             NavigationStack(path: Bindable(coordinator.mainCoordinator).storePath) {
                 AppColors.screenBackground.ignoresSafeArea()
             }

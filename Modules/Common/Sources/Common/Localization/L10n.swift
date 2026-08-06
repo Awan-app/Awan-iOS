@@ -818,6 +818,7 @@ public enum L10n {
         public static var today: String { L10n.currentBundle.localizedString(forKey: "home.today", value: nil, table: "Localizable") }
         public static var calendar: String { L10n.currentBundle.localizedString(forKey: "home.calendar", value: nil, table: "Localizable") }
         public static var rewards: String { L10n.currentBundle.localizedString(forKey: "home.rewards", value: nil, table: "Localizable") }
+        public static var store: String { L10n.currentBundle.localizedString(forKey: "home.store", value: nil, table: "Localizable") }
         public static var you: String { L10n.currentBundle.localizedString(forKey: "home.you", value: nil, table: "Localizable") }
     }
 

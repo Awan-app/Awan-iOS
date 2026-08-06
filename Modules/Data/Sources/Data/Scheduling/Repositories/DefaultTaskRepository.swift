@@ -33,6 +33,22 @@ public struct DefaultTaskRepository: TaskRepository {
     public func observeTasks() -> AnyPublisher<[AwanTask], Error> {
         localDataSource.observeTasks()
     }
+
+    public func fetchInboxTasks() async throws -> [AwanTask] {
+        try await loadRemoteInboxTasks().tasks
+    }
+
+    public func observeInboxTasks() -> AnyPublisher<[AwanTask], Error> {
+        AsyncValuePublisher.make { try await self.loadRemoteInboxTasks() }
+            .flatMap { result in
+                self.localDataSource.observeTasks()
+                    .map { tasks in
+                        tasks.filter { $0.goalID == result.goalID }
+                    }
+            }
+            .eraseToAnyPublisher()
+    }
+
     public func fetchTasks(for date: Date) async throws -> [AwanTask] {
         let timeZoneID = await getTimeZoneID()
         let dayKey = LocalDateKey.value(
@@ -120,6 +136,21 @@ public struct DefaultTaskRepository: TaskRepository {
         )
     }
 
+    private func loadRemoteInboxTasks() async throws -> (goalID: UUID, tasks: [AwanTask]) {
+        let response = try await remoteGoalDataSource.getInbox()
+        let preferredDuration = await getPreferredSessionDuration()
+        let tasks = try (response.tasks ?? [])
+            .map {
+                try HomeRemoteMapper.task(
+                    $0,
+                    defaultDuration: preferredDuration
+                )
+            }
+            .sorted { $0.id.uuidString < $1.id.uuidString }
+        try await localDataSource.upsertTasks(tasks)
+        return (response.id, tasks)
+    }
+
     private func cachedTasks(
         forDay dayKey: String,
         timeZoneID: String
@@ -198,26 +229,10 @@ public struct DefaultTaskRepository: TaskRepository {
         )
 
         let response = try await remoteSessionDataSource.createTaskWithSessions(request: request)
-        var acceptedTask = try HomeRemoteMapper.task(
+        let acceptedTask = try HomeRemoteMapper.task(
             response.task,
             defaultDuration: durationMinutes
         )
-        
-        if task.goalID == nil {
-            acceptedTask = AwanTask(
-                id: acceptedTask.id,
-                title: acceptedTask.title,
-                description: acceptedTask.description,
-                status: acceptedTask.status,
-                goalID: nil,
-                duration: acceptedTask.duration,
-                isSplittable: acceptedTask.isSplittable,
-                mandatory: acceptedTask.mandatory,
-                estimatedPoints: acceptedTask.estimatedPoints,
-                dependencyIDs: acceptedTask.dependencyIDs,
-                category: acceptedTask.category
-            )
-        }
         let acceptedSessions = try response.sessions.map {
             try HomeRemoteMapper.session(
                 $0,
@@ -252,13 +267,13 @@ public struct DefaultTaskRepository: TaskRepository {
             defaultDuration: task.duration.minutes
         )
         let finalStatus = task.status
-        if task.goalID == nil || task.status == .completed {
+        if task.status == .completed {
             accepted = AwanTask(
                 id: accepted.id,
                 title: accepted.title,
                 description: accepted.description,
                 status: finalStatus,
-                goalID: task.goalID == nil ? nil : accepted.goalID,
+                goalID: accepted.goalID,
                 duration: accepted.duration,
                 isSplittable: accepted.isSplittable,
                 mandatory: accepted.mandatory,

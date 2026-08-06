@@ -33,12 +33,10 @@ public struct DefaultFetchInboxTasksUseCase: FetchInboxTasksUseCase {
     }
 
     public func execute() async throws -> [InboxTask] {
-        async let tasksResult = taskRepository.fetchTasks()
+        async let tasksResult = taskRepository.fetchInboxTasks()
         async let sessionsResult = sessionRepository.fetchSessions()
 
-        let (allTasks, allSessions) = try await (tasksResult, sessionsResult)
-
-        let inboxTasks = allTasks.filter { $0.goalID == nil }
+        let (inboxTasks, allSessions) = try await (tasksResult, sessionsResult)
         let sessionsByTaskID = Dictionary(grouping: allSessions, by: \.taskID)
 
         return inboxTasks.map { task in
@@ -50,11 +48,10 @@ public struct DefaultFetchInboxTasksUseCase: FetchInboxTasksUseCase {
 
     public func observe() -> AnyPublisher<[InboxTask], Error> {
         Publishers.CombineLatest(
-            taskRepository.observeTasks(),
+            taskRepository.observeInboxTasks(),
             sessionRepository.observeSessions()
         )
-        .map { [deriveStatus] allTasks, allSessions in
-            let inboxTasks = allTasks.filter { $0.goalID == nil }
+        .map { [deriveStatus] inboxTasks, allSessions in
             let sessionsByTaskID = Dictionary(grouping: allSessions, by: \.taskID)
             return inboxTasks.map { task in
                 let taskSessions = sessionsByTaskID[task.id] ?? []

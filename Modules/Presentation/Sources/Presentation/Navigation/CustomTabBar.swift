@@ -138,7 +138,7 @@ struct CustomTabBar: View {
         switch tab {
         case .home:    return L10n.Home.today
         case .tasks:   return L10n.Inbox.title
-        case .rewards: return L10n.Home.rewards
+        case .store:   return L10n.Home.store
         case .you:     return L10n.Home.you
         default:       return ""
         }

@@ -1379,6 +1379,23 @@
         }
       }
     },
+    "home.store": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المتجر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Store"
+          }
+        }
+      }
+    },
     "home.scheduling_nudge_message": {
       "extractionState": "manual",
       "localizations": {

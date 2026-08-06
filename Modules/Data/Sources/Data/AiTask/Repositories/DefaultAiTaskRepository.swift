@@ -8,17 +8,20 @@ import Foundation
 
 public final class DefaultAiTaskRepository: AiTaskRepository {
     private let remoteDataSource: any AiTaskRemoteDataSource
+    private let remoteGoalDataSource: any RemoteGoalDataSource
     private let localTaskDataSource: any LocalTaskDataSource
     private let localSessionDataSource: any LocalSessionDataSource
     private let timeZoneID: String
 
     public init(
         remoteDataSource: any AiTaskRemoteDataSource,
+        remoteGoalDataSource: any RemoteGoalDataSource,
         localTaskDataSource: any LocalTaskDataSource,
         localSessionDataSource: any LocalSessionDataSource,
         timeZoneID: String = TimeZone.current.identifier
     ) {
         self.remoteDataSource = remoteDataSource
+        self.remoteGoalDataSource = remoteGoalDataSource
         self.localTaskDataSource = localTaskDataSource
         self.localSessionDataSource = localSessionDataSource
         self.timeZoneID = timeZoneID
@@ -42,18 +45,38 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
     }
 
     public func acceptTasksWithSessions(
-        _ drafts: [TaskWithSessionsDraft]
+        _ drafts: [TaskWithSessionsDraft],
+        destination: ProposedTaskDestination
     ) async throws -> [AwanTask] {
-        let requestDTO = BulkCreateTasksWithSessionsRequestDTO(drafts: drafts)
+        let preparedDrafts = try await prepare(drafts, for: destination)
+        let requestDTO = BulkCreateTasksWithSessionsRequestDTO(drafts: preparedDrafts)
         let responseDTO = try await remoteDataSource.acceptTasksWithSessions(requestDTO)
 
         var acceptedTasks: [AwanTask] = []
         acceptedTasks.reserveCapacity(responseDTO.tasks.count)
         for (index, response) in responseDTO.tasks.enumerated() {
-            let draft = drafts.indices.contains(index) ? drafts[index] : nil
+            let draft = preparedDrafts.indices.contains(index) ? preparedDrafts[index] : nil
             acceptedTasks.append(try await persist(response, draft: draft))
         }
         return acceptedTasks
+    }
+
+    private func prepare(
+        _ drafts: [TaskWithSessionsDraft],
+        for destination: ProposedTaskDestination
+    ) async throws -> [TaskWithSessionsDraft] {
+        switch destination {
+        case .schedule:
+            return drafts
+        case .inbox:
+            let inboxGoalID = try await remoteGoalDataSource.getInbox().id
+            return drafts.map { draft in
+                var inboxDraft = draft
+                inboxDraft.task.goalId = inboxGoalID
+                inboxDraft.sessions = []
+                return inboxDraft
+            }
+        }
     }
 
     private func persist(
@@ -61,22 +84,16 @@ public final class DefaultAiTaskRepository: AiTaskRepository {
         draft: TaskWithSessionsDraft?
     ) async throws -> AwanTask {
         let defaultDuration = draft?.task.estimatedDuration ?? 60
-        var acceptedTask = (try? HomeRemoteMapper.task(
+        let acceptedTask = (try? HomeRemoteMapper.task(
             responseDTO.task,
             defaultDuration: defaultDuration
         )) ?? responseDTO.task.toDomain()
 
-        if let draft {
-            acceptedTask = acceptedTask.applyingDraftGoalID(draft.task.goalId)
+        let acceptedSessions = try responseDTO.sessions.map {
+            try HomeRemoteMapper.session($0, timeZoneID: timeZoneID)
         }
-
-        try? await localTaskDataSource.addTask(acceptedTask)
-        let acceptedSessions = responseDTO.sessions.compactMap {
-            try? HomeRemoteMapper.session($0, timeZoneID: timeZoneID)
-        }
-        for session in acceptedSessions {
-            try? await localSessionDataSource.addSession(session)
-        }
+        try await localTaskDataSource.upsertTasks([acceptedTask])
+        try await localSessionDataSource.upsertSessions(acceptedSessions)
         return acceptedTask
     }
 }
