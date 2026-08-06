@@ -21,7 +21,7 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
         let request = CreateTemplateRequestDTO(
             name: name,
             daysOfWeek: orderedRawDays(daysOfWeek),
-            zones: zones.map(createPayload)
+            zones: try zones.map(createPayload)
         )
 
         do {
@@ -51,13 +51,17 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
         id: UUID,
         zones: [TemplateZoneMutation]
     ) async throws -> Template {
-        let zonePayloads = zones.map { zone in
-            BulkUpdateZonesRequestDTO.ZonePayload(
+        let zonePayloads = try zones.map { zone in
+            guard let categoryID = zone.category?.id else {
+                throw TemplateManagementError.zoneCategoryRequired
+            }
+            return BulkUpdateZonesRequestDTO.ZonePayload(
                 id: zone.id?.uuidString,
                 name: zone.name,
                 startTime: String(format: "%02d:%02d:00", zone.startTime.hour, zone.startTime.minute),
                 endTime: String(format: "%02d:%02d:00", zone.endTime.hour, zone.endTime.minute),
-                color: zone.color.hex
+                color: zone.color.hex,
+                categoryId: categoryID
             )
         }
 
@@ -104,12 +108,16 @@ public final class DefaultTemplateRepository: TemplateRepository, Sendable {
         }
     }
 
-    private func createPayload(_ zone: Zone) -> CreateTemplateRequestDTO.ZonePayload {
-        CreateTemplateRequestDTO.ZonePayload(
+    private func createPayload(_ zone: Zone) throws -> CreateTemplateRequestDTO.ZonePayload {
+        guard let categoryID = zone.category?.id else {
+            throw TemplateManagementError.zoneCategoryRequired
+        }
+        return CreateTemplateRequestDTO.ZonePayload(
             name: zone.name,
             startTime: formatted(zone.startTime),
             endTime: formatted(zone.endTime),
-            color: zone.color.hex
+            color: zone.color.hex,
+            categoryId: categoryID
         )
     }
 
