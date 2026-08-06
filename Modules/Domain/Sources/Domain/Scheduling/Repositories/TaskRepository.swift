@@ -25,14 +25,6 @@ public protocol TaskRepository: Sendable {
 }
 
 public extension TaskRepository {
-    func fetchInboxTasks() async throws -> [AwanTask] {
-        try await fetchTasks()
-    }
-
-    func observeInboxTasks() -> AnyPublisher<[AwanTask], Error> {
-        AsyncValuePublisher.make { try await fetchInboxTasks() }
-    }
-
     func fetchTasks(for date: Date) async throws -> [AwanTask] {
         try await fetchTasks()
     }

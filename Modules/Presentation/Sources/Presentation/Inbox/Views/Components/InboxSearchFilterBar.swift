@@ -10,6 +10,7 @@ struct InboxSearchFilterBar: View {
     @Binding var searchQuery: String
     @Binding var isFilterExpanded: Bool
     let hasActiveFilters: Bool
+    let showsFilterButton: Bool
 
     var body: some View {
         HStack(spacing: 10) {
@@ -45,50 +46,52 @@ struct InboxSearchFilterBar: View {
                     .stroke(AppColors.outline.opacity(0.12), lineWidth: 1.5)
             )
 
-            Button {
-                withAnimation(.snappy(duration: 0.24)) {
-                    isFilterExpanded.toggle()
-                }
-            } label: {
-                ZStack(alignment: .topTrailing) {
-                    Image(systemName: "slider.horizontal.3")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(
-                            isFilterExpanded ? AppColors.onAccent : AppColors.accentBlue
-                        )
-                        .frame(width: 46, height: 46)
+            if showsFilterButton {
+                Button {
+                    withAnimation(.snappy(duration: 0.24)) {
+                        isFilterExpanded.toggle()
+                    }
+                } label: {
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "slider.horizontal.3")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(
+                                isFilterExpanded ? AppColors.onAccent : AppColors.accentBlue
+                            )
+                            .frame(width: 46, height: 46)
 
-                    if hasActiveFilters && !isFilterExpanded {
-                        Circle()
-                            .fill(AppColors.accentBlue)
-                            .frame(width: 8, height: 8)
-                            .overlay {
-                                Circle()
-                                    .stroke(AppColors.surface, lineWidth: 2)
-                            }
-                            .offset(x: -3, y: 3)
+                        if hasActiveFilters && !isFilterExpanded {
+                            Circle()
+                                .fill(AppColors.accentBlue)
+                                .frame(width: 8, height: 8)
+                                .overlay {
+                                    Circle()
+                                        .stroke(AppColors.surface, lineWidth: 2)
+                                }
+                                .offset(x: -3, y: 3)
+                        }
                     }
                 }
-            }
-            .buttonStyle(
-                AppDepthButtonStyle(
-                    shape: .roundedRectangle(cornerRadius: 16),
-                    surfaceColor: isFilterExpanded ? AppColors.accentBlue : AppColors.surface,
-                    borderColor: AppColors.accentBlue.opacity(0.35),
-                    depthColor: isFilterExpanded
-                        ? AppColors.accentBlueDepth
-                        : AppColors.accentBlueDepth.opacity(0.25),
-                    borderWidth: 1.5,
-                    depthOffset: 4,
-                    pressedOffset: 2
+                .buttonStyle(
+                    AppDepthButtonStyle(
+                        shape: .roundedRectangle(cornerRadius: 16),
+                        surfaceColor: isFilterExpanded ? AppColors.accentBlue : AppColors.surface,
+                        borderColor: AppColors.accentBlue.opacity(0.35),
+                        depthColor: isFilterExpanded
+                            ? AppColors.accentBlueDepth
+                            : AppColors.accentBlueDepth.opacity(0.25),
+                        borderWidth: 1.5,
+                        depthOffset: 4,
+                        pressedOffset: 2
+                    )
                 )
-            )
-            .accessibilityLabel(
-                isFilterExpanded ? L10n.Inbox.hideFilters : L10n.Inbox.showFilters
-            )
-            .accessibilityValue(
-                hasActiveFilters ? L10n.Inbox.filtersApplied : L10n.Inbox.noFiltersApplied
-            )
+                .accessibilityLabel(
+                    isFilterExpanded ? L10n.Inbox.hideFilters : L10n.Inbox.showFilters
+                )
+                .accessibilityValue(
+                    hasActiveFilters ? L10n.Inbox.filtersApplied : L10n.Inbox.noFiltersApplied
+                )
+            }
         }
     }
 }
@@ -97,7 +100,8 @@ struct InboxSearchFilterBar: View {
     InboxSearchFilterBar(
         searchQuery: .constant(""),
         isFilterExpanded: .constant(false),
-        hasActiveFilters: false
+        hasActiveFilters: false,
+        showsFilterButton: true
     )
         .padding()
         .background(AppColors.screenBackground)
@@ -107,7 +111,8 @@ struct InboxSearchFilterBar: View {
     InboxSearchFilterBar(
         searchQuery: .constant("presentation"),
         isFilterExpanded: .constant(true),
-        hasActiveFilters: true
+        hasActiveFilters: true,
+        showsFilterButton: true
     )
         .padding()
         .background(AppColors.screenBackground)

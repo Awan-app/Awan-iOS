@@ -69,7 +69,8 @@ public struct InboxView: View {
                         ),
                         isFilterExpanded: $isFilterExpanded,
                         hasActiveFilters: state.selectedTaskFilter != .all
-                            || state.selectedSessionFilter != .any
+                            || state.selectedSessionFilter != .any,
+                        showsFilterButton: true
                     )
 
                     if isFilterExpanded {

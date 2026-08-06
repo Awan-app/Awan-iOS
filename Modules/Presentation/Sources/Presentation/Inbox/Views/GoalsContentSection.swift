@@ -49,7 +49,10 @@ struct GoalsContentSection: View {
             searchQuery: Binding(
                 get: { state.searchQuery },
                 set: { viewModel.send(.searchQueryChanged($0)) }
-            )
+            ),
+            isFilterExpanded: .constant(false),
+            hasActiveFilters: false,
+            showsFilterButton: false
         )
 
         // Section title

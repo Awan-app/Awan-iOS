@@ -92,6 +92,12 @@ Sources: [`Zone.swift`](Modules/Domain/Sources/Domain/Scheduling/Entities/Zone.s
 
 A `Goal` currently contains a UUID, name, and deadline. Tasks belong to a goal through `task.goalID`, rather than the goal storing task objects.
 
+#### Inbox goal
+
+The Inbox is a backend-owned default goal created for the user when the user account is created. Consequently, an Inbox task has a non-`nil` `goalID`: that value is the UUID of the user's Inbox goal.
+
+Inbox membership must come from the backend's dedicated Inbox resource (`GET /goals/inbox`) and must not be inferred from `task.goalID == nil`. The Data repository loads the Inbox goal, persists its returned tasks, and uses the returned goal UUID when observing the cached task collection. Domain use cases consume the repository's explicit `fetchInboxTasks` and `observeInboxTasks` operations without reclassifying tasks by goal nullability.
+
 Task dependencies form a directed graph. If task B contains task A's UUID in `dependencyIDs`, A must be fully scheduled before B can start.
 
 The current seven-task goal use case creates a linear chain:

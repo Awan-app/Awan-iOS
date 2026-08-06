@@ -7,12 +7,14 @@ final class DefaultTemplateRepositoryTests: XCTestCase {
     func testCreateWeeklyTemplateCachesRemoteTemplateAndZoneIDs() async throws {
         let remoteTemplateID = UUID()
         let remoteZoneID = UUID()
+        let category = TaskCategory(id: UUID(), name: "Work")
         let draftZone = try Zone(
             id: UUID(),
             name: "Work",
             color: ZoneColor(hex: "#336699"),
             startTime: LocalTime(hour: 9, minute: 0),
-            endTime: LocalTime(hour: 17, minute: 0)
+            endTime: LocalTime(hour: 17, minute: 0),
+            category: category
         )
         let response = TemplateResponseDTO(
             id: remoteTemplateID,
@@ -33,7 +35,7 @@ final class DefaultTemplateRepositoryTests: XCTestCase {
                     startTime: "09:00:00",
                     endTime: "17:00:00",
                     color: draftZone.color.hex,
-                    category: CategoryResponseDTO(id: UUID(), name: "Work"),
+                    category: CategoryResponseDTO(id: category.id, name: category.name),
                     templateId: remoteTemplateID,
                     templateOverrideId: nil
                 )
