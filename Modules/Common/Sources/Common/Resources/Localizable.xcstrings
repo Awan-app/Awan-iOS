@@ -2612,6 +2612,23 @@
         }
       }
     },
+    "goals.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الأهداف المحفوظة في خطتك"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Goals saved to your plan"
+          }
+        }
+      }
+    },
     "goals.empty_title": {
       "extractionState": "manual",
       "localizations": {

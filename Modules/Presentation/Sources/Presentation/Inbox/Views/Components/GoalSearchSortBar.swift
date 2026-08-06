@@ -71,7 +71,7 @@ struct GoalSearchSortBar: View {
                     }
                 }
             } label: {
-                Image(systemName: "arrow.up.arrow.down")
+                Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(AppColors.accentBlue)
                     .frame(width: 46, height: 46)

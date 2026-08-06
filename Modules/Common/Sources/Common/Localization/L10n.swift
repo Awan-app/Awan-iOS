@@ -1120,6 +1120,7 @@ public enum L10n {
     }
 
     public enum Goals {
+        public static var subtitle: String { text("goals.subtitle") }
         public static var emptyTitle: String { text("goals.empty_title") }
         public static var emptySubtitle: String { text("goals.empty_subtitle") }
         public static var searchPlaceholder: String { text("goals.search_placeholder") }

@@ -4,10 +4,12 @@
 //
 
 import Common
+import Domain
 import SwiftUI
 
 public struct InboxView: View {
     @State private var viewModel: InboxViewModel
+    @State private var selectedGoalForDetails: Goal? = nil
 
     @Environment(AppCoordinator.self) private var coordinator: AppCoordinator?
 
@@ -48,6 +50,14 @@ public struct InboxView: View {
             }
         } message: {
             Text(state.failureMessage ?? L10n.Inbox.loadFailed)
+        }
+        .sheet(item: $selectedGoalForDetails) { goal in
+            GoalDetailSheet(
+                goal: goal,
+                onDismiss: {
+                    selectedGoalForDetails = nil
+                }
+            )
         }
     }
 
@@ -113,8 +123,8 @@ public struct InboxView: View {
                         onRefresh: {
                             viewModel.send(.goalsRefresh)
                         },
-                        onGoalSelected: { _ in
-                            // TODO: Present Goal details
+                        onGoalSelected: { goal in
+                            selectedGoalForDetails = goal
                         }
                     )
                 }
