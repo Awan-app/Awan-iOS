@@ -4,6 +4,7 @@ import Domain
 import Foundation
 import Observation
 import PhotosUI
+import Combine
 
 @Observable
 @MainActor
@@ -17,6 +18,8 @@ final class CreateTaskViewModel {
     @ObservationIgnored let speechTranscriber: any SpeechTranscribing
     @ObservationIgnored let timeZone: TimeZone
     @ObservationIgnored private var didLoadZones = false
+    @ObservationIgnored private var categoryCancellable: AnyCancellable?
+    @ObservationIgnored private var didResolveInitialCategory = false
     @ObservationIgnored var wantsToRecord = false
     @ObservationIgnored var pendingTranscription = ""
 
@@ -39,6 +42,7 @@ final class CreateTaskViewModel {
     }
 
     func loadCreationData() async {
+        loadCategories()
         guard !didLoadZones else { return }
         didLoadZones = true
         state.isLoadingZones = true
@@ -70,7 +74,47 @@ final class CreateTaskViewModel {
         }
     }
 
+    func retryCategories() {
+        loadCategories()
+    }
+
+    private func loadCategories() {
+        categoryCancellable?.cancel()
+        state.categoryErrorMessage = nil
+        categoryCancellable = useCases.fetchCategories.observe()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    guard case .failure(let error) = completion else { return }
+                    self?.state.categoryErrorMessage = error.localizedDescription
+                },
+                receiveValue: { [weak self] categories in
+                    self?.applyCategories(categories)
+                }
+            )
+    }
+
+    private func applyCategories(_ categories: [TaskCategory]) {
+        state.categories = categories
+        if let selectedID = state.selectedCategoryID,
+           categories.contains(where: { $0.id == selectedID }) {
+            didResolveInitialCategory = true
+            return
+        }
+        if !didResolveInitialCategory, let first = categories.first {
+            state.selectedCategoryID = first.id
+            didResolveInitialCategory = true
+        } else if state.selectedCategoryID != nil {
+            state.selectedCategoryID = categories.first?.id
+        }
+    }
+
     func submitCurrentTask() async {
+        guard !state.categories.isEmpty else {
+            state.categoryErrorMessage = state.categoryErrorMessage ?? L10n.Common.pleaseTryAgain
+            state.errorMessage = state.categoryErrorMessage
+            return
+        }
         let title = state.quickText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !title.isEmpty else { return }
 
@@ -100,6 +144,10 @@ final class CreateTaskViewModel {
         mandatory: Bool,
         startsAt: Date?
     ) async {
+        guard !state.categories.isEmpty else {
+            state.errorMessage = state.categoryErrorMessage ?? L10n.Common.pleaseTryAgain
+            return
+        }
         guard !state.isSubmitting else { return }
         state.isSubmitting = true
         state.errorMessage = nil

@@ -13,6 +13,8 @@ struct ProposedTaskCategoryButton: View {
     let categories: [TaskCategory]
     let zones: [Zone]
     let selectedCategoryID: UUID?
+    let errorMessage: String?
+    let onRetry: () -> Void
     let onCategoryChanged: (UUID?) -> Void
 
     @State private var isCategoryPickerPresented = false
@@ -52,6 +54,8 @@ struct ProposedTaskCategoryButton: View {
                 categories: categories,
                 zones: zones,
                 selectedCategoryID: selectedCategoryID,
+                errorMessage: errorMessage,
+                onRetry: onRetry,
                 onSelect: { categoryID in
                     onCategoryChanged(categoryID)
                     isCategoryPickerPresented = false
@@ -81,13 +85,7 @@ struct ProposedTaskCategoryButton: View {
     }
 
     private func zoneColors(for categoryID: UUID) -> [ZoneColor] {
-        var seen = Set<ZoneColor>()
-        return zones.compactMap { zone in
-            guard zone.category?.id == categoryID,
-                  seen.insert(zone.color).inserted
-            else { return nil }
-            return zone.color
-        }
+        zones.first { $0.category?.id == categoryID }.map { [$0.color] } ?? []
     }
 }
 
@@ -97,6 +95,8 @@ struct ProposedCategoryPickerPopover: View {
     let categories: [TaskCategory]
     let zones: [Zone]
     let selectedCategoryID: UUID?
+    let errorMessage: String?
+    let onRetry: () -> Void
     let onSelect: (UUID?) -> Void
 
     var body: some View {
@@ -120,6 +120,16 @@ struct ProposedCategoryPickerPopover: View {
                 ) {
                     onSelect(category.id)
                 }
+            }
+
+            if let errorMessage {
+                Divider()
+                Text(errorMessage)
+                    .font(AppFonts.caption2Bold)
+                    .foregroundStyle(AppColors.warning)
+                Button(L10n.Templates.retry, action: onRetry)
+                    .font(AppFonts.subheadlineHeavy)
+                    .foregroundStyle(AppColors.accentBlue)
             }
         }
         .padding(10)
@@ -168,13 +178,7 @@ struct ProposedCategoryPickerPopover: View {
     }
 
     private func zoneColors(for categoryID: UUID) -> [ZoneColor] {
-        var seen = Set<ZoneColor>()
-        return zones.compactMap { zone in
-            guard zone.category?.id == categoryID,
-                  seen.insert(zone.color).inserted
-            else { return nil }
-            return zone.color
-        }
+        zones.first { $0.category?.id == categoryID }.map { [$0.color] } ?? []
     }
 }
 

@@ -10,6 +10,8 @@ struct ImageToTasksResultSheet: View {
     let response: TaskProposal
     let categories: [TaskCategory]
     let zones: [Zone]
+    let categoryErrorMessage: String?
+    let onRetryCategories: () -> Void
     let onConfirm: ([ProposedTask]) -> Void
     let onAddToInbox: ([ProposedTask]) -> Void
     let defaultSessionStart: Date
@@ -23,6 +25,8 @@ struct ImageToTasksResultSheet: View {
         response: TaskProposal,
         categories: [TaskCategory],
         zones: [Zone],
+        categoryErrorMessage: String?,
+        onRetryCategories: @escaping () -> Void,
         onConfirm: @escaping ([ProposedTask]) -> Void,
         onAddToInbox: @escaping ([ProposedTask]) -> Void,
         defaultSessionStart: Date,
@@ -31,6 +35,8 @@ struct ImageToTasksResultSheet: View {
         self.response = response
         self.categories = categories
         self.zones = zones
+        self.categoryErrorMessage = categoryErrorMessage
+        self.onRetryCategories = onRetryCategories
         self.onConfirm = onConfirm
         self.onAddToInbox = onAddToInbox
         self.defaultSessionStart = defaultSessionStart
@@ -91,6 +97,8 @@ struct ImageToTasksResultSheet: View {
                                 task: task,
                                 categories: categories,
                                 zones: zones,
+                                categoryErrorMessage: categoryErrorMessage,
+                                onRetryCategories: onRetryCategories,
                                 isSelected: selectedTaskIDs.contains(task.id),
                                 onToggleSelect: {
                                     if selectedTaskIDs.contains(task.id) {
@@ -146,7 +154,7 @@ struct ImageToTasksResultSheet: View {
                             onAddToInbox(selectedTasks)
                         }
                     )
-                    .disabled(selectedTasks.isEmpty)
+                    .disabled(selectedTasks.isEmpty || categories.isEmpty)
 
                     AppButton(
                         title: L10n.Home.scheduleSelectedCount(selectedTasks.count),
@@ -160,7 +168,7 @@ struct ImageToTasksResultSheet: View {
                             onConfirm(selectedTasks)
                         }
                     )
-                    .disabled(!canScheduleSelectedTasks)
+                    .disabled(!canScheduleSelectedTasks || categories.isEmpty)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)

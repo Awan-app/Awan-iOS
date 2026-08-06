@@ -19,6 +19,10 @@ extension CreateTaskViewModel {
             }
         }
     func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
+            guard !state.categories.isEmpty else {
+                state.errorMessage = state.categoryErrorMessage ?? L10n.Common.pleaseTryAgain
+                return
+            }
             guard !state.isSubmitting else { return }
             state.isSubmitting = true
             state.errorMessage = nil
@@ -217,6 +221,10 @@ extension CreateTaskViewModel {
         _ tasks: [ProposedTask],
         destination: ProposedTaskDestination
     ) async {
+        guard !state.categories.isEmpty else {
+            state.errorMessage = state.categoryErrorMessage ?? L10n.Common.pleaseTryAgain
+            return
+        }
         guard !state.isSubmitting, !tasks.isEmpty else { return }
         state.isSubmitting = true
         state.errorMessage = nil

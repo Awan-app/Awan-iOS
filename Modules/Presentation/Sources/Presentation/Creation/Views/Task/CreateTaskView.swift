@@ -31,6 +31,8 @@ struct CreateTaskView: View {
                     response: response,
                     categories: viewModel.state.categories,
                     zones: viewModel.state.zones,
+                    categoryErrorMessage: viewModel.state.categoryErrorMessage,
+                    onRetryCategories: viewModel.retryCategories,
                     onConfirm: { selectedTasks in
                         Task {
                             await viewModel.confirmAndAcceptProposedTasks(selectedTasks)
@@ -89,6 +91,8 @@ struct CreateTaskView: View {
                     ManualScheduleControls(
                         categories: viewModel.state.categories,
                         zones: viewModel.state.zones,
+                        categoryErrorMessage: viewModel.state.categoryErrorMessage,
+                        onRetryCategories: viewModel.retryCategories,
                         isSchedulingEnabled: bindableViewModel.state.isManualSchedulingEnabled,
                         startsAt: bindableViewModel.state.startsAt,
                         durationMinutes: bindableViewModel.state.durationMinutes,

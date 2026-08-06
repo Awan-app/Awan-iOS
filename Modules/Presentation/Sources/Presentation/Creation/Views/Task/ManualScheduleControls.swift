@@ -5,6 +5,8 @@ import SwiftUI
 struct ManualScheduleControls: View {
     let categories: [TaskCategory]
     let zones: [Zone]
+    let categoryErrorMessage: String?
+    let onRetryCategories: () -> Void
 
     @Binding var isSchedulingEnabled: Bool
     @Binding var startsAt: Date
@@ -85,12 +87,11 @@ struct ManualScheduleControls: View {
                 }
             }
 
-            if !categories.isEmpty {
-                Divider()
+            Divider()
                     .overlay(AppColors.accentBlue.opacity(0.14))
                     .padding(.leading, 46)
 
-                controlRow(
+            controlRow(
                     icon: "square.grid.2x2.fill",
                     title: L10n.Schedule.category
                 ) {
@@ -114,14 +115,15 @@ struct ManualScheduleControls: View {
                     .popover(isPresented: $isCategoryPickerPresented, arrowEdge: .bottom) {
                         CategoryPickerPopover(
                             options: categoryOptions,
-                            selectedCategoryID: selectedCategoryID
+                            selectedCategoryID: selectedCategoryID,
+                            errorMessage: categoryErrorMessage,
+                            onRetry: onRetryCategories
                         ) { categoryID in
                             selectedCategoryID = categoryID
                             isCategoryPickerPresented = false
                         }
                         .presentationCompactAdaptation(.popover)
                     }
-                }
             }
         }
         .background {
@@ -227,15 +229,7 @@ struct ManualScheduleControls: View {
     }
 
     private func zoneColors(for categoryID: UUID) -> [ZoneColor] {
-        var seen = Set<ZoneColor>()
-        return zones.compactMap { zone in
-            guard zone.category?.id == categoryID,
-                  seen.insert(zone.color).inserted
-            else {
-                return nil
-            }
-            return zone.color
-        }
+        zones.first { $0.category?.id == categoryID }.map { [$0.color] } ?? []
     }
 }
 
@@ -249,6 +243,8 @@ private struct ManualCategoryOption: Identifiable {
 private struct CategoryPickerPopover: View {
     let options: [ManualCategoryOption]
     let selectedCategoryID: UUID?
+    let errorMessage: String?
+    let onRetry: () -> Void
     let onSelect: (UUID?) -> Void
 
     var body: some View {
@@ -272,6 +268,16 @@ private struct CategoryPickerPopover: View {
                 ) {
                     onSelect(option.id)
                 }
+            }
+
+            if let errorMessage {
+                Divider()
+                Text(errorMessage)
+                    .font(AppFonts.caption2Bold)
+                    .foregroundStyle(AppColors.warning)
+                Button(L10n.Templates.retry, action: onRetry)
+                    .font(AppFonts.subheadlineHeavy)
+                    .foregroundStyle(AppColors.accentBlue)
             }
         }
         .padding(10)
@@ -344,6 +350,8 @@ private struct ZoneColorSwatches: View {
     ManualScheduleControls(
         categories: [],
         zones: [],
+        categoryErrorMessage: nil,
+        onRetryCategories: {},
         isSchedulingEnabled: .constant(false),
         startsAt: .constant(Date()),
         durationMinutes: .constant(60),
