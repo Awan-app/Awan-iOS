@@ -91,6 +91,7 @@ public final class OnboardingViewModel: ZoneManaging {
 
     public var suggestedZones: [SuggestedZone]
     public var isAddZoneSheetPresented: Bool = false
+    public private(set) var shouldCreateEmptyTemplate = false
     public private(set) var categories: [TaskCategory] = []
     public private(set) var categoryErrorMessage: String?
 
@@ -227,6 +228,14 @@ public final class OnboardingViewModel: ZoneManaging {
         loadCategories()
     }
 
+    public func setZoneSetupForLater() {
+        shouldCreateEmptyTemplate = true
+    }
+
+    public func useSuggestedZoneSetup() {
+        shouldCreateEmptyTemplate = false
+    }
+
     private func applyCategories(_ categories: [TaskCategory]) {
         self.categories = categories
         let general = categories.first {
@@ -307,7 +316,7 @@ public final class OnboardingViewModel: ZoneManaging {
 
     public func completeOnboarding() async {
         guard !isCompleting else { return }
-        guard areZonesCategorized else {
+        guard shouldCreateEmptyTemplate || areZonesCategorized else {
             completionErrorMessage = L10n.Schedule.chooseCategory
             return
         }
@@ -320,7 +329,9 @@ public final class OnboardingViewModel: ZoneManaging {
             let request = try makeDraft().makeRequest()
             _ = try await completeOnboardingUseCase.execute(request)
 
-            let zoneDrafts = suggestedZones.map(\.asDraft)
+            let zoneDrafts = shouldCreateEmptyTemplate
+                ? []
+                : suggestedZones.map(\.asDraft)
             try await createOnboardingTemplateUseCase.execute(zoneDrafts: zoneDrafts)
 
             onComplete?()
@@ -363,6 +374,7 @@ public final class OnboardingViewModel: ZoneManaging {
     /// Regenerates suggested zones scaled to fit between `wakeupTime` and `sleepTime`.
     /// Called when the user arrives at the Suggested Zones step so they never start out-of-bounds.
     public func resetSuggestedZones() {
+        shouldCreateEmptyTemplate = false
         suggestedZones = makeZonesForActiveDay()
     }
 

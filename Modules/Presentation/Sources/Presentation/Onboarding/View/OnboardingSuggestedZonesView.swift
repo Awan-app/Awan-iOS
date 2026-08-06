@@ -12,6 +12,7 @@ import Domain
 struct OnboardingSuggestedZonesView: View {
     @Bindable var viewModel: OnboardingViewModel
     let onContinue: () -> Void
+    let onLater: () -> Void
 
     @State private var draggedZone: SuggestedZone?
     @State private var dragOffset: CGSize = .zero
@@ -190,7 +191,8 @@ struct OnboardingSuggestedZonesView: View {
                 shadowColor: .clear,
                 useGradient: false,
                 onTap: {
-                    onContinue()
+                    viewModel.setZoneSetupForLater()
+                    onLater()
                 }
             )
 
@@ -200,15 +202,19 @@ struct OnboardingSuggestedZonesView: View {
                 color: AppColors.accentBlue,
                 foregroundColor: AppColors.onAccent,
                 onTap: {
-                    guard !viewModel.suggestedZones.isEmpty else { return }
+                    guard !viewModel.suggestedZones.isEmpty,
+                          viewModel.areZonesCategorized else { return }
+                    viewModel.useSuggestedZoneSetup()
                     onContinue()
                 }
             )
-            .disabled(viewModel.suggestedZones.isEmpty)
-            .opacity(viewModel.suggestedZones.isEmpty ? 0.5 : 1.0)
+            .disabled(viewModel.suggestedZones.isEmpty || !viewModel.areZonesCategorized)
+            .opacity(
+                viewModel.suggestedZones.isEmpty || !viewModel.areZonesCategorized
+                    ? 0.5
+                    : 1.0
+            )
         }
-        .disabled(!viewModel.areZonesCategorized)
-        .opacity(viewModel.areZonesCategorized ? 1 : 0.55)
     }
 }
 
@@ -221,6 +227,7 @@ struct OnboardingSuggestedZonesView: View {
             manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl(),
             fetchCategoriesUseCase: MockFetchCategoriesUseCase()
         ),
-        onContinue: {}
+        onContinue: {},
+        onLater: {}
     )
 }
