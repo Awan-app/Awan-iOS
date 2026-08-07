@@ -10,7 +10,6 @@ import Foundation
 public enum MainTab: Hashable, Sendable {
     case home
     case tasks
-    case rewards
     case store
     case you
     case add

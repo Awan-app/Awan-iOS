@@ -6,15 +6,18 @@ import XCTest
 // MARK: - FetchInboxTasksUseCaseTests
 
 final class FetchInboxTasksUseCaseTests: XCTestCase {
+    private let inboxGoalID = UUID()
 
-    // MARK: - Inbox filtering (goalID == nil)
+    // MARK: - Backend-authoritative Inbox membership
 
-    func testReturnsOnlyInboxTasks_excludesGoalTasks() async throws {
-        let goalID = UUID()
-        let inboxTask = try makeTask(goalID: nil)
-        let goalTask = try makeTask(goalID: goalID)
+    func testReturnsRepositoryInboxTasksWithNonNilGoalID() async throws {
+        let inboxTask = try makeTask(goalID: inboxGoalID)
+        let regularGoalTask = try makeTask(goalID: UUID())
 
-        let taskRepo = InboxTaskRepositoryStub(tasks: [inboxTask, goalTask])
+        let taskRepo = InboxTaskRepositoryStub(
+            allTasks: [inboxTask, regularGoalTask],
+            inboxTasks: [inboxTask]
+        )
         let sessionRepo = InboxSessionRepositoryStub(sessions: [])
         let useCase = DefaultFetchInboxTasksUseCase(taskRepository: taskRepo, sessionRepository: sessionRepo)
 
@@ -22,14 +25,16 @@ final class FetchInboxTasksUseCaseTests: XCTestCase {
 
         XCTAssertEqual(result.count, 1)
         XCTAssertEqual(result.first?.id, inboxTask.id)
+        XCTAssertEqual(result.first?.task.goalID, inboxGoalID)
     }
 
-    func testReturnsEmptyWhenAllTasksHaveGoal() async throws {
-        let goalID = UUID()
-        let goalTask1 = try makeTask(goalID: goalID)
-        let goalTask2 = try makeTask(goalID: goalID)
+    func testReturnsEmptyWhenRepositoryInboxIsEmpty() async throws {
+        let regularGoalTask = try makeTask(goalID: UUID())
 
-        let taskRepo = InboxTaskRepositoryStub(tasks: [goalTask1, goalTask2])
+        let taskRepo = InboxTaskRepositoryStub(
+            allTasks: [regularGoalTask],
+            inboxTasks: []
+        )
         let sessionRepo = InboxSessionRepositoryStub(sessions: [])
         let useCase = DefaultFetchInboxTasksUseCase(taskRepository: taskRepo, sessionRepository: sessionRepo)
 
@@ -40,13 +45,13 @@ final class FetchInboxTasksUseCaseTests: XCTestCase {
     // MARK: - Session grouping
 
     func testGroupsSessionsByTaskID() async throws {
-        let task1 = try makeTask(goalID: nil)
-        let task2 = try makeTask(goalID: nil)
+        let task1 = try makeTask(goalID: inboxGoalID)
+        let task2 = try makeTask(goalID: inboxGoalID)
         let session1a = makeSession(taskID: task1.id)
         let session1b = makeSession(taskID: task1.id)
         let session2a = makeSession(taskID: task2.id)
 
-        let taskRepo = InboxTaskRepositoryStub(tasks: [task1, task2])
+        let taskRepo = InboxTaskRepositoryStub(inboxTasks: [task1, task2])
         let sessionRepo = InboxSessionRepositoryStub(sessions: [session1a, session1b, session2a])
         let useCase = DefaultFetchInboxTasksUseCase(taskRepository: taskRepo, sessionRepository: sessionRepo)
 
@@ -60,9 +65,9 @@ final class FetchInboxTasksUseCaseTests: XCTestCase {
     }
 
     func testTaskWithNoSessions_hasDraftedStatus() async throws {
-        let task = try makeTask(goalID: nil)
+        let task = try makeTask(goalID: inboxGoalID)
 
-        let taskRepo = InboxTaskRepositoryStub(tasks: [task])
+        let taskRepo = InboxTaskRepositoryStub(inboxTasks: [task])
         let sessionRepo = InboxSessionRepositoryStub(sessions: [])
         let useCase = DefaultFetchInboxTasksUseCase(taskRepository: taskRepo, sessionRepository: sessionRepo)
 
@@ -72,13 +77,13 @@ final class FetchInboxTasksUseCaseTests: XCTestCase {
     }
 
     func testTaskWithAllCancelledSessions_hasCancelledStatus() async throws {
-        let task = try makeTask(goalID: nil)
+        let task = try makeTask(goalID: inboxGoalID)
         let sessions = [
             makeSession(taskID: task.id, status: .cancelled),
             makeSession(taskID: task.id, status: .cancelled)
         ]
 
-        let taskRepo = InboxTaskRepositoryStub(tasks: [task])
+        let taskRepo = InboxTaskRepositoryStub(inboxTasks: [task])
         let sessionRepo = InboxSessionRepositoryStub(sessions: sessions)
         let useCase = DefaultFetchInboxTasksUseCase(taskRepository: taskRepo, sessionRepository: sessionRepo)
 
@@ -87,13 +92,13 @@ final class FetchInboxTasksUseCaseTests: XCTestCase {
     }
 
     func testTaskWithAllCompletedSessions_hasCompletedStatus() async throws {
-        let task = try makeTask(goalID: nil)
+        let task = try makeTask(goalID: inboxGoalID)
         let sessions = [
             makeSession(taskID: task.id, status: .completed),
             makeSession(taskID: task.id, status: .completed)
         ]
 
-        let taskRepo = InboxTaskRepositoryStub(tasks: [task])
+        let taskRepo = InboxTaskRepositoryStub(inboxTasks: [task])
         let sessionRepo = InboxSessionRepositoryStub(sessions: sessions)
         let useCase = DefaultFetchInboxTasksUseCase(taskRepository: taskRepo, sessionRepository: sessionRepo)
 
@@ -102,13 +107,13 @@ final class FetchInboxTasksUseCaseTests: XCTestCase {
     }
 
     func testTaskWithMixedSessions_hasActiveStatus() async throws {
-        let task = try makeTask(goalID: nil)
+        let task = try makeTask(goalID: inboxGoalID)
         let sessions = [
             makeSession(taskID: task.id, status: .planned),
             makeSession(taskID: task.id, status: .completed)
         ]
 
-        let taskRepo = InboxTaskRepositoryStub(tasks: [task])
+        let taskRepo = InboxTaskRepositoryStub(inboxTasks: [task])
         let sessionRepo = InboxSessionRepositoryStub(sessions: sessions)
         let useCase = DefaultFetchInboxTasksUseCase(taskRepository: taskRepo, sessionRepository: sessionRepo)
 
@@ -117,11 +122,11 @@ final class FetchInboxTasksUseCaseTests: XCTestCase {
     }
 
     func testSessionsForOtherTasksAreNotGroupedToInboxTask() async throws {
-        let inboxTask = try makeTask(goalID: nil)
-        let otherTaskID = UUID() // Not in the inbox (imagine it's a goal task that already got filtered out)
+        let inboxTask = try makeTask(goalID: inboxGoalID)
+        let otherTaskID = UUID()
         let sessionForOther = makeSession(taskID: otherTaskID, status: .planned)
 
-        let taskRepo = InboxTaskRepositoryStub(tasks: [inboxTask])
+        let taskRepo = InboxTaskRepositoryStub(inboxTasks: [inboxTask])
         let sessionRepo = InboxSessionRepositoryStub(sessions: [sessionForOther])
         let useCase = DefaultFetchInboxTasksUseCase(taskRepository: taskRepo, sessionRepository: sessionRepo)
 
@@ -157,12 +162,22 @@ final class FetchInboxTasksUseCaseTests: XCTestCase {
 // MARK: - Stubs
 
 private actor InboxTaskRepositoryStub: TaskRepository {
-    private let tasks: [AwanTask]
-    init(tasks: [AwanTask]) { self.tasks = tasks }
+    private let allTasks: [AwanTask]
+    private let inboxTasks: [AwanTask]
 
-    func fetchTasks() -> [AwanTask] { tasks }
+    init(allTasks: [AwanTask]? = nil, inboxTasks: [AwanTask]) {
+        self.allTasks = allTasks ?? inboxTasks
+        self.inboxTasks = inboxTasks
+    }
+
+    func fetchTasks() -> [AwanTask] { allTasks }
+    func fetchInboxTasks() -> [AwanTask] { inboxTasks }
 
     nonisolated func observeTasks() -> AnyPublisher<[AwanTask], Error> {
+        Empty(completeImmediately: true).eraseToAnyPublisher()
+    }
+
+    nonisolated func observeInboxTasks() -> AnyPublisher<[AwanTask], Error> {
         Empty(completeImmediately: true).eraseToAnyPublisher()
     }
 

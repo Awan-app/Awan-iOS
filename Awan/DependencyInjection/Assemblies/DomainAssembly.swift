@@ -60,6 +60,16 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(ZoneRepository.self, from: resolver)
             )
         }
+        container.register(FetchCategoriesUseCase.self) { resolver in
+            DefaultFetchCategoriesUseCase(
+                repository: Self.resolve(CategoryRepository.self, from: resolver)
+            )
+        }
+        container.register(CreateCategoryUseCase.self) { resolver in
+            DefaultCreateCategoryUseCase(
+                repository: Self.resolve(CategoryRepository.self, from: resolver)
+            )
+        }
         container.register(FetchTasksUseCase.self) { resolver in
             DefaultFetchTasksUseCase(
                 repository: Self.resolve(TaskRepository.self, from: resolver)

@@ -10,6 +10,7 @@ import Observation
 import SwiftUI
 import Domain
 import Common
+import Combine
 
 @Observable
 @MainActor
@@ -54,6 +55,16 @@ public final class OnboardingViewModel: ZoneManaging {
 
     public var suggestedZones: [SuggestedZone]
     public var isAddZoneSheetPresented: Bool = false
+    public private(set) var shouldCreateEmptyTemplate = false
+    public private(set) var categories: [TaskCategory] = []
+    public private(set) var categoryErrorMessage: String?
+
+    public var areZonesCategorized: Bool {
+        !categories.isEmpty && suggestedZones.allSatisfy { zone in
+            guard let categoryID = zone.category?.id else { return false }
+            return categories.contains { $0.id == categoryID }
+        }
+    }
 
     // MARK: - Task Length
 
@@ -83,15 +94,19 @@ public final class OnboardingViewModel: ZoneManaging {
     private let completeOnboardingUseCase: any CompleteOnboardingUseCase
     private let createOnboardingTemplateUseCase: any CreateOnboardingTemplateUseCase
     private let manageZoneScheduleUseCase: any ManageZoneScheduleUseCase
+    private let fetchCategoriesUseCase: any FetchCategoriesUseCase
+    @ObservationIgnored private var categoryCancellable: AnyCancellable?
 
     public init(
         completeOnboardingUseCase: any CompleteOnboardingUseCase,
         createOnboardingTemplateUseCase: any CreateOnboardingTemplateUseCase,
-        manageZoneScheduleUseCase: any ManageZoneScheduleUseCase
+        manageZoneScheduleUseCase: any ManageZoneScheduleUseCase,
+        fetchCategoriesUseCase: any FetchCategoriesUseCase
     ) {
         self.completeOnboardingUseCase = completeOnboardingUseCase
         self.createOnboardingTemplateUseCase = createOnboardingTemplateUseCase
         self.manageZoneScheduleUseCase = manageZoneScheduleUseCase
+        self.fetchCategoriesUseCase = fetchCategoriesUseCase
 
         let calendar = Calendar.current
         self.wakeupTime = calendar.date(
@@ -143,7 +158,8 @@ public final class OnboardingViewModel: ZoneManaging {
         colorGreen: Double,
         colorBlue: Double,
         startTime: String,
-        endTime: String
+        endTime: String,
+        category: TaskCategory
     ) {
         guard let index = suggestedZones.firstIndex(where: { $0.id == id }) else { return }
         suggestedZones[index].name = name
@@ -152,7 +168,52 @@ public final class OnboardingViewModel: ZoneManaging {
         suggestedZones[index].colorBlue = colorBlue
         suggestedZones[index].startTime = startTime
         suggestedZones[index].endTime = endTime
+        suggestedZones[index].category = category
         sortZonesChronologically()
+    }
+
+    public func loadCategories() {
+        categoryCancellable?.cancel()
+        categoryErrorMessage = nil
+        categoryCancellable = fetchCategoriesUseCase.observe()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    guard case .failure(let error) = completion else { return }
+                    self?.categoryErrorMessage = error.localizedDescription
+                },
+                receiveValue: { [weak self] categories in
+                    self?.applyCategories(categories)
+                }
+            )
+    }
+
+    public func retryCategories() {
+        loadCategories()
+    }
+
+    public func setZoneSetupForLater() {
+        shouldCreateEmptyTemplate = true
+    }
+
+    public func useSuggestedZoneSetup() {
+        shouldCreateEmptyTemplate = false
+    }
+
+    private func applyCategories(_ categories: [TaskCategory]) {
+        self.categories = categories
+        let general = categories.first {
+            $0.name.localizedCaseInsensitiveCompare("General") == .orderedSame
+        }
+        for index in suggestedZones.indices {
+            if let category = suggestedZones[index].category,
+               categories.contains(where: { $0.id == category.id }) {
+                continue
+            }
+            suggestedZones[index].category = categories.first {
+                $0.name.localizedCaseInsensitiveCompare(suggestedZones[index].name) == .orderedSame
+            } ?? general
+        }
     }
 
     private func sortZonesChronologically() {
@@ -219,6 +280,10 @@ public final class OnboardingViewModel: ZoneManaging {
 
     public func completeOnboarding() async {
         guard !isCompleting else { return }
+        guard shouldCreateEmptyTemplate || areZonesCategorized else {
+            completionErrorMessage = L10n.Schedule.chooseCategory
+            return
+        }
 
         isCompleting = true
         completionErrorMessage = nil
@@ -228,7 +293,9 @@ public final class OnboardingViewModel: ZoneManaging {
             let request = try makeDraft().makeRequest()
             _ = try await completeOnboardingUseCase.execute(request)
 
-            let zoneDrafts = suggestedZones.map(\.asDraft)
+            let zoneDrafts = shouldCreateEmptyTemplate
+                ? []
+                : suggestedZones.map(\.asDraft)
             try await createOnboardingTemplateUseCase.execute(zoneDrafts: zoneDrafts)
 
             onComplete?()
@@ -271,6 +338,7 @@ public final class OnboardingViewModel: ZoneManaging {
     /// Regenerates suggested zones scaled to fit between `wakeupTime` and `sleepTime`.
     /// Called when the user arrives at the Suggested Zones step so they never start out-of-bounds.
     public func resetSuggestedZones() {
+        shouldCreateEmptyTemplate = false
         suggestedZones = makeZonesForActiveDay()
     }
 

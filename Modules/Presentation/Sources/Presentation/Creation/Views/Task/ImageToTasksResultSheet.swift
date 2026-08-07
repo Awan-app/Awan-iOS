@@ -10,6 +10,8 @@ struct ImageToTasksResultSheet: View {
     let response: TaskProposal
     let categories: [TaskCategory]
     let zones: [Zone]
+    let categoryErrorMessage: String?
+    let onRetryCategories: () -> Void
     let onConfirm: ([ProposedTask]) -> Void
     let onAddToInbox: ([ProposedTask]) -> Void
     let defaultSessionStart: Date
@@ -23,6 +25,8 @@ struct ImageToTasksResultSheet: View {
         response: TaskProposal,
         categories: [TaskCategory],
         zones: [Zone],
+        categoryErrorMessage: String?,
+        onRetryCategories: @escaping () -> Void,
         onConfirm: @escaping ([ProposedTask]) -> Void,
         onAddToInbox: @escaping ([ProposedTask]) -> Void,
         defaultSessionStart: Date,
@@ -31,11 +35,17 @@ struct ImageToTasksResultSheet: View {
         self.response = response
         self.categories = categories
         self.zones = zones
+        self.categoryErrorMessage = categoryErrorMessage
+        self.onRetryCategories = onRetryCategories
         self.onConfirm = onConfirm
         self.onAddToInbox = onAddToInbox
         self.defaultSessionStart = defaultSessionStart
         self.onDismiss = onDismiss
-        _tasks = State(initialValue: response.tasks)
+        var normalizedTasks = response.tasks
+        for taskIndex in normalizedTasks.indices {
+            Self.updateSessionEnds(in: &normalizedTasks[taskIndex])
+        }
+        _tasks = State(initialValue: normalizedTasks)
         _selectedTaskIDs = State(initialValue: Set(response.tasks.map { $0.id }))
     }
 
@@ -91,6 +101,9 @@ struct ImageToTasksResultSheet: View {
                                 task: task,
                                 categories: categories,
                                 zones: zones,
+                                categoryErrorMessage: categoryErrorMessage,
+                                categoryPopoverArrowEdge: index == tasks.startIndex ? .top : .bottom,
+                                onRetryCategories: onRetryCategories,
                                 isSelected: selectedTaskIDs.contains(task.id),
                                 onToggleSelect: {
                                     if selectedTaskIDs.contains(task.id) {
@@ -101,6 +114,7 @@ struct ImageToTasksResultSheet: View {
                                 },
                                 onDurationChanged: { newDuration in
                                     tasks[index].draft.task.estimatedDuration = newDuration
+                                    Self.updateSessionEnds(in: &tasks[index])
                                 },
                                 onCategoryChanged: { categoryID in
                                     tasks[index].draft.task.categoryId = categoryID
@@ -109,7 +123,8 @@ struct ImageToTasksResultSheet: View {
                                     sessionEditor = ProposedSessionEditorContext(
                                         taskID: task.id,
                                         source: source,
-                                        session: session
+                                        session: session,
+                                        durationMinutes: task.draft.task.estimatedDuration
                                     )
                                 },
                                 onAddSession: {
@@ -117,9 +132,7 @@ struct ImageToTasksResultSheet: View {
                                         taskID: task.id,
                                         source: .fixed,
                                         start: defaultSessionStart,
-                                        end: defaultSessionStart.addingTimeInterval(
-                                            TimeInterval(max(1, task.draft.task.estimatedDuration) * 60)
-                                        )
+                                        durationMinutes: task.draft.task.estimatedDuration
                                     )
                                 }
                             )
@@ -146,7 +159,7 @@ struct ImageToTasksResultSheet: View {
                             onAddToInbox(selectedTasks)
                         }
                     )
-                    .disabled(selectedTasks.isEmpty)
+                    .disabled(selectedTasks.isEmpty || categories.isEmpty)
 
                     AppButton(
                         title: L10n.Home.scheduleSelectedCount(selectedTasks.count),
@@ -160,7 +173,7 @@ struct ImageToTasksResultSheet: View {
                             onConfirm(selectedTasks)
                         }
                     )
-                    .disabled(!canScheduleSelectedTasks)
+                    .disabled(!canScheduleSelectedTasks || categories.isEmpty)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
@@ -208,6 +221,19 @@ struct ImageToTasksResultSheet: View {
                 return
             }
             tasks[taskIndex].aiProposedSessions[sessionIndex] = session
+        }
+    }
+
+    private static func updateSessionEnds(in task: inout ProposedTask) {
+        let duration = TimeInterval(max(1, task.draft.task.estimatedDuration) * 60)
+
+        for index in task.draft.sessions.indices {
+            task.draft.sessions[index].end = task.draft.sessions[index].start
+                .addingTimeInterval(duration)
+        }
+        for index in task.aiProposedSessions.indices {
+            task.aiProposedSessions[index].end = task.aiProposedSessions[index].start
+                .addingTimeInterval(duration)
         }
     }
 }

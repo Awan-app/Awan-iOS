@@ -682,6 +682,40 @@
         }
       }
     },
+    "home.ai_task_option_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يكمل أوان تفاصيل المهمة مما تكتبه أو تقوله."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Awan completes the task details from what you type or say."
+          }
+        }
+      }
+    },
+    "home.ai_task_option_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إنشاء باستخدام الذكاء الاصطناعي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create with AI"
+          }
+        }
+      }
+    },
     "home.can_split": {
       "extractionState": "manual",
       "localizations": {
@@ -881,7 +915,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "DURATION"
+            "value": "Duration"
           }
         }
       }
@@ -1375,6 +1409,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rewards"
+          }
+        }
+      }
+    },
+    "home.store": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المتجر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Store"
           }
         }
       }
@@ -2234,6 +2285,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "You"
+          }
+        }
+      }
+    },
+    "inbox.accessibility_filters_applied": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم تطبيق عوامل التصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters applied"
+          }
+        }
+      }
+    },
+    "inbox.accessibility_hide_filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إخفاء عوامل التصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide filters"
+          }
+        }
+      }
+    },
+    "inbox.accessibility_no_filters_applied": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يتم تطبيق عوامل تصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No filters applied"
+          }
+        }
+      }
+    },
+    "inbox.accessibility_show_filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إظهار عوامل التصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show filters"
           }
         }
       }
@@ -4006,6 +4125,23 @@
         }
       }
     },
+    "onboarding.zone_category_required": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختر فئة لهذه المنطقة قبل الحفظ."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a category for this zone before saving."
+          }
+        }
+      }
+    },
     "onboarding.wake_sleep_same_time_error": {
       "extractionState": "manual",
       "localizations": {
@@ -4019,6 +4155,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wake-up and sleep times can't be the same. Choose different times to continue."
+          }
+        }
+      }
+    },
+    "onboarding.sleep_before_wake_error": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يجب أن يكون وقت النوم بعد وقت الاستيقاظ في اليوم نفسه. اختر وقت نوم لاحقًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep time must be later than wake-up time on the same day. Choose a later sleep time."
           }
         }
       }
@@ -5760,6 +5913,20 @@
             "value": "Edit profile"
           }
         }
+      }
+    },
+    "categories.create": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "إنشاء فئة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Create Category" } }
+      }
+    },
+    "categories.new_name": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "اسم الفئة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Category name" } }
       }
     },
     "profile.logout_confirmation_message": {

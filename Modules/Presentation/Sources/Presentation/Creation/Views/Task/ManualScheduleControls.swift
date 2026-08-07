@@ -5,6 +5,8 @@ import SwiftUI
 struct ManualScheduleControls: View {
     let categories: [TaskCategory]
     let zones: [Zone]
+    let categoryErrorMessage: String?
+    let onRetryCategories: () -> Void
 
     @Binding var isSchedulingEnabled: Bool
     @Binding var startsAt: Date
@@ -15,12 +17,64 @@ struct ManualScheduleControls: View {
     var body: some View {
         VStack(spacing: 0) {
             controlRow(
-                icon: "calendar.badge.plus",
-                title: L10n.Home.addSchedule
+                icon: "hourglass",
+                title: L10n.Home.estimatedDuration
             ) {
-                Toggle("", isOn: $isSchedulingEnabled)
-                .labelsHidden()
-                .tint(AppColors.accentBlue)
+                HStack(spacing: 10) {
+                    stepButton(icon: "minus") {
+                        durationMinutes = max(15, durationMinutes - 15)
+                    }
+
+                    Text(durationText)
+                        .font(AppFonts.bodyBold)
+                        .foregroundStyle(AppColors.brandDarkBlue)
+                        .monospacedDigit()
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
+
+                    stepButton(icon: "plus") {
+                        durationMinutes = min(480, durationMinutes + 15)
+                    }
+                }
+            }
+
+            Divider()
+                .overlay(AppColors.accentBlue.opacity(0.14))
+                .padding(.leading, 46)
+
+            controlRow(
+                icon: "square.grid.2x2.fill",
+                title: L10n.Schedule.category
+            ) {
+                Button {
+                    isCategoryPickerPresented = true
+                } label: {
+                    HStack(spacing: 7) {
+                        selectedCategoryIndicator
+
+                        Text(selectedCategoryName)
+                            .font(AppFonts.subheadlineHeavy)
+                            .foregroundStyle(AppColors.brandDarkBlue)
+                            .lineLimit(1)
+
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
+                }
+                .buttonStyle(.plain)
+                .popover(isPresented: $isCategoryPickerPresented, arrowEdge: .bottom) {
+                    CategoryPickerPopover(
+                        options: categoryOptions,
+                        selectedCategoryID: selectedCategoryID,
+                        errorMessage: categoryErrorMessage,
+                        onRetry: onRetryCategories
+                    ) { categoryID in
+                        selectedCategoryID = categoryID
+                        isCategoryPickerPresented = false
+                    }
+                    .presentationCompactAdaptation(.popover)
+                }
             }
 
             if isSchedulingEnabled {
@@ -64,64 +118,12 @@ struct ManualScheduleControls: View {
                 .padding(.leading, 46)
 
             controlRow(
-                icon: "hourglass",
-                title: L10n.Home.estimatedDuration
+                icon: "calendar.badge.plus",
+                title: L10n.Home.addSchedule
             ) {
-                HStack(spacing: 10) {
-                    stepButton(icon: "minus") {
-                        durationMinutes = max(15, durationMinutes - 15)
-                    }
-
-                    Text(durationText)
-                        .font(AppFonts.bodyBold)
-                        .foregroundStyle(AppColors.brandDarkBlue)
-                        .monospacedDigit()
-                        .lineLimit(1)
-                        .fixedSize(horizontal: true, vertical: false)
-
-                    stepButton(icon: "plus") {
-                        durationMinutes = min(480, durationMinutes + 15)
-                    }
-                }
-            }
-
-            if !categories.isEmpty {
-                Divider()
-                    .overlay(AppColors.accentBlue.opacity(0.14))
-                    .padding(.leading, 46)
-
-                controlRow(
-                    icon: "square.grid.2x2.fill",
-                    title: L10n.Schedule.category
-                ) {
-                    Button {
-                        isCategoryPickerPresented = true
-                    } label: {
-                        HStack(spacing: 7) {
-                            selectedCategoryIndicator
-
-                            Text(selectedCategoryName)
-                                .font(AppFonts.subheadlineHeavy)
-                                .foregroundStyle(AppColors.brandDarkBlue)
-                                .lineLimit(1)
-
-                            Image(systemName: "chevron.up.chevron.down")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(AppColors.textSecondary)
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    .popover(isPresented: $isCategoryPickerPresented, arrowEdge: .bottom) {
-                        CategoryPickerPopover(
-                            options: categoryOptions,
-                            selectedCategoryID: selectedCategoryID
-                        ) { categoryID in
-                            selectedCategoryID = categoryID
-                            isCategoryPickerPresented = false
-                        }
-                        .presentationCompactAdaptation(.popover)
-                    }
-                }
+                Toggle("", isOn: $isSchedulingEnabled)
+                    .labelsHidden()
+                    .tint(AppColors.accentBlue)
             }
         }
         .background {
@@ -227,15 +229,7 @@ struct ManualScheduleControls: View {
     }
 
     private func zoneColors(for categoryID: UUID) -> [ZoneColor] {
-        var seen = Set<ZoneColor>()
-        return zones.compactMap { zone in
-            guard zone.category?.id == categoryID,
-                  seen.insert(zone.color).inserted
-            else {
-                return nil
-            }
-            return zone.color
-        }
+        zones.first { $0.category?.id == categoryID }.map { [$0.color] } ?? []
     }
 }
 
@@ -249,6 +243,8 @@ private struct ManualCategoryOption: Identifiable {
 private struct CategoryPickerPopover: View {
     let options: [ManualCategoryOption]
     let selectedCategoryID: UUID?
+    let errorMessage: String?
+    let onRetry: () -> Void
     let onSelect: (UUID?) -> Void
 
     var body: some View {
@@ -272,6 +268,16 @@ private struct CategoryPickerPopover: View {
                 ) {
                     onSelect(option.id)
                 }
+            }
+
+            if let errorMessage {
+                Divider()
+                Text(errorMessage)
+                    .font(AppFonts.caption2Bold)
+                    .foregroundStyle(AppColors.warning)
+                Button(L10n.Templates.retry, action: onRetry)
+                    .font(AppFonts.subheadlineHeavy)
+                    .foregroundStyle(AppColors.accentBlue)
             }
         }
         .padding(10)
@@ -344,6 +350,8 @@ private struct ZoneColorSwatches: View {
     ManualScheduleControls(
         categories: [],
         zones: [],
+        categoryErrorMessage: nil,
+        onRetryCategories: {},
         isSchedulingEnabled: .constant(false),
         startsAt: .constant(Date()),
         durationMinutes: .constant(60),

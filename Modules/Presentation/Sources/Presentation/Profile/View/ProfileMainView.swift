@@ -216,6 +216,8 @@ struct ProfileMainView: View {
         dailyZonesViewModel: DailyZonesViewModel(
             useCases: DailyZonesUseCases(
                 fetchTemplates: MockFetchTemplatesUseCase(),
+                fetchCategories: MockFetchCategoriesUseCase(),
+                createCategory: MockCreateCategoryUseCase(),
                 fetchOverrides: MockFetchTemplateOverridesUseCase(),
                 createTemplate: MockCreateTemplateUseCase(),
                 updateTemplateZones: MockUpdateTemplateUseCase(),

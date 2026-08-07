@@ -25,6 +25,23 @@ public enum L10n {
         public static var edit: String { L10n.currentBundle.localizedString(forKey: "common.edit", value: nil, table: "Localizable") }
     }
 
+    public enum Categories {
+        public static var create: String {
+            L10n.currentBundle.localizedString(
+                forKey: "categories.create",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var newName: String {
+            L10n.currentBundle.localizedString(
+                forKey: "categories.new_name",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+    }
+
     public enum Onboarding {
         public static var welcomeTitle: String {
             L10n.currentBundle.localizedString(forKey: "onboarding.welcome_title", value: nil, table: "Localizable")
@@ -64,6 +81,9 @@ public enum L10n {
         }
         public static var wakeSleepSameTimeError: String {
             L10n.currentBundle.localizedString(forKey: "onboarding.wake_sleep_same_time_error", value: nil, table: "Localizable")
+        }
+        public static var sleepBeforeWakeError: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.sleep_before_wake_error", value: nil, table: "Localizable")
         }
         public static var shortActiveDayWarning: String {
             L10n.currentBundle.localizedString(forKey: "onboarding.short_active_day_warning", value: nil, table: "Localizable")
@@ -143,6 +163,7 @@ public enum L10n {
         public static var skipForNow: String { L10n.currentBundle.localizedString(forKey: "onboarding.skip_for_now", value: nil, table: "Localizable") }
         public static var zoneNameLabel: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_name_label", value: nil, table: "Localizable") }
         public static var zoneNamePlaceholder: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_name_placeholder", value: nil, table: "Localizable") }
+        public static var zoneCategoryRequired: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_category_required", value: nil, table: "Localizable") }
         public static func aboutMinutes(_ minutes: Int) -> String {
             String(format: L10n.currentBundle.localizedString(forKey: "onboarding.about_minutes", value: nil, table: "Localizable"), minutes)
         }
@@ -517,6 +538,14 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: "home.chip_auto_scheduled", value: nil, table: "Localizable")
         }
 
+        public static var aiTaskOptionTitle: String {
+            L10n.currentBundle.localizedString(forKey: "home.ai_task_option_title", value: nil, table: "Localizable")
+        }
+
+        public static var aiTaskOptionHint: String {
+            L10n.currentBundle.localizedString(forKey: "home.ai_task_option_hint", value: nil, table: "Localizable")
+        }
+
         public static var btnPlanItForMe: String {
             L10n.currentBundle.localizedString(forKey: "home.btn_plan_it_for_me", value: nil, table: "Localizable")
         }
@@ -807,6 +836,7 @@ public enum L10n {
         public static var today: String { L10n.currentBundle.localizedString(forKey: "home.today", value: nil, table: "Localizable") }
         public static var calendar: String { L10n.currentBundle.localizedString(forKey: "home.calendar", value: nil, table: "Localizable") }
         public static var rewards: String { L10n.currentBundle.localizedString(forKey: "home.rewards", value: nil, table: "Localizable") }
+        public static var store: String { L10n.currentBundle.localizedString(forKey: "home.store", value: nil, table: "Localizable") }
         public static var you: String { L10n.currentBundle.localizedString(forKey: "home.you", value: nil, table: "Localizable") }
     }
 
@@ -1091,6 +1121,10 @@ public enum L10n {
         public static var tabGoals: String { text("inbox.tab_goals") }
         public static var subtitle: String { text("inbox.subtitle") }
         public static var searchPlaceholder: String { text("inbox.search_placeholder") }
+        public static var hideFilters: String { text("inbox.accessibility_hide_filters") }
+        public static var showFilters: String { text("inbox.accessibility_show_filters") }
+        public static var filtersApplied: String { text("inbox.accessibility_filters_applied") }
+        public static var noFiltersApplied: String { text("inbox.accessibility_no_filters_applied") }
         public static var filterAll: String { text("inbox.filter_all") }
         public static var filterDrafted: String { text("inbox.filter_drafted") }
         public static var filterActive: String { text("inbox.filter_active") }
@@ -1139,4 +1173,3 @@ public enum L10n {
         }
     }
 }
-

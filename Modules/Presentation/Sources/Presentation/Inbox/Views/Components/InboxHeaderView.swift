@@ -25,8 +25,8 @@ struct InboxHeaderView: View {
             AppSegmentedPicker(
                 selection: $selectedTopTab,
                 items: [
-                    .init(value: .inbox, title: L10n.Inbox.tabInbox),
-                    .init(value: .goals, title: L10n.Inbox.tabGoals)
+                    .init(value: .inbox, title: L10n.Inbox.tabInbox, icon: "tray.fill"),
+                    .init(value: .goals, title: L10n.Inbox.tabGoals, icon: "target")
                 ]
             )
 

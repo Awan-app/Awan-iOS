@@ -22,6 +22,8 @@ enum DailyZonesErrorMessageMapper {
             L10n.Templates.zoneOverlap
         case TemplateManagementError.invalidZoneTimeRange:
             L10n.Templates.invalidZoneTimeRangeError
+        case TemplateManagementError.zoneCategoryRequired:
+            L10n.Schedule.chooseCategory
         case TemplateManagementError.templateNotFound,
              TemplateManagementError.overrideNotFound:
             L10n.Templates.scheduleNotFoundError

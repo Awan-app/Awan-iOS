@@ -80,7 +80,7 @@ public struct PresentationFactory {
 
     func makeGlobalCreationSheet(
         onDismiss: @escaping () -> Void,
-        onTaskSchedulingModeChanged: @escaping (Bool) -> Void,
+        onTaskLayoutModeChanged: @escaping (Bool, Bool) -> Void,
         onGoalFullScreenChanged: @escaping (Bool) -> Void
     ) -> some View {
         GlobalCreationSheet(
@@ -94,7 +94,7 @@ public struct PresentationFactory {
                 speechTranscriber: LiveSpeechTranscriber()
             ),
             onDismiss: onDismiss,
-            onTaskSchedulingModeChanged: onTaskSchedulingModeChanged,
+            onTaskLayoutModeChanged: onTaskLayoutModeChanged,
             onGoalFullScreenChanged: onGoalFullScreenChanged
         )
     }

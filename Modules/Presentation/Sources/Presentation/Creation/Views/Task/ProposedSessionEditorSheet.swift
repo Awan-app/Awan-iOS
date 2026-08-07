@@ -15,12 +15,13 @@ struct ProposedSessionEditorContext: Identifiable {
     let zoneID: UUID?
     let status: String
     let start: Date
-    let end: Date
+    let durationMinutes: Int
 
     init(
         taskID: UUID,
         source: ProposedSessionSource,
-        session: ProposedSession
+        session: ProposedSession,
+        durationMinutes: Int
     ) {
         self.taskID = taskID
         self.source = source
@@ -28,14 +29,14 @@ struct ProposedSessionEditorContext: Identifiable {
         zoneID = session.zoneId
         status = session.status
         start = session.start
-        end = session.end
+        self.durationMinutes = durationMinutes
     }
 
     init(
         taskID: UUID,
         source: ProposedSessionSource,
         start: Date,
-        end: Date
+        durationMinutes: Int
     ) {
         self.taskID = taskID
         self.source = source
@@ -43,7 +44,7 @@ struct ProposedSessionEditorContext: Identifiable {
         zoneID = nil
         status = "SCHEDULED"
         self.start = start
-        self.end = end
+        self.durationMinutes = durationMinutes
     }
 }
 
@@ -55,7 +56,6 @@ struct ProposedSessionEditorSheet: View {
     @Environment(\.calendar) private var calendar
     @State private var sessionDay: Date
     @State private var start: Date
-    @State private var end: Date
 
     init(
         context: ProposedSessionEditorContext,
@@ -67,20 +67,14 @@ struct ProposedSessionEditorSheet: View {
         self.onDismiss = onDismiss
         _sessionDay = State(initialValue: context.start)
         _start = State(initialValue: context.start)
-        _end = State(initialValue: context.end)
     }
 
     private var normalizedStart: Date? {
         date(on: sessionDay, withTimeFrom: start)
     }
 
-    private var normalizedEnd: Date? {
-        date(on: sessionDay, withTimeFrom: end)
-    }
-
     private var isValid: Bool {
-        guard let normalizedStart, let normalizedEnd else { return false }
-        return normalizedEnd > normalizedStart
+        normalizedStart != nil && context.durationMinutes > 0
     }
 
     var body: some View {
@@ -163,15 +157,6 @@ struct ProposedSessionEditorSheet: View {
                     title: L10n.Home.sessionStart,
                     selection: $start
                 )
-
-                Divider()
-                    .overlay(AppColors.accentBlue.opacity(0.14))
-                    .padding(.vertical, 12)
-
-                timeRow(
-                    title: L10n.Home.sessionEnd,
-                    selection: $end
-                )
             }
         }
     }
@@ -200,7 +185,11 @@ struct ProposedSessionEditorSheet: View {
     private func save() {
         guard isValid,
               let normalizedStart,
-              let normalizedEnd else {
+              let normalizedEnd = calendar.date(
+                  byAdding: .minute,
+                  value: context.durationMinutes,
+                  to: normalizedStart
+              ) else {
             return
         }
         onSave(

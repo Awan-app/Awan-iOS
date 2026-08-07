@@ -14,9 +14,6 @@ public final class MainCoordinator: Coordinating {
     public var selectedTab: MainTab = .home
     public var homePath = NavigationPath()
     public var tasksPath = NavigationPath()
-    public var calendarPath = NavigationPath()
-    //public var tasksPath = NavigationPath()
-    public var rewardsPath = NavigationPath()
     public var storePath = NavigationPath()
     public var youPath = NavigationPath()
     public var presentedSheet: MainRoute?
@@ -65,8 +62,6 @@ public final class MainCoordinator: Coordinating {
             mutation(&homePath)
         case .tasks:
             mutation(&tasksPath)
-        case .rewards:
-            mutation(&rewardsPath)
         case .store:
             mutation(&storePath)
         case .you:
@@ -76,4 +71,3 @@ public final class MainCoordinator: Coordinating {
         }
     }
 }
-

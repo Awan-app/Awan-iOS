@@ -10,6 +10,7 @@ public enum SchedulingPersistence {
             TemplateModel.self,
             TemplateOverrideModel.self,
             UserProfileModel.self,
+            CategoryModel.self,
         ])
     }
 }
