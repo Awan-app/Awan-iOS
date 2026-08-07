@@ -6,13 +6,16 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
     
     private let localDataSource: any LocalUserProfileDataSource
     private let remoteDataSource: any RemoteProfileDataSource
-
+    private let remoteGamificationDataSource: any RemoteGamificationDataSource
+    
     public init(
         localDataSource: any LocalUserProfileDataSource,
-        remoteDataSource: any RemoteProfileDataSource
+        remoteDataSource: any RemoteProfileDataSource,
+        remoteGamificationDataSource: any RemoteGamificationDataSource
     ) {
         self.localDataSource = localDataSource
         self.remoteDataSource = remoteDataSource
+        self.remoteGamificationDataSource = remoteGamificationDataSource
     }
 
     public func fetchCurrentUser() async throws -> UserProfile {
@@ -101,5 +104,15 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
         let response = try await remoteDataSource.updateProfilePartial(request)
         let profile = try HomeRemoteMapper.profile(response)
         try await localDataSource.replaceProfile(profile)
+    }
+    
+    public func refreshGamificationProgress() async throws {
+        let progress = try await remoteGamificationDataSource.getProgress()
+
+        try await localDataSource.updateGamification(
+            points: progress.points,
+            streak: progress.streak,
+            maxStreak: progress.maxStreak
+        )
     }
 }

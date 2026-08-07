@@ -277,4 +277,24 @@ enum HomeRemoteMapper {
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         return formatter
     }
+    static func completionReward(
+        _ dto: SessionCompletionRewardDTO
+    ) -> SessionCompletionReward {
+        SessionCompletionReward(
+            points: .init(
+                awarded: dto.points.awarded,
+                amount: dto.points.amount,
+                oldValue: dto.points.oldValue,
+                newValue: dto.points.newValue
+            ),
+            streak: .init(
+                updated: dto.streak.updated,
+                oldValue: dto.streak.oldValue,
+                newValue: dto.streak.newValue,
+                maxStreakBroken: dto.streak.maxStreakBroken,
+                maxStreakOld: dto.streak.maxStreakOld,
+                maxStreakNew: dto.streak.maxStreakNew
+            )
+        )
+    }
 }
