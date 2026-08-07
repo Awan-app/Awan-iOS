@@ -17,14 +17,14 @@ final class DeriveInboxTaskStatusServiceTests: XCTestCase {
 
     // MARK: - Cancelled
 
-    func testAllSessionsCancelled_returnsDrafted() throws {
+    func testAllSessionsCancelled_returnsCancelled() throws {
         let taskID = UUID()
         let sessions = [
             makeSession(taskID: taskID, status: .cancelled),
             makeSession(taskID: taskID, status: .cancelled)
         ]
         let result = service.derive(from: sessions)
-        XCTAssertEqual(result, .drafted)
+        XCTAssertEqual(result, .cancelled)
     }
 
     // MARK: - Completed

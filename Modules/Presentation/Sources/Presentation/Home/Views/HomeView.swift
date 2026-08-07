@@ -117,7 +117,7 @@ struct HomeView: View {
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
-            .padding(.bottom, 24)
+            .padding(.bottom, 120)
         }
         .scrollDismissesKeyboard(.interactively)
         .refreshable { viewModel.send(.refresh) }
@@ -160,5 +160,4 @@ struct HomeView: View {
     }
 
 }
-
 

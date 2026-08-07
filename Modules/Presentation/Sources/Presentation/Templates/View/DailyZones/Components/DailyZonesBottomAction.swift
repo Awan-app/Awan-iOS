@@ -15,11 +15,17 @@ struct DailyZonesBottomAction: View {
                     ? L10n.Templates.saveTemplate
                     : L10n.Templates.saveChanges,
                 icon: "checkmark.circle.fill",
-                color: viewModel.state.isDirty ? AppColors.accentBlue : AppColors.buttonDisabled,
+                color: viewModel.state.isDirty && viewModel.state.areZonesCategorized
+                    ? AppColors.accentBlue
+                    : AppColors.buttonDisabled,
                 foregroundColor: AppColors.onAccent,
                 onTap: { viewModel.send(.save) }
             )
-            .disabled(!viewModel.state.isDirty || viewModel.state.isSaving)
+            .disabled(
+                !viewModel.state.isDirty
+                    || viewModel.state.isSaving
+                    || !viewModel.state.areZonesCategorized
+            )
             .padding(.horizontal, 24)
             .padding(.top, 12)
             .padding(.bottom, 16)

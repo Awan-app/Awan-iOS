@@ -19,6 +19,10 @@ extension CreateTaskViewModel {
             }
         }
     func confirmAndAddAITask(item: AITaskSheetItem, finalDurationMinutes: Int) async {
+            guard !state.categories.isEmpty else {
+                state.errorMessage = state.categoryErrorMessage ?? L10n.Common.pleaseTryAgain
+                return
+            }
             guard !state.isSubmitting else { return }
             state.isSubmitting = true
             state.errorMessage = nil
@@ -208,33 +212,24 @@ extension CreateTaskViewModel {
         }
     }
 
-    enum ProposedTaskDestination {
-        case schedule
-        case inbox
-    }
-
     func acceptProposedTasks(
         _ tasks: [ProposedTask],
         destination: ProposedTaskDestination
     ) async {
+        guard !state.categories.isEmpty else {
+            state.errorMessage = state.categoryErrorMessage ?? L10n.Common.pleaseTryAgain
+            return
+        }
         guard !state.isSubmitting, !tasks.isEmpty else { return }
         state.isSubmitting = true
         state.errorMessage = nil
         defer { state.isSubmitting = false }
 
         do {
-            let drafts = tasks.map { task in
-                var draft = task.draft
-                switch destination {
-                case .schedule:
-                    draft.sessions += task.aiProposedSessions
-                case .inbox:
-                    draft.task.goalId = nil
-                    draft.sessions = []
-                }
-                return draft
-            }
-            _ = try await useCases.acceptProposedTasks.execute(drafts)
+            _ = try await useCases.acceptProposedTasks.execute(
+                tasks,
+                destination: destination
+            )
             state.didCreateTask = true
         } catch is CancellationError {
         } catch {

@@ -23,7 +23,10 @@ struct OnboardingWakeSleepView: View {
                     if viewModel.wakeSleepTimesAreEqual {
                         sameTimeWarning
                     }
-                    if !viewModel.wakeSleepTimesAreEqual && viewModel.availableHours < 9 {
+                    if viewModel.sleepTimeIsBeforeWakeupTime {
+                        sleepBeforeWakeWarning
+                    }
+                    if viewModel.wakeSleepTimeRangeIsValid && viewModel.availableHours < 9 {
                         shortDayWarning
                     }
                     dayPreview
@@ -57,6 +60,10 @@ struct OnboardingWakeSleepView: View {
         inlineWarning(text: L10n.Onboarding.shortActiveDayWarning)
     }
 
+    private var sleepBeforeWakeWarning: some View {
+        inlineWarning(text: L10n.Onboarding.sleepBeforeWakeError)
+    }
+
     private func inlineWarning(text: String) -> some View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
@@ -66,7 +73,7 @@ struct OnboardingWakeSleepView: View {
         }
         .foregroundStyle(AppColors.warning)
         .padding(.horizontal, 12)
-        //.padding(.vertical, 5)
+        .padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             AppColors.warning.opacity(0.1),
@@ -142,7 +149,8 @@ struct OnboardingWakeSleepView: View {
     }
 
     private var continueButton: some View {
-        let isDisabled = viewModel.wakeSleepTimesAreEqual || viewModel.availableHours < 9
+        let isDisabled = !viewModel.wakeSleepTimeRangeIsValid
+            || viewModel.availableHours < 9
         return AppButton(
             title: L10n.Common.continue,
             icon: nil,
@@ -164,7 +172,8 @@ struct OnboardingWakeSleepView: View {
         viewModel: OnboardingViewModel(
             completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
             createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
-            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl(),
+            fetchCategoriesUseCase: MockFetchCategoriesUseCase()
         ),
         onContinue: {}
     )

@@ -11,6 +11,9 @@ struct ProposedTaskCard: View {
     let task: ProposedTask
     let categories: [TaskCategory]
     let zones: [Zone]
+    let categoryErrorMessage: String?
+    let categoryPopoverArrowEdge: Edge
+    let onRetryCategories: () -> Void
     let isSelected: Bool
     let onToggleSelect: () -> Void
     let onDurationChanged: (Int) -> Void
@@ -36,6 +39,9 @@ struct ProposedTaskCard: View {
                         categories: categories,
                         zones: zones,
                         selectedCategoryID: task.draft.task.categoryId,
+                        errorMessage: categoryErrorMessage,
+                        popoverArrowEdge: categoryPopoverArrowEdge,
+                        onRetry: onRetryCategories,
                         onCategoryChanged: onCategoryChanged
                     )
 

@@ -13,6 +13,9 @@ struct ProposedTaskCategoryButton: View {
     let categories: [TaskCategory]
     let zones: [Zone]
     let selectedCategoryID: UUID?
+    let errorMessage: String?
+    let popoverArrowEdge: Edge
+    let onRetry: () -> Void
     let onCategoryChanged: (UUID?) -> Void
 
     @State private var isCategoryPickerPresented = false
@@ -47,11 +50,13 @@ struct ProposedTaskCategoryButton: View {
             )
         }
         .buttonStyle(.plain)
-        .popover(isPresented: $isCategoryPickerPresented, arrowEdge: .bottom) {
+        .popover(isPresented: $isCategoryPickerPresented, arrowEdge: popoverArrowEdge) {
             ProposedCategoryPickerPopover(
                 categories: categories,
                 zones: zones,
                 selectedCategoryID: selectedCategoryID,
+                errorMessage: errorMessage,
+                onRetry: onRetry,
                 onSelect: { categoryID in
                     onCategoryChanged(categoryID)
                     isCategoryPickerPresented = false
@@ -81,13 +86,7 @@ struct ProposedTaskCategoryButton: View {
     }
 
     private func zoneColors(for categoryID: UUID) -> [ZoneColor] {
-        var seen = Set<ZoneColor>()
-        return zones.compactMap { zone in
-            guard zone.category?.id == categoryID,
-                  seen.insert(zone.color).inserted
-            else { return nil }
-            return zone.color
-        }
+        zones.first { $0.category?.id == categoryID }.map { [$0.color] } ?? []
     }
 }
 
@@ -97,34 +96,55 @@ struct ProposedCategoryPickerPopover: View {
     let categories: [TaskCategory]
     let zones: [Zone]
     let selectedCategoryID: UUID?
+    let errorMessage: String?
+    let onRetry: () -> Void
     let onSelect: (UUID?) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            categoryButton(
-                title: L10n.Home.proposedTaskUnassigned,
-                colors: [],
-                isSelected: selectedCategoryID == nil
-            ) {
-                onSelect(nil)
-            }
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 6) {
+                    categoryButton(
+                        title: L10n.Home.proposedTaskUnassigned,
+                        colors: [],
+                        isSelected: selectedCategoryID == nil
+                    ) {
+                        onSelect(nil)
+                    }
 
-            Divider()
-                .overlay(AppColors.accentBlue.opacity(0.14))
+                    Divider()
+                        .overlay(AppColors.accentBlue.opacity(0.14))
 
-            ForEach(categories) { category in
-                categoryButton(
-                    title: category.name,
-                    colors: zoneColors(for: category.id),
-                    isSelected: selectedCategoryID == category.id
-                ) {
-                    onSelect(category.id)
+                    ForEach(categories) { category in
+                        categoryButton(
+                            title: category.name,
+                            colors: zoneColors(for: category.id),
+                            isSelected: selectedCategoryID == category.id
+                        ) {
+                            onSelect(category.id)
+                        }
+                    }
                 }
+            }
+            .frame(height: optionListHeight)
+
+            if let errorMessage {
+                Divider()
+                Text(errorMessage)
+                    .font(AppFonts.caption2Bold)
+                    .foregroundStyle(AppColors.warning)
+                Button(L10n.Templates.retry, action: onRetry)
+                    .font(AppFonts.subheadlineHeavy)
+                    .foregroundStyle(AppColors.accentBlue)
             }
         }
         .padding(10)
         .frame(minWidth: 220)
         .background(AppColors.surface)
+    }
+
+    private var optionListHeight: CGFloat {
+        min(max(CGFloat(categories.count + 1) * 44, 44), 320)
     }
 
     private func categoryButton(
@@ -168,13 +188,7 @@ struct ProposedCategoryPickerPopover: View {
     }
 
     private func zoneColors(for categoryID: UUID) -> [ZoneColor] {
-        var seen = Set<ZoneColor>()
-        return zones.compactMap { zone in
-            guard zone.category?.id == categoryID,
-                  seen.insert(zone.color).inserted
-            else { return nil }
-            return zone.color
-        }
+        zones.first { $0.category?.id == categoryID }.map { [$0.color] } ?? []
     }
 }
 

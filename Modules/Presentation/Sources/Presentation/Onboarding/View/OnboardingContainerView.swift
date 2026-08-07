@@ -43,7 +43,8 @@ struct OnboardingContainerView: View {
                 case .suggestedZones:
                     OnboardingSuggestedZonesView(
                         viewModel: viewModel,
-                        onContinue: { advance(to: .taskLength) }
+                        onContinue: { advance(to: .taskLength) },
+                        onLater: { advance(to: .taskLength) }
                     )
                 case .taskLength:
                     TaskLength(
@@ -146,4 +147,3 @@ struct OnboardingContainerView: View {
         }
     }
 }
-

@@ -20,7 +20,7 @@ public struct DeriveInboxTaskStatusService: Sendable {
         let nonCancelledSessions = sessions.filter { $0.status != .cancelled }
 
         if nonCancelledSessions.isEmpty {
-            return .drafted
+            return .cancelled
         }
 
         let hasAtLeastOneCompleted = sessions.contains { $0.status == .completed }

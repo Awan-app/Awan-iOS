@@ -8,6 +8,7 @@ import SwiftUI
 
 public struct InboxView: View {
     @State private var viewModel: InboxViewModel
+    @State private var isFilterExpanded = false
 
     public init(viewModel: InboxViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -65,20 +66,26 @@ public struct InboxView: View {
                         searchQuery: Binding(
                             get: { state.searchQuery },
                             set: { viewModel.send(.searchQueryChanged($0)) }
-                        )
-                    )
-
-                    InboxFilterChipsRow(
-                        selectedTaskFilter: Binding(
-                            get: { state.selectedTaskFilter },
-                            set: { viewModel.send(.taskFilterChanged($0)) }
                         ),
-                        selectedSessionFilter: Binding(
-                            get: { state.selectedSessionFilter },
-                            set: { viewModel.send(.sessionFilterChanged($0)) }
-                        )
+                        isFilterExpanded: $isFilterExpanded,
+                        hasActiveFilters: state.selectedTaskFilter != .all
+                            || state.selectedSessionFilter != .any,
+                        showsFilterButton: true
                     )
 
+                    if isFilterExpanded {
+                        InboxFilterChipsRow(
+                            selectedTaskFilter: Binding(
+                                get: { state.selectedTaskFilter },
+                                set: { viewModel.send(.taskFilterChanged($0)) }
+                            ),
+                            selectedSessionFilter: Binding(
+                                get: { state.selectedSessionFilter },
+                                set: { viewModel.send(.sessionFilterChanged($0)) }
+                            )
+                        )
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
 
                     sectionTitleRow(count: state.filteredTasks.count)
 
@@ -87,20 +94,22 @@ public struct InboxView: View {
                         InboxEmptyView()
                             .padding(.top, 20)
                     } else {
-                        ForEach(state.filteredTasks) { taskItem in
-                            InboxTaskCard(
-                                taskItem: taskItem,
-                                isExpanded: state.expandedTaskIDs.contains(taskItem.id),
-                                onToggleExpand: {
-                                    viewModel.send(.toggleTaskExpansion(taskItem.id))
-                                },
-                                onCompleteTask: {
-                                    viewModel.send(.completeTask(taskItem.id))
-                                },
-                                onDeleteTask: {
-                                    viewModel.send(.deleteTask(taskItem.id))
-                                }
-                            )
+                        LazyVStack(spacing: 10) {
+                            ForEach(state.filteredTasks) { taskItem in
+                                InboxTaskCard(
+                                    taskItem: taskItem,
+                                    isExpanded: state.expandedTaskIDs.contains(taskItem.id),
+                                    onToggleExpand: {
+                                        viewModel.send(.toggleTaskExpansion(taskItem.id))
+                                    },
+                                    onCompleteTask: {
+                                        viewModel.send(.completeTask(taskItem.id))
+                                    },
+                                    onDeleteTask: {
+                                        viewModel.send(.deleteTask(taskItem.id))
+                                    }
+                                )
+                            }
                         }
                     }
                 } else {
@@ -125,7 +134,7 @@ public struct InboxView: View {
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
-            .padding(.bottom, 24)
+            .padding(.bottom, 120)
         }
         .scrollDismissesKeyboard(.interactively)
         .refreshable {

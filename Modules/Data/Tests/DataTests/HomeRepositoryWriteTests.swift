@@ -252,7 +252,7 @@ final class HomeRepositoryWriteTests: XCTestCase {
         XCTAssertEqual(request.sessions?.first?.zoneId, zoneID)
     }
 
-    func testStandaloneCreationEncodesNullCategoryAndZone() throws {
+    func testStandaloneCreationOmitsCategoryAndZone() throws {
         let request = CreateTaskWithSessionsRequestDTO(
             task: .init(title: "Standalone", categoryId: nil),
             sessions: [
@@ -271,8 +271,8 @@ final class HomeRepositoryWriteTests: XCTestCase {
         let task = try XCTUnwrap(object["task"] as? [String: Any])
         let session = try XCTUnwrap((object["sessions"] as? [[String: Any]])?.first)
 
-        XCTAssertTrue(task["categoryId"] is NSNull)
-        XCTAssertTrue(session["zoneId"] is NSNull)
+        XCTAssertNil(task["categoryId"])
+        XCTAssertNil(session["zoneId"])
     }
 
     func testCategoryCreationEncodesCategoryAndResolvedZone() throws {

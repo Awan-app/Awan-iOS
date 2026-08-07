@@ -56,14 +56,4 @@ public struct AwanTask: Identifiable, Hashable, Sendable {
         )
     }
 
-    public func applyingDraftGoalID(_ newGoalID: UUID?) -> AwanTask {
-        AwanTask(
-            id: id, title: title, description: description,
-            status: status, goalID: newGoalID, duration: duration,
-            isSplittable: isSplittable, mandatory: mandatory,
-            estimatedPoints: estimatedPoints, dependencyIDs: dependencyIDs,
-            category: category
-        )
-    }
 }
-

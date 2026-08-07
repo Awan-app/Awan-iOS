@@ -20,7 +20,8 @@ struct DailyZonesZoneEditor {
             name: zone?.name ?? "",
             selectedColorIndex: zone.map(colorIndex) ?? 0,
             startTime: interval.0,
-            endTime: interval.1
+            endTime: interval.1,
+            selectedCategoryID: zone?.category?.id
         )
         return validated(
             form,
@@ -55,12 +56,17 @@ struct DailyZonesZoneEditor {
         return form
     }
 
-    func draft(from form: ZoneEditorForm, original: DailyZoneDraft?) -> DailyZoneDraft? {
+    func draft(
+        from form: ZoneEditorForm,
+        original: DailyZoneDraft?,
+        categories: [TaskCategory]
+    ) -> DailyZoneDraft? {
         guard form.isValid,
               ZoneColorPalette.colors.indices.contains(form.selectedColorIndex),
               let start = calendar.localTime(from: form.startTime),
               let end = calendar.localTime(from: form.endTime),
-              let color = color(at: form.selectedColorIndex) else {
+              let color = color(at: form.selectedColorIndex),
+              let category = categories.first(where: { $0.id == form.selectedCategoryID }) else {
             return nil
         }
         return DailyZoneDraft(
@@ -70,7 +76,7 @@ struct DailyZonesZoneEditor {
             color: color,
             startTime: start,
             endTime: end,
-            category: original?.category
+            category: category
         )
     }
 

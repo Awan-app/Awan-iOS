@@ -11,6 +11,7 @@ public enum TemplateManagementError: Error, Equatable, Sendable {
     case dayAlreadyAssigned
     case zoneOverlap
     case invalidZoneTimeRange
+    case zoneCategoryRequired
     case templateNotFound
     case overrideNotFound
     case networkFailure

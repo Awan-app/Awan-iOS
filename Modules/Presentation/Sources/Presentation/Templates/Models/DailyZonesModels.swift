@@ -61,7 +61,8 @@ struct DailyZoneDraft: Identifiable, Equatable, Sendable {
             name: name,
             color: color,
             startTime: startTime,
-            endTime: endTime
+            endTime: endTime,
+            category: category
         )
     }
 
@@ -105,6 +106,7 @@ struct ZoneEditorForm: Equatable, Sendable {
     var selectedColorIndex: Int
     var startTime: Date
     var endTime: Date
+    var selectedCategoryID: UUID?
     var overlapMessage: String?
     var outsideHoursWarning = false
 }
@@ -144,6 +146,8 @@ struct DailyZonesState: Equatable, Sendable {
     var mode: DailyZonesMode = .weekly
     var templates: [Template] = []
     var overrides: [TemplateOverride] = []
+    var categories: [TaskCategory] = []
+    var categoryErrorMessage: String?
     var selectedTemplateID: UUID?
     var selectedDate: TemplateOverrideDate?
     var weekNavigationDirection: WeekNavigationDirection = .forward
@@ -161,9 +165,16 @@ struct DailyZonesState: Equatable, Sendable {
     var dialog: DailyZonesDialog?
     var errorMessage: String?
     var isSaving = false
+    var isCreatingCategory = false
     var shouldDismiss = false
 
     var isDirty: Bool { zones != baselineZones }
+    var areZonesCategorized: Bool {
+        !categories.isEmpty && zones.allSatisfy { zone in
+            guard let categoryID = zone.category?.id else { return false }
+            return categories.contains { $0.id == categoryID }
+        }
+    }
 }
 
 enum DailyZonesAction {
@@ -197,6 +208,9 @@ enum DailyZonesAction {
     case setZoneColor(Int)
     case setZoneStart(Date)
     case setZoneEnd(Date)
+    case setZoneCategory(UUID?)
+    case retryCategories
+    case createCategory(String)
     case submitZoneForm
     case requestDeleteZone(UUID)
     case dragZone(id: UUID, translation: Double, rowStride: Double)

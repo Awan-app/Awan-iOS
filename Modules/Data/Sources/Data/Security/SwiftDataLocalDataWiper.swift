@@ -19,6 +19,7 @@ public final class SwiftDataLocalDataWiper: LocalDataWiper, @unchecked Sendable 
         try deleteModels(ofType: TemplateModel.self, in: context)
         try deleteModels(ofType: TemplateOverrideModel.self, in: context)
         try deleteModels(ofType: UserProfileModel.self, in: context)
+        try deleteModels(ofType: CategoryModel.self, in: context)
         
         try context.save()
     }

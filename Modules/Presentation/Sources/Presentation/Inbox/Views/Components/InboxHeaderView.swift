@@ -25,15 +25,15 @@ struct InboxHeaderView: View {
             AppSegmentedPicker(
                 selection: $selectedTopTab,
                 items: [
-                    .init(value: .inbox, title: L10n.Inbox.tabInbox),
-                    .init(value: .goals, title: L10n.Inbox.tabGoals)
+                    .init(value: .inbox, title: L10n.Inbox.tabInbox, icon: "tray.fill"),
+                    .init(value: .goals, title: L10n.Inbox.tabGoals, icon: "target")
                 ]
             )
 
             if selectedTopTab == .inbox {
-                Text(L10n.Inbox.subtitle)
-                    .font(AppFonts.subheadlineSemibold)
-                    .foregroundStyle(AppColors.textSecondary)
+//                Text(L10n.Inbox.subtitle)
+//                    .font(AppFonts.subheadlineSemibold)
+//                    .foregroundStyle(AppColors.textSecondary)
             }
         }
     }

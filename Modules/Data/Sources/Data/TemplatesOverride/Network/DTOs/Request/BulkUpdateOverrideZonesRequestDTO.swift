@@ -13,13 +13,22 @@ public struct BulkUpdateOverrideZonesRequestDTO: Encodable, Sendable {
         public let startTime: String
         public let endTime: String
         public let color: String
+        public let categoryId: UUID
 
-        public init(id: String? = nil, name: String, startTime: String, endTime: String, color: String) {
+        public init(
+            id: String? = nil,
+            name: String,
+            startTime: String,
+            endTime: String,
+            color: String,
+            categoryId: UUID
+        ) {
             self.id = id
             self.name = name
             self.startTime = startTime
             self.endTime = endTime
             self.color = color
+            self.categoryId = categoryId
         }
     }
 }

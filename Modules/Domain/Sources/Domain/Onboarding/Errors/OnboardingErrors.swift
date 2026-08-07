@@ -8,6 +8,8 @@ public enum OnboardingInputError: Error, Equatable, Sendable {
     case negativeBufferBetweenSessions(Int)
     case invalidWakeupTime
     case invalidSleepTime
+    case wakeSleepTimesAreEqual
+    case sleepTimeBeforeWakeupTime
 }
 
 public struct OnboardingFieldValidationError: Equatable, Sendable {

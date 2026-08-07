@@ -2,6 +2,7 @@ import Domain
 
 public struct CreationUseCases: Sendable {
     public let fetchZones: any FetchZonesUseCase
+    public let fetchCategories: any FetchCategoriesUseCase
     public let createTask: any CreateTaskUseCase
     public let createAITask: any CreateAITaskUseCase
     public let imageToTasks: any ImageToTasksUseCase
@@ -12,6 +13,7 @@ public struct CreationUseCases: Sendable {
 
     public init(
         fetchZones: any FetchZonesUseCase,
+        fetchCategories: any FetchCategoriesUseCase,
         createTask: any CreateTaskUseCase,
         createAITask: any CreateAITaskUseCase,
         imageToTasks: any ImageToTasksUseCase,
@@ -21,6 +23,7 @@ public struct CreationUseCases: Sendable {
         goalDecomposition: GoalDecompositionUseCases
     ) {
         self.fetchZones = fetchZones
+        self.fetchCategories = fetchCategories
         self.createTask = createTask
         self.createAITask = createAITask
         self.imageToTasks = imageToTasks

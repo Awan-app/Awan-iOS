@@ -74,6 +74,25 @@ public struct MockFetchZonesUseCase: FetchZonesUseCase {
     }
 }
 
+public struct MockFetchCategoriesUseCase: FetchCategoriesUseCase {
+    public init() {}
+    public func observe() -> AnyPublisher<[TaskCategory], Error> {
+        Just([
+            TaskCategory(id: UUID(), name: "General"),
+            TaskCategory(id: UUID(), name: "Work"),
+        ])
+        .setFailureType(to: Error.self)
+        .eraseToAnyPublisher()
+    }
+}
+
+public struct MockCreateCategoryUseCase: CreateCategoryUseCase {
+    public init() {}
+    public func execute(name: String) async throws -> TaskCategory {
+        TaskCategory(id: UUID(), name: name)
+    }
+}
+
 public struct MockFetchTemplatesUseCase: FetchTemplatesUseCase {
     public init() {}
     public func execute() async throws -> [Template] {
