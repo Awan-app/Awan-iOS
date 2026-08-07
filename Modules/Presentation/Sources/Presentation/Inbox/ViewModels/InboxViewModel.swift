@@ -33,7 +33,6 @@ public final class InboxViewModel {
         switch action {
         case .appeared, .refresh:
             load()
-            //loadGoals()
         case let .searchQueryChanged(query):
             state.searchQuery = query
         case let .taskFilterChanged(filter):
@@ -52,9 +51,7 @@ public final class InboxViewModel {
             deleteTask(id: id)
         case let .selectTopTab(tab):
             state.selectedTopTab = tab
-            if tab == .goals {
-                //loadGoals()
-            }
+            
         case .dismissError:
             state.failureMessage = nil
         }
