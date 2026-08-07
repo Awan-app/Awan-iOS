@@ -39,14 +39,14 @@ struct GoalDetailTaskRow: View {
                         Text(desc)
                             .font(AppFonts.caption2Bold)
                             .foregroundStyle(AppColors.textSecondary)
-                            
+                            .lineLimit(1)
                     }
 
                     // Dependency Relationship Visualization
                     if !task.dependencyIDs.isEmpty {
                         HStack(spacing: 5) {
                             Image(systemName: "arrow.turn.down.right")
-                                .font(.system(size: 11, weight: .bold))
+                                .font(.system(size: 8, weight: .bold))
                                 .foregroundStyle(AppColors.accentBlue)
 
                             if !parentTaskNames.isEmpty {

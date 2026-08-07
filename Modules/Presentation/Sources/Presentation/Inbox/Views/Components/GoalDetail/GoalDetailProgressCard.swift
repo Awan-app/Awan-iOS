@@ -19,7 +19,7 @@ struct GoalDetailProgressCard: View {
         } else if progressFraction > 0.0 {
             return AppColors.accentBlue
         } else {
-            return AppColors.textSecondary
+            return AppColors.warning
         }
     }
 

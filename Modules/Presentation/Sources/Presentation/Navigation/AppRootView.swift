@@ -38,7 +38,9 @@ struct AppRootView: View {
             coordinator.mainCoordinator.homePath.isEmpty
         case .you:
             coordinator.mainCoordinator.youPath.isEmpty
-        case .tasks, .store, .add:
+        case .tasks:
+            coordinator.mainCoordinator.tasksPath.isEmpty
+        case .store, .add:
             true
         }
     }
