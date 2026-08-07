@@ -40,28 +40,14 @@ public final class OnboardingViewModel: ZoneManaging {
     public var sleepTime: Date
 
     public var availableHours: Int {
-        let calendar = Calendar.current
-        let wakeComponents = calendar.dateComponents([.hour, .minute], from: wakeupTime)
-        let sleepComponents = calendar.dateComponents([.hour, .minute], from: sleepTime)
-
-        let wakeMinutes = (wakeComponents.hour ?? 7) * 60 + (wakeComponents.minute ?? 0)
-        var sleepMinutes = (sleepComponents.hour ?? 23) * 60 + (sleepComponents.minute ?? 0)
-
-        if sleepMinutes <= wakeMinutes {
-            sleepMinutes += 24 * 60
-        }
-
-        return (sleepMinutes - wakeMinutes) / 60
+        WakeSleepScheduleValidator.availableHours(wakeupTime: wakeupTime, sleepTime: sleepTime)
     }
 
     // MARK: - Wake/Sleep validation
 
     /// `true` when wakeup and sleep represent the same hour and minute.
     public var wakeSleepTimesAreEqual: Bool {
-        let calendar = Calendar.current
-        let wakeHM = calendar.dateComponents([.hour, .minute], from: wakeupTime)
-        let sleepHM = calendar.dateComponents([.hour, .minute], from: sleepTime)
-        return wakeHM.hour == sleepHM.hour && wakeHM.minute == sleepHM.minute
+        WakeSleepScheduleValidator.areTimesEqual(wakeupTime: wakeupTime, sleepTime: sleepTime)
     }
 
     // MARK: - Suggested Zones
