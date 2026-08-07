@@ -69,8 +69,8 @@ struct GoalDetailTasksCard: View {
                         .padding(.vertical, 8)
                 } else {
                     VStack(spacing: 10) {
-                        ForEach(tasks) { task in
-                            GoalDetailTaskRow(task: task, allTasks: tasks)
+                        ForEach(Array(tasks.enumerated()), id: \.element.id) { index, task in
+                            GoalDetailTaskRow(index: index + 1, task: task, allTasks: tasks)
                         }
                     }
                 }
