@@ -123,6 +123,22 @@ struct AppRootView: View {
                             EmptyView()
                         }
                     }
+                    .navigationDestination(for: InboxRoute.self) { route in
+                        switch route {
+                        case let .goalDetail(goalID):
+                            factory.makeGoalDetailView(goalID: goalID)
+                        }
+                    }
+                    .navigationDestination(for: AnyHashable.self) { route in
+                        if let inboxRoute = route.base as? InboxRoute {
+                            switch inboxRoute {
+                            case let .goalDetail(goalID):
+                                factory.makeGoalDetailView(goalID: goalID)
+                            }
+                        } else {
+                            EmptyView()
+                        }
+                    }
             }
             .tag(MainTab.tasks)
             .toolbar(.hidden, for: .tabBar)

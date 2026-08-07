@@ -145,8 +145,13 @@ struct PresentationAssembly: Assembly {
 
         container.register(GoalsViewModel.self) { resolver in
             let useCases = Self.resolve(GoalsUseCases.self, from: resolver)
+            let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
             return MainActor.assumeIsolated {
-                GoalsViewModel(useCases: useCases)
+                let vm = GoalsViewModel(useCases: useCases)
+                vm.onSelectGoal = { goalID in
+                    appCoordinator.mainCoordinator.push(InboxRoute.goalDetail(goalID))
+                }
+                return vm
             }
         }
         .inObjectScope(.container)
@@ -239,6 +244,7 @@ struct PresentationAssembly: Assembly {
             let profileViewModel = Self.resolve(ProfileViewModel.self, from: resolver)
             let dailyZonesViewModel = Self.resolve(DailyZonesViewModel.self, from: resolver)
             let inboxViewModel = Self.resolve(InboxViewModel.self, from: resolver)
+            let goalsViewModel = Self.resolve(GoalsViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
@@ -262,7 +268,8 @@ struct PresentationAssembly: Assembly {
                     makeUserInfoViewModel: {
                         Self.resolve(UserInfoViewModel.self, from: resolver)
                     },
-                    inboxViewModel: inboxViewModel
+                    inboxViewModel: inboxViewModel,
+                    goalsViewModel: goalsViewModel
                 )
             }
         }

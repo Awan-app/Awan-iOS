@@ -46,14 +46,13 @@ public final class GoalsViewModel {
     }
 
     public func loadGoalTasks(goalID: UUID) {
-        guard let fetchGoalTasks = useCases.fetchGoalTasks else { return }
         state.isLoadingGoalTasks = true
         state.goalTasksFailureMessage = nil
         state.selectedGoalTasks = []
 
         Task {
             do {
-                let tasks = try await fetchGoalTasks.execute(goalID: goalID)
+                let tasks = try await useCases.fetchGoalTasks.execute(goalID: goalID)
                 self.state.isLoadingGoalTasks = false
                 self.state.selectedGoalTasks = tasks
             } catch {
