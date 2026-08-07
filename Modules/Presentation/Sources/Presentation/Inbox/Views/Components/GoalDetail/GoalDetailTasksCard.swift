@@ -25,7 +25,7 @@ struct GoalDetailTasksCard: View {
                     Spacer()
 
                     if !tasks.isEmpty {
-                        Text("\(completedCount)/\(tasks.count)")
+                        Text("\(tasks.count)")
                             .font(AppFonts.captionHeavy)
                             .foregroundStyle(AppColors.accentBlue)
                             .padding(.horizontal, 8)
@@ -70,7 +70,7 @@ struct GoalDetailTasksCard: View {
                 } else {
                     VStack(spacing: 10) {
                         ForEach(tasks) { task in
-                            GoalDetailTaskRow(task: task)
+                            GoalDetailTaskRow(task: task, allTasks: tasks)
                         }
                     }
                 }
