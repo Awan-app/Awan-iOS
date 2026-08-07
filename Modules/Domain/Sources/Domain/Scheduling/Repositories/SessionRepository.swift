@@ -11,6 +11,12 @@ public protocol SessionRepository: Sendable {
     func deleteSession(id: UUID) async throws
     func deleteSessions(taskID: UUID) async throws
     func deleteAllSessions() async throws
+    func completeSession(
+        id: UUID
+    ) async throws -> SessionCompletionResult
+    func uncompleteSession(
+        id: UUID
+    ) async throws -> Session
 }
 
 public extension SessionRepository {

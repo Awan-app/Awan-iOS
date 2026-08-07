@@ -16,11 +16,11 @@ enum SessionEndpoint: APIEndpoint {
     case getSessionsByDate(date: String)
     case getSessionsByDateRange(startDate: String, endDate: String)
     case updateSession(sessionID: UUID, UpdateSessionRequestDTO)
-    case updateSessionStatus(sessionID: UUID, status: String)
     case lockSession(sessionID: UUID)
     case unlockSession(sessionID: UUID)
     case deleteSession(sessionID: UUID)
-
+    case completeSession(sessionID: UUID)
+    case uncompleteSession(sessionID: UUID)
     // MARK: - Task ↔ Session
 
     case createTaskWithSessions(CreateTaskWithSessionsRequestDTO)
@@ -42,8 +42,6 @@ enum SessionEndpoint: APIEndpoint {
             return "/sessions/range"
         case .updateSession(let sessionID, _):
             return "/sessions/\(sessionID.uuidString)"
-        case .updateSessionStatus(let sessionID, _):
-            return "/sessions/\(sessionID.uuidString)/status"
         case .lockSession(let sessionID):
             return "/sessions/\(sessionID.uuidString)/lock"
         case .unlockSession(let sessionID):
@@ -54,6 +52,10 @@ enum SessionEndpoint: APIEndpoint {
             return "/tasks/with-sessions"
         case .getTaskSessions(let taskID):
             return "/tasks/\(taskID.uuidString)/sessions"
+        case .completeSession(let sessionID):
+            return "/sessions/\(sessionID.uuidString)/complete"
+        case .uncompleteSession(let sessionID):
+            return "/sessions/\(sessionID.uuidString)/uncomplete"
         }
     }
 
@@ -65,10 +67,12 @@ enum SessionEndpoint: APIEndpoint {
             return .post
         case .updateSession:
             return .put
-        case .updateSessionStatus, .lockSession, .unlockSession:
+        case .lockSession, .unlockSession:
             return .patch
         case .deleteSession:
             return .delete
+        case .completeSession, .uncompleteSession:
+            return .post
         }
     }
 
@@ -79,8 +83,6 @@ enum SessionEndpoint: APIEndpoint {
                 "startDate": startDate,
                 "endDate": endDate,
             ]
-        case .updateSessionStatus(_, let status):
-            return ["status": status]
         default:
             return nil
         }
