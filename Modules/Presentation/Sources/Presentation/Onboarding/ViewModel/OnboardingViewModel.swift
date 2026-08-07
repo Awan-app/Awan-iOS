@@ -51,6 +51,16 @@ public final class OnboardingViewModel: ZoneManaging {
         WakeSleepScheduleValidator.areTimesEqual(wakeupTime: wakeupTime, sleepTime: sleepTime)
     }
 
+    /// `true` when sleep time is earlier in the day than wakeup time.
+    public var sleepTimeIsBeforeWakeupTime: Bool {
+        WakeSleepScheduleValidator.isSleepTimeBeforeWakeupTime(wakeupTime: wakeupTime, sleepTime: sleepTime)
+    }
+
+    /// `true` when wake and sleep times are valid (not equal, and range is positive).
+    public var wakeSleepTimeRangeIsValid: Bool {
+        WakeSleepScheduleValidator.isTimeRangeValid(wakeupTime: wakeupTime, sleepTime: sleepTime)
+    }
+
     // MARK: - Suggested Zones
 
     public var suggestedZones: [SuggestedZone]
