@@ -130,11 +130,32 @@ extension HomeViewModel {
             guard let self else { return }
             defer { state.isMutating = false }
             do {
-                let accepted = try await useCases.sessions.setCompletion.execute(
+                let result = try await useCases.sessions.setCompletion.execute(
                     sessionID: id,
                     isCompleted: isCompleted
                 )
-                replaceSession(accepted)
+
+                replaceSession(result.session)
+
+                switch result {
+                case .completed(let completion):
+                    let reward = completion.reward
+
+                    if reward.points.awarded || reward.streak.updated {
+                        state.completionReward = HomeCompletionRewardState(
+                            pointsAwarded: reward.points.awarded
+                                ? reward.points.amount
+                                : nil,
+                            streak: reward.streak.updated
+                                ? reward.streak.newValue
+                                : nil,
+                            maxStreakBroken: reward.streak.maxStreakBroken
+                        )
+                    }
+
+                case .uncompleted:
+                    state.completionReward = nil
+                }
             } catch is CancellationError {
                 replaceSession(original)
             } catch {

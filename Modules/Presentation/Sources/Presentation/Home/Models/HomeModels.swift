@@ -60,6 +60,7 @@ struct HomeState {
     var success: HomeSuccessState?
     var failure: HomeFailureState?
     var selectedDay: Date
+    var completionReward: HomeCompletionRewardState?
     var selectedSessionID: UUID?
     var isMutating: Bool
    
@@ -79,6 +80,7 @@ struct HomeState {
             success: nil,
             failure: nil,
             selectedDay: selectedDay,
+            completionReward: nil,
             selectedSessionID: nil,
             isMutating: false
         )
@@ -107,4 +109,10 @@ struct HomeSuccessState {
     let timelineBedtime: Date
     let timelineZones: [HomeTimelineZoneItem]
     let timelineItems: [HomeTimelineItem]
+}
+
+struct HomeCompletionRewardState: Equatable {
+    let pointsAwarded: Int?
+    let streak: Int?
+    let maxStreakBroken: Bool
 }
