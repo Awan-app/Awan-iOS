@@ -139,7 +139,8 @@ struct PresentationAssembly: Assembly {
 
         container.register(GoalsUseCases.self) { resolver in
             GoalsUseCases(
-                fetchGoalsWithTasks: Self.resolve(FetchGoalsWithTasksUseCase.self, from: resolver)
+                fetchGoalsWithTasks: Self.resolve(FetchGoalsWithTasksUseCase.self, from: resolver),
+                fetchGoalTasks: Self.resolve(FetchGoalTasksUseCase.self, from: resolver)
             )
         }
 

@@ -9,10 +9,14 @@ import SwiftUI
 
 public struct GoalDetailSheet: View {
     let goal: Goal
-    let progressFraction: Double
-    let completedCount: Int
-    let totalCount: Int
+    let initialProgressFraction: Double
+    let initialCompletedCount: Int
+    let initialTotalCount: Int
     let breakdown: GoalTaskBreakdown?
+    let tasks: [AwanTask]
+    let isLoadingTasks: Bool
+    let tasksFailureMessage: String?
+    let onRetryFetchTasks: (() -> Void)?
     let onDismiss: () -> Void
 
     private static let dateFormatter: DateFormatter = {
@@ -28,32 +32,61 @@ public struct GoalDetailSheet: View {
         completedCount: Int = 0,
         totalCount: Int = 0,
         breakdown: GoalTaskBreakdown? = nil,
+        tasks: [AwanTask] = [],
+        isLoadingTasks: Bool = false,
+        tasksFailureMessage: String? = nil,
+        onRetryFetchTasks: (() -> Void)? = nil,
         onDismiss: @escaping () -> Void
     ) {
         self.goal = goal
-        self.progressFraction = progressFraction
-        self.completedCount = completedCount
-        self.totalCount = totalCount
+        self.initialProgressFraction = progressFraction
+        self.initialCompletedCount = completedCount
+        self.initialTotalCount = totalCount
         self.breakdown = breakdown
+        self.tasks = tasks
+        self.isLoadingTasks = isLoadingTasks
+        self.tasksFailureMessage = tasksFailureMessage
+        self.onRetryFetchTasks = onRetryFetchTasks
         self.onDismiss = onDismiss
     }
 
     public init(
         goalItem: GoalProgressItem,
+        tasks: [AwanTask] = [],
+        isLoadingTasks: Bool = false,
+        tasksFailureMessage: String? = nil,
+        onRetryFetchTasks: (() -> Void)? = nil,
         onDismiss: @escaping () -> Void
     ) {
         self.goal = goalItem.rawGoal
-        self.progressFraction = goalItem.progressFraction
-        self.completedCount = goalItem.completedCount
-        self.totalCount = goalItem.totalCount
+        self.initialProgressFraction = goalItem.progressFraction
+        self.initialCompletedCount = goalItem.completedCount
+        self.initialTotalCount = goalItem.totalCount
         self.breakdown = goalItem.breakdown
+        self.tasks = tasks
+        self.isLoadingTasks = isLoadingTasks
+        self.tasksFailureMessage = tasksFailureMessage
+        self.onRetryFetchTasks = onRetryFetchTasks
         self.onDismiss = onDismiss
     }
 
+    private var effectiveTotalCount: Int {
+        tasks.isEmpty ? initialTotalCount : tasks.count
+    }
+
+    private var effectiveCompletedCount: Int {
+        tasks.isEmpty ? initialCompletedCount : tasks.filter { $0.status == .completed }.count
+    }
+
+    private var effectiveProgressFraction: Double {
+        guard effectiveTotalCount > 0 else { return initialProgressFraction }
+        return Double(effectiveCompletedCount) / Double(effectiveTotalCount)
+    }
+
     private var progressColor: Color {
-        if progressFraction >= 1.0 {
+        if effectiveProgressFraction >= 1.0 {
             return AppColors.accentGreen
-        } else if progressFraction > 0.0 {
+        } else if effectiveProgressFraction > 0.0 {
             return AppColors.accentBlue
         } else {
             return AppColors.textSecondary
@@ -70,6 +103,8 @@ public struct GoalDetailSheet: View {
                         headerCard
 
                         progressSection
+
+                        tasksSection
 
                         if let description = goal.description, !description.isEmpty {
                             descriptionCard(description)
@@ -137,11 +172,11 @@ public struct GoalDetailSheet: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
-                        Text("\(Int(progressFraction * 100))%")
+                        Text("\(Int(effectiveProgressFraction * 100))%")
                             .font(AppFonts.title2Black)
                             .foregroundStyle(progressColor)
 
-                        Text("\(completedCount) of \(totalCount) tasks completed")
+                        Text("\(effectiveCompletedCount) of \(effectiveTotalCount) tasks completed")
                             .font(AppFonts.subheadlineSemibold)
                             .foregroundStyle(AppColors.textSecondary)
                     }
@@ -161,7 +196,7 @@ public struct GoalDetailSheet: View {
                                     )
                                 )
                                 .frame(
-                                    width: max(0, geo.size.width * progressFraction),
+                                    width: max(0, geo.size.width * effectiveProgressFraction),
                                     height: 8
                                 )
                         }
@@ -209,6 +244,120 @@ public struct GoalDetailSheet: View {
                 }
             }
         }
+    }
+
+    private var tasksSection: some View {
+        AppCard {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack {
+                    Text("Tasks")
+                        .font(AppFonts.title3Black)
+                        .foregroundStyle(AppColors.textPrimary)
+
+                    Spacer()
+
+                    if !tasks.isEmpty {
+                        Text("\(effectiveCompletedCount)/\(tasks.count)")
+                            .font(AppFonts.captionHeavy)
+                            .foregroundStyle(AppColors.accentBlue)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(
+                                Capsule()
+                                    .fill(AppColors.accentBlue.opacity(0.12))
+                            )
+                    }
+                }
+
+                if isLoadingTasks && tasks.isEmpty {
+                    HStack(spacing: 10) {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text("Loading tasks...")
+                            .font(AppFonts.subheadlineSemibold)
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
+                    .padding(.vertical, 12)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                } else if let failure = tasksFailureMessage, tasks.isEmpty {
+                    VStack(spacing: 8) {
+                        Text(failure)
+                            .font(AppFonts.subheadlineSemibold)
+                            .foregroundStyle(AppColors.destructive)
+                            .multilineTextAlignment(.center)
+
+                        if let onRetry = onRetryFetchTasks {
+                            Button("Retry") {
+                                onRetry()
+                            }
+                            .font(AppFonts.subheadlineBold)
+                            .foregroundStyle(AppColors.accentBlue)
+                        }
+                    }
+                    .padding(.vertical, 12)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                } else if tasks.isEmpty {
+                    Text("No tasks assigned to this goal.")
+                        .font(AppFonts.subheadlineSemibold)
+                        .foregroundStyle(AppColors.textSecondary)
+                        .padding(.vertical, 8)
+                } else {
+                    VStack(spacing: 10) {
+                        ForEach(tasks) { task in
+                            taskRow(task)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func taskRow(_ task: AwanTask) -> some View {
+        let isCompleted = task.status == .completed
+        return HStack(spacing: 12) {
+            Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(isCompleted ? AppColors.accentGreen : AppColors.accentBlue)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(task.title)
+                    .font(AppFonts.subheadlineBold)
+                    .foregroundStyle(isCompleted ? AppColors.textSecondary : AppColors.textPrimary)
+                    .strikethrough(isCompleted, color: AppColors.textSecondary)
+
+                if let desc = task.description, !desc.isEmpty {
+                    Text(desc)
+                        .font(AppFonts.caption2Bold)
+                        .foregroundStyle(AppColors.textSecondary)
+                        .lineLimit(1)
+                }
+            }
+
+            Spacer()
+
+            if isCompleted {
+                Text("Done")
+                    .font(AppFonts.caption2Bold)
+                    .foregroundStyle(AppColors.accentGreen)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(
+                        Capsule()
+                            .fill(AppColors.accentGreen.opacity(0.12))
+                    )
+            } else if task.status == .inProgress {
+                Text("In Progress")
+                    .font(AppFonts.caption2Bold)
+                    .foregroundStyle(AppColors.warning)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(
+                        Capsule()
+                            .fill(AppColors.warning.opacity(0.12))
+                    )
+            }
+        }
+        .padding(.vertical, 4)
     }
 
     private func breakdownChip(count: Int, label: String, icon: String, color: Color) -> some View {
@@ -320,6 +469,11 @@ public struct GoalDetailSheet: View {
                 deadline: Date().addingTimeInterval(86400 * 14)
             )
         ),
+        tasks: [
+            AwanTask(id: UUID(), title: "Design homepage wireframes", status: .completed, duration: try! TaskDuration(minutes: 60), isSplittable: true),
+            AwanTask(id: UUID(), title: "Set up SwiftUI project", status: .completed, duration: try! TaskDuration(minutes: 45), isSplittable: false),
+            AwanTask(id: UUID(), title: "Publish website online", status: .pending, duration: try! TaskDuration(minutes: 30), isSplittable: false)
+        ],
         onDismiss: {}
     )
 }
@@ -343,6 +497,10 @@ public struct GoalDetailSheet: View {
                 deadline: nil
             )
         ),
+        tasks: [
+            AwanTask(id: UUID(), title: "Read Structured Concurrency Docs", status: .completed, duration: try! TaskDuration(minutes: 60), isSplittable: true),
+            AwanTask(id: UUID(), title: "Practice Global Actors & TaskGroups", status: .inProgress, duration: try! TaskDuration(minutes: 90), isSplittable: true)
+        ],
         onDismiss: {}
     )
     .preferredColorScheme(.dark)

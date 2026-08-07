@@ -36,10 +36,19 @@ struct GoalsContentSection: View {
         .sheet(item: $selectedGoalForSheet) { goalItem in
             GoalDetailSheet(
                 goalItem: goalItem,
+                tasks: state.selectedGoalTasks,
+                isLoadingTasks: state.isLoadingGoalTasks,
+                tasksFailureMessage: state.goalTasksFailureMessage,
+                onRetryFetchTasks: {
+                    viewModel.send(.loadGoalTasks(goalItem.id))
+                },
                 onDismiss: {
                     selectedGoalForSheet = nil
                 }
             )
+            .task {
+                viewModel.send(.loadGoalTasks(goalItem.id))
+            }
         }
     }
 

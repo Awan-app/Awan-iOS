@@ -37,8 +37,29 @@ public final class GoalsViewModel {
             state.searchQuery = query
         case let .selectGoal(id):
             onSelectGoal?(id)
+        case let .loadGoalTasks(goalID):
+            loadGoalTasks(goalID: goalID)
         case .dismissError:
             state.failureMessage = nil
+            state.goalTasksFailureMessage = nil
+        }
+    }
+
+    public func loadGoalTasks(goalID: UUID) {
+        guard let fetchGoalTasks = useCases.fetchGoalTasks else { return }
+        state.isLoadingGoalTasks = true
+        state.goalTasksFailureMessage = nil
+        state.selectedGoalTasks = []
+
+        Task {
+            do {
+                let tasks = try await fetchGoalTasks.execute(goalID: goalID)
+                self.state.isLoadingGoalTasks = false
+                self.state.selectedGoalTasks = tasks
+            } catch {
+                self.state.isLoadingGoalTasks = false
+                self.state.goalTasksFailureMessage = error.localizedDescription
+            }
         }
     }
 
