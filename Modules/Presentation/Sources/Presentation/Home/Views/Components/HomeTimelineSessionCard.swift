@@ -76,11 +76,16 @@ struct HomeTimelineSessionCard: View {
 
     @ViewBuilder
     private var pointsLabel: some View {
-        if item.points > 0 {
-            Text(item.laneCount == 1 ? "+\(item.points) pts" : "+\(item.points)")
-                .font(AppFonts.captionHeavy)
-                .foregroundStyle(cardColor)
-                .lineLimit(1)
+        if item.showsCompletionPoints, item.points > 0 {
+            Text(
+                item.laneCount == 1
+                    ? "+\(item.points) pts"
+                    : "+\(item.points)"
+            )
+            .font(AppFonts.captionHeavy)
+            .foregroundStyle(cardColor)
+            .lineLimit(1)
+            .transition(.opacity)
         }
     }
 

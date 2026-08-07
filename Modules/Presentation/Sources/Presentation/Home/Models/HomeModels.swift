@@ -23,7 +23,8 @@ struct HomeTimelineItem: Identifiable, Hashable {
     let status: Session.Status
     let lane: Int
     let laneCount: Int
-
+    let showsCompletionPoints: Bool
+    
     var durationMinutes: Int {
         max(1, Int(end.timeIntervalSince(start) / 60))
     }

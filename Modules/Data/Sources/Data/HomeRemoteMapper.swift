@@ -84,7 +84,7 @@ enum HomeRemoteMapper {
         _ dto: SessionResponseDTO,
         timeZoneID: String
     ) throws -> Session {
-        Session(
+        return Session(
             id: dto.id,
             taskID: dto.taskID,
             zoneID: dto.zoneId,
@@ -93,7 +93,8 @@ enum HomeRemoteMapper {
                 end: parseDateTime(dto.end, timeZoneID: timeZoneID)
             ),
             blocking: dto.locked,
-            status: try sessionStatus(dto.status)
+            status: try sessionStatus(dto.status),
+            firstCompletedAt: try dto.firstCompletedAt.map(parseISO8601Date)
         )
     }
 
