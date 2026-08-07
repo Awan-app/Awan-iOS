@@ -17,7 +17,6 @@ public final class InboxViewModel {
     @ObservationIgnored private let useCases: InboxUseCases
     @ObservationIgnored private let mapper: InboxStateMapper
     @ObservationIgnored private var cancellable: AnyCancellable?
-    @ObservationIgnored private var goalsCancellable: AnyCancellable?
 
     public init(
         useCases: InboxUseCases,
@@ -34,7 +33,7 @@ public final class InboxViewModel {
         switch action {
         case .appeared, .refresh:
             load()
-            loadGoals()
+            //loadGoals()
         case let .searchQueryChanged(query):
             state.searchQuery = query
         case let .taskFilterChanged(filter):
@@ -54,14 +53,10 @@ public final class InboxViewModel {
         case let .selectTopTab(tab):
             state.selectedTopTab = tab
             if tab == .goals {
-                loadGoals()
+                //loadGoals()
             }
         case .dismissError:
             state.failureMessage = nil
-        case .goalsAppeared, .goalsRefresh:
-            loadGoals()
-        case .dismissGoalsError:
-            state.goalsFailureMessage = nil
         }
     }
 
@@ -124,30 +119,6 @@ public final class InboxViewModel {
                     guard let self else { return }
                     self.state.isLoading = false
                     self.state.allTasks = self.mapper.map(inboxTasks: inboxTasks)
-                }
-            )
-    }
-
-    private func loadGoals() {
-        guard let fetchGoalsUseCase = useCases.fetchGoals else { return }
-        goalsCancellable?.cancel()
-        state.isLoadingGoals = true
-        state.goalsFailureMessage = nil
-
-        goalsCancellable = fetchGoalsUseCase.observe()
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    guard let self else { return }
-                    self.state.isLoadingGoals = false
-                    if case let .failure(error) = completion {
-                        self.state.goalsFailureMessage = error.localizedDescription
-                    }
-                },
-                receiveValue: { [weak self] goals in
-                    guard let self else { return }
-                    self.state.isLoadingGoals = false
-                    self.state.allGoals = goals
                 }
             )
     }

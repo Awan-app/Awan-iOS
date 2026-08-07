@@ -131,7 +131,6 @@ struct PresentationAssembly: Assembly {
         container.register(InboxUseCases.self) { resolver in
             InboxUseCases(
                 fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver),
-                fetchGoals: Self.resolve(FetchGoalsUseCase.self, from: resolver),
                 completeTask: Self.resolve(CompleteTaskSessionsUseCase.self, from: resolver),
                 deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver)
             )

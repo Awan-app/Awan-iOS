@@ -15,9 +15,6 @@ public struct InboxState: Equatable, Sendable {
     public var expandedTaskIDs: Set<UUID>
     public var allTasks: [InboxTaskItem]
     public var failureMessage: String?
-    public var allGoals: [Goal]
-    public var isLoadingGoals: Bool
-    public var goalsFailureMessage: String?
 
     public init(
         selectedTopTab: InboxTopTab = .inbox,
@@ -28,9 +25,6 @@ public struct InboxState: Equatable, Sendable {
         expandedTaskIDs: Set<UUID> = [],
         allTasks: [InboxTaskItem] = [],
         failureMessage: String? = nil,
-        allGoals: [Goal] = [],
-        isLoadingGoals: Bool = false,
-        goalsFailureMessage: String? = nil
     ) {
         self.selectedTopTab = selectedTopTab
         self.isLoading = isLoading
@@ -40,9 +34,7 @@ public struct InboxState: Equatable, Sendable {
         self.expandedTaskIDs = expandedTaskIDs
         self.allTasks = allTasks
         self.failureMessage = failureMessage
-        self.allGoals = allGoals
-        self.isLoadingGoals = isLoadingGoals
-        self.goalsFailureMessage = goalsFailureMessage
+      
     }
 
     public var filteredTasks: [InboxTaskItem] {
