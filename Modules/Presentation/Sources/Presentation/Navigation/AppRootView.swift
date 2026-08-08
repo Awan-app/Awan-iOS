@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Common
+import GoogleSignIn
 
 struct AppRootView: View {
     private static let compactCreationDetent = PresentationDetent.height(370)
@@ -69,6 +70,9 @@ struct AppRootView: View {
             if status == .unauthenticated {
                 coordinator.authCoordinator.popToRoot()
             }
+        }
+        .onOpenURL { url in
+            GIDSignIn.sharedInstance.handle(url)
         }
     }
 
