@@ -1153,6 +1153,75 @@ public enum L10n {
         }
     }
 
+    public enum Goals {
+        public static var subtitle: String { text("goals.subtitle") }
+        public static var emptyTitle: String { text("goals.empty_title") }
+        public static var emptySubtitle: String { text("goals.empty_subtitle") }
+        public static var searchPlaceholder: String { text("goals.search_placeholder") }
+        public static var sortNewest: String { text("goals.sort_newest") }
+        public static var sortOldest: String { text("goals.sort_oldest") }
+        public static var sortNameAZ: String { text("goals.sort_name_az") }
+        public static var sortNameZA: String { text("goals.sort_name_za") }
+        public static var sortDeadline: String { text("goals.sort_deadline") }
+        public static var sortTitle: String { text("goals.sort_title") }
+        public static var sectionTitle: String { text("goals.section_title") }
+        public static var noDeadline: String { text("goals.no_deadline") }
+        public static var loadFailed: String { text("goals.load_failed") }
+
+        public static func nGoals(_ count: Int) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: count == 1 ? "goals.one_goal" : "goals.n_goals",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                count
+            )
+        }
+
+        public static func tasksCompletedSummary(_ completed: Int, _ total: Int) -> String {
+            String(
+                format: text("goals.tasks_completed_summary"),
+                completed,
+                total
+            )
+        }
+
+        public static var calculatedFromSessions: String { text("goals.calculated_from_sessions") }
+
+        public static func targetDeadline(_ deadline: String) -> String {
+            String(format: text("goals.target_deadline"), deadline)
+        }
+
+        public static var notFound: String { text("goals.not_found") }
+        public static var progress: String { text("goals.progress") }
+        public static var tasks: String { text("goals.tasks") }
+        public static var loadingTasks: String { text("goals.loading_tasks") }
+        public static var noTasksAssigned: String { text("goals.no_tasks_assigned") }
+
+        public static func dependsOnNames(_ names: String) -> String {
+            String(format: text("goals.depends_on_names"), names)
+        }
+
+        public static func dependsOnCount(_ count: Int) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: count == 1 ? "goals.depends_on_count_one" : "goals.depends_on_count_multiple",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                count
+            )
+        }
+
+        public static var created: String { text("goals.created") }
+        public static var managementPlaceholder: String { text("goals.management_placeholder") }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
+
     public enum StreakCelebration {
         public static func daysStreak(_ count: Int) -> String {
             String(format: text("streak_celebration.days_streak"), count)

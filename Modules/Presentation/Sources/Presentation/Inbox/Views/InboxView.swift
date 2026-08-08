@@ -124,7 +124,7 @@ public struct InboxView: View {
                                 .font(AppFonts.title2Black)
                                 .foregroundStyle(AppColors.textPrimary)
 
-                            Text("Goal management will be available here.")
+                            Text(L10n.Goals.managementPlaceholder)
                                 .font(AppFonts.subheadlineSemibold)
                                 .foregroundStyle(AppColors.textSecondary)
                         }

@@ -11,17 +11,26 @@ public struct GoalsState: Equatable, Sendable {
     public var searchQuery: String
     public var allGoals: [GoalProgressItem]
     public var failureMessage: String?
+    public var selectedGoalTasks: [AwanTask]
+    public var isLoadingGoalTasks: Bool
+    public var goalTasksFailureMessage: String?
 
     public init(
         isLoading: Bool = false,
         searchQuery: String = "",
         allGoals: [GoalProgressItem] = [],
-        failureMessage: String? = nil
+        failureMessage: String? = nil,
+        selectedGoalTasks: [AwanTask] = [],
+        isLoadingGoalTasks: Bool = false,
+        goalTasksFailureMessage: String? = nil
     ) {
         self.isLoading = isLoading
         self.searchQuery = searchQuery
         self.allGoals = allGoals
         self.failureMessage = failureMessage
+        self.selectedGoalTasks = selectedGoalTasks
+        self.isLoadingGoalTasks = isLoadingGoalTasks
+        self.goalTasksFailureMessage = goalTasksFailureMessage
     }
 
     public var filteredGoals: [GoalProgressItem] {

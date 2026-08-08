@@ -38,7 +38,9 @@ struct AppRootView: View {
             coordinator.mainCoordinator.homePath.isEmpty
         case .you:
             coordinator.mainCoordinator.youPath.isEmpty
-        case .tasks, .store, .add:
+        case .tasks:
+            coordinator.mainCoordinator.tasksPath.isEmpty
+        case .store, .add:
             true
         }
     }
@@ -127,6 +129,16 @@ struct AppRootView: View {
                         case let .inboxTaskDetail(taskID):
                             factory.makeInboxTaskDetailView(taskID: taskID)
                         default:
+                            EmptyView()
+                        }
+                    }
+                    .navigationDestination(for: AnyHashable.self) { route in
+                        if let inboxRoute = route.base as? InboxRoute {
+                            switch inboxRoute {
+                            case let .goalDetail(goalID):
+                                factory.makeGoalDetailView(goalID: goalID)
+                            }
+                        } else {
                             EmptyView()
                         }
                     }
