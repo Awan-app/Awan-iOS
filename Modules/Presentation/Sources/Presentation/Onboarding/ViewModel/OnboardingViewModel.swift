@@ -41,50 +41,24 @@ public final class OnboardingViewModel: ZoneManaging {
     public var sleepTime: Date
 
     public var availableHours: Int {
-        guard case let .valid(durationMinutes) = wakeSleepTimeValidation else {
-            return 0
-        }
-        return durationMinutes / 60
+        WakeSleepScheduleValidator.availableHours(wakeupTime: wakeupTime, sleepTime: sleepTime)
     }
 
     // MARK: - Wake/Sleep validation
 
     /// `true` when wakeup and sleep represent the same hour and minute.
     public var wakeSleepTimesAreEqual: Bool {
-        wakeSleepTimeValidation == .sameTime
+        WakeSleepScheduleValidator.areTimesEqual(wakeupTime: wakeupTime, sleepTime: sleepTime)
     }
 
+    /// `true` when sleep time is earlier in the day than wakeup time.
     public var sleepTimeIsBeforeWakeupTime: Bool {
-        wakeSleepTimeValidation == .sleepBeforeWake
+        WakeSleepScheduleValidator.isSleepTimeBeforeWakeupTime(wakeupTime: wakeupTime, sleepTime: sleepTime)
     }
 
+    /// `true` when wake and sleep times are valid (not equal, and range is positive).
     public var wakeSleepTimeRangeIsValid: Bool {
-        if case .valid = wakeSleepTimeValidation {
-            return true
-        }
-        return false
-    }
-
-    private var wakeSleepTimeValidation: WakeSleepTimeValidation {
-        let calendar = Calendar.current
-        let wakeComponents = calendar.dateComponents([.hour, .minute], from: wakeupTime)
-        let sleepComponents = calendar.dateComponents([.hour, .minute], from: sleepTime)
-
-        guard
-            let wakeHour = wakeComponents.hour,
-            let wakeMinute = wakeComponents.minute,
-            let sleepHour = sleepComponents.hour,
-            let sleepMinute = sleepComponents.minute,
-            let wake = try? LocalTime(hour: wakeHour, minute: wakeMinute),
-            let sleep = try? LocalTime(hour: sleepHour, minute: sleepMinute)
-        else {
-            return .sameTime
-        }
-
-        return WakeSleepTimeValidator().validate(
-            wakeupTime: wake,
-            sleepTime: sleep
-        )
+        WakeSleepScheduleValidator.isTimeRangeValid(wakeupTime: wakeupTime, sleepTime: sleepTime)
     }
 
     // MARK: - Suggested Zones
