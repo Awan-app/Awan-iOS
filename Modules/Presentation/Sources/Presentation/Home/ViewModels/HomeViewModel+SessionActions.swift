@@ -34,7 +34,8 @@ extension HomeViewModel {
             zoneID: original.zoneID,
             timeRange: range,
             blocking: true,
-            status: original.status
+            status: original.status,
+            firstCompletedAt: original.firstCompletedAt
         )
 
         state.isMutating = true
@@ -76,7 +77,8 @@ extension HomeViewModel {
             zoneID: original.zoneID,
             timeRange: original.timeRange,
             blocking: isLocked,
-            status: original.status
+            status: original.status,
+            firstCompletedAt: original.firstCompletedAt
         )
 
         state.isMutating = true
@@ -117,7 +119,8 @@ extension HomeViewModel {
             zoneID: original.zoneID,
             timeRange: original.timeRange,
             blocking: original.blocking,
-            status: isCompleted ? .completed : .planned
+            status: isCompleted ? .completed : .planned,
+            firstCompletedAt: original.firstCompletedAt
         )
 
         state.isMutating = true
@@ -143,18 +146,22 @@ extension HomeViewModel {
 
                     if reward.points.awarded || reward.streak.updated {
                         state.completionReward = HomeCompletionRewardState(
-                            pointsAwarded: reward.points.awarded
-                                ? reward.points.amount
-                                : nil,
-                            streak: reward.streak.updated
-                                ? reward.streak.newValue
-                                : nil,
+                            pointsAwarded: reward.points.awarded ? reward.points.amount: nil,
+                            streak: reward.streak.updated ? reward.streak.newValue: nil,
                             maxStreakBroken: reward.streak.maxStreakBroken
                         )
                     }
+                    
+                    if reward.points.awarded, reward.points.amount > 0 {
+                            state.completionRewardAnimation = HomeCompletionRewardAnimation(
+                                sessionID: completion.session.id,
+                                points: reward.points.amount
+                            )
+                        }
 
                 case .uncompleted:
                     state.completionReward = nil
+                    state.completionRewardAnimation = nil
                 }
             } catch is CancellationError {
                 replaceSession(original)

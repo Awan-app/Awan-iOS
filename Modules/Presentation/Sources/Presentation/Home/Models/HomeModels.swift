@@ -62,6 +62,7 @@ struct HomeState {
     var failure: HomeFailureState?
     var selectedDay: Date
     var completionReward: HomeCompletionRewardState?
+    var completionRewardAnimation: HomeCompletionRewardAnimation?
     var selectedSessionID: UUID?
     var isMutating: Bool
    
@@ -116,4 +117,11 @@ struct HomeCompletionRewardState: Equatable {
     let pointsAwarded: Int?
     let streak: Int?
     let maxStreakBroken: Bool
+}
+
+
+struct HomeCompletionRewardAnimation: Equatable, Identifiable {
+    let id = UUID()
+    let sessionID: UUID
+    let points: Int
 }

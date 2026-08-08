@@ -4,7 +4,7 @@ import SwiftUI
 struct HomeView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @State private var viewModel: HomeViewModel
-
+    @State private var rewardFlightSessionID: UUID?
     init(viewModel: HomeViewModel) {
         _viewModel = State(initialValue: viewModel)
     }
@@ -57,6 +57,26 @@ struct HomeView: View {
             Button(L10n.Common.gotIt) { viewModel.send(.dismissError) }
         } message: {
             Text(state.failure?.message ?? L10n.Common.pleaseTryAgain)
+        }
+        .overlayPreferenceValue(RewardAnchorKey.self) { anchors in
+            GeometryReader { proxy in
+                if let animation = viewModel.state.completionRewardAnimation,
+                   let sourceAnchor = anchors["session-points-\(animation.sessionID.uuidString)"],
+                   let destinationAnchor = anchors["points-badge"] {
+
+                    let sourceRect = proxy[sourceAnchor]
+                    let destinationRect = proxy[destinationAnchor]
+
+                    RewardFlightOverlay(
+                        sourceRect: sourceRect,
+                        destinationRect: destinationRect,
+                        points: animation.points,
+                        onFinished: {
+                            viewModel.send(.dismissCompletionRewardAnimation)
+                        }
+                    )
+                }
+            }
         }
     }
 
@@ -112,7 +132,10 @@ struct HomeView: View {
                             )
                         )
                     },
-                    onTap: { viewModel.send(.presentSession($0))}
+                    onTap: { viewModel.send(.presentSession($0))},
+                    onPointsRewardHidden: { sessionID in
+                            rewardFlightSessionID = sessionID
+                        }
                 )
             }
             .padding(.horizontal, 16)

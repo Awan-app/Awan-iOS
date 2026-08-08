@@ -8,7 +8,7 @@ struct HomeHeaderView: View {
     let rewardPoints: Int
     let onOpenCalendar: () -> Void
     let onSelectToday: () -> Void
-
+    @State private var badgePulseTrigger = 0
     @Environment(LanguageManager.self) private var languageManager
 
     var body: some View {
@@ -51,6 +51,16 @@ struct HomeHeaderView: View {
                                     .number.locale(languageManager.locale)
                                 ),
                                 color: AppColors.reward
+                            )
+                            .symbolEffect(.bounce, value: badgePulseTrigger)
+                            .background(
+                                GeometryReader { proxy in
+                                    Color.clear
+                                        .anchorPreference(
+                                            key: RewardAnchorKey.self,
+                                            value: .bounds
+                                        ) { ["points-badge": $0] }
+                                }
                             )
                         }
                     }

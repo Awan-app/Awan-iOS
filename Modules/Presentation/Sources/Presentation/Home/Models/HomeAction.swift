@@ -13,5 +13,6 @@ enum HomeAction {
     case deleteSession(UUID)
     case dismissError
     case dismissCompletionReward
+    case dismissCompletionRewardAnimation
 }
 
