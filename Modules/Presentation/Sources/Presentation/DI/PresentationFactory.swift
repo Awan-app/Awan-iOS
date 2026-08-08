@@ -16,6 +16,7 @@ public struct PresentationFactory {
     private let makeUserInfoViewModel: () -> UserInfoViewModel
     private let inboxViewModel: InboxViewModel
     private let goalsViewModel: GoalsViewModel
+    private let marketplaceViewModel: MarketplaceViewModel
 
     public init(
         appCoordinator: AppCoordinator,
@@ -31,7 +32,8 @@ public struct PresentationFactory {
         dailyZonesViewModel: DailyZonesViewModel,
         makeUserInfoViewModel: @escaping () -> UserInfoViewModel,
         inboxViewModel: InboxViewModel,
-        goalsViewModel: GoalsViewModel
+        goalsViewModel: GoalsViewModel,
+        marketplaceViewModel: MarketplaceViewModel = MarketplaceViewModel()
     ) {
         self.appCoordinator = appCoordinator
         self.authenticationState = authenticationState
@@ -47,6 +49,7 @@ public struct PresentationFactory {
         self.makeUserInfoViewModel = makeUserInfoViewModel
         self.inboxViewModel = inboxViewModel
         self.goalsViewModel = goalsViewModel
+        self.marketplaceViewModel = marketplaceViewModel
         if self.inboxViewModel.goalsViewModel == nil {
             self.inboxViewModel.goalsViewModel = goalsViewModel
         }
@@ -114,6 +117,10 @@ public struct PresentationFactory {
 
     func makeInboxView() -> some View {
         InboxView(viewModel: inboxViewModel)
+    }
+
+    func makeMarketplaceView() -> some View {
+        MarketplaceView(viewModel: marketplaceViewModel)
     }
 
     func makeInboxTaskDetailView(taskID: UUID) -> some View {

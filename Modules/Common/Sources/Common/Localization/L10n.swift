@@ -1171,6 +1171,52 @@ public enum L10n {
         }
     }
 
+    public enum Marketplace {
+        public static var title: String { text("marketplace.title") }
+        public static var pointsSubtitle: String { text("marketplace.points_subtitle") }
+        public static var searchPlaceholder: String { text("marketplace.search_placeholder") }
+        public static var filterAll: String { text("marketplace.filter_all") }
+        public static var filterFrames: String { text("marketplace.filter_frames") }
+        public static var filterSkins: String { text("marketplace.filter_skins") }
+        public static var filterThemes: String { text("marketplace.filter_themes") }
+        public static var filterAppIcons: String { text("marketplace.filter_app_icons") }
+        public static var hideFilters: String { text("marketplace.hide_filters") }
+        public static var showFilters: String { text("marketplace.show_filters") }
+        public static var filtersApplied: String { text("marketplace.filters_applied") }
+        public static var noFiltersApplied: String { text("marketplace.no_filters_applied") }
+        public static var filtersTitle: String { text("marketplace.filters_title") }
+        public static var filterItemType: String { text("marketplace.filter_item_type") }
+        public static var filterPrice: String { text("marketplace.filter_price") }
+        public static var filterReset: String { text("marketplace.filter_reset") }
+        public static var applyFilters: String { text("marketplace.apply_filters") }
+        public static var statusOwned: String { text("marketplace.status_owned") }
+        public static var statusEquipped: String { text("marketplace.status_equipped") }
+        public static var statusLocked: String { text("marketplace.status_locked") }
+        public static var buyFor: String { text("marketplace.buy_for") }
+        public static var pts: String { text("marketplace.pts") }
+        public static var youHave: String { text("marketplace.you_have") }
+        public static var priceLabel: String { text("marketplace.price_label") }
+        public static var notOwned: String { text("marketplace.not_owned") }
+        public static var notOwnedDesc: String { text("marketplace.not_owned_desc") }
+        public static var oncePurchased: String { text("marketplace.once_purchased") }
+        public static var badgeNew: String { text("marketplace.badge_new") }
+        public static var emptyTitle: String { text("marketplace.empty_title") }
+        public static var emptySubtitle: String { text("marketplace.empty_subtitle") }
+        public static var clearFilters: String { text("marketplace.clear_filters") }
+        public static var needMorePts: String { text("marketplace.need_more_pts") }
+        public static var earnMoreHint: String { text("marketplace.earn_more_hint") }
+        public static var itsYours: String { text("marketplace.its_yours") }
+        public static var ownedHint: String { text("marketplace.owned_hint") }
+        public static var currentlyEquipped: String { text("marketplace.currently_equipped") }
+        public static var equippedHint: String { text("marketplace.equipped_hint") }
+        public static var lockedHint: String { text("marketplace.locked_hint") }
+        public static var progressLabel: String { text("marketplace.progress_label") }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
+
     public enum Goals {
         public static var subtitle: String { text("goals.subtitle") }
         public static var emptyTitle: String { text("goals.empty_title") }
