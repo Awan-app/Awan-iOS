@@ -262,6 +262,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(AuthRepository.self, from: resolver)
             )
         }
+        container.register(GoogleSignInUseCase.self) { resolver in
+            DefaultGoogleSignInUseCase(
+                authRepository: Self.resolve(AuthRepository.self, from: resolver)
+            )
+        }
         container.register(ObserveAuthenticationUseCase.self) { resolver in
             ObserveAuthenticationUseCase(
                 repository: Self.resolve(AuthRepository.self, from: resolver)
