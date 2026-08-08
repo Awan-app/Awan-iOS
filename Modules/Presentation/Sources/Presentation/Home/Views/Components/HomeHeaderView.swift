@@ -8,7 +8,8 @@ struct HomeHeaderView: View {
     let rewardPoints: Int
     let onOpenCalendar: () -> Void
     let onSelectToday: () -> Void
-    @State private var badgePulseTrigger = 0
+    let pointsPulse: Int
+    
     @Environment(LanguageManager.self) private var languageManager
 
     var body: some View {
@@ -52,7 +53,7 @@ struct HomeHeaderView: View {
                                 ),
                                 color: AppColors.reward
                             )
-                            .symbolEffect(.bounce, value: badgePulseTrigger)
+                            .symbolEffect(.bounce, value: pointsPulse)
                             .background(
                                 GeometryReader { proxy in
                                     Color.clear
@@ -233,7 +234,8 @@ private struct HomeStatChip: View {
         streakCount: 5,
         rewardPoints: 100,
         onOpenCalendar: {},
-        onSelectToday: {}
+        onSelectToday: {},
+        pointsPulse: 0
     )
         .padding()
         .environment(LanguageManager())

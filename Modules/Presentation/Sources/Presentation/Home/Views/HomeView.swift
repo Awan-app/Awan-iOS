@@ -101,13 +101,14 @@ struct HomeView: View {
                     displayName: success.displayName,
                     selectedDay: state.selectedDay,
                     streakCount: success.streakCount,
-                    rewardPoints: success.rewardPoints,
+                    rewardPoints: animatedPoints ?? success.rewardPoints,
                     onOpenCalendar: {
                         coordinator.mainCoordinator.push(.calendar)
                     },
                     onSelectToday: {
                         viewModel.send(.selectDay(.now))
-                    }
+                    },
+                    pointsPulse: pointsPulse,
                 )
 
                 HomeWeekStripView(
@@ -148,8 +149,14 @@ struct HomeView: View {
                     },
                     onTap: { viewModel.send(.presentSession($0))},
                     onPointsRewardHidden: { sessionID in
-                            rewardFlightSessionID = sessionID
+                        guard let animation = viewModel.state.completionRewardAnimation,
+                              animation.sessionID == sessionID else {
+                            return
                         }
+
+                        animatedPoints = animation.oldPoints
+                        rewardFlightSessionID = sessionID
+                    }
                 )
             }
             .padding(.horizontal, 16)
@@ -199,8 +206,6 @@ struct HomeView: View {
         from oldValue: Int,
         to newValue: Int
     ) {
-        animatedPoints = oldValue
-
         Task { @MainActor in
             let difference = newValue - oldValue
 
@@ -215,11 +220,12 @@ struct HomeView: View {
                 let progress = Double(step) / Double(steps)
 
                 animatedPoints =
-                    oldValue
-                    + Int(Double(difference) * progress)
+                    oldValue + Int(
+                        Double(difference) * progress
+                    )
 
                 try? await Task.sleep(
-                    for: .milliseconds(25)
+                    for: .milliseconds(15)
                 )
             }
 
@@ -227,5 +233,6 @@ struct HomeView: View {
             pointsPulse += 1
         }
     }
+    
 }
 
