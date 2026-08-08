@@ -1152,4 +1152,53 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
         }
     }
+
+    public enum Marketplace {
+        public static var title: String { loc("marketplace.title") }
+        public static var pointsSubtitle: String { loc("marketplace.points_subtitle") }
+        public static var searchPlaceholder: String { loc("marketplace.search_placeholder") }
+        public static var filterAll: String { loc("marketplace.filter_all") }
+        public static var filterFrames: String { loc("marketplace.filter_frames") }
+        public static var filterSkins: String { loc("marketplace.filter_skins") }
+        public static var filterThemes: String { loc("marketplace.filter_themes") }
+        public static var filterAppIcons: String { loc("marketplace.filter_app_icons") }
+        public static var hideFilters: String { loc("marketplace.hide_filters") }
+        public static var showFilters: String { loc("marketplace.show_filters") }
+        public static var filtersApplied: String { loc("marketplace.filters_applied") }
+        public static var noFiltersApplied: String { loc("marketplace.no_filters_applied") }
+        public static var filtersTitle: String { loc("marketplace.filters_title") }
+        public static var filterItemType: String { loc("marketplace.filter_item_type") }
+        public static var filterPrice: String { loc("marketplace.filter_price") }
+        public static var filterReset: String { loc("marketplace.filter_reset") }
+        public static var applyFilters: String { loc("marketplace.apply_filters") }
+        public static var statusOwned: String { loc("marketplace.status_owned") }
+        public static var statusEquipped: String { loc("marketplace.status_equipped") }
+        public static var statusLocked: String { loc("marketplace.status_locked") }
+        public static var buyFor: String { loc("marketplace.buy_for") }
+        public static var pts: String { loc("marketplace.pts") }
+        public static var youHave: String { loc("marketplace.you_have") }
+        public static var priceLabel: String { loc("marketplace.price_label") }
+        public static var notOwned: String { loc("marketplace.not_owned") }
+        public static var notOwnedDesc: String { loc("marketplace.not_owned_desc") }
+        public static var oncePurchased: String { loc("marketplace.once_purchased") }
+        public static var badgeNew: String { loc("marketplace.badge_new") }
+        public static var emptyTitle: String { loc("marketplace.empty_title") }
+        public static var emptySubtitle: String { loc("marketplace.empty_subtitle") }
+        public static var clearFilters: String { loc("marketplace.clear_filters") }
+        // Contextual detail sheet states
+        public static var needMorePts: String { loc("marketplace.need_more_pts") }
+        public static var earnMoreHint: String { loc("marketplace.earn_more_hint") }
+        public static var itsYours: String { loc("marketplace.its_yours") }
+        public static var ownedHint: String { loc("marketplace.owned_hint") }
+        public static var currentlyEquipped: String { loc("marketplace.currently_equipped") }
+        public static var equippedHint: String { loc("marketplace.equipped_hint") }
+        public static var lockedHint: String { loc("marketplace.locked_hint") }
+        public static var progressLabel: String { loc("marketplace.progress_label") }
+
+        private static func loc(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
 }
+
+

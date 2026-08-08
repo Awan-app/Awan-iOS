@@ -5724,7 +5724,626 @@
           }
         }
       }
+    },
+    "marketplace.apply_filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تطبيق الفلاتر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apply filters"
+          }
+        }
+      }
+    },
+    "marketplace.badge_new": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جديد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New"
+          }
+        }
+      }
+    },
+    "marketplace.buy_for": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اشترِ بـ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buy for"
+          }
+        }
+      }
+    },
+    "marketplace.filter_all": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الكل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
+          }
+        }
+      }
+    },
+    "marketplace.filter_app_icons": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أيقونات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Icons"
+          }
+        }
+      }
+    },
+    "marketplace.filter_frames": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إطارات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frames"
+          }
+        }
+      }
+    },
+    "marketplace.filter_item_type": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نوع العنصر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item type"
+          }
+        }
+      }
+    },
+    "marketplace.filter_price": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "السعر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Price"
+          }
+        }
+      }
+    },
+    "marketplace.filter_reset": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة ضبط"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset"
+          }
+        }
+      }
+    },
+    "marketplace.filter_skins": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مظاهر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skins"
+          }
+        }
+      }
+    },
+    "marketplace.filter_themes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سمات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Themes"
+          }
+        }
+      }
+    },
+    "marketplace.filters_applied": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الفلاتر مطبقة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters applied"
+          }
+        }
+      }
+    },
+    "marketplace.filters_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الفلاتر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters"
+          }
+        }
+      }
+    },
+    "marketplace.hide_filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إخفاء الفلاتر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide filters"
+          }
+        }
+      }
+    },
+    "marketplace.no_filters_applied": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد فلاتر مطبقة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No filters applied"
+          }
+        }
+      }
+    },
+    "marketplace.not_owned": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "غير مملوك بعد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not owned yet"
+          }
+        }
+      }
+    },
+    "marketplace.not_owned_desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اشترِ هذا العنصر لإضافته لمجموعتك واستخدامه في أي وقت."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purchase this item to add it to your collection and use it anytime."
+          }
+        }
+      }
+    },
+    "marketplace.once_purchased": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بعد الشراء يمكنك تفعيله في أي وقت."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Once purchased, you can equip it anytime."
+          }
+        }
+      }
+    },
+    "marketplace.points_subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أنفق مكافآتك على مكافآت مخصصة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spend your rewards on custom rewards"
+          }
+        }
+      }
+    },
+    "marketplace.price_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "السعر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Price"
+          }
+        }
+      }
+    },
+    "marketplace.pts": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نقطة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pts"
+          }
+        }
+      }
+    },
+    "marketplace.search_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ابحث عن عنصر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search items"
+          }
+        }
+      }
+    },
+    "marketplace.show_filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إظهار الفلاتر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show filters"
+          }
+        }
+      }
+    },
+    "marketplace.status_equipped": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مُفعَّل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Equipped"
+          }
+        }
+      }
+    },
+    "marketplace.status_locked": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مقفول"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked"
+          }
+        }
+      }
+    },
+    "marketplace.status_owned": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مملوك"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Owned"
+          }
+        }
+      }
+    },
+    "marketplace.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المتجر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marketplace"
+          }
+        }
+      }
+    },
+    "marketplace.you_have": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لديك"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have"
+          }
+        }
+      }
+    },
+    "marketplace.clear_filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة ضبط الفلاتر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset filters"
+          }
+        }
+      }
+    },
+    "marketplace.empty_subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم نجد أي عناصر تطابق بحثك أو الفلاتر المختارة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We couldn't find any items matching your search or filters"
+          }
+        }
+      }
+    },
+    "marketplace.empty_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد نتائج"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No results found"
+          }
+        }
+      }
+    },
+    "marketplace.need_more_pts": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": { "state": "translated", "value": "باقيلك %lld pts" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "%lld pts to go" }
+        }
+      }
+    },
+    "marketplace.earn_more_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": { "state": "translated", "value": "أكمل مهامك وارجع تشتريه!" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "Complete your tasks and come back for it!" }
+        }
+      }
+    },
+    "marketplace.its_yours": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": { "state": "translated", "value": "ده بالفعل ملكك" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "Already yours" }
+        }
+      }
+    },
+    "marketplace.owned_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": { "state": "translated", "value": "جهّزه واستمتع بيه في أي وقت" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "Equip it and enjoy it anytime" }
+        }
+      }
+    },
+    "marketplace.currently_equipped": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": { "state": "translated", "value": "شغّال دلوقتي" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "Active right now" }
+        }
+      }
+    },
+    "marketplace.equipped_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": { "state": "translated", "value": "العنصر ده هو الـ active بتاعك حالياً" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "This item is your current active selection" }
+        }
+      }
+    },
+    "marketplace.locked_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": { "state": "translated", "value": "أكمل مهامك عشان يتفتحلك" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "Complete your tasks to unlock this item" }
+        }
+      }
+    },
+    "marketplace.progress_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": { "state": "translated", "value": "تقدمك" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "Your progress" }
+        }
+      }
     }
   },
   "version": "1.0"
 }
+
+
+
+
