@@ -76,9 +76,12 @@ public final class OnboardingViewModel: ZoneManaging {
         }
     }
 
+    public static let sessionDurations = [10, 20, 30, 40, 50, 60, 75, 90, 105, 120, 150, 180]
+
     // MARK: - Task Length
 
-    public var focusDurationIndex: Int = 2
+    public var focusDurationIndex: Int = 5 // Defaults to 60 minutes
+    public var customDurationText: String = ""
 
     // MARK: - Task Simulation
 
@@ -328,15 +331,22 @@ public final class OnboardingViewModel: ZoneManaging {
         let birthDate = calendar.date(
             from: DateComponents(year: 2000, month: 1, day: 1)
         ) ?? Date(timeIntervalSince1970: 946_684_800)
-        let sessionDurations = [30, 45, 60, 90, 120, 180]
-        let durationIndex = min(max(focusDurationIndex, 0), sessionDurations.count - 1)
+        let durationIndex = min(max(focusDurationIndex, 0), Self.sessionDurations.count - 1)
+
+        let finalDuration: Int
+        if !customDurationText.isEmpty, let custom = Int(customDurationText), custom >= 10, custom <= 180 {
+            finalDuration = custom
+        } else {
+            let durationIndex = min(max(focusDurationIndex, 0), Self.sessionDurations.count - 1)
+            finalDuration = Self.sessionDurations[durationIndex]
+        }
 
         return OnboardingDraft(
             firstName: firstName,
             lastName: lastName,
             birthDate: birthDate,
             timezone: TimeZone.current.identifier,
-            preferredSessionDuration: sessionDurations[durationIndex],
+            preferredSessionDuration: finalDuration,
             bufferBetweenSessions: 10,
             wakeupTime: wakeupTime,
             sleepTime: sleepTime
