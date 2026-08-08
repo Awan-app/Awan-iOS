@@ -18,6 +18,7 @@ struct ProfileProgressSection: View {
             LazyVGrid(columns: columns, spacing: 12) {
                 statCard(
                     icon: "star.fill",
+                    watermarkFont: AppFonts.goalHeroSymbol,
                     value: points,
                     title: L10n.Profile.points,
                     color: AppColors.reward,
@@ -26,6 +27,7 @@ struct ProfileProgressSection: View {
 
                 statCard(
                     icon: "flame.fill",
+                    watermarkFont: AppFonts.profileStatWatermark,
                     value: streak,
                     title: L10n.Profile.streak,
                     color: AppColors.warning,
@@ -79,6 +81,7 @@ struct ProfileProgressSection: View {
 
     private func statCard(
         icon: String,
+        watermarkFont: Font,
         value: Int,
         title: String,
         color: Color,
@@ -88,25 +91,63 @@ struct ProfileProgressSection: View {
             shape: .roundedRectangle(cornerRadius: 20),
             surfaceColor: surfaceColor,
             borderColor: color.opacity(0.34),
-            depthColor: color.opacity(0.42),
+            depthColor: color.opacity(0.52),
             depthOffset: 5,
-            contentInsets: EdgeInsets(top: 18, leading: 16, bottom: 18, trailing: 16)
+            contentInsets: EdgeInsets()
         ) {
-            VStack(alignment: .leading, spacing: 12) {
+            ZStack(alignment: .topTrailing) {
+                Circle()
+                    .fill(color.opacity(0.13))
+                    .frame(width: 106, height: 106)
+                    .offset(x: 42, y: -48)
+
                 Image(systemName: icon)
-                    .font(AppFonts.progressSymbol)
-                    .foregroundStyle(color)
+                    .font(watermarkFont)
+                    .foregroundStyle(color.opacity(0.07))
+                    .rotationEffect(.degrees(-12))
+                    .offset(x: 20, y: 62)
 
-                Text(value.formatted(.number.locale(languageManager.locale)))
-                    .font(AppFonts.titleBlack)
-                    .foregroundStyle(AppColors.textPrimary)
-                    .contentTransition(.numericText(value: Double(value)))
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .center) {
+                        Image(systemName: icon)
+                            .font(AppFonts.progressSymbol)
+                            .foregroundStyle(color)
+                            .frame(width: 38, height: 38)
+                            .background(
+                                AppColors.surface.opacity(0.88),
+                                in: RoundedRectangle(
+                                    cornerRadius: 12,
+                                    style: .continuous
+                                )
+                            )
+                            .overlay {
+                                RoundedRectangle(
+                                    cornerRadius: 12,
+                                    style: .continuous
+                                )
+                                .stroke(color.opacity(0.22), lineWidth: 1)
+                            }
 
-                Text(title)
-                    .font(AppFonts.subheadlineBold)
-                    .foregroundStyle(AppColors.textSecondary)
+                        Text(title)
+                            .font(AppFonts.subheadlineHeavy)
+                            .foregroundStyle(AppColors.textSecondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
+                    }
+
+                    Text(value.formatted(.number.locale(languageManager.locale)))
+                        .font(AppFonts.profileStatNumber)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .minimumScaleFactor(0.72)
+                        .lineLimit(1)
+                        .contentTransition(.numericText(value: Double(value)))
+                }
+                .padding(14)
             }
-            .frame(maxWidth: .infinity, minHeight: 104, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: 112, alignment: .leading)
+            .clipShape(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+            )
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)

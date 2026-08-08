@@ -61,26 +61,22 @@ public struct StreakCelebrationDialog: View {
                         .foregroundStyle(AppColors.onAccent)
                 }
 
-                if detailsVisible {
-                    VStack(spacing: 14) {
-                        Text(L10n.StreakCelebration.onFire)
-                            .font(AppFonts.title2Black)
-                            .foregroundStyle(AppColors.onAccent)
+                VStack(spacing: 14) {
+                    Text(L10n.StreakCelebration.onFire)
+                        .font(AppFonts.title2Black)
+                        .foregroundStyle(AppColors.onAccent)
 
-                        Text(L10n.StreakCelebration.sameTimeTomorrow)
-                            .font(AppFonts.bodyBold)
-                            .foregroundStyle(AppColors.accentBlue)
-                            .multilineTextAlignment(.center)
+                    Text(L10n.StreakCelebration.sameTimeTomorrow)
+                        .font(AppFonts.bodyBold)
+                        .foregroundStyle(AppColors.accentBlue)
+                        .multilineTextAlignment(.center)
 
-                        if isNewRecord {
-                            newRecordBadge
-                        }
+                    if isNewRecord {
+                        newRecordBadge
                     }
-                    .transition(
-                        .move(edge: .bottom)
-                        .combined(with: .opacity)
-                    )
                 }
+                .opacity(detailsVisible ? 1 : 0)
+                .accessibilityHidden(!detailsVisible)
             }
             .padding(.horizontal, 28)
         }
