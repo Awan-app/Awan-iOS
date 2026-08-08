@@ -243,6 +243,9 @@ public struct MockAuthRepository: AuthRepository {
     public func verifyOTP(email: String, code: String) async throws -> VerifyOTPResult {
         return VerifyOTPResult(user: UserEntity(id: "1", email: "test@test.com", isNew: false))
     }
+    public func signInWithGoogle(idToken: String, accessToken: String) async throws -> VerifyOTPResult {
+        return VerifyOTPResult(user: UserEntity(id: "1", email: "google@test.com", isNew: false))
+    }
     public func observeAuthenticatedUser() -> AsyncStream<UserEntity?> {
         AsyncStream { continuation in
             continuation.yield(UserEntity(id: "1", email: "test@test.com", isNew: false))
