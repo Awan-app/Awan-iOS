@@ -23,7 +23,7 @@ struct GoalDetailMetadataCard: View {
                 HStack {
                     Image(systemName: "clock.fill")
                         .foregroundStyle(AppColors.accentBlue)
-                    Text("Created")
+                    Text(L10n.Goals.created)
                         .font(AppFonts.subheadlineSemibold)
                         .foregroundStyle(AppColors.textSecondary)
                     Spacer()

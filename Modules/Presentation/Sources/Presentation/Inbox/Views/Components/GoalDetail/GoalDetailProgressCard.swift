@@ -26,7 +26,7 @@ struct GoalDetailProgressCard: View {
     var body: some View {
         AppCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Progress")
+                Text(L10n.Goals.progress)
                     .font(AppFonts.subheadlineHeavy)
                     .foregroundStyle(AppColors.textSecondary)
 
@@ -36,7 +36,7 @@ struct GoalDetailProgressCard: View {
                             .font(AppFonts.title2Black)
                             .foregroundStyle(progressColor)
 
-                        Text("\(completedCount) of \(totalCount) tasks completed")
+                        Text(L10n.Goals.tasksCompletedSummary(completedCount, totalCount))
                             .font(AppFonts.subheadlineSemibold)
                             .foregroundStyle(AppColors.textSecondary)
                     }
@@ -70,7 +70,7 @@ struct GoalDetailProgressCard: View {
                             if breakdown.completed > 0 {
                                 breakdownChip(
                                     count: breakdown.completed,
-                                    label: "Completed",
+                                    label: L10n.Inbox.filterCompleted,
                                     icon: "checkmark.circle",
                                     color: AppColors.accentGreen
                                 )
@@ -78,7 +78,7 @@ struct GoalDetailProgressCard: View {
                             if breakdown.active > 0 {
                                 breakdownChip(
                                     count: breakdown.active,
-                                    label: "Active",
+                                    label: L10n.Inbox.filterActive,
                                     icon: "circle.dotted",
                                     color: AppColors.warning
                                 )
@@ -86,7 +86,7 @@ struct GoalDetailProgressCard: View {
                             if breakdown.drafted > 0 {
                                 breakdownChip(
                                     count: breakdown.drafted,
-                                    label: "Drafted",
+                                    label: L10n.Inbox.filterDrafted,
                                     icon: "circle.dashed",
                                     color: AppColors.textSecondary
                                 )
@@ -94,7 +94,7 @@ struct GoalDetailProgressCard: View {
                             if breakdown.cancelled > 0 {
                                 breakdownChip(
                                     count: breakdown.cancelled,
-                                    label: "Cancelled",
+                                    label: L10n.Inbox.filterCancelled,
                                     icon: "xmark.circle",
                                     color: AppColors.destructive
                                 )

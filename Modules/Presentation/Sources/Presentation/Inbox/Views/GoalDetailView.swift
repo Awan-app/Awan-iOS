@@ -79,7 +79,7 @@ public struct GoalDetailView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 VStack(spacing: 12) {
-                    Text("Goal not found")
+                    Text(L10n.Goals.notFound)
                         .font(AppFonts.subheadlineBold)
                         .foregroundStyle(AppColors.textSecondary)
                 }

@@ -18,7 +18,7 @@ struct GoalDetailTasksCard: View {
         AppCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack {
-                    Text("Tasks")
+                    Text(L10n.Goals.tasks)
                         .font(AppFonts.title3Black)
                         .foregroundStyle(AppColors.textPrimary)
 
@@ -41,7 +41,7 @@ struct GoalDetailTasksCard: View {
                     HStack(spacing: 10) {
                         ProgressView()
                             .controlSize(.small)
-                        Text("Loading tasks...")
+                        Text(L10n.Goals.loadingTasks)
                             .font(AppFonts.subheadlineSemibold)
                             .foregroundStyle(AppColors.textSecondary)
                     }
@@ -54,7 +54,7 @@ struct GoalDetailTasksCard: View {
                             .foregroundStyle(AppColors.destructive)
                             .multilineTextAlignment(.center)
 
-                        Button("Retry") {
+                        Button(L10n.Home.retry) {
                             onRetry()
                         }
                         .font(AppFonts.subheadlineBold)
@@ -63,7 +63,7 @@ struct GoalDetailTasksCard: View {
                     .padding(.vertical, 12)
                     .frame(maxWidth: .infinity, alignment: .center)
                 } else if tasks.isEmpty {
-                    Text("No tasks assigned to this goal.")
+                    Text(L10n.Goals.noTasksAssigned)
                         .font(AppFonts.subheadlineSemibold)
                         .foregroundStyle(AppColors.textSecondary)
                         .padding(.vertical, 8)

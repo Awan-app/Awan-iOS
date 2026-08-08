@@ -50,12 +50,16 @@ public final class GoalsViewModel {
         state.goalTasksFailureMessage = nil
         state.selectedGoalTasks = []
 
-        Task {
+        let fetchGoalTasks = useCases.fetchGoalTasks
+
+        Task { [weak self] in
             do {
-                let tasks = try await useCases.fetchGoalTasks.execute(goalID: goalID)
+                let tasks = try await fetchGoalTasks.execute(goalID: goalID)
+                guard let self else { return }
                 self.state.isLoadingGoalTasks = false
                 self.state.selectedGoalTasks = tasks
             } catch {
+                guard let self else { return }
                 self.state.isLoadingGoalTasks = false
                 self.state.goalTasksFailureMessage = error.localizedDescription
             }

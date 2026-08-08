@@ -44,11 +44,11 @@ struct GoalDetailTaskRow: View {
                             .foregroundStyle(AppColors.accentBlue)
 
                         if !parentTaskNames.isEmpty {
-                            Text("Depends on: \(parentTaskNames.joined(separator: ", "))")
+                            Text(L10n.Goals.dependsOnNames(parentTaskNames.joined(separator: ", ")))
                                 .font(AppFonts.caption2Bold)
                                 .foregroundStyle(AppColors.accentBlue)
                         } else {
-                            Text("Depends on \(task.dependencyIDs.count) task\(task.dependencyIDs.count == 1 ? "" : "s")")
+                            Text(L10n.Goals.dependsOnCount(task.dependencyIDs.count))
                                 .font(AppFonts.caption2Bold)
                                 .foregroundStyle(AppColors.accentBlue)
                         }
@@ -78,7 +78,7 @@ struct GoalDetailTaskRow: View {
                         )
                 }
 
-                Text("\(task.duration.minutes)m")
+                Text(L10n.Home.minutesShort(task.duration.minutes))
                     .font(AppFonts.caption2Bold)
                     .foregroundStyle(AppColors.textSecondary)
             }
