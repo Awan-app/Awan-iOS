@@ -149,6 +149,12 @@ public enum L10n {
         public static func durationHoursMinutes(_ hours: Int, _ minutes: Int) -> String {
             String(format: L10n.currentBundle.localizedString(forKey: "onboarding.duration_hours_minutes", value: nil, table: "Localizable"), hours, minutes)
         }
+        public static var customTimePlaceholder: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.custom_time_placeholder", value: nil, table: "Localizable")
+        }
+        public static var timeValidationError: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.time_validation_error", value: nil, table: "Localizable")
+        }
         public static var taskLengthExplanationPrefix: String { L10n.currentBundle.localizedString(forKey: "onboarding.task_length_explanation_prefix", value: nil, table: "Localizable") }
         public static var splitIntoSessions: String { L10n.currentBundle.localizedString(forKey: "onboarding.split_into_sessions", value: nil, table: "Localizable") }
         public static var zoneOverlapError: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_overlap_error", value: nil, table: "Localizable") }

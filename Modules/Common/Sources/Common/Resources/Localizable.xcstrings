@@ -6427,6 +6427,40 @@
           }
         }
       }
+    },
+    "onboarding.custom_time_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom time (min)"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وقت مخصص (دقائق)"
+          }
+        }
+      }
+    },
+    "onboarding.time_validation_error": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time must be between 10 and 180 minutes"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يجب أن يكون الوقت بين 10 و 180 دقيقة"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -55,13 +55,13 @@ struct TaskLength: View {
                     VStack(spacing: 8) {
                         AppTextField(
                             text: $viewModel.customDurationText,
-                            placeholder: "Custom time (min)"
+                            placeholder: L10n.Onboarding.customTimePlaceholder
                         )
                         .keyboardType(.numberPad)
                         .padding(.horizontal, 24)
                         
                         if showValidationError {
-                            Text("Time must be between 10 and 180 minutes")
+                            Text(L10n.Onboarding.timeValidationError)
                                 .foregroundColor(AppColors.destructive)
                                 .font(AppFonts.captionHeavy)
                         }
