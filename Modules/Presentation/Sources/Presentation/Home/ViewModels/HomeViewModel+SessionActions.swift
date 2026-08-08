@@ -144,13 +144,11 @@ extension HomeViewModel {
                 case .completed(let completion):
                     let reward = completion.reward
 
-                    if true {
+                    if reward.points.awarded || reward.streak.updated {
                         state.completionReward = HomeCompletionRewardState(
-//                            pointsAwarded: reward.points.awarded ? reward.points.amount: nil,
-//                            streak: reward.streak.updated ? reward.streak.newValue: nil,
-                            pointsAwarded: reward.points.amount,
-                            streak: reward.streak.newValue,
-                            maxStreakBroken: true
+                            pointsAwarded: reward.points.awarded ? reward.points.amount: nil,
+                            streak: reward.streak.updated ? reward.streak.newValue: nil,
+                            maxStreakBroken: reward.streak.maxStreakBroken
                         )
                     }
                     

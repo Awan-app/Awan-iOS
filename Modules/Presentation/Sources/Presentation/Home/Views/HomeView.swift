@@ -108,7 +108,7 @@ struct HomeView: View {
 
     private func content(_ state: HomeState, success: HomeSuccessState) -> some View {
         ScrollView {
-            LazyVStack(spacing: 18) {
+            VStack(spacing: 18) {
                 HomeHeaderView(
                     displayName: success.displayName,
                     selectedDay: state.selectedDay,
