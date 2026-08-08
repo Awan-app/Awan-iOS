@@ -194,6 +194,7 @@ public struct DefaultTaskRepository: TaskRepository {
 
     public func addTask(
         _ task: AwanTask,
+        categoryID: UUID?,
         sessionZoneID: UUID?,
         startsAt: Date?,
         durationMinutes: Int,
