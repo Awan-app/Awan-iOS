@@ -135,7 +135,7 @@ struct AppRootView: View {
             .toolbar(.hidden, for: .tabBar)
 
             NavigationStack(path: Bindable(coordinator.mainCoordinator).storePath) {
-                AppColors.screenBackground.ignoresSafeArea()
+                factory.makeMarketplaceView()
             }
             .tag(MainTab.store)
             .toolbar(.hidden, for: .tabBar)
