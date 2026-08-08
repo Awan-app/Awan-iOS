@@ -58,7 +58,6 @@ public final class HomeViewModel {
         case .dismissCompletionReward:
             state.completionReward = nil
         case .dismissCompletionRewardAnimation:
-            state.completionReward = nil
             state.completionRewardAnimation = nil
         }
     }
