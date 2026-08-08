@@ -83,6 +83,18 @@ struct HomeView: View {
                         },
                         onFinished: {
                             rewardFlightSessionID = nil
+
+                            if let reward = viewModel.state.completionReward,
+                               let streak = reward.streak {
+
+                                coordinator.mainCoordinator.presentStreakCelebration(
+                                    streak: streak,
+                                    isNewRecord: reward.maxStreakBroken
+                                )
+
+                                viewModel.send(.dismissCompletionReward)
+                            }
+
                             viewModel.send(.dismissCompletionRewardAnimation)
                         }
                     )
@@ -90,29 +102,6 @@ struct HomeView: View {
                 }
             }
             .allowsHitTesting(false)
-        }.fullScreenCover(
-            isPresented: Binding(
-                get: {
-                    viewModel.state.completionReward?.streak != nil
-                        && viewModel.state.completionRewardAnimation == nil
-                },
-                set: { isPresented in
-                    if !isPresented {
-                        viewModel.send(.dismissCompletionReward)
-                    }
-                }
-            )
-        ) {
-            if let reward = viewModel.state.completionReward,
-               let streak = reward.streak {
-                StreakCelebrationDialog(
-                    streak: streak,
-                    isNewRecord: reward.maxStreakBroken
-                ) {
-                    viewModel.send(.dismissCompletionReward)
-                }
-                .presentationBackground(.clear)
-            }
         }
     }
 
