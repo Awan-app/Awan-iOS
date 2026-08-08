@@ -1239,4 +1239,17 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
         }
     }
+
+    public enum StreakCelebration {
+        public static func daysStreak(_ count: Int) -> String {
+            String(format: text("streak_celebration.days_streak"), count)
+        }
+        public static var subtitle: String { text("streak_celebration.subtitle") }
+        public static var newBest: String { text("streak_celebration.new_best") }
+        public static var keepGoing: String { text("streak_celebration.keep_going") }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
 }

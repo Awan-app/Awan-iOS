@@ -120,14 +120,25 @@ struct DataAssembly: Assembly {
                 localDataSource: Self.resolve(LocalTemplateOverrideDataSource.self, from: resolver)
             )
         }
-
+        container.register(RemoteGamificationDataSource.self) { resolver in
+            DefaultRemoteGamificationDataSource(
+                networkService: Self.resolve(
+                    NetworkServiceProtocol.self,
+                    from: resolver
+                )
+            )
+        }
         container.register(UserProfileRepository.self) { resolver in
             DefaultUserProfileRepository(
                 localDataSource: Self.resolve(
                     LocalUserProfileDataSource.self,
                     from: resolver
                 ),
-                remoteDataSource: Self.resolve(RemoteProfileDataSource.self, from: resolver)
+                remoteDataSource: Self.resolve(RemoteProfileDataSource.self, from: resolver),
+                remoteGamificationDataSource: Self.resolve(
+                    RemoteGamificationDataSource.self,
+                    from: resolver
+                )
             )
         }
         .inObjectScope(.container)

@@ -196,6 +196,25 @@ struct AppRootView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .overlay {
+            if let celebration = coordinator.mainCoordinator.streakCelebration {
+                StreakCelebrationDialog(
+                    streak: celebration.streak,
+                    isNewRecord: celebration.isNewRecord
+                ) {
+                    coordinator.mainCoordinator.dismissStreakCelebration()
+                }
+                .transition(
+                    .scale(scale: 0.88)
+                    .combined(with: .opacity)
+                )
+                .zIndex(1000)
+            }
+        }
+        .animation(
+            .spring(response: 0.38, dampingFraction: 0.72),
+            value: coordinator.mainCoordinator.streakCelebration?.id
+        )
         .animation(.snappy(duration: 0.3), value: shouldShowCustomTabBar)
         .sheet(item: Bindable(coordinator.mainCoordinator).presentedSheet) { route in
             switch route {

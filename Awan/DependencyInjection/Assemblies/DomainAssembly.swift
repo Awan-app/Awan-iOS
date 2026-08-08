@@ -163,7 +163,14 @@ struct DomainAssembly: Assembly {
         }
         container.register(SetSessionCompletionUseCase.self) { resolver in
             DefaultSetSessionCompletionUseCase(
-                repository: Self.resolve(SessionRepository.self, from: resolver)
+                sessionRepository: Self.resolve(
+                    SessionRepository.self,
+                    from: resolver
+                ),
+                userProfileRepository: Self.resolve(
+                    UserProfileRepository.self,
+                    from: resolver
+                )
             )
         }
         container.register(DeleteSessionUseCase.self) { resolver in

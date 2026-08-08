@@ -14,14 +14,16 @@ public struct Session: Identifiable, Hashable, Sendable {
     public let timeRange: TimeRange
     public let blocking: Bool
     public let status: Status
-
+    public let firstCompletedAt: Date?
+    
     public init(
         id: UUID,
         taskID: UUID,
         zoneID: UUID?,
         timeRange: TimeRange,
         blocking: Bool,
-        status: Status
+        status: Status,
+        firstCompletedAt: Date? = nil
     ) {
         self.id = id
         self.taskID = taskID
@@ -29,6 +31,7 @@ public struct Session: Identifiable, Hashable, Sendable {
         self.timeRange = timeRange
         self.blocking = blocking
         self.status = status
+        self.firstCompletedAt = firstCompletedAt
     }
 
     public var contributesScheduledWork: Bool {

@@ -144,7 +144,8 @@ extension HomeTimelineItem {
             blocking: false,
             status: .planned,
             lane: 0,
-            laneCount: 1
+            laneCount: 1,
+            showsCompletionPoints: true
         )
     }
 }

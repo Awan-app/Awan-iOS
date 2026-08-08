@@ -65,6 +65,7 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
         let second = try demoTask(title: "Team sync", zone: workZone, minutes: 90)
         _ = try await taskRepository.addTask(
             first,
+            categoryID: nil,
             sessionZoneID: nil,
             startsAt: nil,
             durationMinutes: 90,
@@ -72,6 +73,7 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
         )
         _ = try await taskRepository.addTask(
             second,
+            categoryID: nil,
             sessionZoneID: nil,
             startsAt: nil,
             durationMinutes: 90,
@@ -135,6 +137,7 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
         )
         _ = try await taskRepository.addTask(
             filler,
+            categoryID: nil,
             sessionZoneID: nil,
             startsAt: nil,
             durationMinutes: 450,
@@ -142,6 +145,7 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
         )
         _ = try await taskRepository.addTask(
             overflow,
+            categoryID: nil,
             sessionZoneID: nil,
             startsAt: nil,
             durationMinutes: 60,
@@ -249,6 +253,7 @@ public struct SimulateScheduleScenarioUseCaseImpl: SimulateScheduleScenarioUseCa
         )
         _ = try await taskRepository.addTask(
             task,
+            categoryID: nil,
             sessionZoneID: nil,
             startsAt: nil,
             durationMinutes: 60,

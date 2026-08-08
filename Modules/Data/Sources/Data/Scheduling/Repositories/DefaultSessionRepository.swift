@@ -116,48 +116,60 @@ public struct DefaultSessionRepository: SessionRepository {
             throw SchedulingError.entityNotFound(id: session.id)
         }
         let timeChanged = original.timeRange != session.timeRange
-        let statusChanged = original.status != session.status
         let lockChanged = original.blocking != session.blocking
-        guard timeChanged || statusChanged || lockChanged else { return }
+        guard timeChanged || lockChanged else { return }
 
         var response: SessionResponseDTO
+
         if timeChanged {
             response = try await remoteDataSource.updateSession(
                 sessionID: session.id,
-                request: updateRequest(for: session, timeZoneID: timeZoneID)
+                request: updateRequest(
+                    for: session,
+                    timeZoneID: timeZoneID
+                )
             )
-        } else if statusChanged {
-            response = try await remoteDataSource.updateSessionStatus(
-                sessionID: session.id,
-                status: remoteStatus(session.status)
-            )
-        } else if session.blocking {
-            response = try await remoteDataSource.lockSession(sessionID: session.id)
         } else {
-            response = try await remoteDataSource.unlockSession(sessionID: session.id)
+            response = if session.blocking {
+                try await remoteDataSource.lockSession(
+                    sessionID: session.id
+                )
+            } else {
+                try await remoteDataSource.unlockSession(
+                    sessionID: session.id
+                )
+            }
         }
 
-        if lockChanged, timeChanged || statusChanged {
+        if timeChanged && lockChanged {
             do {
                 response = if session.blocking {
-                    try await remoteDataSource.lockSession(sessionID: session.id)
+                    try await remoteDataSource.lockSession(
+                        sessionID: session.id
+                    )
                 } else {
-                    try await remoteDataSource.unlockSession(sessionID: session.id)
-                }
-            } catch {
-                if timeChanged {
-                    _ = try? await remoteDataSource.updateSession(
-                        sessionID: original.id,
-                        request: updateRequest(for: original, timeZoneID: timeZoneID)
+                    try await remoteDataSource.unlockSession(
+                        sessionID: session.id
                     )
                 }
+            } catch {
+                _ = try? await remoteDataSource.updateSession(
+                    sessionID: original.id,
+                    request: updateRequest(
+                        for: original,
+                        timeZoneID: timeZoneID
+                    )
+                )
+
                 throw error
             }
         }
+
         let accepted = try HomeRemoteMapper.session(
             response,
             timeZoneID: timeZoneID
         )
+
         try await localDataSource.updateSession(accepted)
     }
     public func deleteSession(id: UUID) async throws {
@@ -170,7 +182,50 @@ public struct DefaultSessionRepository: SessionRepository {
     public func deleteAllSessions() async throws {
         try await localDataSource.deleteAllSessions()
     }
+    public func completeSession(
+        id: UUID
+    ) async throws -> SessionCompletionResult {
+        let timeZoneID = await getTimeZoneID()
 
+        let response = try await remoteDataSource.completeSession(
+            sessionID: id
+        )
+
+        let session = try HomeRemoteMapper.session(
+            response.session,
+            timeZoneID: timeZoneID
+        )
+
+        let reward = HomeRemoteMapper.completionReward(
+            response.reward
+        )
+
+        try await localDataSource.updateSession(session)
+
+        return SessionCompletionResult(
+            session: session,
+            reward: reward
+        )
+    }
+    public func uncompleteSession(
+        id: UUID
+    ) async throws -> Session {
+        let timeZoneID = await getTimeZoneID()
+
+        let response = try await remoteDataSource.uncompleteSession(
+            sessionID: id
+        )
+
+        let session = try HomeRemoteMapper.session(
+            response,
+            timeZoneID: timeZoneID
+        )
+
+        try await localDataSource.updateSession(session)
+
+        return session
+    }
+    
     private func updateRequest(
         for session: Session,
         timeZoneID: String
@@ -184,16 +239,7 @@ public struct DefaultSessionRepository: SessionRepository {
                 session.timeRange.end,
                 timeZoneID: timeZoneID
             ),
-            status: remoteStatus(session.status)
+            status: nil
         )
-    }
-
-    private func remoteStatus(_ status: Session.Status) -> String {
-        switch status {
-        case .planned: "SCHEDULED"
-        case .completed: "COMPLETED"
-        case .missed: "SKIPPED"
-        case .cancelled: "CANCELLED"
-        }
     }
 }

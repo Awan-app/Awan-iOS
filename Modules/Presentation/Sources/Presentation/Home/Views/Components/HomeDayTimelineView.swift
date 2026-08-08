@@ -14,6 +14,7 @@ struct HomeDayTimelineView: View {
     let onMove: (UUID, CGFloat) -> Void
     let onSetCompletion: (UUID, Bool) -> Void
     let onTap: (UUID) -> Void
+    let onPointsRewardHidden: (UUID) -> Void
 
     @State private var zoomScale: CGFloat = 1
     @GestureState private var gestureScale: CGFloat = 1
@@ -108,7 +109,10 @@ struct HomeDayTimelineView: View {
             item: item,
             onMove: { onMove(item.id, $0 / displayedZoomScale) },
             onSetCompletion: { onSetCompletion(item.id, $0) },
-            onTap: { onTap(item.id) }
+            onTap: { onTap(item.id) },
+            onPointsRewardHidden: {
+                onPointsRewardHidden(item.id)
+            }
         )
         .frame(
             width: cardWidth,
@@ -159,7 +163,8 @@ import Domain
         items: [],
         onMove: { _, _ in },
         onSetCompletion: { _, _ in },
-        onTap: { _ in }
+        onTap: { _ in },
+        onPointsRewardHidden: { _ in}
     )
         .padding()
 }
