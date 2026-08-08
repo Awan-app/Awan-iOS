@@ -10,6 +10,8 @@ import SwiftData
 import Data
 import Presentation
 import Common
+import GoogleSignIn
+import FirebaseCore
 
 @main
 struct AwanApp: App {
@@ -25,6 +27,11 @@ struct AwanApp: App {
             modelContainer: sharedModelContainer
         )
         presentationFactory = dependencies.resolve(PresentationFactory.self)
+        FirebaseConfigurator.configure()
+
+        if let clientID = FirebaseApp.app()?.options.clientID {
+            GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
+        }
     }
 
     var body: some Scene {
