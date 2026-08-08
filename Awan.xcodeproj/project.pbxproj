@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3E469E243026D57A007B6A80 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3E469E233026D57A007B6A80 /* GoogleService-Info.plist */; };
 		4CA335BA3007FBC3001DBF8D /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335B93007FBC3001DBF8D /* Shimmer */; };
 		4CA335BD3007FBDC001DBF8D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335BC3007FBDC001DBF8D /* Kingfisher */; };
 		4CA335C33007FC20001DBF8D /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335C23007FC20001DBF8D /* Alamofire */; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3E469E233026D57A007B6A80 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3E51E42A30079E70009EDCE9 /* Awan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Awan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E51E43C30079E77009EDCE9 /* AwanTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AwanTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E51E44630079E77009EDCE9 /* AwanUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AwanUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,6 +101,7 @@
 				3E51E44930079E77009EDCE9 /* AwanUITests */,
 				6D0C309630079430004492E4 /* Frameworks */,
 				3E51E42B30079E70009EDCE9 /* Products */,
+				3E469E233026D57A007B6A80 /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -253,6 +256,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E469E243026D57A007B6A80 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,6 +444,7 @@
 				DEVELOPMENT_TEAM = Z8F43TUMF5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SupportingFiles/Info.plist;
 				INFOPLIST_KEY_NSAppTransportSecurity = "<dict><key>NSAllowsArbitraryLoads</key><true/></dict>";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Awan uses the microphone to turn your spoken task into text.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Awan uses speech recognition to transcribe your spoken task.";
@@ -472,6 +477,7 @@
 				DEVELOPMENT_TEAM = Z8F43TUMF5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SupportingFiles/Info.plist;
 				INFOPLIST_KEY_NSAppTransportSecurity = "<dict><key>NSAllowsArbitraryLoads</key><true/></dict>";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Awan uses the microphone to turn your spoken task into text.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Awan uses speech recognition to transcribe your spoken task.";
