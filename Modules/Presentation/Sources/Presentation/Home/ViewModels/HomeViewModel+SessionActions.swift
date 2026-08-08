@@ -153,9 +153,11 @@ extension HomeViewModel {
                     }
                     
                     if reward.points.awarded, reward.points.amount > 0 {
-                            state.completionRewardAnimation = HomeCompletionRewardAnimation(
+                        state.completionRewardAnimation =
+                            HomeCompletionRewardAnimation(
                                 sessionID: completion.session.id,
-                                points: reward.points.amount
+                                oldPoints: reward.points.oldValue,
+                                newPoints: reward.points.newValue
                             )
                         }
 

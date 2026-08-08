@@ -96,28 +96,30 @@ struct HomeTimelineSessionCard: View {
 
     @ViewBuilder
     private var pointsLabel: some View {
-        if item.showsCompletionPoints, item.points > 0 {
-            Text(
-                item.laneCount == 1
-                    ? "+\(item.points) pts"
-                    : "+\(item.points)"
-            )
-            .font(AppFonts.captionHeavy)
-            .foregroundStyle(cardColor)
-            .lineLimit(1)
-            .transition(.opacity)
-            .background(
-                GeometryReader { proxy in
-                    Color.clear
-                        .anchorPreference(
-                            key: RewardAnchorKey.self,
-                            value: .bounds
-                        ) { ["session-points-\(item.id.uuidString)": $0] }
-                }
-            )
+        Text(
+            item.laneCount == 1
+                ? "+\(item.points) pts"
+                : "+\(item.points)"
+        )
+        .font(AppFonts.captionHeavy)
+        .foregroundStyle(cardColor)
+        .lineLimit(1)
+        .opacity(
+            item.showsCompletionPoints && item.points > 0
+                ? 1
+                : 0
+        )
+        .animation(
+            .easeOut(duration: 0.25),
+            value: item.showsCompletionPoints
+        )
+        .anchorPreference(
+            key: RewardAnchorKey.self,
+            value: .bounds
+        ) {
+            ["session-points-\(item.id.uuidString)": $0]
         }
     }
-
     private var dragHandle: some View {
         VStack(spacing: 3) {
             ForEach(0..<3, id: \.self) { _ in

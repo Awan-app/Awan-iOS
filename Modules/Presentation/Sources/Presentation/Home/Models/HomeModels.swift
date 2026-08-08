@@ -123,5 +123,7 @@ struct HomeCompletionRewardState: Equatable {
 struct HomeCompletionRewardAnimation: Equatable, Identifiable {
     let id = UUID()
     let sessionID: UUID
-    let points: Int
+
+    let oldPoints: Int
+    let newPoints: Int
 }

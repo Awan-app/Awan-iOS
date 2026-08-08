@@ -5,22 +5,25 @@ struct HomeView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @State private var viewModel: HomeViewModel
     @State private var rewardFlightSessionID: UUID?
+    @State private var animatedPoints: Int?
+    @State private var pointsPulse = 0
+    
     init(viewModel: HomeViewModel) {
         _viewModel = State(initialValue: viewModel)
     }
-
+    
     var body: some View {
         let state = viewModel.state
-
+        
         ZStack {
             AppColors.screenBackground.ignoresSafeArea()
-
+            
             if state.failure != nil, state.success == nil {
                 failureView
             } else if let success = state.success {
                 content(state, success: success)
             }
-
+            
             if state.isLoading {
                 ProgressView()
                     .controlSize(.large)
@@ -60,25 +63,36 @@ struct HomeView: View {
         }
         .overlayPreferenceValue(RewardAnchorKey.self) { anchors in
             GeometryReader { proxy in
-                if let animation = viewModel.state.completionRewardAnimation,
-                   let sourceAnchor = anchors["session-points-\(animation.sessionID.uuidString)"],
+                if let sessionID = rewardFlightSessionID,
+                   let animation = viewModel.state.completionRewardAnimation,
+                   animation.sessionID == sessionID,
+                   let sourceAnchor = anchors[
+                    "session-points-\(sessionID.uuidString)"
+                   ],
                    let destinationAnchor = anchors["points-badge"] {
-
-                    let sourceRect = proxy[sourceAnchor]
-                    let destinationRect = proxy[destinationAnchor]
-
+                    
                     RewardFlightOverlay(
-                        sourceRect: sourceRect,
-                        destinationRect: destinationRect,
-                        points: animation.points,
+                        sourceRect: proxy[sourceAnchor],
+                        destinationRect: proxy[destinationAnchor],
+                        points: animation.newPoints - animation.oldPoints,
+                        onArrived: {
+                            animatePoints(
+                                from: animation.oldPoints,
+                                to: animation.newPoints
+                            )
+                        },
                         onFinished: {
+                            rewardFlightSessionID = nil
                             viewModel.send(.dismissCompletionRewardAnimation)
                         }
                     )
+                    .id(animation.id)
                 }
             }
+            .allowsHitTesting(false)
         }
     }
+
 
     private func content(_ state: HomeState, success: HomeSuccessState) -> some View {
         ScrollView {
@@ -181,6 +195,37 @@ struct HomeView: View {
             set: { if $0 == nil { viewModel.send(.dismissSession) } }
         )
     }
+    private func animatePoints(
+        from oldValue: Int,
+        to newValue: Int
+    ) {
+        animatedPoints = oldValue
 
+        Task { @MainActor in
+            let difference = newValue - oldValue
+
+            guard difference > 0 else {
+                animatedPoints = newValue
+                return
+            }
+
+            let steps = min(difference, 20)
+
+            for step in 1...steps {
+                let progress = Double(step) / Double(steps)
+
+                animatedPoints =
+                    oldValue
+                    + Int(Double(difference) * progress)
+
+                try? await Task.sleep(
+                    for: .milliseconds(25)
+                )
+            }
+
+            animatedPoints = newValue
+            pointsPulse += 1
+        }
+    }
 }
 
