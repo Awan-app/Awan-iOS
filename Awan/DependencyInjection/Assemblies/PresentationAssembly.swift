@@ -20,9 +20,17 @@ struct PresentationAssembly: Assembly {
         .inObjectScope(.container)
 
         container.register(LoginViewModel.self) { resolver in
-            let useCase = Self.resolve(RequestOTPUseCase.self, from: resolver)
+            let requestUseCase = Self.resolve(RequestOTPUseCase.self, from: resolver)
+            let googleSignInUseCase = Self.resolve(GoogleSignInUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
-                LoginViewModel(requestOTPUseCase: useCase)
+                LoginViewModel(
+                    requestOTPUseCase: requestUseCase,
+                    googleSignInUseCase: googleSignInUseCase,
+                    googleSignInTokenProvider: {
+                        let tokens = try await GoogleSignInHelper.signIn()
+                        return GoogleSignInTokens(idToken: tokens.idToken, accessToken: tokens.accessToken)
+                    }
+                )
             }
         }
 
@@ -139,7 +147,8 @@ struct PresentationAssembly: Assembly {
 
         container.register(GoalsUseCases.self) { resolver in
             GoalsUseCases(
-                fetchGoalsWithTasks: Self.resolve(FetchGoalsWithTasksUseCase.self, from: resolver)
+                fetchGoalsWithTasks: Self.resolve(FetchGoalsWithTasksUseCase.self, from: resolver),
+                fetchGoalTasks: Self.resolve(FetchGoalTasksUseCase.self, from: resolver)
             )
         }
 
@@ -147,9 +156,11 @@ struct PresentationAssembly: Assembly {
             let useCases = Self.resolve(GoalsUseCases.self, from: resolver)
             let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
             return MainActor.assumeIsolated {
-                GoalsViewModel(useCases: useCases) { goalID in
-                    appCoordinator.mainCoordinator.push(.inboxTaskDetail(goalID))
+                let vm = GoalsViewModel(useCases: useCases)
+                vm.onSelectGoal = { goalID in
+                    appCoordinator.mainCoordinator.push(InboxRoute.goalDetail(goalID))
                 }
+                return vm
             }
         }
         .inObjectScope(.container)
@@ -246,6 +257,7 @@ struct PresentationAssembly: Assembly {
             let profileViewModel = Self.resolve(ProfileViewModel.self, from: resolver)
             let dailyZonesViewModel = Self.resolve(DailyZonesViewModel.self, from: resolver)
             let inboxViewModel = Self.resolve(InboxViewModel.self, from: resolver)
+            let goalsViewModel = Self.resolve(GoalsViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
@@ -269,7 +281,8 @@ struct PresentationAssembly: Assembly {
                     makeUserInfoViewModel: {
                         Self.resolve(UserInfoViewModel.self, from: resolver)
                     },
-                    inboxViewModel: inboxViewModel
+                    inboxViewModel: inboxViewModel,
+                    goalsViewModel: goalsViewModel
                 )
             }
         }

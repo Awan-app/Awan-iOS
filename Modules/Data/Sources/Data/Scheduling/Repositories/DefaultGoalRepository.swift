@@ -18,6 +18,11 @@ public struct DefaultGoalRepository: GoalRepository {
         try await localDataSource.fetchGoals()
     }
 
+    public func fetchGoalTasks(goalID: UUID) async throws -> [AwanTask] {
+        let dtos = try await remoteDataSource.getGoalTasks(goalId: goalID)
+        return try dtos.map { try HomeRemoteMapper.task($0, defaultDuration: 30) }
+    }
+
     public func observeGoals() -> AnyPublisher<[Goal], Error> {
         let cached = localDataSource.observeGoals()
             .map(Self.activeGoalPage)

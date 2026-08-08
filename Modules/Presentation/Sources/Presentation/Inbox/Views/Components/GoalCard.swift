@@ -63,7 +63,7 @@ struct GoalCard: View {
                                 .font(AppFonts.title2Black)
                                 .foregroundStyle(progressColor)
 
-                            Text("\(goal.completedCount) of \(goal.totalCount) tasks completed")
+                            Text(L10n.Goals.tasksCompletedSummary(goal.completedCount, goal.totalCount))
                                 .font(AppFonts.subheadlineSemibold)
                                 .foregroundStyle(AppColors.textSecondary)
                         }
@@ -102,7 +102,7 @@ struct GoalCard: View {
                         Image(systemName: "info.circle")
                             .font(.system(size: 11, weight: .medium))
                             .foregroundStyle(AppColors.textSecondary.opacity(0.6))
-                        Text("Calculated from sessions")
+                        Text(L10n.Goals.calculatedFromSessions)
                             .font(AppFonts.caption2Bold)
                             .foregroundStyle(AppColors.textSecondary.opacity(0.6))
                         Spacer()
@@ -127,7 +127,7 @@ struct GoalCard: View {
     }
 
     private func deadlineBadge(_ text: String) -> some View {
-        Text("Target \(text)")
+        Text(L10n.Goals.targetDeadline(text))
             .font(AppFonts.caption2Bold)
             .foregroundStyle(AppColors.accentBlue)
             .padding(.horizontal, 10)
@@ -149,7 +149,7 @@ struct GoalCard: View {
                 if goal.breakdown.completed > 0 {
                     breakdownChip(
                         count: goal.breakdown.completed,
-                        label: "Completed",
+                        label: L10n.Inbox.filterCompleted,
                         icon: "checkmark.circle",
                         color: AppColors.accentGreen
                     )
@@ -157,7 +157,7 @@ struct GoalCard: View {
                 if goal.breakdown.active > 0 {
                     breakdownChip(
                         count: goal.breakdown.active,
-                        label: "Active",
+                        label: L10n.Inbox.filterActive,
                         icon: "circle.dotted",
                         color: AppColors.warning
                     )
@@ -165,7 +165,7 @@ struct GoalCard: View {
                 if goal.breakdown.drafted > 0 {
                     breakdownChip(
                         count: goal.breakdown.drafted,
-                        label: "Drafted",
+                        label: L10n.Inbox.filterDrafted,
                         icon: "circle.dashed",
                         color: AppColors.textSecondary
                     )
@@ -173,7 +173,7 @@ struct GoalCard: View {
                 if goal.breakdown.cancelled > 0 {
                     breakdownChip(
                         count: goal.breakdown.cancelled,
-                        label: "Cancelled",
+                        label: L10n.Inbox.filterCancelled,
                         icon: "xmark.circle",
                         color: AppColors.destructive
                     )

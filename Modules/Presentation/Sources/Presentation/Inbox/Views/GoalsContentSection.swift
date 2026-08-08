@@ -39,7 +39,7 @@ struct GoalsContentSection: View {
     @ViewBuilder
     private func goalsContent(_ state: GoalsState) -> some View {
         // Subtitle
-        Text("Progress from derived task states")
+        Text(L10n.Goals.subtitle)
             .font(AppFonts.subheadlineSemibold)
             .foregroundStyle(AppColors.textSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -69,7 +69,7 @@ struct GoalsContentSection: View {
             }
 
             // Footer count
-            Text("\(state.filteredGoals.count) \(state.filteredGoals.count == 1 ? "goal" : "goals")")
+            Text(L10n.Goals.nGoals(state.filteredGoals.count))
                 .font(AppFonts.subheadlineSemibold)
                 .foregroundStyle(AppColors.textSecondary)
                 .frame(maxWidth: .infinity)
@@ -107,11 +107,11 @@ struct GoalsContentSection: View {
             AwanMascotView(state: .goal)
                 .frame(width: 140, height: 110)
 
-            Text("No Goals Yet")
+            Text(L10n.Goals.emptyTitle)
                 .font(AppFonts.title3Black)
                 .foregroundStyle(AppColors.textPrimary)
 
-            Text("Create your first goal to track progress across your tasks.")
+            Text(L10n.Goals.emptySubtitle)
                 .font(AppFonts.subheadlineSemibold)
                 .foregroundStyle(AppColors.textSecondary)
                 .multilineTextAlignment(.center)

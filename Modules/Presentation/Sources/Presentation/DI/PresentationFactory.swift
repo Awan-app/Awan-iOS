@@ -15,7 +15,7 @@ public struct PresentationFactory {
     private let dailyZonesViewModel: DailyZonesViewModel
     private let makeUserInfoViewModel: () -> UserInfoViewModel
     private let inboxViewModel: InboxViewModel
-    private let goalsViewModel: GoalsViewModel?
+    private let goalsViewModel: GoalsViewModel
     private let marketplaceViewModel: MarketplaceViewModel
 
     public init(
@@ -32,7 +32,7 @@ public struct PresentationFactory {
         dailyZonesViewModel: DailyZonesViewModel,
         makeUserInfoViewModel: @escaping () -> UserInfoViewModel,
         inboxViewModel: InboxViewModel,
-        goalsViewModel: GoalsViewModel? = nil,
+        goalsViewModel: GoalsViewModel,
         marketplaceViewModel: MarketplaceViewModel = MarketplaceViewModel()
     ) {
         self.appCoordinator = appCoordinator
@@ -127,6 +127,10 @@ public struct PresentationFactory {
         // Placeholder until inbox task detail is implemented.
         EmptyView()
             .accessibilityIdentifier("inbox-task-detail-\(taskID.uuidString)")
+    }
+
+    func makeGoalDetailView(goalID: UUID) -> GoalDetailView {
+        GoalDetailView(goalID: goalID, viewModel: goalsViewModel)
     }
 
     func makeYouView() -> some View {

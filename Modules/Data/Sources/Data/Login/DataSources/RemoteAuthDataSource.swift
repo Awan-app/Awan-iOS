@@ -11,6 +11,7 @@ import AwaNetwork
 public protocol AuthDataSource: Sendable {
     func requestOTP(email: String) async throws -> OTPRequestResponseDTO
     func verifyOTP(email: String, code: String, deviceId: String) async throws -> OTPVerifyResponseDTO
+    func firebaseSignIn(idToken: String, deviceId: String) async throws -> OTPVerifyResponseDTO
     func logout(deviceId: String) async throws
 }
 
@@ -28,6 +29,11 @@ public final class RemoteAuthDataSource: AuthDataSource {
 
     public func verifyOTP(email: String, code: String, deviceId: String) async throws -> OTPVerifyResponseDTO {
         let endpoint = AuthEndpoint.verifyOTP(email: email, code: code, deviceId: deviceId)
+        return try await networkService.request(endpoint)
+    }
+
+    public func firebaseSignIn(idToken: String, deviceId: String) async throws -> OTPVerifyResponseDTO {
+        let endpoint = AuthEndpoint.firebaseSignIn(idToken: idToken, deviceId: deviceId)
         return try await networkService.request(endpoint)
     }
 

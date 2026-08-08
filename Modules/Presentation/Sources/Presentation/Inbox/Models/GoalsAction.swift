@@ -10,5 +10,6 @@ public enum GoalsAction: Sendable {
     case refresh
     case searchQueryChanged(String)
     case selectGoal(UUID)
+    case loadGoalTasks(UUID)
     case dismissError
 }

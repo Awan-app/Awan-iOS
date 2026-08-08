@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Common
+import GoogleSignIn
 
 struct AppRootView: View {
     private static let compactCreationDetent = PresentationDetent.height(370)
@@ -38,7 +39,9 @@ struct AppRootView: View {
             coordinator.mainCoordinator.homePath.isEmpty
         case .you:
             coordinator.mainCoordinator.youPath.isEmpty
-        case .tasks, .store, .add:
+        case .tasks:
+            coordinator.mainCoordinator.tasksPath.isEmpty
+        case .store, .add:
             true
         }
     }
@@ -69,6 +72,9 @@ struct AppRootView: View {
             if status == .unauthenticated {
                 coordinator.authCoordinator.popToRoot()
             }
+        }
+        .onOpenURL { url in
+            GIDSignIn.sharedInstance.handle(url)
         }
     }
 
@@ -130,6 +136,16 @@ struct AppRootView: View {
                             EmptyView()
                         }
                     }
+                    .navigationDestination(for: AnyHashable.self) { route in
+                        if let inboxRoute = route.base as? InboxRoute {
+                            switch inboxRoute {
+                            case let .goalDetail(goalID):
+                                factory.makeGoalDetailView(goalID: goalID)
+                            }
+                        } else {
+                            EmptyView()
+                        }
+                    }
             }
             .tag(MainTab.tasks)
             .toolbar(.hidden, for: .tabBar)
@@ -180,6 +196,25 @@ struct AppRootView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .overlay {
+            if let celebration = coordinator.mainCoordinator.streakCelebration {
+                StreakCelebrationDialog(
+                    streak: celebration.streak,
+                    isNewRecord: celebration.isNewRecord
+                ) {
+                    coordinator.mainCoordinator.dismissStreakCelebration()
+                }
+                .transition(
+                    .scale(scale: 0.88)
+                    .combined(with: .opacity)
+                )
+                .zIndex(1000)
+            }
+        }
+        .animation(
+            .spring(response: 0.38, dampingFraction: 0.72),
+            value: coordinator.mainCoordinator.streakCelebration?.id
+        )
         .animation(.snappy(duration: 0.3), value: shouldShowCustomTabBar)
         .sheet(item: Bindable(coordinator.mainCoordinator).presentedSheet) { route in
             switch route {

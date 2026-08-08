@@ -71,6 +71,7 @@ public struct DefaultCreateSevenTaskGoalUseCase: CreateSevenTaskGoalUseCase {
         for task in tasks {
             _ = try await taskRepository.addTask(
                 task,
+                categoryID: nil,
                 sessionZoneID: nil,
                 startsAt: nil,
                 durationMinutes: request.taskDurationMinutes,

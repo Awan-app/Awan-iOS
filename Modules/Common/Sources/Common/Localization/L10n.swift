@@ -170,6 +170,24 @@ public enum L10n {
         public static func aboutHours(_ hours: Double) -> String {
             String(format: L10n.currentBundle.localizedString(forKey: "onboarding.about_hours", value: nil, table: "Localizable"), hours)
         }
+        public static func durationMinutes(_ minutes: Int) -> String {
+            String(format: L10n.currentBundle.localizedString(forKey: "onboarding.duration_minutes", value: nil, table: "Localizable"), minutes)
+        }
+        public static var durationOneHour: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.duration_one_hour", value: nil, table: "Localizable")
+        }
+        public static func durationHours(_ hours: Int) -> String {
+            String(format: L10n.currentBundle.localizedString(forKey: "onboarding.duration_hours", value: nil, table: "Localizable"), hours)
+        }
+        public static func durationHoursMinutes(_ hours: Int, _ minutes: Int) -> String {
+            String(format: L10n.currentBundle.localizedString(forKey: "onboarding.duration_hours_minutes", value: nil, table: "Localizable"), hours, minutes)
+        }
+        public static var customTimePlaceholder: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.custom_time_placeholder", value: nil, table: "Localizable")
+        }
+        public static var timeValidationError: String {
+            L10n.currentBundle.localizedString(forKey: "onboarding.time_validation_error", value: nil, table: "Localizable")
+        }
         public static var taskLengthExplanationPrefix: String { L10n.currentBundle.localizedString(forKey: "onboarding.task_length_explanation_prefix", value: nil, table: "Localizable") }
         public static var splitIntoSessions: String { L10n.currentBundle.localizedString(forKey: "onboarding.split_into_sessions", value: nil, table: "Localizable") }
         public static var zoneOverlapError: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_overlap_error", value: nil, table: "Localizable") }
@@ -1154,51 +1172,130 @@ public enum L10n {
     }
 
     public enum Marketplace {
-        public static var title: String { loc("marketplace.title") }
-        public static var pointsSubtitle: String { loc("marketplace.points_subtitle") }
-        public static var searchPlaceholder: String { loc("marketplace.search_placeholder") }
-        public static var filterAll: String { loc("marketplace.filter_all") }
-        public static var filterFrames: String { loc("marketplace.filter_frames") }
-        public static var filterSkins: String { loc("marketplace.filter_skins") }
-        public static var filterThemes: String { loc("marketplace.filter_themes") }
-        public static var filterAppIcons: String { loc("marketplace.filter_app_icons") }
-        public static var hideFilters: String { loc("marketplace.hide_filters") }
-        public static var showFilters: String { loc("marketplace.show_filters") }
-        public static var filtersApplied: String { loc("marketplace.filters_applied") }
-        public static var noFiltersApplied: String { loc("marketplace.no_filters_applied") }
-        public static var filtersTitle: String { loc("marketplace.filters_title") }
-        public static var filterItemType: String { loc("marketplace.filter_item_type") }
-        public static var filterPrice: String { loc("marketplace.filter_price") }
-        public static var filterReset: String { loc("marketplace.filter_reset") }
-        public static var applyFilters: String { loc("marketplace.apply_filters") }
-        public static var statusOwned: String { loc("marketplace.status_owned") }
-        public static var statusEquipped: String { loc("marketplace.status_equipped") }
-        public static var statusLocked: String { loc("marketplace.status_locked") }
-        public static var buyFor: String { loc("marketplace.buy_for") }
-        public static var pts: String { loc("marketplace.pts") }
-        public static var youHave: String { loc("marketplace.you_have") }
-        public static var priceLabel: String { loc("marketplace.price_label") }
-        public static var notOwned: String { loc("marketplace.not_owned") }
-        public static var notOwnedDesc: String { loc("marketplace.not_owned_desc") }
-        public static var oncePurchased: String { loc("marketplace.once_purchased") }
-        public static var badgeNew: String { loc("marketplace.badge_new") }
-        public static var emptyTitle: String { loc("marketplace.empty_title") }
-        public static var emptySubtitle: String { loc("marketplace.empty_subtitle") }
-        public static var clearFilters: String { loc("marketplace.clear_filters") }
-        // Contextual detail sheet states
-        public static var needMorePts: String { loc("marketplace.need_more_pts") }
-        public static var earnMoreHint: String { loc("marketplace.earn_more_hint") }
-        public static var itsYours: String { loc("marketplace.its_yours") }
-        public static var ownedHint: String { loc("marketplace.owned_hint") }
-        public static var currentlyEquipped: String { loc("marketplace.currently_equipped") }
-        public static var equippedHint: String { loc("marketplace.equipped_hint") }
-        public static var lockedHint: String { loc("marketplace.locked_hint") }
-        public static var progressLabel: String { loc("marketplace.progress_label") }
+        public static var title: String { text("marketplace.title") }
+        public static var pointsSubtitle: String { text("marketplace.points_subtitle") }
+        public static var searchPlaceholder: String { text("marketplace.search_placeholder") }
+        public static var filterAll: String { text("marketplace.filter_all") }
+        public static var filterFrames: String { text("marketplace.filter_frames") }
+        public static var filterSkins: String { text("marketplace.filter_skins") }
+        public static var filterThemes: String { text("marketplace.filter_themes") }
+        public static var filterAppIcons: String { text("marketplace.filter_app_icons") }
+        public static var hideFilters: String { text("marketplace.hide_filters") }
+        public static var showFilters: String { text("marketplace.show_filters") }
+        public static var filtersApplied: String { text("marketplace.filters_applied") }
+        public static var noFiltersApplied: String { text("marketplace.no_filters_applied") }
+        public static var filtersTitle: String { text("marketplace.filters_title") }
+        public static var filterItemType: String { text("marketplace.filter_item_type") }
+        public static var filterPrice: String { text("marketplace.filter_price") }
+        public static var filterReset: String { text("marketplace.filter_reset") }
+        public static var applyFilters: String { text("marketplace.apply_filters") }
+        public static var statusOwned: String { text("marketplace.status_owned") }
+        public static var statusEquipped: String { text("marketplace.status_equipped") }
+        public static var statusLocked: String { text("marketplace.status_locked") }
+        public static var buyFor: String { text("marketplace.buy_for") }
+        public static var pts: String { text("marketplace.pts") }
+        public static var youHave: String { text("marketplace.you_have") }
+        public static var priceLabel: String { text("marketplace.price_label") }
+        public static var notOwned: String { text("marketplace.not_owned") }
+        public static var notOwnedDesc: String { text("marketplace.not_owned_desc") }
+        public static var oncePurchased: String { text("marketplace.once_purchased") }
+        public static var badgeNew: String { text("marketplace.badge_new") }
+        public static var emptyTitle: String { text("marketplace.empty_title") }
+        public static var emptySubtitle: String { text("marketplace.empty_subtitle") }
+        public static var clearFilters: String { text("marketplace.clear_filters") }
+        public static var needMorePts: String { text("marketplace.need_more_pts") }
+        public static var earnMoreHint: String { text("marketplace.earn_more_hint") }
+        public static var itsYours: String { text("marketplace.its_yours") }
+        public static var ownedHint: String { text("marketplace.owned_hint") }
+        public static var currentlyEquipped: String { text("marketplace.currently_equipped") }
+        public static var equippedHint: String { text("marketplace.equipped_hint") }
+        public static var lockedHint: String { text("marketplace.locked_hint") }
+        public static var progressLabel: String { text("marketplace.progress_label") }
 
-        private static func loc(_ key: String) -> String {
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
+
+    public enum Goals {
+        public static var subtitle: String { text("goals.subtitle") }
+        public static var emptyTitle: String { text("goals.empty_title") }
+        public static var emptySubtitle: String { text("goals.empty_subtitle") }
+        public static var searchPlaceholder: String { text("goals.search_placeholder") }
+        public static var sortNewest: String { text("goals.sort_newest") }
+        public static var sortOldest: String { text("goals.sort_oldest") }
+        public static var sortNameAZ: String { text("goals.sort_name_az") }
+        public static var sortNameZA: String { text("goals.sort_name_za") }
+        public static var sortDeadline: String { text("goals.sort_deadline") }
+        public static var sortTitle: String { text("goals.sort_title") }
+        public static var sectionTitle: String { text("goals.section_title") }
+        public static var noDeadline: String { text("goals.no_deadline") }
+        public static var loadFailed: String { text("goals.load_failed") }
+
+        public static func nGoals(_ count: Int) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: count == 1 ? "goals.one_goal" : "goals.n_goals",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                count
+            )
+        }
+
+        public static func tasksCompletedSummary(_ completed: Int, _ total: Int) -> String {
+            String(
+                format: text("goals.tasks_completed_summary"),
+                completed,
+                total
+            )
+        }
+
+        public static var calculatedFromSessions: String { text("goals.calculated_from_sessions") }
+
+        public static func targetDeadline(_ deadline: String) -> String {
+            String(format: text("goals.target_deadline"), deadline)
+        }
+
+        public static var notFound: String { text("goals.not_found") }
+        public static var progress: String { text("goals.progress") }
+        public static var tasks: String { text("goals.tasks") }
+        public static var loadingTasks: String { text("goals.loading_tasks") }
+        public static var noTasksAssigned: String { text("goals.no_tasks_assigned") }
+
+        public static func dependsOnNames(_ names: String) -> String {
+            String(format: text("goals.depends_on_names"), names)
+        }
+
+        public static func dependsOnCount(_ count: Int) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: count == 1 ? "goals.depends_on_count_one" : "goals.depends_on_count_multiple",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                count
+            )
+        }
+
+        public static var created: String { text("goals.created") }
+        public static var managementPlaceholder: String { text("goals.management_placeholder") }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
+
+    public enum StreakCelebration {
+        public static func daysStreak(_ count: Int) -> String {
+            String(format: text("streak_celebration.days_streak"), count)
+        }
+        public static var subtitle: String { text("streak_celebration.subtitle") }
+        public static var newBest: String { text("streak_celebration.new_best") }
+        public static var keepGoing: String { text("streak_celebration.keep_going") }
+
+        private static func text(_ key: String) -> String {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
         }
     }
 }
-
-

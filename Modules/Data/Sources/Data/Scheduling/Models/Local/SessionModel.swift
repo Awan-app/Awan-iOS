@@ -10,7 +10,8 @@ final class SessionModel {
     var endDate: Date
     var blocking: Bool
     var statusRaw: String
-
+    var firstCompletedAt: Date?
+    
     init(
         id: UUID,
         taskID: UUID,
@@ -18,7 +19,8 @@ final class SessionModel {
         startDate: Date,
         endDate: Date,
         blocking: Bool,
-        statusRaw: String
+        statusRaw: String,
+        firstCompletedAt: Date?
     ) {
         self.id = id
         self.taskID = taskID
@@ -27,5 +29,6 @@ final class SessionModel {
         self.endDate = endDate
         self.blocking = blocking
         self.statusRaw = statusRaw
+        self.firstCompletedAt = firstCompletedAt
     }
 }

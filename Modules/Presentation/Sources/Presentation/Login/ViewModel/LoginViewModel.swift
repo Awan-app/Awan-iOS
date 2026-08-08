@@ -17,6 +17,16 @@ public enum LoginState: Equatable, Sendable {
     case failure(AuthenticationErrorState)
 }
 
+public struct GoogleSignInTokens: Sendable {
+    public let idToken: String
+    public let accessToken: String
+    
+    public init(idToken: String, accessToken: String) {
+        self.idToken = idToken
+        self.accessToken = accessToken
+    }
+}
+
 
 @Observable
 @MainActor
@@ -27,6 +37,8 @@ public final class LoginViewModel {
     private var isOffline = false
     private var rateLimitTask: Task<Void, Never>?
     private let requestOTPUseCase: RequestOTPUseCase
+    private let googleSignInUseCase: GoogleSignInUseCase
+    private let googleSignInTokenProvider: @MainActor @Sendable () async throws -> GoogleSignInTokens
     private let monitor = NWPathMonitor()
         
     public var email: String = "" {
@@ -62,9 +74,16 @@ public final class LoginViewModel {
     }
 
     public var onSuccess: ((String, OTPRequestResult) -> Void)?
+    public var onLoginSuccess: ((VerifyOTPResult) -> Void)?
         
-    public init(requestOTPUseCase: RequestOTPUseCase) {
+    public init(
+        requestOTPUseCase: RequestOTPUseCase,
+        googleSignInUseCase: GoogleSignInUseCase,
+        googleSignInTokenProvider: @MainActor @Sendable @escaping () async throws -> GoogleSignInTokens
+    ) {
         self.requestOTPUseCase = requestOTPUseCase
+        self.googleSignInUseCase = googleSignInUseCase
+        self.googleSignInTokenProvider = googleSignInTokenProvider
         startNetworkMonitoring()
     }
     
@@ -109,6 +128,38 @@ public final class LoginViewModel {
     }
     
     public func onGoogleSignInTapped() {
+        guard !isOffline else {
+            state = .failure(.network)
+            return
+        }
+
+        state = .loading
+        
+        Task {
+            do {
+                let tokens = try await googleSignInTokenProvider()
+                
+                if Task.isCancelled { return }
+                
+                let result = try await self.googleSignInUseCase.execute(idToken: tokens.idToken, accessToken: tokens.accessToken)
+                
+                if !Task.isCancelled {
+                    self.state = .idle
+                    self.onLoginSuccess?(result)
+                }
+            } catch {
+                guard !Task.isCancelled else { return }
+                
+                let nsError = error as NSError
+                // 8 == GIDSignInError.canceled
+                if nsError.domain == "com.google.GIDSignIn" && nsError.code == 8 {
+                    self.state = .idle
+                    return
+                }
+                
+                self.state = .failure(.inline(message: error.localizedDescription))
+            }
+        }
     }
     
     
