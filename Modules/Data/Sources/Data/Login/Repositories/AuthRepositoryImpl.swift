@@ -1,6 +1,7 @@
 import AwaNetwork
 import Domain
 import Foundation
+import FirebaseAuth
 
 public final class AuthRepositoryImpl: AuthRepository, @unchecked Sendable {
     private let remoteDataSource: AuthDataSource
@@ -35,6 +36,37 @@ public final class AuthRepositoryImpl: AuthRepository, @unchecked Sendable {
                 code: code,
                 deviceId: deviceId
             )
+            let session = AuthSession(
+                accessToken: response.accessToken,
+                refreshToken: response.refreshToken,
+                accessTokenExpiresAt: Date().addingTimeInterval(
+                    TimeInterval(max(0, response.accessTokenExpiresIn))
+                ),
+                user: AuthSessionUser(
+                    id: response.user.id,
+                    email: response.user.email,
+                    isNew: response.user.isNew
+                )
+            )
+
+            try sessionDataSource.save(session)
+            return response.toDomain()
+        } catch let error as NetworkError {
+            throw mapNetworkErrorToAuthError(error)
+        } catch {
+            throw AuthError.unknown(message: error.localizedDescription)
+        }
+    }
+
+    public func signInWithGoogle(idToken: String, accessToken: String) async throws -> VerifyOTPResult {
+        do {
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+            let authResult = try await Auth.auth().signIn(with: credential)
+            let firebaseToken = try await authResult.user.getIDToken()
+            
+            let deviceId = try sessionDataSource.deviceId()
+            let response = try await remoteDataSource.firebaseSignIn(idToken: firebaseToken, deviceId: deviceId)
+            
             let session = AuthSession(
                 accessToken: response.accessToken,
                 refreshToken: response.refreshToken,

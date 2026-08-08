@@ -11,6 +11,7 @@ import AwaNetwork
 enum AuthEndpoint: APIEndpoint {
     case requestOTP(email: String)
     case verifyOTP(email: String, code: String, deviceId: String)
+    case firebaseSignIn(idToken: String, deviceId: String)
     case logout(deviceId: String)
 
     var baseURL: String {
@@ -23,6 +24,8 @@ enum AuthEndpoint: APIEndpoint {
             return "/otp/request"
         case .verifyOTP:
             return "/otp/verify"
+        case .firebaseSignIn:
+            return "/firebase"
         case .logout:
             return "/logout"
         }
@@ -30,7 +33,7 @@ enum AuthEndpoint: APIEndpoint {
 
     var method: HTTPMethod {
         switch self {
-        case .requestOTP, .verifyOTP, .logout:
+        case .requestOTP, .verifyOTP, .firebaseSignIn, .logout:
             return .post
         }
     }
@@ -41,6 +44,8 @@ enum AuthEndpoint: APIEndpoint {
             return OTPRequestRequestDTO(email: email)
         case .verifyOTP(let email, let code, let deviceId):
             return OTPVerifyRequestDTO(email: email, code: code, deviceId: deviceId)
+        case .firebaseSignIn(let idToken, let deviceId):
+            return FirebaseSignInRequestDTO(idToken: idToken, deviceId: deviceId)
         case .logout(let deviceId):
             return LogoutRequestDTO(deviceId: deviceId)
         }
