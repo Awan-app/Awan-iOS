@@ -147,7 +147,12 @@ extension HomeViewModel {
                     if reward.points.awarded || reward.streak.updated {
                         state.completionReward = HomeCompletionRewardState(
                             pointsAwarded: reward.points.awarded ? reward.points.amount: nil,
-                            streak: reward.streak.updated ? reward.streak.newValue: nil,
+                            streakTransition: reward.streak.updated
+                                ? HomeStreakTransition(
+                                    oldValue: reward.streak.oldValue,
+                                    newValue: reward.streak.newValue
+                                )
+                                : nil,
                             maxStreakBroken: reward.streak.maxStreakBroken
                         )
                     }

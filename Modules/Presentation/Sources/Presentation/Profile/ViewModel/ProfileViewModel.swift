@@ -33,6 +33,8 @@ public final class ProfileViewModel {
     /// User's real name and email
     var userName: String = ""
     var userEmail: String = ""
+    var points: Int = 0
+    var streak: Int = 0
     
     // MARK: - Profile Preferences
     var sessionTime: Int = 0
@@ -135,6 +137,8 @@ public final class ProfileViewModel {
     private func applyUserProfile(_ profile: UserProfile) {
         self.userName = profile.firstName + " " + profile.lastName
         self.userEmail = profile.email
+        self.points = profile.points
+        self.streak = profile.streak
         self.sessionTime = profile.preferences.preferredSessionDuration
         self.timeZone = profile.preferences.timezone
         self.wakeupTime = profile.preferences.wakeupTime

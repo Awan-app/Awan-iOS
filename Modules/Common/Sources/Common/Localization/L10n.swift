@@ -950,6 +950,11 @@ public enum L10n {
 
     public enum Profile {
         public static var title: String { L10n.currentBundle.localizedString(forKey: "profile.title", value: nil, table: "Localizable") }
+        public static var points: String { text("profile.points") }
+        public static var streak: String { text("profile.streak") }
+        public static var inventory: String { text("profile.inventory") }
+        public static var inventorySubtitle: String { text("profile.inventory_subtitle") }
+        public static var inventoryPlaceholder: String { text("profile.inventory_placeholder") }
         public static var personalInfo: String {
             L10n.currentBundle.localizedString(forKey: "profile.personal_info", value: nil, table: "Localizable")
         }
@@ -1012,6 +1017,10 @@ public enum L10n {
         public static var dummyTimeZone: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_time_zone", value: nil, table: "Localizable") }
         public static var dummySleepSchedule: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_sleep_schedule", value: nil, table: "Localizable") }
         public static var ready: String { L10n.currentBundle.localizedString(forKey: "profile.ready", value: nil, table: "Localizable") }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
     }
 
     public enum UserInfo {
@@ -1291,6 +1300,10 @@ public enum L10n {
             String(format: text("streak_celebration.days_streak"), count)
         }
         public static var subtitle: String { text("streak_celebration.subtitle") }
+        public static var dayStreak: String { text("streak_celebration.day_streak") }
+        public static var onFire: String { text("streak_celebration.on_fire") }
+        public static var sameTimeTomorrow: String { text("streak_celebration.same_time_tomorrow") }
+        public static var dismiss: String { text("streak_celebration.dismiss") }
         public static var newBest: String { text("streak_celebration.new_best") }
         public static var keepGoing: String { text("streak_celebration.keep_going") }
 

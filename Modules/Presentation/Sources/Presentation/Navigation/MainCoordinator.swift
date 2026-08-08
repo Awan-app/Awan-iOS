@@ -58,10 +58,12 @@ public final class MainCoordinator: Coordinating {
     }
     
     public func presentStreakCelebration(
+        previousStreak: Int,
         streak: Int,
         isNewRecord: Bool
     ) {
         streakCelebration = StreakCelebrationPresentation(
+            previousStreak: previousStreak,
             streak: streak,
             isNewRecord: isNewRecord
         )

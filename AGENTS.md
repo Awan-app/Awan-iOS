@@ -140,21 +140,10 @@ Use SwiftUI with the Observation framework.
 
 ## Testing And Verification
 
-- Test Domain rules and use cases without UI or infrastructure dependencies.
-- Test Data mappers, repository behavior, and data-source coordination independently.
-- Test view models by mocking use cases and asserting published UI-state transitions.
-- Do not test business rules through view-model tests; test them at the Domain boundary.
-- Add focused tests for new behavior and regressions.
-- Run the narrowest useful package tests and the workspace build when integration risk warrants it.
-
-```bash
-swift test --package-path Modules/Domain
-swift test --package-path Modules/Data
-swift test --package-path Modules/Network
-xcodebuild -workspace Awan.xcworkspace -scheme Awan -destination 'platform=iOS Simulator,name=iPhone 16' build
-```
-
-Use an installed simulator if the named device is unavailable. If a check cannot run, report the command and exact failure reason. Never claim unrun verification.
+- Do not create or run automated tests unless the user explicitly requests them.
+- Builds, static inspection, and other non-test validation remain allowed when useful.
+- When the user explicitly requests tests, keep them focused on the layer that owns the behavior and run the narrowest useful suite.
+- If a requested check cannot run, report the command and exact failure reason. Never claim unrun verification.
 
 ## Documentation Maintenance
 

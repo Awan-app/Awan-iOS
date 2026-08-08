@@ -115,10 +115,14 @@ struct HomeSuccessState {
 
 struct HomeCompletionRewardState: Equatable {
     let pointsAwarded: Int?
-    let streak: Int?
+    let streakTransition: HomeStreakTransition?
     let maxStreakBroken: Bool
 }
 
+struct HomeStreakTransition: Equatable {
+    let oldValue: Int
+    let newValue: Int
+}
 
 struct HomeCompletionRewardAnimation: Equatable, Identifiable {
     let id = UUID()

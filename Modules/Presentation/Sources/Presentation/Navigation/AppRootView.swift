@@ -162,6 +162,7 @@ struct AppRootView: View {
                         switch route {
                         case .userInfo:   factory.makeUserInfoView()
                         case .dailyZones: factory.makeDailyZonesView().environment(appearanceManager)
+                        case .inventory:  InventoryPlaceholderView()
                         default:          EmptyView()
                         }
                     }
@@ -199,6 +200,7 @@ struct AppRootView: View {
         .overlay {
             if let celebration = coordinator.mainCoordinator.streakCelebration {
                 StreakCelebrationDialog(
+                    previousStreak: celebration.previousStreak,
                     streak: celebration.streak,
                     isNewRecord: celebration.isNewRecord
                 ) {
@@ -256,7 +258,7 @@ struct AppRootView: View {
                     selection: $creationSheetDetent
                 )
                 .presentationDragIndicator(.visible)
-            case .home, .tasks, .calendar, .userInfo, .dailyZones, .inboxTaskDetail:
+            case .home, .tasks, .calendar, .userInfo, .dailyZones, .inventory, .inboxTaskDetail:
                 EmptyView()
             }
         }
