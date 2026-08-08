@@ -37,6 +37,12 @@ struct DataAssembly: Assembly {
                 )
             )
         }
+        container.register(CategoryRepository.self) { resolver in
+            DefaultCategoryRepository(
+                localDataSource: Self.resolve(LocalCategoryDataSource.self, from: resolver),
+                remoteDataSource: Self.resolve(RemoteCategoryDataSource.self, from: resolver)
+            )
+        }
         container.register(TaskRepository.self) { resolver in
             DefaultTaskRepository(
                 localDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver),
@@ -183,8 +189,9 @@ struct DataAssembly: Assembly {
         container.register(AiTaskRepository.self) { resolver in
             DefaultAiTaskRepository(
                 remoteDataSource: Self.resolve(AiTaskRemoteDataSource.self, from: resolver),
-                localTaskDataSource: resolver.resolve(LocalTaskDataSource.self),
-                localSessionDataSource: resolver.resolve(LocalSessionDataSource.self)
+                remoteGoalDataSource: Self.resolve(RemoteGoalDataSource.self, from: resolver),
+                localTaskDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver),
+                localSessionDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver)
             )
         }
     }
@@ -216,6 +223,10 @@ struct DataAssembly: Assembly {
         .inObjectScope(.container)
         container.register(LocalUserProfileDataSource.self) { _ in
             SwiftDataUserProfileDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+        container.register(LocalCategoryDataSource.self) { _ in
+            SwiftDataCategoryDataSource(modelContainer: modelContainer)
         }
         .inObjectScope(.container)
     }
@@ -251,6 +262,11 @@ struct DataAssembly: Assembly {
         }
         container.register(RemoteZoneDataSourceProtocol.self) { resolver in
             RemoteZoneDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+        container.register(RemoteCategoryDataSource.self) { resolver in
+            DefaultRemoteCategoryDataSource(
                 networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
             )
         }

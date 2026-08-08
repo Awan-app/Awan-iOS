@@ -167,6 +167,9 @@ extension ZoneEditorForm {
     }
 
     var isValid: Bool {
-        !trimmedName.isEmpty && startTime < endTime && overlapMessage == nil
+        !trimmedName.isEmpty
+            && startTime < endTime
+            && overlapMessage == nil
+            && selectedCategoryID != nil
     }
 }

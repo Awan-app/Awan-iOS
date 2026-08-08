@@ -89,6 +89,7 @@ struct PresentationAssembly: Assembly {
         container.register(CreationUseCases.self) { resolver in
             CreationUseCases(
                 fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
+                fetchCategories: Self.resolve(FetchCategoriesUseCase.self, from: resolver),
                 createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
                 createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver),
                 imageToTasks: Self.resolve(ImageToTasksUseCase.self, from: resolver),
@@ -128,15 +129,51 @@ struct PresentationAssembly: Assembly {
         }
         .inObjectScope(.container)
 
+        container.register(InboxUseCases.self) { resolver in
+            InboxUseCases(
+                fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver),
+                completeTask: Self.resolve(CompleteTaskSessionsUseCase.self, from: resolver),
+                deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(GoalsUseCases.self) { resolver in
+            GoalsUseCases(
+                fetchGoalsWithTasks: Self.resolve(FetchGoalsWithTasksUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(GoalsViewModel.self) { resolver in
+            let useCases = Self.resolve(GoalsUseCases.self, from: resolver)
+            let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
+            return MainActor.assumeIsolated {
+                GoalsViewModel(useCases: useCases) { goalID in
+                    appCoordinator.mainCoordinator.push(.inboxTaskDetail(goalID))
+                }
+            }
+        }
+        .inObjectScope(.container)
+
+        container.register(InboxViewModel.self) { resolver in
+            let useCases = Self.resolve(InboxUseCases.self, from: resolver)
+            let goalsVM = Self.resolve(GoalsViewModel.self, from: resolver)
+            return MainActor.assumeIsolated {
+                InboxViewModel(useCases: useCases, goalsViewModel: goalsVM)
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(OnboardingViewModel.self) { resolver in
             let useCase = Self.resolve(CompleteOnboardingUseCase.self, from: resolver)
             let createTemplateUseCase = Self.resolve(CreateOnboardingTemplateUseCase.self, from: resolver)
             let manageZoneScheduleUseCase = Self.resolve(ManageZoneScheduleUseCase.self, from: resolver)
+            let fetchCategoriesUseCase = Self.resolve(FetchCategoriesUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 OnboardingViewModel(
                     completeOnboardingUseCase: useCase,
                     createOnboardingTemplateUseCase: createTemplateUseCase,
-                    manageZoneScheduleUseCase: manageZoneScheduleUseCase
+                    manageZoneScheduleUseCase: manageZoneScheduleUseCase,
+                    fetchCategoriesUseCase: fetchCategoriesUseCase
                 )
             }
         }
@@ -176,6 +213,8 @@ struct PresentationAssembly: Assembly {
         container.register(DailyZonesViewModel.self) { resolver in
             let useCases = DailyZonesUseCases(
                 fetchTemplates: Self.resolve(FetchTemplatesUseCase.self, from: resolver),
+                fetchCategories: Self.resolve(FetchCategoriesUseCase.self, from: resolver),
+                createCategory: Self.resolve(CreateCategoryUseCase.self, from: resolver),
                 fetchOverrides: Self.resolve(FetchTemplateOverridesUseCase.self, from: resolver),
                 createTemplate: Self.resolve(CreateTemplateUseCase.self, from: resolver),
                 updateTemplateZones: Self.resolve(UpdateTemplateUseCase.self, from: resolver),
@@ -206,6 +245,7 @@ struct PresentationAssembly: Assembly {
             let onboardingViewModel = Self.resolve(OnboardingViewModel.self, from: resolver)
             let profileViewModel = Self.resolve(ProfileViewModel.self, from: resolver)
             let dailyZonesViewModel = Self.resolve(DailyZonesViewModel.self, from: resolver)
+            let inboxViewModel = Self.resolve(InboxViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
@@ -228,7 +268,8 @@ struct PresentationAssembly: Assembly {
                     dailyZonesViewModel: dailyZonesViewModel,
                     makeUserInfoViewModel: {
                         Self.resolve(UserInfoViewModel.self, from: resolver)
-                    }
+                    },
+                    inboxViewModel: inboxViewModel
                 )
             }
         }

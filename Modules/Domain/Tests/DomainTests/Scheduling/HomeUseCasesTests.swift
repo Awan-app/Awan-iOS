@@ -330,7 +330,11 @@ private actor TaskRepositoryStub: TaskRepository {
 
     init(tasks: [AwanTask]) { self.tasks = tasks }
     func fetchTasks() -> [AwanTask] { tasks }
+    func fetchInboxTasks() -> [AwanTask] { tasks }
     nonisolated func observeTasks() -> AnyPublisher<[AwanTask], Error> {
+        Empty(completeImmediately: true).eraseToAnyPublisher()
+    }
+    nonisolated func observeInboxTasks() -> AnyPublisher<[AwanTask], Error> {
         Empty(completeImmediately: true).eraseToAnyPublisher()
     }
     func addTask(

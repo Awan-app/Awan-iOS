@@ -13,8 +13,7 @@ import Common
 public final class MainCoordinator: Coordinating {
     public var selectedTab: MainTab = .home
     public var homePath = NavigationPath()
-    public var calendarPath = NavigationPath()
-    public var rewardsPath = NavigationPath()
+    public var tasksPath = NavigationPath()
     public var storePath = NavigationPath()
     public var youPath = NavigationPath()
     public var presentedSheet: MainRoute?
@@ -61,10 +60,8 @@ public final class MainCoordinator: Coordinating {
         switch selectedTab {
         case .home:
             mutation(&homePath)
-        case .calendar:
-            mutation(&calendarPath)
-        case .rewards:
-            mutation(&rewardsPath)
+        case .tasks:
+            mutation(&tasksPath)
         case .store:
             mutation(&storePath)
         case .you:

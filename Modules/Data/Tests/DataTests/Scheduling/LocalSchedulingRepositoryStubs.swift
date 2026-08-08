@@ -7,7 +7,9 @@ struct LocalTaskRepositoryStub: TaskRepository {
     let dataSource: any LocalTaskDataSource
     let sessionDataSource: any LocalSessionDataSource
     func fetchTasks() async throws -> [AwanTask] { try await dataSource.fetchTasks() }
+    func fetchInboxTasks() async throws -> [AwanTask] { try await dataSource.fetchTasks() }
     func observeTasks() -> AnyPublisher<[AwanTask], Error> { dataSource.observeTasks() }
+    func observeInboxTasks() -> AnyPublisher<[AwanTask], Error> { dataSource.observeTasks() }
     func addTask(
         _ task: AwanTask,
         sessionZoneID: UUID?,

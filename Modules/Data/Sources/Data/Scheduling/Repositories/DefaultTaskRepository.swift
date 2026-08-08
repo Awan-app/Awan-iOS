@@ -33,6 +33,22 @@ public struct DefaultTaskRepository: TaskRepository {
     public func observeTasks() -> AnyPublisher<[AwanTask], Error> {
         localDataSource.observeTasks()
     }
+
+    public func fetchInboxTasks() async throws -> [AwanTask] {
+        try await loadRemoteInboxTasks().tasks
+    }
+
+    public func observeInboxTasks() -> AnyPublisher<[AwanTask], Error> {
+        AsyncValuePublisher.make { try await self.loadRemoteInboxTasks() }
+            .flatMap { result in
+                self.localDataSource.observeTasks()
+                    .map { tasks in
+                        tasks.filter { $0.goalID == result.goalID }
+                    }
+            }
+            .eraseToAnyPublisher()
+    }
+
     public func fetchTasks(for date: Date) async throws -> [AwanTask] {
         let timeZoneID = await getTimeZoneID()
         let dayKey = LocalDateKey.value(
@@ -118,6 +134,21 @@ public struct DefaultTaskRepository: TaskRepository {
             dayKey: dayKey,
             timeZoneID: timeZoneID
         )
+    }
+
+    private func loadRemoteInboxTasks() async throws -> (goalID: UUID, tasks: [AwanTask]) {
+        let response = try await remoteGoalDataSource.getInbox()
+        let preferredDuration = await getPreferredSessionDuration()
+        let tasks = try (response.tasks ?? [])
+            .map {
+                try HomeRemoteMapper.task(
+                    $0,
+                    defaultDuration: preferredDuration
+                )
+            }
+            .sorted { $0.id.uuidString < $1.id.uuidString }
+        try await localDataSource.upsertTasks(tasks)
+        return (response.id, tasks)
     }
 
     private func cachedTasks(
@@ -231,10 +262,26 @@ public struct DefaultTaskRepository: TaskRepository {
                 categoryID: task.category?.id
             )
         )
-        let accepted = try HomeRemoteMapper.task(
+        var accepted = try HomeRemoteMapper.task(
             response,
             defaultDuration: task.duration.minutes
         )
+        let finalStatus = task.status
+        if task.status == .completed {
+            accepted = AwanTask(
+                id: accepted.id,
+                title: accepted.title,
+                description: accepted.description,
+                status: finalStatus,
+                goalID: accepted.goalID,
+                duration: accepted.duration,
+                isSplittable: accepted.isSplittable,
+                mandatory: accepted.mandatory,
+                estimatedPoints: accepted.estimatedPoints,
+                dependencyIDs: accepted.dependencyIDs,
+                category: accepted.category
+            )
+        }
         try await localDataSource.updateTask(accepted)
         let timeZoneID = await getTimeZoneID()
         let sessions = try await remoteSessionDataSource.getTaskSessions(taskID: task.id)

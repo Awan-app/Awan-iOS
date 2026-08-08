@@ -42,6 +42,17 @@ public struct CompleteOnboardingRequest: Equatable, Sendable {
                 bufferBetweenSessions
             )
         }
+        switch WakeSleepTimeValidator().validate(
+            wakeupTime: wakeupTime,
+            sleepTime: sleepTime
+        ) {
+        case .valid:
+            break
+        case .sameTime:
+            throw OnboardingInputError.wakeSleepTimesAreEqual
+        case .sleepBeforeWake:
+            throw OnboardingInputError.sleepTimeBeforeWakeupTime
+        }
 
         self.firstName = firstName
         self.lastName = lastName

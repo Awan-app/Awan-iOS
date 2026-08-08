@@ -3,8 +3,10 @@ import Foundation
 
 public protocol TaskRepository: Sendable {
     func fetchTasks() async throws -> [AwanTask]
+    func fetchInboxTasks() async throws -> [AwanTask]
     func fetchTasks(for date: Date) async throws -> [AwanTask]
     func observeTasks() -> AnyPublisher<[AwanTask], Error>
+    func observeInboxTasks() -> AnyPublisher<[AwanTask], Error>
     func observeTasks(for date: Date) -> AnyPublisher<[AwanTask], Error>
     func updateTask(_ task: AwanTask) async throws
     func deleteTask(id: UUID) async throws

@@ -133,7 +133,8 @@ private struct TaskLengthExplanation: View {
         viewModel: OnboardingViewModel(
             completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
             createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
-            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl(),
+            fetchCategoriesUseCase: MockFetchCategoriesUseCase()
         ),
         onContinue: {}
     )

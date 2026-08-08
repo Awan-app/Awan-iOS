@@ -31,6 +31,10 @@ extension DailyZonesViewModel {
 
     func save(then destination: DailyZonesDestination? = nil) async {
         guard !state.isSaving else { return }
+        guard state.areZonesCategorized else {
+            state.errorMessage = L10n.Schedule.chooseCategory
+            return
+        }
         switch state.mode {
         case .weekly where selectedTemplate == nil:
             return

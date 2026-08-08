@@ -16,7 +16,7 @@ struct CustomTabBar: View {
 
     private let leading: [(MainTab, String)] = [
         (.home, "house.fill"),
-        (.rewards, "trophy.fill")
+        (.tasks, "target")
     ]
     private let trailing: [(MainTab, String)] = [
         (.store, "storefront.fill"),
@@ -137,7 +137,8 @@ struct CustomTabBar: View {
     private func tabTitle(_ tab: MainTab) -> String {
         switch tab {
         case .home:    return L10n.Home.today
-        case .rewards: return L10n.Home.rewards
+        case .tasks:   return L10n.Inbox.title
+        case .store:   return L10n.Home.store
         case .you:     return L10n.Home.you
         default:       return ""
         }

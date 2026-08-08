@@ -1,6 +1,7 @@
 import Domain
 import Foundation
 import Observation
+import Combine
 
 @Observable
 @MainActor
@@ -8,6 +9,7 @@ public final class DailyZonesViewModel {
     var state = DailyZonesState()
 
     let useCases: DailyZonesUseCases
+    @ObservationIgnored var categoryCancellable: AnyCancellable?
 
     public init(useCases: DailyZonesUseCases) {
         self.useCases = useCases
@@ -17,6 +19,7 @@ public final class DailyZonesViewModel {
         switch action {
         case .appeared, .retry:
             Task { await load() }
+            loadCategories()
         case .selectMode(let mode):
             request(.mode(mode))
         case .selectTemplate(let id):
@@ -81,6 +84,12 @@ public final class DailyZonesViewModel {
         case .setZoneEnd(let date):
             state.updateZoneForm { $0.endTime = date }
             validateZoneForm()
+        case .setZoneCategory(let id):
+            state.updateZoneForm { $0.selectedCategoryID = id }
+        case .retryCategories:
+            loadCategories()
+        case .createCategory(let name):
+            Task { await createCategory(name: name) }
         case .submitZoneForm:
             submitZoneForm()
         case .requestDeleteZone(let id):

@@ -39,6 +39,17 @@ public extension LocalSessionDataSource {
         }
     }
 
+    func upsertSessions(_ sessions: [Session]) async throws {
+        let existingIDs = Set(try await fetchSessions().map(\.id))
+        for session in sessions {
+            if existingIDs.contains(session.id) {
+                try await updateSession(session)
+            } else {
+                try await addSession(session)
+            }
+        }
+    }
+
     func replaceSessions(
         _ sessions: [Session],
         forDay dayKey: String,

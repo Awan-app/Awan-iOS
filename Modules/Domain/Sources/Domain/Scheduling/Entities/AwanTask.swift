@@ -45,4 +45,15 @@ public struct AwanTask: Identifiable, Hashable, Sendable {
         self.dependencyIDs = dependencyIDs
         self.category = category
     }
+
+    public func updatingStatus(_ newStatus: TaskStatus) -> AwanTask {
+        AwanTask(
+            id: id, title: title, description: description,
+            status: newStatus, goalID: goalID, duration: duration,
+            isSplittable: isSplittable, mandatory: mandatory,
+            estimatedPoints: estimatedPoints, dependencyIDs: dependencyIDs,
+            category: category
+        )
+    }
+
 }

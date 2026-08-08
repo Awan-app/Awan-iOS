@@ -180,7 +180,8 @@ struct OnboardingYourNameView: View {
         viewModel: OnboardingViewModel(
             completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
             createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
-            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl()
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl(),
+            fetchCategoriesUseCase: MockFetchCategoriesUseCase()
         ),
         onContinue: {}
     )

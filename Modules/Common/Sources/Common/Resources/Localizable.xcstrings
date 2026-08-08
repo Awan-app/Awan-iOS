@@ -682,6 +682,40 @@
         }
       }
     },
+    "home.ai_task_option_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يكمل أوان تفاصيل المهمة مما تكتبه أو تقوله."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Awan completes the task details from what you type or say."
+          }
+        }
+      }
+    },
+    "home.ai_task_option_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إنشاء باستخدام الذكاء الاصطناعي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create with AI"
+          }
+        }
+      }
+    },
     "home.can_split": {
       "extractionState": "manual",
       "localizations": {
@@ -881,7 +915,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "DURATION"
+            "value": "Duration"
           }
         }
       }
@@ -1375,6 +1409,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rewards"
+          }
+        }
+      }
+    },
+    "home.store": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المتجر"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Store"
           }
         }
       }
@@ -2348,6 +2399,482 @@
         }
       }
     },
+    "inbox.accessibility_filters_applied": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم تطبيق عوامل التصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters applied"
+          }
+        }
+      }
+    },
+    "inbox.accessibility_hide_filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إخفاء عوامل التصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide filters"
+          }
+        }
+      }
+    },
+    "inbox.accessibility_no_filters_applied": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يتم تطبيق عوامل تصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No filters applied"
+          }
+        }
+      }
+    },
+    "inbox.accessibility_show_filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إظهار عوامل التصفية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show filters"
+          }
+        }
+      }
+    },
+    "inbox.derived_explanation": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حالة المهمة مشتقة من الجلسات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Task status is derived from sessions"
+          }
+        }
+      }
+    },
+    "inbox.empty_subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المهام التي تحفظها بدون هدف ستظهر هنا"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tasks saved to your Inbox will appear here"
+          }
+        }
+      }
+    },
+    "inbox.empty_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد مهام"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No tasks found"
+          }
+        }
+      }
+    },
+    "inbox.error_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خطأ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error"
+          }
+        }
+      }
+    },
+    "inbox.filter_active": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نشط"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active"
+          }
+        }
+      }
+    },
+    "inbox.filter_all": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الكل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
+          }
+        }
+      }
+    },
+    "inbox.filter_cancelled": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ملغى"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelled"
+          }
+        }
+      }
+    },
+    "inbox.filter_completed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مكتمل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completed"
+          }
+        }
+      }
+    },
+    "inbox.filter_drafted": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مسودة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drafted"
+          }
+        }
+      }
+    },
+    "inbox.load_failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فشل تحميل مهام البريد الوارد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed to load Inbox tasks"
+          }
+        }
+      }
+    },
+    "inbox.n_sessions": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d جلسات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d sessions"
+          }
+        }
+      }
+    },
+    "inbox.no_sessions": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد جلسات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No sessions"
+          }
+        }
+      }
+    },
+    "inbox.one_session": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جلسة واحدة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 session"
+          }
+        }
+      }
+    },
+    "inbox.search_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "البحث في المهام أو الجلسات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search tasks or sessions"
+          }
+        }
+      }
+    },
+    "inbox.section_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مهام الوارد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inbox tasks"
+          }
+        }
+      }
+    },
+    "inbox.sessions_active_now": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نشط الآن"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active now"
+          }
+        }
+      }
+    },
+    "inbox.sessions_any": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any"
+          }
+        }
+      }
+    },
+    "inbox.sessions_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الجلسات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessions"
+          }
+        }
+      }
+    },
+    "inbox.sessions_missed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فائت"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Missed"
+          }
+        }
+      }
+    },
+    "inbox.sessions_scheduled": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مجدول"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scheduled"
+          }
+        }
+      }
+    },
+    "inbox.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المهام المحفوظة في البريد الوارد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tasks saved to your Inbox"
+          }
+        }
+      }
+    },
+    "inbox.tab_goals": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الأهداف"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Goals"
+          }
+        }
+      }
+    },
+    "inbox.tab_inbox": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الوارد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inbox"
+          }
+        }
+      }
+    },
+    "inbox.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المهام والأهداف"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tasks & Goals"
+          }
+        }
+      }
+    },
     "login.app_title": {
       "extractionState": "manual",
       "localizations": {
@@ -3057,7 +3584,41 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Out of bounds warning"
+            "value": "Adjust this zone so it fits within your wake and sleep times."
+          }
+        }
+      }
+    },
+    "onboarding.out_of_bounds_warning_multiple" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "المناطق التالية تقع خارج أوقات استيقاظك ونومك:\n%@\n\nعدّلها لتبقى ضمن يومك النشط."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following zones fall outside your wake and sleep times:\n%@\nAdjust them to keep them within your active day."
+          }
+        }
+      }
+    },
+    "onboarding.out_of_bounds_warning_single" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "المنطقة التالية تقع خارج أوقات استيقاظك ونومك:\n%@\n\nعدّلها لتبقى ضمن يومك النشط."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The following zone falls outside your wake and sleep times:\n%@\nAdjust it to keep it within your active day."
           }
         }
       }
@@ -3227,7 +3788,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "SET MANUALLY"
+            "value": "SET LATER"
           }
         }
       }
@@ -3449,6 +4010,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "I usually wake up at"
+          }
+        }
+      }
+    },
+    "onboarding.zone_category_required": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختر فئة لهذه المنطقة قبل الحفظ."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a category for this zone before saving."
+          }
+        }
+      }
+    },
+    "onboarding.wake_sleep_same_time_error": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يمكن أن يكون وقت الاستيقاظ والنوم متماثلين. اختر أوقاتًا مختلفة للمتابعة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wake-up and sleep times can't be the same. Choose different times to continue."
+          }
+        }
+      }
+    },
+    "onboarding.sleep_before_wake_error": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يجب أن يكون وقت النوم بعد وقت الاستيقاظ في اليوم نفسه. اختر وقت نوم لاحقًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep time must be later than wake-up time on the same day. Choose a later sleep time."
+          }
+        }
+      }
+    },
+    "onboarding.short_active_day_warning": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يومك النشط أقل من 10 ساعات. قد يكون لدى أوان وقت أقل لجدولة مهامك."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your active day is less than 10 hours. Awan may have less time to schedule your tasks."
           }
         }
       }
@@ -6341,6 +6970,20 @@
             "value": "Edit profile"
           }
         }
+      }
+    },
+    "categories.create": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "إنشاء فئة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Create Category" } }
+      }
+    },
+    "categories.new_name": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "اسم الفئة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Category name" } }
       }
     },
     "profile.logout_confirmation_message": {

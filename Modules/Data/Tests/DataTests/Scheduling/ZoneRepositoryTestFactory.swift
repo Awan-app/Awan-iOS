@@ -80,6 +80,10 @@ private struct ZoneRemoteTemplateOverrideDataSourceStub:
         throw ZoneRepositoryTestError.unusedRemote
     }
     func getZones(overrideId: UUID) async throws -> [ZoneResponseDTO] { [] }
+    func updateBulkTemplateOverride(
+        overrideId: UUID,
+        request: BulkUpdateOverrideZonesRequestDTO
+    ) async throws -> [ZoneResponseDTO] { [] }
 }
 
 private enum ZoneRepositoryTestError: Error {

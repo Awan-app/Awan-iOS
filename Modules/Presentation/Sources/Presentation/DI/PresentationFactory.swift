@@ -14,6 +14,8 @@ public struct PresentationFactory {
     private let profileViewModel: ProfileViewModel
     private let dailyZonesViewModel: DailyZonesViewModel
     private let makeUserInfoViewModel: () -> UserInfoViewModel
+    private let inboxViewModel: InboxViewModel
+    private let goalsViewModel: GoalsViewModel?
 
     public init(
         appCoordinator: AppCoordinator,
@@ -27,7 +29,9 @@ public struct PresentationFactory {
         onboardingViewModel: OnboardingViewModel,
         profileViewModel: ProfileViewModel,
         dailyZonesViewModel: DailyZonesViewModel,
-        makeUserInfoViewModel: @escaping () -> UserInfoViewModel
+        makeUserInfoViewModel: @escaping () -> UserInfoViewModel,
+        inboxViewModel: InboxViewModel,
+        goalsViewModel: GoalsViewModel? = nil
     ) {
         self.appCoordinator = appCoordinator
         self.authenticationState = authenticationState
@@ -41,6 +45,11 @@ public struct PresentationFactory {
         self.profileViewModel = profileViewModel
         self.dailyZonesViewModel = dailyZonesViewModel
         self.makeUserInfoViewModel = makeUserInfoViewModel
+        self.inboxViewModel = inboxViewModel
+        self.goalsViewModel = goalsViewModel
+        if self.inboxViewModel.goalsViewModel == nil {
+            self.inboxViewModel.goalsViewModel = goalsViewModel
+        }
     }
 
     public func makeAppRootView() -> some View {
@@ -71,7 +80,7 @@ public struct PresentationFactory {
 
     func makeGlobalCreationSheet(
         onDismiss: @escaping () -> Void,
-        onTaskSchedulingModeChanged: @escaping (Bool) -> Void,
+        onTaskLayoutModeChanged: @escaping (Bool, Bool) -> Void,
         onGoalFullScreenChanged: @escaping (Bool) -> Void
     ) -> some View {
         GlobalCreationSheet(
@@ -85,7 +94,7 @@ public struct PresentationFactory {
                 speechTranscriber: LiveSpeechTranscriber()
             ),
             onDismiss: onDismiss,
-            onTaskSchedulingModeChanged: onTaskSchedulingModeChanged,
+            onTaskLayoutModeChanged: onTaskLayoutModeChanged,
             onGoalFullScreenChanged: onGoalFullScreenChanged
         )
     }
@@ -101,6 +110,16 @@ public struct PresentationFactory {
 
     func makeRewardsView() -> some View {
         RewardsView()
+    }
+
+    func makeInboxView() -> some View {
+        InboxView(viewModel: inboxViewModel)
+    }
+
+    func makeInboxTaskDetailView(taskID: UUID) -> some View {
+        // Placeholder until inbox task detail is implemented.
+        EmptyView()
+            .accessibilityIdentifier("inbox-task-detail-\(taskID.uuidString)")
     }
 
     func makeYouView() -> some View {

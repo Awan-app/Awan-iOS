@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Common
+import Domain
 
 struct DayPreviewCard: View {
     let wakeupTime: Date
@@ -25,14 +26,22 @@ struct DayPreviewCard: View {
         let wakeComponents = calendar.dateComponents([.hour, .minute], from: wakeupTime)
         let sleepComponents = calendar.dateComponents([.hour, .minute], from: sleepTime)
 
-        let wakeMinutes = (wakeComponents.hour ?? 7) * 60 + (wakeComponents.minute ?? 0)
-        var sleepMinutes = (sleepComponents.hour ?? 23) * 60 + (sleepComponents.minute ?? 0)
-
-        if sleepMinutes <= wakeMinutes {
-            sleepMinutes += 24 * 60
+        guard
+            let wakeHour = wakeComponents.hour,
+            let wakeMinute = wakeComponents.minute,
+            let sleepHour = sleepComponents.hour,
+            let sleepMinute = sleepComponents.minute,
+            let wake = try? LocalTime(hour: wakeHour, minute: wakeMinute),
+            let sleep = try? LocalTime(hour: sleepHour, minute: sleepMinute),
+            case let .valid(durationMinutes) = WakeSleepTimeValidator().validate(
+                wakeupTime: wake,
+                sleepTime: sleep
+            )
+        else {
+            return 0
         }
 
-        return (sleepMinutes - wakeMinutes) / 60
+        return durationMinutes / 60
     }
 
     var body: some View {
@@ -127,4 +136,3 @@ struct DayPreviewCard: View {
     DayPreviewCard(wakeupTime: Date(), sleepTime: Date().addingTimeInterval(3600 * 16))
         .padding()
 }
-

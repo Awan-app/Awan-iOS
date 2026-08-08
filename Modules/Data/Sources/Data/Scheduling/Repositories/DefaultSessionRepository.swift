@@ -37,6 +37,10 @@ public struct DefaultSessionRepository: SessionRepository {
             .sorted(by: sessionOrder)
     }
 
+    public func observeSessions() -> AnyPublisher<[Session], Error> {
+        localDataSource.observeSessions()
+    }
+
     public func observeSessions(for date: Date) -> AnyPublisher<[Session], Error> {
         AsyncValuePublisher.make { await getTimeZoneID() }
             .flatMap { timeZoneID -> AnyPublisher<[Session], Error> in

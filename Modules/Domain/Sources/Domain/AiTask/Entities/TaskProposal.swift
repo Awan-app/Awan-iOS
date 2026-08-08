@@ -5,6 +5,11 @@
 
 import Foundation
 
+public enum ProposedTaskDestination: Sendable {
+    case schedule
+    case inbox
+}
+
 public struct TaskProposal: Sendable, Hashable {
     public let sourceSummary: String?
     public let tasks: [ProposedTask]

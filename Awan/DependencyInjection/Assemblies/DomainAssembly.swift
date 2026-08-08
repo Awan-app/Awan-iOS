@@ -60,6 +60,16 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(ZoneRepository.self, from: resolver)
             )
         }
+        container.register(FetchCategoriesUseCase.self) { resolver in
+            DefaultFetchCategoriesUseCase(
+                repository: Self.resolve(CategoryRepository.self, from: resolver)
+            )
+        }
+        container.register(CreateCategoryUseCase.self) { resolver in
+            DefaultCreateCategoryUseCase(
+                repository: Self.resolve(CategoryRepository.self, from: resolver)
+            )
+        }
         container.register(FetchTasksUseCase.self) { resolver in
             DefaultFetchTasksUseCase(
                 repository: Self.resolve(TaskRepository.self, from: resolver)
@@ -73,6 +83,41 @@ struct DomainAssembly: Assembly {
         container.register(FetchSessionsUseCase.self) { resolver in
             DefaultFetchSessionsUseCase(
                 repository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchInboxTasksUseCase.self) { resolver in
+            DefaultFetchInboxTasksUseCase(
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
+                sessionRepository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchGoalsWithTasksUseCase.self) { resolver in
+            DefaultFetchGoalsWithTasksUseCase(
+                goalRepository: Self.resolve(GoalRepository.self, from: resolver),
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
+                sessionRepository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(DefaultFetchInboxTasksUseCase.self) { resolver in
+            DefaultFetchInboxTasksUseCase(
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
+                sessionRepository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTaskStatusUseCase.self) { resolver in
+            DefaultUpdateTaskStatusUseCase(
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver)
+            )
+        }
+        container.register(CompleteTaskSessionsUseCase.self) { resolver in
+            DefaultCompleteTaskSessionsUseCase(
+                sessionRepository: Self.resolve(SessionRepository.self, from: resolver),
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver)
+            )
+        }
+        container.register(DeleteInboxTaskUseCase.self) { resolver in
+            DefaultDeleteInboxTaskUseCase(
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver)
             )
         }
         container.register(GetUserProfileUseCase.self) { resolver in
