@@ -9,6 +9,7 @@ import Foundation
 import Observation
 import Domain
 import Network
+import Common
 
 public enum LoginState: Equatable, Sendable {
     case idle
@@ -65,11 +66,11 @@ public final class LoginViewModel {
         guard hasAttemptedSubmit else { return nil }
         
         if email.isEmpty {
-            return "Please enter your email."
+            return L10n.Login.emptyEmailError
         }
         
         if !isValidEmail {
-            return "Please enter a valid email address."
+            return L10n.Login.invalidEmailError
         }
         
         return nil
@@ -131,36 +132,37 @@ public final class LoginViewModel {
     
     public func onGoogleSignInTapped() {
         guard !isOffline else {
-            googleErrorMessage = "Network connection is offline. Please try again."
+            googleErrorMessage = L10n.Login.networkOfflineError
             return
         }
 
         isGoogleLoading = true
         googleErrorMessage = nil
         
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
                 let tokens = try await googleSignInTokenProvider()
                 
                 if Task.isCancelled { return }
                 
-                let result = try await self.googleSignInUseCase.execute(idToken: tokens.idToken, accessToken: tokens.accessToken)
+                let result = try await googleSignInUseCase.execute(idToken: tokens.idToken, accessToken: tokens.accessToken)
                 
                 if !Task.isCancelled {
-                    self.isGoogleLoading = false
-                    self.onLoginSuccess?(result)
+                    isGoogleLoading = false
+                    onLoginSuccess?(result)
                 }
             } catch {
                 guard !Task.isCancelled else { return }
                 
-                self.isGoogleLoading = false
+                isGoogleLoading = false
                 let nsError = error as NSError
                 // 8 == GIDSignInError.canceled
                 if nsError.domain == "com.google.GIDSignIn" && nsError.code == 8 {
                     return
                 }
                 
-                self.googleErrorMessage = error.localizedDescription
+                googleErrorMessage = error.localizedDescription
             }
         }
     }

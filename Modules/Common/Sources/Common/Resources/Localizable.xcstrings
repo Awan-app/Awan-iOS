@@ -3690,6 +3690,57 @@
         }
       }
     },
+    "login.error.empty_email": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يرجى إدخال بريدك الإلكتروني."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please enter your email."
+          }
+        }
+      }
+    },
+    "login.error.invalid_email": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يرجى إدخال عنوان بريد إلكتروني صالح."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please enter a valid email address."
+          }
+        }
+      }
+    },
+    "login.error.network_offline": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الاتصال بالشبكة غير متوفر. يرجى المحاولة مرة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network connection is offline. Please try again."
+          }
+        }
+      }
+    },
     "login.footer.and": {
       "extractionState": "manual",
       "localizations": {
