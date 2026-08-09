@@ -163,6 +163,9 @@ struct AppRootView: View {
                         case .userInfo:   factory.makeUserInfoView()
                         case .dailyZones: factory.makeDailyZonesView().environment(appearanceManager)
                         case .inventory:  InventoryPlaceholderView()
+                        case .personalization: factory.makePersonalizationView()
+                        case .settings: factory.makeSettingsView()
+                        case .aboutAwan:  factory.makeAboutAwanView()
                         default:          EmptyView()
                         }
                     }
@@ -258,7 +261,8 @@ struct AppRootView: View {
                     selection: $creationSheetDetent
                 )
                 .presentationDragIndicator(.visible)
-            case .home, .tasks, .calendar, .userInfo, .dailyZones, .inventory, .inboxTaskDetail:
+            case .home, .tasks, .calendar, .userInfo, .dailyZones, .inventory,
+                 .personalization, .settings, .aboutAwan, .inboxTaskDetail:
                 EmptyView()
             }
         }
