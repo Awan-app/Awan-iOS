@@ -18,6 +18,10 @@ private final class StoreItemRepositoryStub: GamificationRepository, @unchecked 
     func buyStoreItem(itemID: String) async throws -> StorePurchase {
         fatalError("Unimplemented")
     }
+
+    func fetchUserPoints() async throws -> Int {
+        fatalError("Unimplemented")
+    }
 }
 
 final class FetchStoreItemsUseCaseTests: XCTestCase {

@@ -10,19 +10,23 @@ public final class MarketplaceViewModel {
 
     @ObservationIgnored private let fetchStoreItemsUseCase: any FetchStoreItemsUseCase
     @ObservationIgnored private let buyStoreItemUseCase: any BuyStoreItemUseCase
+    @ObservationIgnored private let fetchUserPointsUseCase: any FetchUserPointsUseCase
 
     public init(
         fetchStoreItemsUseCase: any FetchStoreItemsUseCase,
-        buyStoreItemUseCase: any BuyStoreItemUseCase
+        buyStoreItemUseCase: any BuyStoreItemUseCase,
+        fetchUserPointsUseCase: any FetchUserPointsUseCase
     ) {
         self.fetchStoreItemsUseCase = fetchStoreItemsUseCase
         self.buyStoreItemUseCase = buyStoreItemUseCase
+        self.fetchUserPointsUseCase = fetchUserPointsUseCase
         self.state = MarketplaceState()
     }
 
     public func send(_ action: MarketplaceAction) {
         switch action {
         case .appeared, .retry:
+            loadUserPoints()
             loadStoreItems()
 
         case let .selectCategory(category):
@@ -58,6 +62,23 @@ public final class MarketplaceViewModel {
 
         case .dismissPurchaseFeedback:
             state.purchaseFeedback = nil
+        }
+    }
+
+    private func loadUserPoints() {
+        state.isLoadingPoints = true
+        let useCase = fetchUserPointsUseCase
+
+        Task { [weak self] in
+            do {
+                let points = try await useCase.execute()
+                guard let self else { return }
+                self.state.userPoints = points
+                self.state.isLoadingPoints = false
+            } catch {
+                guard let self else { return }
+                self.state.isLoadingPoints = false
+            }
         }
     }
 
@@ -113,7 +134,7 @@ public final class MarketplaceViewModel {
 
         Task { [weak self] in
             do {
-                let purchase = try await useCase.execute(itemID: itemID)
+                _ = try await useCase.execute(itemID: itemID)
 
                 guard let self else { return }
                 self.state.purchasingItemID = nil
@@ -127,7 +148,7 @@ public final class MarketplaceViewModel {
                     self.state.selectedItem = selected
                 }
 
-                self.state.userPoints = max(0, self.state.userPoints - purchase.item.price)
+                self.loadUserPoints()
                 self.state.purchaseSuccessMessage = L10n.Marketplace.itsYours
                 self.state.purchaseFeedback = .success(message: L10n.Marketplace.itsYours)
                 self.scheduleFeedbackDismissal()

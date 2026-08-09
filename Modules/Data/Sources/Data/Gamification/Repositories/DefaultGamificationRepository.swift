@@ -31,4 +31,9 @@ public final class DefaultGamificationRepository: GamificationRepository {
             throw error
         }
     }
+
+    public func fetchUserPoints() async throws -> Int {
+        let dto = try await remoteDataSource.getProgress()
+        return dto.points
+    }
 }

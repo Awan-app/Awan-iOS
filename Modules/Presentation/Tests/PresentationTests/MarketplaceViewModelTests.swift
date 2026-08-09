@@ -48,12 +48,27 @@ private final class MockBuyStoreItemUseCaseImpl: BuyStoreItemUseCase, @unchecked
     }
 }
 
+private final class MockFetchUserPointsUseCaseImpl: FetchUserPointsUseCase, @unchecked Sendable {
+    var pointsToReturn: Int = 1500
+    var shouldFail: Bool = false
+    var executeCallCount: Int = 0
+
+    func execute() async throws -> Int {
+        executeCallCount += 1
+        if shouldFail {
+            throw NSError(domain: "TestError", code: 500, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch points"])
+        }
+        return pointsToReturn
+    }
+}
+
 @MainActor
 final class MarketplaceViewModelTests: XCTestCase {
 
     func testAppearedFetchesAllCategoryAggregated() async throws {
         let mockFetch = MockFetchStoreItemsUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
+        let mockPoints = MockFetchUserPointsUseCaseImpl()
         mockFetch.itemsPerType["FRAME"] = [
             StoreItem(id: "f1", name: "Frame 1", description: "Desc", image: "img1", info: nil, price: 100, version: "1.0", type: "FRAME")
         ]
@@ -69,7 +84,8 @@ final class MarketplaceViewModelTests: XCTestCase {
 
         let viewModel = MarketplaceViewModel(
             fetchStoreItemsUseCase: mockFetch,
-            buyStoreItemUseCase: mockBuy
+            buyStoreItemUseCase: mockBuy,
+            fetchUserPointsUseCase: mockPoints
         )
         viewModel.send(.appeared)
 
@@ -90,9 +106,11 @@ final class MarketplaceViewModelTests: XCTestCase {
     func testSelectSpecificCategoriesSendsExactApiTypes() async throws {
         let mockFetch = MockFetchStoreItemsUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
+        let mockPoints = MockFetchUserPointsUseCaseImpl()
         let viewModel = MarketplaceViewModel(
             fetchStoreItemsUseCase: mockFetch,
-            buyStoreItemUseCase: mockBuy
+            buyStoreItemUseCase: mockBuy,
+            fetchUserPointsUseCase: mockPoints
         )
 
         viewModel.send(.selectCategory(.skins))
@@ -118,11 +136,13 @@ final class MarketplaceViewModelTests: XCTestCase {
     func testErrorHandlingInViewModel() async throws {
         let mockFetch = MockFetchStoreItemsUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
+        let mockPoints = MockFetchUserPointsUseCaseImpl()
         mockFetch.shouldFail = true
 
         let viewModel = MarketplaceViewModel(
             fetchStoreItemsUseCase: mockFetch,
-            buyStoreItemUseCase: mockBuy
+            buyStoreItemUseCase: mockBuy,
+            fetchUserPointsUseCase: mockPoints
         )
         viewModel.send(.appeared)
 
@@ -133,9 +153,49 @@ final class MarketplaceViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.state.allItems.isEmpty)
     }
 
-    func testSuccessfulPurchaseUpdatesItemStatusToOwned() async throws {
+    func testAppearedFetchesUserPointsFromBackend() async throws {
         let mockFetch = MockFetchStoreItemsUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
+        let mockPoints = MockFetchUserPointsUseCaseImpl()
+        mockPoints.pointsToReturn = 2450
+
+        let viewModel = MarketplaceViewModel(
+            fetchStoreItemsUseCase: mockFetch,
+            buyStoreItemUseCase: mockBuy,
+            fetchUserPointsUseCase: mockPoints
+        )
+        viewModel.send(.appeared)
+
+        try await Task.sleep(nanoseconds: 100_000_000)
+
+        XCTAssertEqual(viewModel.state.userPoints, 2450)
+        XCTAssertEqual(mockPoints.executeCallCount, 1)
+    }
+
+    func testUserPointsUnchangedOnFetchUserPointsFailure() async throws {
+        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockBuy = MockBuyStoreItemUseCaseImpl()
+        let mockPoints = MockFetchUserPointsUseCaseImpl()
+        mockPoints.shouldFail = true
+
+        let viewModel = MarketplaceViewModel(
+            fetchStoreItemsUseCase: mockFetch,
+            buyStoreItemUseCase: mockBuy,
+            fetchUserPointsUseCase: mockPoints
+        )
+        viewModel.state.userPoints = 500
+        viewModel.send(.appeared)
+
+        try await Task.sleep(nanoseconds: 100_000_000)
+
+        XCTAssertEqual(viewModel.state.userPoints, 500)
+    }
+
+    func testSuccessfulPurchaseRefreshesPointsFromBackendUseCase() async throws {
+        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockBuy = MockBuyStoreItemUseCaseImpl()
+        let mockPoints = MockFetchUserPointsUseCaseImpl()
+        mockPoints.pointsToReturn = 1000
 
         let item = MarketplaceItem(
             id: "item-100",
@@ -147,10 +207,15 @@ final class MarketplaceViewModelTests: XCTestCase {
         )
         let viewModel = MarketplaceViewModel(
             fetchStoreItemsUseCase: mockFetch,
-            buyStoreItemUseCase: mockBuy
+            buyStoreItemUseCase: mockBuy,
+            fetchUserPointsUseCase: mockPoints
         )
         viewModel.state.allItems = [item]
         viewModel.state.selectedItem = item
+        viewModel.state.userPoints = 1100
+
+        // Change points to return from backend upon refresh call after purchase
+        mockPoints.pointsToReturn = 900
 
         viewModel.send(.buyItem(item))
 
@@ -160,15 +225,17 @@ final class MarketplaceViewModelTests: XCTestCase {
         XCTAssertEqual(mockBuy.lastBoughtItemID, "item-100")
         XCTAssertEqual(viewModel.state.allItems.first?.status, .owned)
         XCTAssertEqual(viewModel.state.selectedItem?.status, .owned)
+        XCTAssertEqual(viewModel.state.userPoints, 900)
         XCTAssertNotNil(viewModel.state.purchaseSuccessMessage)
         if case .success = viewModel.state.purchaseFeedback { } else {
             XCTFail("Expected purchaseFeedback to be .success")
         }
     }
 
-    func testInsufficientPointsErrorMapsToLocalizedMessage() async throws {
+    func testInsufficientPointsErrorLeavesPointsUnchanged() async throws {
         let mockFetch = MockFetchStoreItemsUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
+        let mockPoints = MockFetchUserPointsUseCaseImpl()
         mockBuy.errorToThrow = GamificationError.insufficientPoints
 
         let item = MarketplaceItem(
@@ -181,15 +248,18 @@ final class MarketplaceViewModelTests: XCTestCase {
         )
         let viewModel = MarketplaceViewModel(
             fetchStoreItemsUseCase: mockFetch,
-            buyStoreItemUseCase: mockBuy
+            buyStoreItemUseCase: mockBuy,
+            fetchUserPointsUseCase: mockPoints
         )
         viewModel.state.allItems = [item]
+        viewModel.state.userPoints = 300
 
         viewModel.send(.buyItem(item))
 
         try await Task.sleep(nanoseconds: 100_000_000)
 
         XCTAssertNil(viewModel.state.purchasingItemID)
+        XCTAssertEqual(viewModel.state.userPoints, 300)
         XCTAssertNotNil(viewModel.state.purchaseErrorMessage)
         XCTAssertFalse(viewModel.state.purchaseErrorMessage?.contains("INSUFFICIENT_POINTS") ?? true)
         if case .failure = viewModel.state.purchaseFeedback { } else {
@@ -200,6 +270,7 @@ final class MarketplaceViewModelTests: XCTestCase {
     func testDuplicatePurchaseIgnoredWhenPurchasing() async throws {
         let mockFetch = MockFetchStoreItemsUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
+        let mockPoints = MockFetchUserPointsUseCaseImpl()
 
         let item = MarketplaceItem(
             id: "item-300",
@@ -211,7 +282,8 @@ final class MarketplaceViewModelTests: XCTestCase {
         )
         let viewModel = MarketplaceViewModel(
             fetchStoreItemsUseCase: mockFetch,
-            buyStoreItemUseCase: mockBuy
+            buyStoreItemUseCase: mockBuy,
+            fetchUserPointsUseCase: mockPoints
         )
         viewModel.state.allItems = [item]
         viewModel.state.purchasingItemID = "other-in-progress"

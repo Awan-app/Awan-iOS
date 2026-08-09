@@ -12,9 +12,10 @@ public enum PurchaseFeedback: Sendable, Equatable {
 
 public struct MarketplaceState: Sendable {
     public var allItems: [MarketplaceItem] = []
-    public var userPoints: Int = 1_240
+    public var userPoints: Int = 0
 
     public var isLoading: Bool = false
+    public var isLoadingPoints: Bool = false
     public var errorMessage: String? = nil
 
     public var purchasingItemID: String? = nil

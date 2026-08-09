@@ -26,6 +26,10 @@ final class BuyStoreItemUseCaseTests: XCTestCase {
                 boughtAt: Date()
             )
         }
+
+        func fetchUserPoints() async throws -> Int {
+            fatalError("Unimplemented")
+        }
     }
 
     func testExecuteForwardsItemIDToRepository() async throws {
