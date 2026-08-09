@@ -8471,6 +8471,181 @@
           "stringUnit": { "state": "translated", "value": "Your progress" }
         }
       }
+    },
+    "daily_wheel.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "هدية اليوم" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Daily Gift" } }
+      }
+    },
+    "daily_wheel.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "لف العجلة واكتشف مكافأتك" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Spin the wheel and reveal your reward" } }
+      }
+    },
+    "daily_wheel.loading": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "نجهز هديتك اليومية…" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Preparing your daily gift…" } }
+      }
+    },
+    "daily_wheel.gift": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "هدية" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Gift" } }
+      }
+    },
+    "daily_wheel.open_gift": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "افتح هدية اليوم" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Open today’s gift" } }
+      }
+    },
+    "daily_wheel.tap_to_spin": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "اضغط على العجلة لتدورها" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Tap the wheel to spin" } }
+      }
+    },
+    "daily_wheel.spin": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "دور العجلة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Spin the wheel" } }
+      }
+    },
+    "daily_wheel.choosing_reward": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "نختار مكافأتك…" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Choosing your reward…" } }
+      }
+    },
+    "daily_wheel.almost_there": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "قربنا…" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Almost there…" } }
+      }
+    },
+    "daily_wheel.you_won": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "كسبت!" } },
+        "en": { "stringUnit": { "state": "translated", "value": "You won!" } }
+      }
+    },
+    "daily_wheel.already_claimed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "استلمت هدية اليوم" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Today’s gift is claimed" } }
+      }
+    },
+    "daily_wheel.gift_claimed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تم استلام مكافأتك" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Your reward was collected" } }
+      }
+    },
+    "daily_wheel.come_back_tomorrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "ارجع بكرة لهدية جديدة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Come back tomorrow for another gift" } }
+      }
+    },
+    "daily_wheel.item_added": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تمت إضافة الهدية لمجموعتك" } },
+        "en": { "stringUnit": { "state": "translated", "value": "The gift was added to your collection" } }
+      }
+    },
+    "daily_wheel.awesome": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "رائع!" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Awesome!" } }
+      }
+    },
+    "daily_wheel.dismiss": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "إغلاق نتيجة الهدية" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Dismiss gift result" } }
+      }
+    },
+    "daily_wheel.could_not_load": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تعذر فتح هدية اليوم" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Couldn’t open today’s gift" } }
+      }
+    },
+    "daily_wheel.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "حاول مرة أخرى" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Try again" } }
+      }
+    },
+    "daily_wheel.stars_awarded": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "%d نجمة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "%d stars" } }
+      }
+    },
+    "daily_wheel.new_balance": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "رصيدك الآن %d نجمة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Your new balance is %d stars" } }
+      }
+    },
+    "daily_wheel.error_already_claimed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "استلمت هدية اليوم بالفعل." } },
+        "en": { "stringUnit": { "state": "translated", "value": "Today’s gift has already been claimed." } }
+      }
+    },
+    "daily_wheel.error_authentication_failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "سجّل الدخول مرة أخرى لاستلام هديتك اليومية." } },
+        "en": { "stringUnit": { "state": "translated", "value": "Please sign in again to claim your daily gift." } }
+      }
+    },
+    "daily_wheel.error_user_not_found": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تعذر العثور على ملفك الشخصي." } },
+        "en": { "stringUnit": { "state": "translated", "value": "Your profile could not be found." } }
+      }
+    },
+    "daily_wheel.error_invalid_configuration": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "عجلة الهدايا غير متاحة مؤقتًا." } },
+        "en": { "stringUnit": { "state": "translated", "value": "The daily wheel is temporarily unavailable." } }
+      }
+    },
+    "daily_wheel.error_unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تعذر تحميل هدية اليوم. حاول مرة أخرى." } },
+        "en": { "stringUnit": { "state": "translated", "value": "We couldn’t load today’s gift. Please try again." } }
+      }
     }
   },
   "version": "1.1"
