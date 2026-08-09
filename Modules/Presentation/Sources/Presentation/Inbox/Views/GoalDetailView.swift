@@ -54,10 +54,9 @@ public struct GoalDetailView: View {
                         )
 
                         GoalDetailTasksCard(
-                            tasks: tasks,
+                            tasks: viewModel.state.orderedGoalTasks,
                             isLoading: viewModel.state.isLoadingGoalTasks,
                             failureMessage: viewModel.state.goalTasksFailureMessage,
-                            completedCount: effectiveCompletedCount,
                             onRetry: {
                                 viewModel.send(.loadGoalTasks(goalID))
                             }

@@ -61,3 +61,32 @@ public struct GoalProgressItem: Identifiable, Hashable, Sendable {
         self.rawGoal = rawGoal
     }
 }
+
+// MARK: - Goal task detail presentation model
+
+/// A ready-to-render snapshot of a single task for the Goal Detail task list.
+/// Built by `GoalsViewModel`; views must not add any business logic on top.
+public struct GoalDetailTaskItem: Identifiable, Equatable, Sendable {
+    /// Sequential 1-based display index after dependency ordering.
+    public let displayIndex: Int
+    /// Whether this task declares one or more in-list dependencies.
+    public let isDependent: Bool
+    /// Human-readable names of the tasks this task depends on.
+    public let dependencyNames: [String]
+    /// The underlying domain task.
+    public let task: AwanTask
+
+    public var id: UUID { task.id }
+
+    public init(
+        displayIndex: Int,
+        isDependent: Bool,
+        dependencyNames: [String],
+        task: AwanTask
+    ) {
+        self.displayIndex = displayIndex
+        self.isDependent = isDependent
+        self.dependencyNames = dependencyNames
+        self.task = task
+    }
+}
