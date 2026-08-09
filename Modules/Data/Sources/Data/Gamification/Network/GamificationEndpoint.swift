@@ -8,17 +8,26 @@ import AwaNetwork
 
 enum GamificationEndpoint: APIEndpoint {
     case getProgress
+    case getWheelConfig
+    case spinWheel
 
     var baseURL: String {
         NetworkConfiguration.apiBaseURL
     }
 
     var path: String {
-        "/gamification/progress"
+        switch self {
+        case .getProgress: "/gamification/progress"
+        case .getWheelConfig: "/gamification/wheel/config"
+        case .spinWheel: "/gamification/wheel/spin"
+        }
     }
 
     var method: HTTPMethod {
-        .get
+        switch self {
+        case .getProgress, .getWheelConfig: .get
+        case .spinWheel: .post
+        }
     }
 
     var queryParameters: [String: String]? {
