@@ -1214,6 +1214,22 @@ public enum L10n {
             )
         }
 
+        public static func taskDependencySummary(_ independent: Int, _ dependent: Int) -> String {
+            String(format: text("goals.task_dependency_summary"), independent, dependent)
+        }
+
+        public static func tasksCount(_ count: Int) -> String {
+            String(
+                format: L10n.currentBundle.localizedString(
+                    forKey: count == 1 ? "goals.tasks_count_one" : "goals.tasks_count_multiple",
+                    value: nil,
+                    table: "Localizable"
+                ),
+                count
+            )
+        }
+
+
         public static var created: String { text("goals.created") }
         public static var managementPlaceholder: String { text("goals.management_placeholder") }
 

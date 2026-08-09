@@ -12,8 +12,6 @@ public struct GoalsState: Equatable, Sendable {
     public var allGoals: [GoalProgressItem]
     public var failureMessage: String?
     public var selectedGoalTasks: [AwanTask]
-    /// Dependency-ordered, index-annotated task list prepared by `GoalsViewModel`.
-    /// Views must read this instead of sorting `selectedGoalTasks` themselves.
     public var orderedGoalTasks: [GoalDetailTaskItem]
     public var isLoadingGoalTasks: Bool
     public var goalTasksFailureMessage: String?

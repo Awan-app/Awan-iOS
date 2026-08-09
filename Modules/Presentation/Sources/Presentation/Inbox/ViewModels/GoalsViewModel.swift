@@ -68,39 +68,22 @@ public final class GoalsViewModel {
         }
     }
 
-    // MARK: - Dependency ordering
-    //
-    // Semantics verified end-to-end:
-    //   API field  "dependsOnTaskIds"  (GoalEndpoint GET /goals/{id}/tasks)
-    //   → TaskInfoResponseDTO.dependencyIDs: [UUID]   (= "IDs of tasks I prerequisite on")
-    //   → HomeRemoteMapper.task(_:) line 53: Set(dto.dependencyIDs)  (straight pass-through)
-    //   → AwanTask.dependencyIDs: Set<UUID>           (= "IDs of tasks I must come after")
-    //
-    // Ordering rule: task X must appear AFTER every task whose ID is in X.dependencyIDs.
-    // Algorithm: Kahn's BFS topological sort, tie-broken by original API array index
-    // (not by UUID string, which would produce an arbitrary/reversed appearance).
-    //
-    // Note: StableTaskDependencySorter from Domain is intentionally NOT used here
-    // because its tie-breaker is UUID-string lexicographic order, which makes
-    // independent tasks appear in a non-intuitive order.
+    
 
     private static func buildOrderedItems(from tasks: [AwanTask]) -> [GoalDetailTaskItem] {
         let knownIDs = Set(tasks.map(\.id))
         let taskByID = Dictionary(uniqueKeysWithValues: tasks.map { ($0.id, $0) })
-        // Original API index used as stable tie-breaker so tasks that are unrelated
-        // to each other appear in the same order the server returned them.
+      
         let originalIndex = Dictionary(uniqueKeysWithValues: tasks.enumerated().map { ($0.element.id, $0.offset) })
 
-        // Restrict each task's dependencyIDs to only IDs present in this list.
-        // Cross-goal edges are dropped: they're invisible here and must not affect
-        // the dependency indicator or the sort.
+        
         let localDepIDs: [UUID: Set<UUID>] = Dictionary(
             uniqueKeysWithValues: tasks.map { task in
                 (task.id, task.dependencyIDs.filter { knownIDs.contains($0) })
             }
         )
 
-        // Build reverse adjacency: prereqID → [IDs of tasks that depend on it].
+       
         var dependents: [UUID: [UUID]] = [:]
         for task in tasks {
             for depID in localDepIDs[task.id, default: []] {
@@ -108,12 +91,11 @@ public final class GoalsViewModel {
             }
         }
 
-        // In-degree = number of local prerequisites not yet emitted.
+      
         var inDegree: [UUID: Int] = Dictionary(
             uniqueKeysWithValues: tasks.map { ($0.id, localDepIDs[$0.id, default: []].count) }
         )
 
-        // Seed: tasks with no local prerequisites, in original API order.
         var queue: [AwanTask] = tasks
             .filter { (inDegree[$0.id] ?? 0) == 0 }
             .sorted { (originalIndex[$0.id] ?? 0) < (originalIndex[$1.id] ?? 0) }
@@ -124,9 +106,7 @@ public final class GoalsViewModel {
             let task = queue.removeFirst()
             ordered.append(task)
 
-            // For each task that depends on the just-emitted task, reduce its
-            // in-degree. When it reaches 0 all prerequisites have been emitted,
-            // so it becomes eligible — inserted in original-API order.
+           
             let newlyEligible = (dependents[task.id] ?? [])
                 .compactMap { taskByID[$0] }
                 .filter {
@@ -137,7 +117,7 @@ public final class GoalsViewModel {
             queue.append(contentsOf: newlyEligible)
         }
 
-        // Fallback on cycle: use original API order.
+       
         if ordered.count != tasks.count {
             ordered = tasks
         }

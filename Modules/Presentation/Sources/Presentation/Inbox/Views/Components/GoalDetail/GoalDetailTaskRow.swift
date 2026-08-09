@@ -129,11 +129,7 @@ struct GoalDetailTaskRow: View {
         }
     }
 
-    // MARK: - Dependency indicator
-    //
-    // Shows a small chain-link icon followed by a comma-joined list of dependency names
-    // when names are available, or a generic "multiple" label when they are not.
-    // Rendered as a compact tinted pill — no large prose, no repeated "Depends on:" prefix.
+   
 
     @ViewBuilder
     private var dependencyIndicator: some View {
@@ -143,7 +139,7 @@ struct GoalDetailTaskRow: View {
                     .font(.system(size: 8, weight: .bold))
                     .foregroundStyle(AppColors.accentBlue.opacity(0.75))
 
-                Text(item.dependencyNames.joined(separator: ", "))
+                Text(L10n.Goals.dependsOnNames(item.dependencyNames.joined(separator: ", ")))
                     .font(AppFonts.caption2Bold)
                     .foregroundStyle(AppColors.accentBlue.opacity(0.80))
                     .lineLimit(1)
@@ -163,10 +159,7 @@ struct GoalDetailTaskRow: View {
     }
 
     // MARK: - Category chip
-    //
-    // A compact tag-icon + name chip. Uses AppColors.outline tint so it stays
-    // visually quiet relative to the task title. The same treatment is used across
-    // breakdownChip in GoalCard / GoalDetailProgressCard.
+    
 
     private func categoryChip(_ category: TaskCategory) -> some View {
         HStack(spacing: 3) {

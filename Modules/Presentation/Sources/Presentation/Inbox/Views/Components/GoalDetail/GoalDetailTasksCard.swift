@@ -21,7 +21,6 @@ struct GoalDetailTasksCard: View {
     var body: some View {
         AppCard {
             VStack(alignment: .leading, spacing: 14) {
-                // ── Section header ──────────────────────────────────────
                 HStack(alignment: .center, spacing: 0) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(L10n.Goals.tasks)
@@ -82,9 +81,9 @@ struct GoalDetailTasksCard: View {
 
     private var taskSubtitle: String {
         if dependentCount > 0 {
-            return "\(independentCount) independent · \(dependentCount) dependent"
+            return L10n.Goals.taskDependencySummary(independentCount, dependentCount)
         }
-        return "\(tasks.count) tasks"
+        return L10n.Goals.tasksCount(tasks.count)
     }
 
     private var loadingView: some View {
