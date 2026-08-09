@@ -183,6 +183,7 @@ private actor InboxTaskRepositoryStub: TaskRepository {
 
     func addTask(
         _ task: AwanTask,
+        categoryID: UUID?,
         sessionZoneID: UUID?,
         startsAt: Date?,
         durationMinutes: Int,
@@ -217,6 +218,8 @@ private actor InboxSessionRepositoryStub: SessionRepository {
     func deleteSession(id: UUID) {}
     func deleteSessions(taskID: UUID) {}
     func deleteAllSessions() {}
+    func completeSession(id: UUID) async throws -> SessionCompletionResult { fatalError() }
+    func uncompleteSession(id: UUID) async throws -> Session { fatalError() }
 }
 
 private extension TimeRange {

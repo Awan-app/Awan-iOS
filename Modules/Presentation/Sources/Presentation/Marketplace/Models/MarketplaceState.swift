@@ -5,12 +5,22 @@
 
 import Foundation
 
+public enum PurchaseFeedback: Sendable, Equatable {
+    case success(message: String)
+    case failure(message: String)
+}
+
 public struct MarketplaceState: Sendable {
     public var allItems: [MarketplaceItem] = []
     public var userPoints: Int = 1_240
 
     public var isLoading: Bool = false
     public var errorMessage: String? = nil
+
+    public var purchasingItemID: String? = nil
+    public var purchaseErrorMessage: String? = nil
+    public var purchaseSuccessMessage: String? = nil
+    public var purchaseFeedback: PurchaseFeedback? = nil
 
     public var searchQuery: String = ""
     public var selectedCategory: MarketplaceItemCategory = .all

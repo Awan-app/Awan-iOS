@@ -1211,6 +1211,9 @@ public enum L10n {
         public static var equippedHint: String { text("marketplace.equipped_hint") }
         public static var lockedHint: String { text("marketplace.locked_hint") }
         public static var progressLabel: String { text("marketplace.progress_label") }
+        public static var retry: String { text("marketplace.retry") }
+        public static var purchaseSuccessTitle: String { text("marketplace.purchase_success_title") }
+        public static var purchaseFailedTitle: String { text("marketplace.purchase_failed_title") }
 
         private static func text(_ key: String) -> String {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")

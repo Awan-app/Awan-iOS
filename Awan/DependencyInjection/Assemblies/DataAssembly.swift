@@ -128,8 +128,8 @@ struct DataAssembly: Assembly {
                 )
             )
         }
-        container.register(StoreItemRepository.self) { resolver in
-            DefaultStoreItemRepository(
+        container.register(GamificationRepository.self) { resolver in
+            DefaultGamificationRepository(
                 remoteDataSource: Self.resolve(RemoteGamificationDataSource.self, from: resolver)
             )
         }

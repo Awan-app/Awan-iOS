@@ -360,7 +360,12 @@ struct DomainAssembly: Assembly {
         }
         container.register(FetchStoreItemsUseCase.self) { resolver in
             DefaultFetchStoreItemsUseCase(
-                repository: Self.resolve(StoreItemRepository.self, from: resolver)
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(BuyStoreItemUseCase.self) { resolver in
+            DefaultBuyStoreItemUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
             )
         }
     }

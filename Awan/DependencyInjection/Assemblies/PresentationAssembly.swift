@@ -244,9 +244,13 @@ struct PresentationAssembly: Assembly {
             }
         }
         container.register(MarketplaceViewModel.self) { resolver in
-            let useCase = Self.resolve(FetchStoreItemsUseCase.self, from: resolver)
+            let fetchUseCase = Self.resolve(FetchStoreItemsUseCase.self, from: resolver)
+            let buyUseCase = Self.resolve(BuyStoreItemUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
-                MarketplaceViewModel(fetchStoreItemsUseCase: useCase)
+                MarketplaceViewModel(
+                    fetchStoreItemsUseCase: fetchUseCase,
+                    buyStoreItemUseCase: buyUseCase
+                )
             }
         }
         .inObjectScope(.container)

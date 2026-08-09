@@ -8338,6 +8338,39 @@
           "stringUnit": { "state": "translated", "value": "Your progress" }
         }
       }
+    },
+    "marketplace.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": { "state": "translated", "value": "إعادة المحاولة" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "Retry" }
+        }
+      }
+    },
+    "marketplace.purchase_success_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": { "state": "translated", "value": "تم الشراء بنجاح" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "Purchase Successful" }
+        }
+      }
+    },
+    "marketplace.purchase_failed_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": { "state": "translated", "value": "فشل الشراء" }
+        },
+        "en": {
+          "stringUnit": { "state": "translated", "value": "Purchase Failed" }
+        }
+      }
     }
   },
   "version": "1.1"

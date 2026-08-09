@@ -51,6 +51,9 @@ public struct MarketplaceView: View {
             MarketplaceItemDetailSheet(
                 item: item,
                 userPoints: state.userPoints,
+                isPurchasing: state.purchasingItemID == item.id,
+                purchaseFeedback: state.purchaseFeedback,
+                onBuy: { viewModel.send(.buyItem(item)) },
                 onDismiss: { viewModel.send(.dismissDetail) }
             )
             .presentationDetents([.large])
@@ -85,7 +88,7 @@ public struct MarketplaceView: View {
                         Button {
                             viewModel.send(.retry)
                         } label: {
-                            Text("Retry")
+                            Text(L10n.Marketplace.retry)
                                 .font(AppFonts.subheadlineSemibold)
                                 .foregroundStyle(AppColors.accentBlue)
                         }
@@ -202,12 +205,12 @@ public struct MarketplaceView: View {
     }
 }
 
-#Preview("Marketplace Light") {
-    MarketplaceView(viewModel: MarketplaceViewModel(fetchStoreItemsUseCase: MockFetchStoreItemsUseCase()))
-        .preferredColorScheme(.light)
-}
-
-#Preview("Marketplace Dark") {
-    MarketplaceView(viewModel: MarketplaceViewModel(fetchStoreItemsUseCase: MockFetchStoreItemsUseCase()))
-        .preferredColorScheme(.dark)
-}
+//#Preview("Marketplace Light") {
+//    MarketplaceView(viewModel: MarketplaceViewModel(fetchStoreItemsUseCase: MockFetchStoreItemsUseCase()))
+//        .preferredColorScheme(.light)
+//}
+//
+//#Preview("Marketplace Dark") {
+//    MarketplaceView(viewModel: MarketplaceViewModel(fetchStoreItemsUseCase: MockFetchStoreItemsUseCase()))
+//        .preferredColorScheme(.dark)
+//}

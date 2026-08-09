@@ -10,9 +10,9 @@ public protocol FetchStoreItemsUseCase: Sendable {
 }
 
 public struct DefaultFetchStoreItemsUseCase: FetchStoreItemsUseCase {
-    private let repository: any StoreItemRepository
+    private let repository: any GamificationRepository
 
-    public init(repository: any StoreItemRepository) {
+    public init(repository: any GamificationRepository) {
         self.repository = repository
     }
 

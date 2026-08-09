@@ -56,18 +56,29 @@ final class HomeUseCasesTests: XCTestCase {
     func testSetCompletionUpdatesOnlySessionStatus() async throws {
         let task = try makeTask()
         let session = try makeSession(taskID: task.id, blocking: true)
-        let repository = SessionRepositoryStub(sessions: [session])
+        let sessionRepo = SessionRepositoryStub(sessions: [session])
+        let profileRepo = UserProfileRepositoryStub(profile: try makeProfile())
 
-        let completed = try await DefaultSetSessionCompletionUseCase(repository: repository)
-            .execute(sessionID: session.id, isCompleted: true)
+        let useCase = DefaultSetSessionCompletionUseCase(
+            sessionRepository: sessionRepo,
+            userProfileRepository: profileRepo
+        )
 
-        XCTAssertEqual(completed.status, .completed)
-        XCTAssertEqual(completed.timeRange, session.timeRange)
-        XCTAssertEqual(completed.blocking, session.blocking)
+        let completedResult = try await useCase.execute(sessionID: session.id, isCompleted: true)
+        if case let .completed(res) = completedResult {
+            XCTAssertEqual(res.session.status, .completed)
+            XCTAssertEqual(res.session.timeRange, session.timeRange)
+            XCTAssertEqual(res.session.blocking, session.blocking)
+        } else {
+            XCTFail("Expected .completed")
+        }
 
-        let planned = try await DefaultSetSessionCompletionUseCase(repository: repository)
-            .execute(sessionID: session.id, isCompleted: false)
-        XCTAssertEqual(planned.status, .planned)
+        let uncompletedResult = try await useCase.execute(sessionID: session.id, isCompleted: false)
+        if case let .uncompleted(uncompletedSession) = uncompletedResult {
+            XCTAssertEqual(uncompletedSession.status, .planned)
+        } else {
+            XCTFail("Expected .uncompleted")
+        }
     }
 
     func testDeleteRemovesOnlyRequestedSession() async throws {
@@ -156,6 +167,7 @@ final class HomeUseCasesTests: XCTestCase {
             CreateTaskRequest(
                 title: "Plan work",
                 durationMinutes: 60,
+                categoryID: category.id,
                 zoneID: morningZone.id,
                 isSplittable: false,
                 startsAt: date(hour: 9),
@@ -307,6 +319,7 @@ private actor SessionRepositoryStub: SessionRepository {
 
     func values() -> [Session] { sessions }
     func fetchSessions() -> [Session] { sessions }
+    func fetchSessions(for date: Date) -> [Session] { sessions }
     func addSession(_ session: Session) { sessions.append(session) }
     func updateSession(_ session: Session) {
         guard let index = sessions.firstIndex(where: { $0.id == session.id }) else { return }
@@ -315,11 +328,53 @@ private actor SessionRepositoryStub: SessionRepository {
     func deleteSession(id: UUID) { sessions.removeAll { $0.id == id } }
     func deleteSessions(taskID: UUID) { sessions.removeAll { $0.taskID == taskID } }
     func deleteAllSessions() { sessions.removeAll() }
+    func completeSession(id: UUID) async throws -> SessionCompletionResult {
+        guard let index = sessions.firstIndex(where: { $0.id == id }) else {
+            fatalError("Session not found")
+        }
+        let old = sessions[index]
+        let updated = Session(
+            id: old.id,
+            taskID: old.taskID,
+            zoneID: old.zoneID,
+            timeRange: old.timeRange,
+            blocking: old.blocking,
+            status: .completed,
+            firstCompletedAt: old.firstCompletedAt ?? Date()
+        )
+        sessions[index] = updated
+        let dummyReward = SessionCompletionReward(
+            points: .init(awarded: true, amount: 10, oldValue: 0, newValue: 10),
+            streak: .init(updated: false, oldValue: 0, newValue: 0, maxStreakBroken: false, maxStreakOld: 0, maxStreakNew: 0)
+        )
+        return SessionCompletionResult(
+            session: updated,
+            reward: dummyReward
+        )
+    }
+    func uncompleteSession(id: UUID) async throws -> Session {
+        guard let index = sessions.firstIndex(where: { $0.id == id }) else {
+            fatalError("Session not found")
+        }
+        let old = sessions[index]
+        let updated = Session(
+            id: old.id,
+            taskID: old.taskID,
+            zoneID: old.zoneID,
+            timeRange: old.timeRange,
+            blocking: old.blocking,
+            status: .planned,
+            firstCompletedAt: old.firstCompletedAt
+        )
+        sessions[index] = updated
+        return updated
+    }
 }
 
 private actor TaskRepositoryStub: TaskRepository {
     struct Addition: Sendable {
         let task: AwanTask
+        let categoryID: UUID?
         let sessionZoneID: UUID?
         let startsAt: Date?
     }
@@ -339,6 +394,7 @@ private actor TaskRepositoryStub: TaskRepository {
     }
     func addTask(
         _ task: AwanTask,
+        categoryID: UUID?,
         sessionZoneID: UUID?,
         startsAt: Date?,
         durationMinutes: Int,
@@ -347,6 +403,7 @@ private actor TaskRepositoryStub: TaskRepository {
         tasks.append(task)
         addition = Addition(
             task: task,
+            categoryID: categoryID,
             sessionZoneID: sessionZoneID,
             startsAt: startsAt
         )
@@ -385,4 +442,5 @@ private actor UserProfileRepositoryStub: UserProfileRepository {
     func updateSleepSchedule(wakeUpTime: String, sleepTime: String) -> UserProfile {
         profile
     }
+    func refreshGamificationProgress() async throws {}
 }

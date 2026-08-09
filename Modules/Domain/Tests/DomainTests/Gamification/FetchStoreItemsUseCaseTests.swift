@@ -6,13 +6,17 @@
 import XCTest
 import Domain
 
-private final class StoreItemRepositoryStub: StoreItemRepository, @unchecked Sendable {
+private final class StoreItemRepositoryStub: GamificationRepository, @unchecked Sendable {
     var requestedTypes: [String] = []
     var mockItemsToReturn: [String: [StoreItem]] = [:]
 
     func fetchStoreItems(type: String) async throws -> [StoreItem] {
         requestedTypes.append(type)
         return mockItemsToReturn[type] ?? []
+    }
+
+    func buyStoreItem(itemID: String) async throws -> StorePurchase {
+        fatalError("Unimplemented")
     }
 }
 

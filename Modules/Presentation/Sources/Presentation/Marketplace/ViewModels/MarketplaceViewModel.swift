@@ -1,4 +1,5 @@
 import Domain
+import Common
 import Foundation
 import Observation
 
@@ -8,9 +9,14 @@ public final class MarketplaceViewModel {
     public var state: MarketplaceState
 
     @ObservationIgnored private let fetchStoreItemsUseCase: any FetchStoreItemsUseCase
+    @ObservationIgnored private let buyStoreItemUseCase: any BuyStoreItemUseCase
 
-    public init(fetchStoreItemsUseCase: any FetchStoreItemsUseCase) {
+    public init(
+        fetchStoreItemsUseCase: any FetchStoreItemsUseCase,
+        buyStoreItemUseCase: any BuyStoreItemUseCase
+    ) {
         self.fetchStoreItemsUseCase = fetchStoreItemsUseCase
+        self.buyStoreItemUseCase = buyStoreItemUseCase
         self.state = MarketplaceState()
     }
 
@@ -43,6 +49,15 @@ public final class MarketplaceViewModel {
 
         case .dismissDetail:
             state.selectedItem = nil
+
+        case let .buyItem(item):
+            buyStoreItem(item)
+
+        case .dismissPurchaseError:
+            state.purchaseErrorMessage = nil
+
+        case .dismissPurchaseFeedback:
+            state.purchaseFeedback = nil
         }
     }
 
@@ -83,6 +98,61 @@ public final class MarketplaceViewModel {
                 self.state.allItems = []
                 self.state.isLoading = false
             }
+        }
+    }
+
+    private func buyStoreItem(_ item: MarketplaceItem) {
+        guard state.purchasingItemID == nil else { return }
+
+        state.purchasingItemID = item.id
+        state.purchaseFeedback = nil
+        state.purchaseErrorMessage = nil
+
+        let useCase = buyStoreItemUseCase
+        let itemID = item.id
+
+        Task { [weak self] in
+            do {
+                let purchase = try await useCase.execute(itemID: itemID)
+
+                guard let self else { return }
+                self.state.purchasingItemID = nil
+
+                if let index = self.state.allItems.firstIndex(where: { $0.id == itemID }) {
+                    self.state.allItems[index].status = .owned
+                }
+
+                if var selected = self.state.selectedItem, selected.id == itemID {
+                    selected.status = .owned
+                    self.state.selectedItem = selected
+                }
+
+                self.state.userPoints = max(0, self.state.userPoints - purchase.item.price)
+                self.state.purchaseSuccessMessage = L10n.Marketplace.itsYours
+                self.state.purchaseFeedback = .success(message: L10n.Marketplace.itsYours)
+                self.scheduleFeedbackDismissal()
+            } catch {
+                guard let self else { return }
+                self.state.purchasingItemID = nil
+
+                let message: String
+                if let gamificationError = error as? GamificationError, gamificationError == .insufficientPoints {
+                    message = L10n.Marketplace.needMorePts
+                } else {
+                    message = error.localizedDescription
+                }
+                self.state.purchaseErrorMessage = message
+                self.state.purchaseFeedback = .failure(message: message)
+                self.scheduleFeedbackDismissal()
+            }
+        }
+    }
+
+    private func scheduleFeedbackDismissal() {
+        Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            guard let self else { return }
+            self.state.purchaseFeedback = nil
         }
     }
 }

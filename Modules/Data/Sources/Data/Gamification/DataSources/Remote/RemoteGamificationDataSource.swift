@@ -8,6 +8,7 @@ import AwaNetwork
 public protocol RemoteGamificationDataSource: Sendable {
     func getProgress() async throws -> UserProgressResponseDTO
     func getStoreItems(type: String) async throws -> [StoreItemResponseDTO]
+    func buyStoreItem(itemID: String) async throws -> StorePurchaseResponseDTO
 }
 
 public final class DefaultRemoteGamificationDataSource:
@@ -30,5 +31,11 @@ public final class DefaultRemoteGamificationDataSource:
             GamificationEndpoint.getStoreItems(type: type)
         )
         return response.items
+    }
+
+    public func buyStoreItem(itemID: String) async throws -> StorePurchaseResponseDTO {
+        try await networkService.request(
+            GamificationEndpoint.buyStoreItem(itemID: itemID)
+        )
     }
 }
