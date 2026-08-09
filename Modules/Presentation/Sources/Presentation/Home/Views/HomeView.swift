@@ -38,6 +38,7 @@ struct HomeView: View {
         .toolbar(.hidden, for: .navigationBar)
         .toolbarBackground(.hidden, for: .navigationBar)
         .task { viewModel.send(.appeared) }
+        .onAppear { viewModel.send(.appeared) }
         .sheet(item: selectedSessionBinding) { detail in
             HomeSessionActionSheet(
                 item: detail.item,

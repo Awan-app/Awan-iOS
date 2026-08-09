@@ -213,6 +213,17 @@ final class HomeViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.state.success)
     }
 
+    func testAppearedTriggersRefreshGamificationProgress() async throws {
+        let stub = HomeUseCaseStub(fixture: try HomeFixture())
+        let viewModel = makeViewModel(stub: stub)
+
+        viewModel.send(.appeared)
+        await waitUntil { !viewModel.state.isLoading && viewModel.state.success != nil }
+
+        let count = await stub.refreshGamificationProgressCallCount
+        XCTAssertGreaterThanOrEqual(count, 1)
+    }
+
     private func makeViewModel(stub: HomeUseCaseStub) -> HomeViewModel {
         HomeViewModel(
             useCases: HomeUseCases(
@@ -344,6 +355,7 @@ private actor HomeUseCaseStub:
     private let mutationDelay: Duration?
     private let shouldFailReschedule: Bool
     private let shouldFailDelete: Bool
+    private(set) var refreshGamificationProgressCallCount = 0
 
     init(
         fixture: HomeFixture,
@@ -392,6 +404,10 @@ private actor HomeUseCaseStub:
         try await pause()
         if shouldFailReads { throw HomeStubError.failed }
         return profile
+    }
+
+    func refreshGamificationProgress() async throws {
+        refreshGamificationProgressCallCount += 1
     }
 
     func execute(sessionID: UUID, newStart: Date) async throws -> Session {
