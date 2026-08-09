@@ -201,7 +201,10 @@ struct PresentationAssembly: Assembly {
                     logoutUseCase: logoutUseCase,
                     updateSessionDurationUseCase: updateSessionDurationUseCase,
                     updateTimezoneUseCase: updateTimezoneUseCase,
-                    updateSleepScheduleUseCase: updateSleepScheduleUseCase
+                    updateSleepScheduleUseCase: updateSleepScheduleUseCase,
+                    onLogout: {
+                        GoogleSignInHelper.signOut()
+                    }
                 )
             }
         }

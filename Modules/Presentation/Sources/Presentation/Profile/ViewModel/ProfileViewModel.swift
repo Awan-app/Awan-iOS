@@ -50,6 +50,7 @@ public final class ProfileViewModel {
     private let updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase
     private let fetchZonesUseCase: FetchZonesUseCase
     private let logoutUseCase: LogoutUseCase
+    private let onLogout: (() -> Void)?
     
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
@@ -57,7 +58,8 @@ public final class ProfileViewModel {
         logoutUseCase: LogoutUseCase,
         updateSessionDurationUseCase: any UpdateSessionDurationUseCase,
         updateTimezoneUseCase: any UpdateTimezoneUseCase,
-        updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase
+        updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase,
+        onLogout: (() -> Void)? = nil
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.updateSessionDurationUseCase = updateSessionDurationUseCase
@@ -65,6 +67,11 @@ public final class ProfileViewModel {
         self.fetchZonesUseCase = fetchZonesUseCase
         self.logoutUseCase = logoutUseCase
         self.updateSleepScheduleUseCase = updateSleepScheduleUseCase
+        self.onLogout = onLogout
+        
+        Task {
+            await fetchUserProfile()
+        }
     }
     
     // MARK: - Actions
@@ -158,6 +165,7 @@ public final class ProfileViewModel {
         isLoggingOut = true
         do {
             try await logoutUseCase.execute()
+            onLogout?()
         } catch {
             print("Failed to logout: \(error)")
         }
