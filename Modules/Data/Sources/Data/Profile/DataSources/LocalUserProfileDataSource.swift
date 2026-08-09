@@ -6,6 +6,11 @@ public protocol LocalUserProfileDataSource: Sendable {
     func observeProfile() -> AnyPublisher<UserProfile?, Error>
     func fetchProfile() async throws -> UserProfile?
     func replaceProfile(_ profile: UserProfile) async throws
+    func updateGamification(
+        points: Int,
+        streak: Int,
+        maxStreak: Int
+    ) async throws
 }
 
 @ModelActor
@@ -73,6 +78,25 @@ public actor SwiftDataUserProfileDataSource: LocalUserProfileDataSource {
                 sleepMinute: profile.preferences.sleepTime.minute
             )
         )
+        try modelContext.save()
+        changes.send()
+    }
+    
+    public func updateGamification(
+        points: Int,
+        streak: Int,
+        maxStreak: Int
+    ) throws {
+        guard let model = try modelContext
+            .fetch(FetchDescriptor<UserProfileModel>())
+            .first else {
+            return
+        }
+
+        model.points = points
+        model.streak = streak
+        model.maxStreak = maxStreak
+
         try modelContext.save()
         changes.send()
     }

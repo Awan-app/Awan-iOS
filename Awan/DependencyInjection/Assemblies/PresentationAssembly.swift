@@ -20,9 +20,17 @@ struct PresentationAssembly: Assembly {
         .inObjectScope(.container)
 
         container.register(LoginViewModel.self) { resolver in
-            let useCase = Self.resolve(RequestOTPUseCase.self, from: resolver)
+            let requestUseCase = Self.resolve(RequestOTPUseCase.self, from: resolver)
+            let googleSignInUseCase = Self.resolve(GoogleSignInUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
-                LoginViewModel(requestOTPUseCase: useCase)
+                LoginViewModel(
+                    requestOTPUseCase: requestUseCase,
+                    googleSignInUseCase: googleSignInUseCase,
+                    googleSignInTokenProvider: {
+                        let tokens = try await GoogleSignInHelper.signIn()
+                        return GoogleSignInTokens(idToken: tokens.idToken, accessToken: tokens.accessToken)
+                    }
+                )
             }
         }
 

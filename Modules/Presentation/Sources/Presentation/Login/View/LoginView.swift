@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Common
-import UIKit
 
 struct LoginView: View {
     @Environment(AppCoordinator.self) private var appCoordinator
@@ -189,7 +188,6 @@ struct LoginView: View {
                 iconAsset: "google-icon",
                 color: AppColors.surface,
                 foregroundColor: AppColors.brandDarkBlue,
-                borderColor: AppColors.accentBlue,
                 shadowColor: .clear,
                 size: .regular,
                 useGradient: false,

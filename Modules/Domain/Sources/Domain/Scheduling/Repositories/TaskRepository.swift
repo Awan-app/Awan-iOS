@@ -17,6 +17,7 @@ public protocol TaskRepository: Sendable {
     func fetchDependents(taskID: UUID) async throws -> [AwanTask]
     func addTask(
         _ task: AwanTask,
+        categoryID: UUID?,
         sessionZoneID: UUID?,
         startsAt: Date?,
         durationMinutes: Int,

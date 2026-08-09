@@ -163,7 +163,14 @@ struct DomainAssembly: Assembly {
         }
         container.register(SetSessionCompletionUseCase.self) { resolver in
             DefaultSetSessionCompletionUseCase(
-                repository: Self.resolve(SessionRepository.self, from: resolver)
+                sessionRepository: Self.resolve(
+                    SessionRepository.self,
+                    from: resolver
+                ),
+                userProfileRepository: Self.resolve(
+                    UserProfileRepository.self,
+                    from: resolver
+                )
             )
         }
         container.register(DeleteSessionUseCase.self) { resolver in
@@ -265,6 +272,11 @@ struct DomainAssembly: Assembly {
         container.register(VerifyOTPUseCase.self) { resolver in
             VerifyOTPUseCase(
                 repository: Self.resolve(AuthRepository.self, from: resolver)
+            )
+        }
+        container.register(GoogleSignInUseCase.self) { resolver in
+            DefaultGoogleSignInUseCase(
+                authRepository: Self.resolve(AuthRepository.self, from: resolver)
             )
         }
         container.register(ObserveAuthenticationUseCase.self) { resolver in

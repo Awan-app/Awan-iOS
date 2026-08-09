@@ -55,7 +55,10 @@ public final class HomeViewModel {
             deleteSession(id: id)
         case .dismissError:
             state.failure = nil
-      
+        case .dismissCompletionReward:
+            state.completionReward = nil
+        case .dismissCompletionRewardAnimation:
+            state.completionRewardAnimation = nil
         }
     }
 
