@@ -1,4 +1,3 @@
-import Lottie
 import SwiftUI
 
 public struct StreakCelebrationDialog: View {
@@ -6,7 +5,6 @@ public struct StreakCelebrationDialog: View {
     private let streak: Int
     private let isNewRecord: Bool
     private let onDismiss: () -> Void
-    private let flameAnimation: LottieAnimation?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.locale) private var locale
@@ -23,10 +21,6 @@ public struct StreakCelebrationDialog: View {
         self.streak = streak
         self.isNewRecord = isNewRecord
         self.onDismiss = onDismiss
-        flameAnimation = LottieAnimation.named(
-            "StreakFire",
-            bundle: .module
-        )
         _displayedStreak = State(initialValue: previousStreak)
     }
 
@@ -37,12 +31,8 @@ public struct StreakCelebrationDialog: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 22) {
-                LottieView(animation: flameAnimation)
-                    .looping()
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                StreakFireView()
                     .frame(width: 190, height: 190)
-                    .accessibilityHidden(true)
 
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
                     Text(

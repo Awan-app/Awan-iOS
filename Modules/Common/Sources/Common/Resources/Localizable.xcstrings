@@ -16,6 +16,76 @@
         "en": { "stringUnit": { "state": "translated", "value": "Day streak" } }
       }
     },
+    "profile.max_streak": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "أطول سلسلة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Max streak" } }
+      }
+    },
+    "profile.more": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "المزيد" } },
+        "en": { "stringUnit": { "state": "translated", "value": "MORE" } }
+      }
+    },
+    "profile.personalization": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "التخصيص" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Personalization" } }
+      }
+    },
+    "profile.settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "الإعدادات" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Settings" } }
+      }
+    },
+    "profile.about_awan": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "عن أوان" } },
+        "en": { "stringUnit": { "state": "translated", "value": "About Awan" } }
+      }
+    },
+    "profile.loading": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "جارٍ تحميل ملفك الشخصي" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Loading your profile" } }
+      }
+    },
+    "profile.load_failure": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تعذر تحميل معلوماتك. حاول مرة أخرى." } },
+        "en": { "stringUnit": { "state": "translated", "value": "We couldn't load your information. Please try again." } }
+      }
+    },
+    "profile.update_failure_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تعذر حفظ التغييرات" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Couldn't Save Changes" } }
+      }
+    },
+    "profile.version": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "الإصدار" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Version" } }
+      }
+    },
+    "profile.build": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "رقم البناء" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Build" } }
+      }
+    },
     "profile.inventory": {
       "extractionState": "manual",
       "localizations": {
@@ -8354,6 +8424,3 @@
   },
   "version": "1.1"
 }
-
-
-

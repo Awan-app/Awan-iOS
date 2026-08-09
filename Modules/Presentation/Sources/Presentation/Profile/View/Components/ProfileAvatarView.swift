@@ -10,6 +10,7 @@ import Common
 
 struct ProfileAvatarView: View {
     let image: Image?
+    var size: CGFloat = 56
 
     var body: some View {
         Group {
@@ -25,7 +26,7 @@ struct ProfileAvatarView: View {
                     .background(AppColors.accentBlue.opacity(0.10))
             }
         }
-        .frame(width: 56, height: 56)
+        .frame(width: size, height: size)
         .clipShape(Circle())
         .overlay(
             Circle()
@@ -39,4 +40,3 @@ struct ProfileAvatarView: View {
     ProfileAvatarView(image: nil)
         .padding()
 }
-

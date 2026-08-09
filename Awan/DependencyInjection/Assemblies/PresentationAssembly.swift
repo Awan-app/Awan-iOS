@@ -192,16 +192,26 @@ struct PresentationAssembly: Assembly {
 
         container.register(ProfileViewModel.self) { resolver in
             let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
-            let updateSessionDurationUseCase = Self.resolve(UpdateSessionDurationUseCase.self, from: resolver)
-            let updateTimezoneUseCase = Self.resolve(UpdateTimezoneUseCase.self, from: resolver)
-            let updateSleepScheduleUseCase = Self.resolve(UpdateSleepScheduleUseCase.self, from: resolver)
             let fetchZonesUseCase = Self.resolve(FetchZonesUseCase.self, from: resolver)
             let logoutUseCase = Self.resolve(LogoutUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 ProfileViewModel(
                     getUserProfileUseCase: useCase,
                     fetchZonesUseCase: fetchZonesUseCase,
-                    logoutUseCase: logoutUseCase,
+                    logoutUseCase: logoutUseCase
+                )
+            }
+        }
+        .inObjectScope(.container)
+
+        container.register(SettingsViewModel.self) { resolver in
+            let getUserProfileUseCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
+            let updateSessionDurationUseCase = Self.resolve(UpdateSessionDurationUseCase.self, from: resolver)
+            let updateTimezoneUseCase = Self.resolve(UpdateTimezoneUseCase.self, from: resolver)
+            let updateSleepScheduleUseCase = Self.resolve(UpdateSleepScheduleUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                SettingsViewModel(
+                    getUserProfileUseCase: getUserProfileUseCase,
                     updateSessionDurationUseCase: updateSessionDurationUseCase,
                     updateTimezoneUseCase: updateTimezoneUseCase,
                     updateSleepScheduleUseCase: updateSleepScheduleUseCase
@@ -255,6 +265,7 @@ struct PresentationAssembly: Assembly {
             let creationUseCases = Self.resolve(CreationUseCases.self, from: resolver)
             let onboardingViewModel = Self.resolve(OnboardingViewModel.self, from: resolver)
             let profileViewModel = Self.resolve(ProfileViewModel.self, from: resolver)
+            let settingsViewModel = Self.resolve(SettingsViewModel.self, from: resolver)
             let dailyZonesViewModel = Self.resolve(DailyZonesViewModel.self, from: resolver)
             let inboxViewModel = Self.resolve(InboxViewModel.self, from: resolver)
             let goalsViewModel = Self.resolve(GoalsViewModel.self, from: resolver)
@@ -277,6 +288,7 @@ struct PresentationAssembly: Assembly {
                     },
                     onboardingViewModel: onboardingViewModel,
                     profileViewModel: profileViewModel,
+                    settingsViewModel: settingsViewModel,
                     dailyZonesViewModel: dailyZonesViewModel,
                     makeUserInfoViewModel: {
                         Self.resolve(UserInfoViewModel.self, from: resolver)

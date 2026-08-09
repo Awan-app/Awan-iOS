@@ -952,6 +952,7 @@ public enum L10n {
         public static var title: String { L10n.currentBundle.localizedString(forKey: "profile.title", value: nil, table: "Localizable") }
         public static var points: String { text("profile.points") }
         public static var streak: String { text("profile.streak") }
+        public static var maxStreak: String { text("profile.max_streak") }
         public static var inventory: String { text("profile.inventory") }
         public static var inventorySubtitle: String { text("profile.inventory_subtitle") }
         public static var inventoryPlaceholder: String { text("profile.inventory_placeholder") }
@@ -1012,6 +1013,15 @@ public enum L10n {
         public static var system: String { L10n.currentBundle.localizedString(forKey: "profile.system", value: nil, table: "Localizable") }
         public static var logout: String { L10n.currentBundle.localizedString(forKey: "profile.logout", value: nil, table: "Localizable") }
         public static var logoutConfirmationMessage: String { L10n.currentBundle.localizedString(forKey: "profile.logout_confirmation_message", value: nil, table: "Localizable") }
+        public static var more: String { text("profile.more") }
+        public static var personalization: String { text("profile.personalization") }
+        public static var settings: String { text("profile.settings") }
+        public static var aboutAwan: String { text("profile.about_awan") }
+        public static var loading: String { text("profile.loading") }
+        public static var loadFailure: String { text("profile.load_failure") }
+        public static var updateFailureTitle: String { text("profile.update_failure_title") }
+        public static var version: String { text("profile.version") }
+        public static var build: String { text("profile.build") }
         
         public static var dummySessionTime: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_session_time", value: nil, table: "Localizable") }
         public static var dummyTimeZone: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_time_zone", value: nil, table: "Localizable") }

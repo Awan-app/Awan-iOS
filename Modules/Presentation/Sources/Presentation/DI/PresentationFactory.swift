@@ -12,6 +12,7 @@ public struct PresentationFactory {
     private let makeOtpViewModel: (OtpVerificationContext) -> OtpVerificationViewModel
     private let onboardingViewModel: OnboardingViewModel
     private let profileViewModel: ProfileViewModel
+    private let settingsViewModel: SettingsViewModel
     private let dailyZonesViewModel: DailyZonesViewModel
     private let makeUserInfoViewModel: () -> UserInfoViewModel
     private let inboxViewModel: InboxViewModel
@@ -29,6 +30,7 @@ public struct PresentationFactory {
         makeOtpViewModel: @escaping (OtpVerificationContext) -> OtpVerificationViewModel,
         onboardingViewModel: OnboardingViewModel,
         profileViewModel: ProfileViewModel,
+        settingsViewModel: SettingsViewModel,
         dailyZonesViewModel: DailyZonesViewModel,
         makeUserInfoViewModel: @escaping () -> UserInfoViewModel,
         inboxViewModel: InboxViewModel,
@@ -45,6 +47,7 @@ public struct PresentationFactory {
         self.makeOtpViewModel = makeOtpViewModel
         self.onboardingViewModel = onboardingViewModel
         self.profileViewModel = profileViewModel
+        self.settingsViewModel = settingsViewModel
         self.dailyZonesViewModel = dailyZonesViewModel
         self.makeUserInfoViewModel = makeUserInfoViewModel
         self.inboxViewModel = inboxViewModel
@@ -148,10 +151,19 @@ public struct PresentationFactory {
     }
 
     public func makeProfileMainView() -> some View {
-        ProfileMainView(
-            viewModel: profileViewModel,
-            dailyZonesViewModel: dailyZonesViewModel
-        )
+        ProfileMainView(viewModel: profileViewModel)
+    }
+
+    func makePersonalizationView() -> some View {
+        PersonalizationView(viewModel: settingsViewModel)
+    }
+
+    func makeSettingsView() -> some View {
+        SettingsView()
+    }
+
+    func makeAboutAwanView() -> some View {
+        AboutAwanView()
     }
 
     func makeDailyZonesView() -> some View {
