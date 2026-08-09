@@ -4,166 +4,123 @@ import SwiftUI
 struct ProfileProgressSection: View {
     let points: Int
     let streak: Int
-    let onInventoryTap: () -> Void
+    let maxStreak: Int
 
     @Environment(LanguageManager.self) private var languageManager
-
-    private let columns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
-    ]
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
-        VStack(spacing: 12) {
-            LazyVGrid(columns: columns, spacing: 12) {
-                statCard(
-                    icon: "star.fill",
-                    watermarkFont: AppFonts.goalHeroSymbol,
-                    value: points,
-                    title: L10n.Profile.points,
-                    color: AppColors.reward,
-                    surfaceColor: AppColors.infoSurface
-                )
-
-                statCard(
-                    icon: "flame.fill",
-                    watermarkFont: AppFonts.profileStatWatermark,
-                    value: streak,
-                    title: L10n.Profile.streak,
-                    color: AppColors.warning,
-                    surfaceColor: AppColors.warningSurface
-                )
-            }
-
-            Button(action: onInventoryTap) {
-                HStack(spacing: 14) {
-                    Image(systemName: "shippingbox.fill")
-                        .font(AppFonts.progressSymbol)
-                        .foregroundStyle(AppColors.accentPurple)
-                        .frame(width: 42, height: 42)
-                        .background(
-                            AppColors.accentPurple.opacity(0.12),
-                            in: RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        )
-
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(L10n.Profile.inventory)
-                            .font(AppFonts.headlineBlack)
-                            .foregroundStyle(AppColors.textPrimary)
-
-                        Text(L10n.Profile.inventorySubtitle)
-                            .font(AppFonts.subheadlineSemibold)
-                            .foregroundStyle(AppColors.textSecondary)
-                    }
-
-                    Spacer(minLength: 8)
-
-                    Image(systemName: "chevron.forward")
-                        .font(AppFonts.captionIconBlack)
-                        .foregroundStyle(AppColors.accentPurple)
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(spacing: 12) {
+                    cards
                 }
-                .padding(.horizontal, 16)
-                .frame(maxWidth: .infinity, minHeight: 76)
-                .contentShape(Rectangle())
+            } else {
+                HStack(alignment: .top, spacing: 10) {
+                    cards
+                }
             }
-            .buttonStyle(
-                AppDepthButtonStyle(
-                    shape: .roundedRectangle(cornerRadius: 20),
-                    surfaceColor: AppColors.surface,
-                    borderColor: AppColors.accentPurple.opacity(0.30),
-                    depthColor: AppColors.accentPurple.opacity(0.38),
-                    depthOffset: 5
-                )
-            )
-            .accessibilityHint(L10n.Profile.inventorySubtitle)
         }
     }
 
-    private func statCard(
-        icon: String,
-        watermarkFont: Font,
+    @ViewBuilder
+    private var cards: some View {
+        statItem(
+            symbol: .system("flame.fill"),
+            value: streak,
+            title: L10n.Profile.streak,
+            color: AppColors.warning,
+            surfaceColor: AppColors.warningSurface
+        )
+
+        statItem(
+            symbol: .animatedFire,
+            value: maxStreak,
+            title: L10n.Profile.maxStreak,
+            color: AppColors.warning,
+            surfaceColor: AppColors.surface
+        )
+
+        statItem(
+            symbol: .system("star.fill"),
+            value: points,
+            title: L10n.Profile.points,
+            color: AppColors.reward,
+            surfaceColor: AppColors.surface
+        )
+    }
+
+    private func statItem(
+        symbol: StatSymbol,
         value: Int,
         title: String,
         color: Color,
         surfaceColor: Color
     ) -> some View {
-        AppDepthSurface(
-            shape: .roundedRectangle(cornerRadius: 20),
-            surfaceColor: surfaceColor,
-            borderColor: color.opacity(0.34),
-            depthColor: color.opacity(0.52),
-            depthOffset: 5,
-            contentInsets: EdgeInsets()
-        ) {
-            ZStack(alignment: .topTrailing) {
-                Circle()
-                    .fill(color.opacity(0.13))
-                    .frame(width: 106, height: 106)
-                    .offset(x: 42, y: -48)
-
-                Image(systemName: icon)
-                    .font(watermarkFont)
-                    .foregroundStyle(color.opacity(0.07))
-                    .rotationEffect(.degrees(-12))
-                    .offset(x: 20, y: 62)
-
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack(alignment: .center) {
-                        Image(systemName: icon)
-                            .font(AppFonts.progressSymbol)
-                            .foregroundStyle(color)
-                            .frame(width: 38, height: 38)
-                            .background(
-                                AppColors.surface.opacity(0.88),
-                                in: RoundedRectangle(
-                                    cornerRadius: 12,
-                                    style: .continuous
-                                )
-                            )
-                            .overlay {
-                                RoundedRectangle(
-                                    cornerRadius: 12,
-                                    style: .continuous
-                                )
-                                .stroke(color.opacity(0.22), lineWidth: 1)
-                            }
-
-                        Text(title)
-                            .font(AppFonts.subheadlineHeavy)
-                            .foregroundStyle(AppColors.textSecondary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.78)
-                    }
-
-                    Text(value.formatted(.number.locale(languageManager.locale)))
-                        .font(AppFonts.profileStatNumber)
-                        .foregroundStyle(AppColors.textPrimary)
-                        .minimumScaleFactor(0.72)
-                        .lineLimit(1)
-                        .contentTransition(.numericText(value: Double(value)))
-                }
-                .padding(14)
+        VStack(spacing: 5) {
+            AppDepthSurface(
+                shape: .circle,
+                surfaceColor: surfaceColor,
+                borderColor: color.opacity(0.34),
+                depthColor: color.opacity(0.52),
+                depthOffset: 4,
+                contentInsets: EdgeInsets()
+            ) {
+                symbolView(symbol, color: color)
+                    .frame(width: 27, height: 27)
+                    .frame(width: 52, height: 52)
             }
-            .frame(maxWidth: .infinity, minHeight: 112, alignment: .leading)
-            .clipShape(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-            )
+
+            Text(value.formatted(.number.locale(languageManager.locale)))
+                .font(AppFonts.headlineBlack)
+                .foregroundStyle(AppColors.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.65)
+                .contentTransition(.numericText(value: Double(value)))
+
+            Text(title)
+                .font(AppFonts.caption2Bold)
+                .foregroundStyle(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.72)
         }
+        .padding(.horizontal, 2)
+        .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
         .accessibilityValue(value.formatted(.number.locale(languageManager.locale)))
     }
+
+    @ViewBuilder
+    private func symbolView(_ symbol: StatSymbol, color: Color) -> some View {
+        switch symbol {
+        case let .system(name):
+            Image(systemName: name)
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(color)
+                .padding(3)
+        case .animatedFire:
+            StreakFireView()
+        }
+    }
+}
+
+private enum StatSymbol {
+    case system(String)
+    case animatedFire
 }
 
 #Preview("Profile Progress Light") {
-    ProfileProgressSection(points: 1_240, streak: 6, onInventoryTap: {})
+    ProfileProgressSection(points: 1_240, streak: 6, maxStreak: 18)
         .padding()
         .background(AppColors.screenBackground)
         .environment(LanguageManager())
 }
 
 #Preview("Profile Progress Dark") {
-    ProfileProgressSection(points: 1_240, streak: 6, onInventoryTap: {})
+    ProfileProgressSection(points: 1_240, streak: 6, maxStreak: 18)
         .padding()
         .background(AppColors.screenBackground)
         .environment(LanguageManager())
