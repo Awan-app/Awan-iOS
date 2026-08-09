@@ -8,6 +8,18 @@
 import Foundation
 import Combine
 
+public extension DailyWheelSegment {
+    static let previewSegments: [DailyWheelSegment] = [
+        .init(id: "SEG_1", coins: 1, payoutType: .coins),
+        .init(id: "SEG_2", coins: 5, payoutType: .coins),
+        .init(id: "SEG_3", coins: 10, payoutType: .coins),
+        .init(id: "SEG_4", coins: 20, payoutType: .coins),
+        .init(id: "SEG_5", coins: 50, payoutType: .coins),
+        .init(id: "SEG_6", coins: 100, payoutType: .coins),
+        .init(id: "SEG_ITEM", coins: 0, payoutType: .item)
+    ]
+}
+
 public struct MockCompleteOnboardingUseCase: CompleteOnboardingUseCase {
     public init() {}
     public func execute(_ request: CompleteOnboardingRequest) async throws -> UserProfile {

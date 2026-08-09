@@ -1321,6 +1321,45 @@ public enum L10n {
         }
     }
 
+    public enum DailyWheel {
+        public static var title: String { text("daily_wheel.title") }
+        public static var subtitle: String { text("daily_wheel.subtitle") }
+        public static var loading: String { text("daily_wheel.loading") }
+        public static var gift: String { text("daily_wheel.gift") }
+        public static var openGift: String { text("daily_wheel.open_gift") }
+        public static var tapToSpin: String { text("daily_wheel.tap_to_spin") }
+        public static var spin: String { text("daily_wheel.spin") }
+        public static var choosingReward: String { text("daily_wheel.choosing_reward") }
+        public static var almostThere: String { text("daily_wheel.almost_there") }
+        public static var youWon: String { text("daily_wheel.you_won") }
+        public static var alreadyClaimed: String { text("daily_wheel.already_claimed") }
+        public static var todaysReward: String { text("daily_wheel.todays_reward") }
+        public static var giftClaimed: String { text("daily_wheel.gift_claimed") }
+        public static var comeBackTomorrow: String { text("daily_wheel.come_back_tomorrow") }
+        public static var itemAdded: String { text("daily_wheel.item_added") }
+        public static var awesome: String { text("daily_wheel.awesome") }
+        public static var dismiss: String { text("daily_wheel.dismiss") }
+        public static var couldNotLoad: String { text("daily_wheel.could_not_load") }
+        public static var retry: String { text("daily_wheel.retry") }
+        public static var errorAlreadyClaimed: String { text("daily_wheel.error_already_claimed") }
+        public static var errorAuthenticationFailed: String { text("daily_wheel.error_authentication_failed") }
+        public static var errorUserNotFound: String { text("daily_wheel.error_user_not_found") }
+        public static var errorInvalidConfiguration: String { text("daily_wheel.error_invalid_configuration") }
+        public static var errorUnavailable: String { text("daily_wheel.error_unavailable") }
+
+        public static func starsAwarded(_ count: Int) -> String {
+            String(format: text("daily_wheel.stars_awarded"), count)
+        }
+
+        public static func newBalance(_ balance: Int) -> String {
+            String(format: text("daily_wheel.new_balance"), balance)
+        }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
+
     public enum StreakCelebration {
         public static func daysStreak(_ count: Int) -> String {
             String(format: text("streak_celebration.days_streak"), count)

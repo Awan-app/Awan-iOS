@@ -126,6 +126,7 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
     case invalidZoneTimeRange
     case sessionNotFound
     case zoneNotFound
+    case dailyGiftAlreadyClaimed
 
     public typealias RawValue = String
 
@@ -157,6 +158,7 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case "INVALID_ZONE_TIME_RANGE":       self = .invalidZoneTimeRange
         case "SESSION_NOT_FOUND":             self = .sessionNotFound
         case "ZONE_NOT_FOUND":                self = .zoneNotFound
+        case "DAILY_GIFT_ALREADY_CLAIMED":    self = .dailyGiftAlreadyClaimed
         default:                              self = .unknown(rawValue)
         }
     }
@@ -190,6 +192,7 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case .invalidZoneTimeRange:          return "INVALID_ZONE_TIME_RANGE"
         case .sessionNotFound:               return "SESSION_NOT_FOUND"
         case .zoneNotFound:                  return "ZONE_NOT_FOUND"
+        case .dailyGiftAlreadyClaimed:        return "DAILY_GIFT_ALREADY_CLAIMED"
         case .unknown(let code):             return code
         }
     }

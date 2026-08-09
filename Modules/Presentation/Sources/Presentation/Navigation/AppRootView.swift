@@ -220,6 +220,12 @@ struct AppRootView: View {
             .spring(response: 0.38, dampingFraction: 0.72),
             value: coordinator.mainCoordinator.streakCelebration?.id
         )
+        .overlay {
+            factory.makeDailyWheelPresentationLayer(
+                alwaysShowsFloatingButton: coordinator.mainCoordinator.selectedTab == .store
+            )
+            .zIndex(1100)
+        }
         .animation(.snappy(duration: 0.3), value: shouldShowCustomTabBar)
         .sheet(item: Bindable(coordinator.mainCoordinator).presentedSheet) { route in
             switch route {
