@@ -2788,13 +2788,13 @@
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "المتابعة باستخدام Google"
+            "value": "تسجيل الدخول باستخدام Google"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Continue with Google"
+            "value": "Sign in with Google"
           }
         }
       }
