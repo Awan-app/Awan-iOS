@@ -123,6 +123,7 @@ private struct PressedDepthButtonStyle: ButtonStyle {
                 )
                 .stroke(borderColor ?? AppColors.onAccent.opacity(0.22), lineWidth: 1.5)
             }
+            .compositingGroup()
             .shadow(
                 color: shadowColor ?? color.opacity(0.75),
                 radius: 0,
