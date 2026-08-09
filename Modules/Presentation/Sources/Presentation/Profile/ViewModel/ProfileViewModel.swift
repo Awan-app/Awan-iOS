@@ -74,12 +74,13 @@ public final class ProfileViewModel {
         }
     }
 
-    func logout() async {
+    public func logout() async {
         guard !isLoggingOut else { return }
         isLoggingOut = true
 
         do {
             try await logoutUseCase.execute()
+            onLogout?()
         } catch is CancellationError {
             isLoggingOut = false
             return
@@ -102,16 +103,5 @@ public final class ProfileViewModel {
                     self?.areDailyZonesReady = true
                 }
             )
-    }
-    
-    public func logout() async {
-        isLoggingOut = true
-        do {
-            try await logoutUseCase.execute()
-            onLogout?()
-        } catch {
-            print("Failed to logout: \(error)")
-        }
-        isLoggingOut = false
     }
 }

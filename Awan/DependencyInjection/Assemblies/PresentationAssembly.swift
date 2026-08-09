@@ -198,7 +198,10 @@ struct PresentationAssembly: Assembly {
                 ProfileViewModel(
                     getUserProfileUseCase: useCase,
                     fetchZonesUseCase: fetchZonesUseCase,
-                    logoutUseCase: logoutUseCase
+                    logoutUseCase: logoutUseCase,
+                    onLogout: {
+                        GoogleSignInHelper.signOut()
+                    }
                 )
             }
         }
@@ -214,10 +217,7 @@ struct PresentationAssembly: Assembly {
                     getUserProfileUseCase: getUserProfileUseCase,
                     updateSessionDurationUseCase: updateSessionDurationUseCase,
                     updateTimezoneUseCase: updateTimezoneUseCase,
-                    updateSleepScheduleUseCase: updateSleepScheduleUseCase,
-                    onLogout: {
-                        GoogleSignInHelper.signOut()
-                    }
+                    updateSleepScheduleUseCase: updateSleepScheduleUseCase
                 )
             }
         }

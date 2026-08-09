@@ -24,7 +24,7 @@ public struct InboxState: Equatable, Sendable {
         selectedSessionFilter: InboxSessionFilter = .any,
         expandedTaskIDs: Set<UUID> = [],
         allTasks: [InboxTaskItem] = [],
-        failureMessage: String? = nil,
+        failureMessage: String? = nil
     ) {
         self.selectedTopTab = selectedTopTab
         self.isLoading = isLoading
