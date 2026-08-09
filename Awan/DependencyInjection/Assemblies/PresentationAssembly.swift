@@ -129,6 +129,21 @@ struct PresentationAssembly: Assembly {
         }
         .inObjectScope(.container)
 
+        container.register(DailyWheelUseCases.self) { resolver in
+            DailyWheelUseCases(
+                fetch: Self.resolve(FetchDailyWheelUseCase.self, from: resolver),
+                spin: Self.resolve(SpinDailyWheelUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(DailyWheelViewModel.self) { resolver in
+            let useCases = Self.resolve(DailyWheelUseCases.self, from: resolver)
+            return MainActor.assumeIsolated {
+                DailyWheelViewModel(useCases: useCases)
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(CalendarViewModel.self) { resolver in
             let useCase = Self.resolve(FetchGoalsUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
@@ -260,6 +275,7 @@ struct PresentationAssembly: Assembly {
             let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
             let loginViewModel = Self.resolve(LoginViewModel.self, from: resolver)
             let homeViewModel = Self.resolve(HomeViewModel.self, from: resolver)
+            let dailyWheelViewModel = Self.resolve(DailyWheelViewModel.self, from: resolver)
             let calendarViewModel = Self.resolve(CalendarViewModel.self, from: resolver)
             let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
             let creationUseCases = Self.resolve(CreationUseCases.self, from: resolver)
@@ -276,6 +292,7 @@ struct PresentationAssembly: Assembly {
                     authenticationState: authenticationState,
                     loginViewModel: loginViewModel,
                     homeViewModel: homeViewModel,
+                    dailyWheelViewModel: dailyWheelViewModel,
                     calendarViewModel: calendarViewModel,
                     scheduleViewModel: scheduleViewModel,
                     creationUseCases: creationUseCases,

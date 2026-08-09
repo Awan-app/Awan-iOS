@@ -6,6 +6,7 @@ public struct PresentationFactory {
     private let authenticationState: AuthenticationState
     private let loginViewModel: LoginViewModel
     private let homeViewModel: HomeViewModel
+    private let dailyWheelViewModel: DailyWheelViewModel
     private let calendarViewModel: CalendarViewModel
     private let scheduleViewModel: ScheduleTimelineViewModel
     private let creationUseCases: CreationUseCases
@@ -24,6 +25,7 @@ public struct PresentationFactory {
         authenticationState: AuthenticationState,
         loginViewModel: LoginViewModel,
         homeViewModel: HomeViewModel,
+        dailyWheelViewModel: DailyWheelViewModel,
         calendarViewModel: CalendarViewModel,
         scheduleViewModel: ScheduleTimelineViewModel,
         creationUseCases: CreationUseCases,
@@ -41,6 +43,7 @@ public struct PresentationFactory {
         self.authenticationState = authenticationState
         self.loginViewModel = loginViewModel
         self.homeViewModel = homeViewModel
+        self.dailyWheelViewModel = dailyWheelViewModel
         self.calendarViewModel = calendarViewModel
         self.scheduleViewModel = scheduleViewModel
         self.creationUseCases = creationUseCases
@@ -74,6 +77,15 @@ public struct PresentationFactory {
 
     func makeHomeView() -> some View {
         HomeView(viewModel: homeViewModel)
+    }
+
+    func makeDailyWheelPresentationLayer(
+        isHomeRootVisible: Bool
+    ) -> some View {
+        DailyWheelPresentationLayer(
+            viewModel: dailyWheelViewModel,
+            isHomeRootVisible: isHomeRootVisible
+        )
     }
 
     func makeScheduleTimelineView() -> some View {

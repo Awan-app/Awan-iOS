@@ -46,6 +46,11 @@ struct AppRootView: View {
         }
     }
 
+    private var isHomeRootVisible: Bool {
+        coordinator.mainCoordinator.selectedTab == .home
+            && coordinator.mainCoordinator.homePath.isEmpty
+    }
+
     init(factory: PresentationFactory) {
         self.factory = factory
     }
@@ -220,6 +225,12 @@ struct AppRootView: View {
             .spring(response: 0.38, dampingFraction: 0.72),
             value: coordinator.mainCoordinator.streakCelebration?.id
         )
+        .overlay {
+            factory.makeDailyWheelPresentationLayer(
+                isHomeRootVisible: isHomeRootVisible
+            )
+            .zIndex(1100)
+        }
         .animation(.snappy(duration: 0.3), value: shouldShowCustomTabBar)
         .sheet(item: Bindable(coordinator.mainCoordinator).presentedSheet) { route in
             switch route {
