@@ -3520,6 +3520,57 @@
         }
       }
     },
+    "goals.task_dependency_summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d مستقلة · %d معتمدة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d independent · %d dependent"
+          }
+        }
+      }
+    },
+    "goals.tasks_count_one": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d مهمة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d task"
+          }
+        }
+      }
+    },
+    "goals.tasks_count_multiple": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d مهام"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d tasks"
+          }
+        }
+      }
+    },
     "goals.created": {
       "extractionState": "manual",
       "localizations": {

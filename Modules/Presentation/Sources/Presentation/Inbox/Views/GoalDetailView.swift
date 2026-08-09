@@ -20,44 +20,26 @@ public struct GoalDetailView: View {
         viewModel.state.allGoals.first { $0.id == goalID }
     }
 
-    private var tasks: [AwanTask] {
-        viewModel.state.selectedGoalTasks
-    }
-
-    private var effectiveTotalCount: Int {
-        tasks.isEmpty ? (goalItem?.totalCount ?? 0) : tasks.count
-    }
-
-    private var effectiveCompletedCount: Int {
-        tasks.isEmpty ? (goalItem?.completedCount ?? 0) : tasks.filter { $0.status == .completed }.count
-    }
-
-    private var effectiveProgressFraction: Double {
-        guard effectiveTotalCount > 0 else { return goalItem?.progressFraction ?? 0.0 }
-        return Double(effectiveCompletedCount) / Double(effectiveTotalCount)
-    }
-
     public var body: some View {
         ZStack {
             AppColors.sheetBackground.ignoresSafeArea()
 
             if let item = goalItem {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 10) {
                         GoalDetailHeaderCard(goal: item.rawGoal)
 
                         GoalDetailProgressCard(
-                            progressFraction: effectiveProgressFraction,
-                            completedCount: effectiveCompletedCount,
-                            totalCount: effectiveTotalCount,
+                            progressFraction: item.progressFraction,
+                            completedCount: item.completedCount,
+                            totalCount: item.totalCount,
                             breakdown: item.breakdown
                         )
 
                         GoalDetailTasksCard(
-                            tasks: tasks,
+                            tasks: viewModel.state.orderedGoalTasks,
                             isLoading: viewModel.state.isLoadingGoalTasks,
                             failureMessage: viewModel.state.goalTasksFailureMessage,
-                            completedCount: effectiveCompletedCount,
                             onRetry: {
                                 viewModel.send(.loadGoalTasks(goalID))
                             }

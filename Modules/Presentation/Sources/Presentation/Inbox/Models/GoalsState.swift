@@ -12,6 +12,7 @@ public struct GoalsState: Equatable, Sendable {
     public var allGoals: [GoalProgressItem]
     public var failureMessage: String?
     public var selectedGoalTasks: [AwanTask]
+    public var orderedGoalTasks: [GoalDetailTaskItem]
     public var isLoadingGoalTasks: Bool
     public var goalTasksFailureMessage: String?
 
@@ -21,6 +22,7 @@ public struct GoalsState: Equatable, Sendable {
         allGoals: [GoalProgressItem] = [],
         failureMessage: String? = nil,
         selectedGoalTasks: [AwanTask] = [],
+        orderedGoalTasks: [GoalDetailTaskItem] = [],
         isLoadingGoalTasks: Bool = false,
         goalTasksFailureMessage: String? = nil
     ) {
@@ -29,6 +31,7 @@ public struct GoalsState: Equatable, Sendable {
         self.allGoals = allGoals
         self.failureMessage = failureMessage
         self.selectedGoalTasks = selectedGoalTasks
+        self.orderedGoalTasks = orderedGoalTasks
         self.isLoadingGoalTasks = isLoadingGoalTasks
         self.goalTasksFailureMessage = goalTasksFailureMessage
     }
