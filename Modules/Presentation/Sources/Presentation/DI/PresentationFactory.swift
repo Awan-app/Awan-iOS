@@ -33,7 +33,7 @@ public struct PresentationFactory {
         makeUserInfoViewModel: @escaping () -> UserInfoViewModel,
         inboxViewModel: InboxViewModel,
         goalsViewModel: GoalsViewModel,
-        marketplaceViewModel: MarketplaceViewModel = MarketplaceViewModel()
+        marketplaceViewModel: MarketplaceViewModel
     ) {
         self.appCoordinator = appCoordinator
         self.authenticationState = authenticationState

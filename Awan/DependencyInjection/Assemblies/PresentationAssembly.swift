@@ -243,6 +243,12 @@ struct PresentationAssembly: Assembly {
                 DailyZonesViewModel(useCases: useCases)
             }
         }
+        container.register(MarketplaceViewModel.self) { resolver in
+            let useCase = Self.resolve(FetchStoreItemsUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                MarketplaceViewModel(fetchStoreItemsUseCase: useCase)
+            }
+        }
         .inObjectScope(.container)
 
         container.register(PresentationFactory.self) { resolver in
@@ -258,6 +264,7 @@ struct PresentationAssembly: Assembly {
             let dailyZonesViewModel = Self.resolve(DailyZonesViewModel.self, from: resolver)
             let inboxViewModel = Self.resolve(InboxViewModel.self, from: resolver)
             let goalsViewModel = Self.resolve(GoalsViewModel.self, from: resolver)
+            let marketplaceViewModel = Self.resolve(MarketplaceViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
@@ -282,7 +289,8 @@ struct PresentationAssembly: Assembly {
                         Self.resolve(UserInfoViewModel.self, from: resolver)
                     },
                     inboxViewModel: inboxViewModel,
-                    goalsViewModel: goalsViewModel
+                    goalsViewModel: goalsViewModel,
+                    marketplaceViewModel: marketplaceViewModel
                 )
             }
         }

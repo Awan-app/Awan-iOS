@@ -2,12 +2,12 @@
 //  RemoteGamificationDataSource.swift
 //  Data
 //
-//  Created by Eslam Elnady on 08/08/2026.
-//
+
 import AwaNetwork
 
 public protocol RemoteGamificationDataSource: Sendable {
     func getProgress() async throws -> UserProgressResponseDTO
+    func getStoreItems(type: String) async throws -> [StoreItemResponseDTO]
 }
 
 public final class DefaultRemoteGamificationDataSource:
@@ -23,5 +23,12 @@ public final class DefaultRemoteGamificationDataSource:
         try await networkService.request(
             GamificationEndpoint.getProgress
         )
+    }
+
+    public func getStoreItems(type: String) async throws -> [StoreItemResponseDTO] {
+        let response: StoreItemsResponseDTO = try await networkService.request(
+            GamificationEndpoint.getStoreItems(type: type)
+        )
+        return response.items
     }
 }

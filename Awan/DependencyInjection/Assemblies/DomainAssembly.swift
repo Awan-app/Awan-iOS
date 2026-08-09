@@ -358,6 +358,11 @@ struct DomainAssembly: Assembly {
         container.register(ManageDailyZoneScheduleUseCase.self) { _ in
             DefaultManageDailyZoneScheduleUseCase()
         }
+        container.register(FetchStoreItemsUseCase.self) { resolver in
+            DefaultFetchStoreItemsUseCase(
+                repository: Self.resolve(StoreItemRepository.self, from: resolver)
+            )
+        }
     }
 
     private func registerConflictUseCases(in container: Container) {

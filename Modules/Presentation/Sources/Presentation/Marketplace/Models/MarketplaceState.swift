@@ -9,6 +9,9 @@ public struct MarketplaceState: Sendable {
     public var allItems: [MarketplaceItem] = []
     public var userPoints: Int = 1_240
 
+    public var isLoading: Bool = false
+    public var errorMessage: String? = nil
+
     public var searchQuery: String = ""
     public var selectedCategory: MarketplaceItemCategory = .all
 
@@ -17,6 +20,8 @@ public struct MarketplaceState: Sendable {
     public var appliedFilter: MarketplaceFilter = .default
 
     public var selectedItem: MarketplaceItem? = nil
+
+    public init() {}
 
     public var filteredItems: [MarketplaceItem] {
         allItems.filter { item in

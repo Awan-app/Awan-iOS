@@ -1,4 +1,5 @@
 import Common
+import Domain
 import SwiftUI
 
 public struct MarketplaceView: View {
@@ -68,7 +69,29 @@ public struct MarketplaceView: View {
 
                 searchFilterBar(state)
 
-                if state.filteredItems.isEmpty {
+                MarketplaceCategoryChips(
+                    selectedCategory: Binding(
+                        get: { state.selectedCategory },
+                        set: { viewModel.send(.selectCategory($0)) }
+                    )
+                )
+
+                if state.isLoading {
+                    ProgressView()
+                        .padding(.top, 40)
+                } else if let errorMessage = state.errorMessage {
+                    VStack(spacing: 12) {
+                        NetworkErrorView(message: errorMessage)
+                        Button {
+                            viewModel.send(.retry)
+                        } label: {
+                            Text("Retry")
+                                .font(AppFonts.subheadlineSemibold)
+                                .foregroundStyle(AppColors.accentBlue)
+                        }
+                    }
+                    .padding(.top, 20)
+                } else if state.filteredItems.isEmpty {
                     MarketplaceEmptyView()
                         .padding(.top, 20)
                 } else {
@@ -180,11 +203,11 @@ public struct MarketplaceView: View {
 }
 
 #Preview("Marketplace Light") {
-    MarketplaceView(viewModel: MarketplaceViewModel())
+    MarketplaceView(viewModel: MarketplaceViewModel(fetchStoreItemsUseCase: MockFetchStoreItemsUseCase()))
         .preferredColorScheme(.light)
 }
 
 #Preview("Marketplace Dark") {
-    MarketplaceView(viewModel: MarketplaceViewModel())
+    MarketplaceView(viewModel: MarketplaceViewModel(fetchStoreItemsUseCase: MockFetchStoreItemsUseCase()))
         .preferredColorScheme(.dark)
 }

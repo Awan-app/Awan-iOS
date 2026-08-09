@@ -22,6 +22,24 @@ public struct MockCreateAITaskUseCase: CreateAITaskUseCase {
     }
 }
 
+public struct MockFetchStoreItemsUseCase: FetchStoreItemsUseCase {
+    public init() {}
+    public func execute(type: String) async throws -> [StoreItem] {
+        [
+            StoreItem(
+                id: "1",
+                name: "Gold Frame",
+                description: "A shiny gold frame",
+                image: "https://example.com/gold.png",
+                info: nil,
+                price: 100,
+                version: "1.0",
+                type: type
+            )
+        ]
+    }
+}
+
 public struct MockCreateOnboardingTemplateUseCase: CreateOnboardingTemplateUseCase {
     public init() {}
     public func execute(zoneDrafts: [Zone]) async throws {}

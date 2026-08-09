@@ -8,13 +8,19 @@ import AwaNetwork
 
 enum GamificationEndpoint: APIEndpoint {
     case getProgress
+    case getStoreItems(type: String)
 
     var baseURL: String {
         NetworkConfiguration.apiBaseURL
     }
 
     var path: String {
-        "/gamification/progress"
+        switch self {
+        case .getProgress:
+            return "/gamification/progress"
+        case .getStoreItems:
+            return "/store/items"
+        }
     }
 
     var method: HTTPMethod {
@@ -22,7 +28,12 @@ enum GamificationEndpoint: APIEndpoint {
     }
 
     var queryParameters: [String: String]? {
-        nil
+        switch self {
+        case .getProgress:
+            return nil
+        case let .getStoreItems(type):
+            return ["type": type]
+        }
     }
 
     var body: (any Encodable)? {

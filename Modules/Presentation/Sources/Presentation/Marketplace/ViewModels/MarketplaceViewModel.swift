@@ -1,3 +1,4 @@
+import Domain
 import Foundation
 import Observation
 
@@ -6,14 +7,21 @@ import Observation
 public final class MarketplaceViewModel {
     public var state: MarketplaceState
 
-    public init() {
+    @ObservationIgnored private let fetchStoreItemsUseCase: any FetchStoreItemsUseCase
+
+    public init(fetchStoreItemsUseCase: any FetchStoreItemsUseCase) {
+        self.fetchStoreItemsUseCase = fetchStoreItemsUseCase
         self.state = MarketplaceState()
     }
 
     public func send(_ action: MarketplaceAction) {
         switch action {
-        case .appeared:
-            loadMockItems()
+        case .appeared, .retry:
+            loadStoreItems()
+
+        case let .selectCategory(category):
+            state.selectedCategory = category
+            loadStoreItems()
 
         case let .searchQueryChanged(query):
             state.searchQuery = query
@@ -38,97 +46,43 @@ public final class MarketplaceViewModel {
         }
     }
 
-    private func loadMockItems() {
-        guard state.allItems.isEmpty else { return }
-        state.allItems = Self.mockItems
-    }
+    private func loadStoreItems() {
+        let category = state.selectedCategory
+        state.isLoading = true
+        state.errorMessage = nil
 
-    private static let mockItems: [MarketplaceItem] = [
-        MarketplaceItem(
-            name: "Cloud Halo Frame",
-            description: "A fluffy cloud halo that surrounds your avatar with a dreamy aura.",
-            category: .frames,
-            status: .price(250),
-            symbolName: "cloud.circle.fill"
-        ),
-        MarketplaceItem(
-            name: "Neon Ring Frame",
-            description: "A vibrant neon ring that makes your avatar glow in the dark.",
-            category: .frames,
-            status: .equipped,
-            symbolName: "record.circle.fill"
-        ),
-        MarketplaceItem(
-            name: "Golden Frame",
-            description: "A premium golden frame that shows off your achievements.",
-            category: .frames,
-            status: .owned,
-            symbolName: "circle.circle.fill"
-        ),
-        MarketplaceItem(
-            name: "Wizard Cloud",
-            description: "A magical look for your loyal cloud companion.",
-            category: .skins,
-            status: .price(200),
-            symbolName: "cloud.fill",
-            isNew: true
-        ),
-        MarketplaceItem(
-            name: "Sleepy Cloud",
-            description: "A cozy bedtime look for when you've earned your rest.",
-            category: .skins,
-            status: .locked,
-            symbolName: "moon.zzz.fill"
-        ),
-        MarketplaceItem(
-            name: "Cool Cloud",
-            description: "Look cool with sunglasses on your cloud companion.",
-            category: .skins,
-            status: .price(350),
-            symbolName: "sun.max.fill"
-        ),
-        MarketplaceItem(
-            name: "Ocean Theme",
-            description: "A deep-sea themed interface with calming blue tones.",
-            category: .themes,
-            status: .equipped,
-            symbolName: "water.waves"
-        ),
-        MarketplaceItem(
-            name: "Midnight Theme",
-            description: "A dark, starry night theme perfect for late-night sessions.",
-            category: .themes,
-            status: .price(300),
-            symbolName: "moon.stars.fill"
-        ),
-        MarketplaceItem(
-            name: "Sunset Theme",
-            description: "Warm orange and pink hues inspired by a beautiful sunset.",
-            category: .themes,
-            status: .price(500),
-            symbolName: "sunset.fill"
-        ),
-        MarketplaceItem(
-            name: "Blue Spark Icon",
-            description: "A sparkling blue icon that stands out on your home screen.",
-            category: .appIcons,
-            status: .price(150),
-            symbolName: "bolt.circle.fill"
-        ),
-        MarketplaceItem(
-            name: "Moon Icon",
-            description: "A serene moon icon for a calming home screen aesthetic.",
-            category: .appIcons,
-            status: .locked,
-            symbolName: "moon.fill"
-        ),
-        MarketplaceItem(
-            name: "Star Gem Icon",
-            description: "A gem-studded star icon that shows off your premium status.",
-            category: .appIcons,
-            status: .price(250),
-            symbolName: "star.circle.fill",
-            isNew: true
-        ),
-    ]
+        let useCase = fetchStoreItemsUseCase
+
+        Task { [weak self] in
+            do {
+                let domainItems: [StoreItem]
+                if let apiType = category.apiType {
+                    domainItems = try await useCase.execute(type: apiType)
+                } else {
+                    let validTypes = ["FRAME", "SKIN", "THEME", "ICON"]
+                    domainItems = try await withThrowingTaskGroup(of: [StoreItem].self) { group in
+                        for type in validTypes {
+                            group.addTask {
+                                try await useCase.execute(type: type)
+                            }
+                        }
+                        var aggregated: [StoreItem] = []
+                        for try await items in group {
+                            aggregated.append(contentsOf: items)
+                        }
+                        return aggregated
+                    }
+                }
+
+                guard let self else { return }
+                self.state.allItems = domainItems.map { MarketplaceItem(storeItem: $0) }
+                self.state.isLoading = false
+            } catch {
+                guard let self else { return }
+                self.state.errorMessage = error.localizedDescription
+                self.state.allItems = []
+                self.state.isLoading = false
+            }
+        }
+    }
 }
