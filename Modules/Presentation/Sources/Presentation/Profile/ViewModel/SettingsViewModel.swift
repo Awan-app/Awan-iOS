@@ -1,6 +1,4 @@
-import Combine
 import Domain
-import Foundation
 import Observation
 
 enum SettingsLoadState: Equatable {
@@ -25,29 +23,23 @@ public final class SettingsViewModel {
     private(set) var timeZone = ""
     private(set) var wakeupTime: LocalTime?
     private(set) var sleepTime: LocalTime?
-    private(set) var dailyZones: [Zone] = []
-    private(set) var areDailyZonesReady = false
     var showError = false
 
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let updateSessionDurationUseCase: any UpdateSessionDurationUseCase
     private let updateTimezoneUseCase: any UpdateTimezoneUseCase
     private let updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase
-    private let fetchZonesUseCase: FetchZonesUseCase
-    @ObservationIgnored private var zonesCancellable: AnyCancellable?
 
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
         updateSessionDurationUseCase: any UpdateSessionDurationUseCase,
         updateTimezoneUseCase: any UpdateTimezoneUseCase,
-        updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase,
-        fetchZonesUseCase: FetchZonesUseCase
+        updateSleepScheduleUseCase: any UpdateSleepScheduleUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.updateSessionDurationUseCase = updateSessionDurationUseCase
         self.updateTimezoneUseCase = updateTimezoneUseCase
         self.updateSleepScheduleUseCase = updateSleepScheduleUseCase
-        self.fetchZonesUseCase = fetchZonesUseCase
     }
 
     func load() async {
@@ -60,7 +52,6 @@ public final class SettingsViewModel {
         do {
             apply(try await getUserProfileUseCase.execute())
             loadState = .content
-            observeDailyZones()
         } catch is CancellationError {
             return
         } catch {
@@ -119,17 +110,4 @@ public final class SettingsViewModel {
         sleepTime = profile.preferences.sleepTime
     }
 
-    private func observeDailyZones() {
-        zonesCancellable?.cancel()
-        areDailyZonesReady = false
-        zonesCancellable = fetchZonesUseCase.observe(for: Date())
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { _ in },
-                receiveValue: { [weak self] zones in
-                    self?.dailyZones = zones
-                    self?.areDailyZonesReady = true
-                }
-            )
-    }
 }

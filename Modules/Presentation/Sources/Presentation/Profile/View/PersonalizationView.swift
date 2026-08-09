@@ -4,7 +4,6 @@ import Foundation
 import SwiftUI
 
 struct PersonalizationView: View {
-    @Environment(AppCoordinator.self) private var coordinator
     @Environment(LanguageManager.self) private var languageManager
     @State private var viewModel: SettingsViewModel
     @State private var isSessionTimeSheetPresented = false
@@ -125,17 +124,7 @@ struct PersonalizationView: View {
 
         case .content:
             ScrollView {
-                VStack(spacing: 18) {
-                    DailyZonesCard(
-                        zones: viewModel.dailyZones,
-                        isReady: viewModel.areDailyZonesReady,
-                        onTap: {
-                            coordinator.mainCoordinator.push(MainRoute.dailyZones)
-                        }
-                    )
-
-                    PreferencesCard(preferences: preferenceItems)
-                }
+                PreferencesCard(preferences: preferenceItems)
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
                 .padding(.bottom, 40)
@@ -248,8 +237,7 @@ struct PersonalizationView: View {
                 getUserProfileUseCase: MockGetUserProfileUseCase(),
                 updateSessionDurationUseCase: MockUpdateSessionDurationUseCase(),
                 updateTimezoneUseCase: MockUpdateTimezoneUseCase(),
-                updateSleepScheduleUseCase: MockUpdateSleepScheduleUseCase(),
-                fetchZonesUseCase: MockFetchZonesUseCase()
+                updateSleepScheduleUseCase: MockUpdateSleepScheduleUseCase()
             )
         )
     }

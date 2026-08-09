@@ -1,4 +1,6 @@
+import Combine
 import Domain
+import Foundation
 import Observation
 
 enum ProfileLoadState: Equatable {
@@ -17,18 +19,24 @@ public final class ProfileViewModel {
     private(set) var points = 0
     private(set) var streak = 0
     private(set) var maxStreak = 0
+    private(set) var dailyZones: [Zone] = []
+    private(set) var areDailyZonesReady = false
     private(set) var isLoggingOut = false
     var showLogoutConfirmation = false
     var showLogoutError = false
 
     private let getUserProfileUseCase: GetUserProfileUseCase
+    private let fetchZonesUseCase: FetchZonesUseCase
     private let logoutUseCase: LogoutUseCase
+    @ObservationIgnored private var zonesCancellable: AnyCancellable?
 
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
+        fetchZonesUseCase: FetchZonesUseCase,
         logoutUseCase: LogoutUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
+        self.fetchZonesUseCase = fetchZonesUseCase
         self.logoutUseCase = logoutUseCase
     }
 
@@ -49,6 +57,7 @@ public final class ProfileViewModel {
             streak = profile.streak
             maxStreak = profile.maxStreak
             loadState = .content
+            observeDailyZones()
         } catch is CancellationError {
             return
         } catch {
@@ -72,5 +81,19 @@ public final class ProfileViewModel {
         }
 
         isLoggingOut = false
+    }
+
+    private func observeDailyZones() {
+        zonesCancellable?.cancel()
+        areDailyZonesReady = false
+        zonesCancellable = fetchZonesUseCase.observe(for: Date())
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { [weak self] zones in
+                    self?.dailyZones = zones
+                    self?.areDailyZonesReady = true
+                }
+            )
     }
 }

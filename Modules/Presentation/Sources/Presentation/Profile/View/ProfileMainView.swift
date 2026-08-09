@@ -17,8 +17,6 @@ struct ProfileMainView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                screenHeader
-
                 ScrollView {
                     content
                         .padding(.horizontal, 24)
@@ -54,25 +52,6 @@ struct ProfileMainView: View {
         }
     }
 
-    private var screenHeader: some View {
-        ZStack {
-            Text(L10n.Profile.title)
-                .font(AppFonts.title3Bold)
-                .foregroundStyle(AppColors.brandDarkBlue)
-
-            HStack {
-                Spacer()
-
-                GifImageView("Animated AWAN mascot")
-                    .frame(width: 64, height: 64)
-            }
-            .padding(.horizontal, 24)
-        }
-        .frame(height: 64)
-        .background(AppColors.screenBackground)
-        .zIndex(1)
-    }
-
     @ViewBuilder
     private var content: some View {
         switch viewModel.loadState {
@@ -92,7 +71,7 @@ struct ProfileMainView: View {
     }
 
     private var profileContent: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 14) {
             ProfileHeroCard(
                 avatarImage: Image("user-avatar"),
                 name: viewModel.userName,
@@ -115,6 +94,14 @@ struct ProfileMainView: View {
                 }
             )
 
+            DailyZonesCard(
+                zones: viewModel.dailyZones,
+                isReady: viewModel.areDailyZonesReady,
+                onTap: {
+                    coordinator.mainCoordinator.push(MainRoute.dailyZones)
+                }
+            )
+
             VStack(alignment: .leading, spacing: 12) {
                 SectionHeaderLabel(
                     title: L10n.Profile.more,
@@ -123,7 +110,7 @@ struct ProfileMainView: View {
 
                 ProfileMenuCard(items: [
                     ProfileMenuItem(
-                        icon: "slider.horizontal.3",
+                        icon: "wand.and.stars",
                         title: L10n.Profile.personalization,
                         color: AppColors.accentBlue,
                         action: {
@@ -131,19 +118,11 @@ struct ProfileMainView: View {
                         }
                     ),
                     ProfileMenuItem(
-                        icon: "circle.lefthalf.filled",
+                        icon: "slider.horizontal.3",
                         title: L10n.Profile.settings,
                         color: AppColors.warning,
                         action: {
                             coordinator.mainCoordinator.push(MainRoute.settings)
-                        }
-                    ),
-                    ProfileMenuItem(
-                        icon: "info.circle.fill",
-                        title: L10n.Profile.aboutAwan,
-                        color: AppColors.accentGreen,
-                        action: {
-                            coordinator.mainCoordinator.push(MainRoute.aboutAwan)
                         }
                     )
                 ])
@@ -196,6 +175,7 @@ struct ProfileMainView: View {
     ProfileMainView(
         viewModel: ProfileViewModel(
             getUserProfileUseCase: MockGetUserProfileUseCase(),
+            fetchZonesUseCase: MockFetchZonesUseCase(),
             logoutUseCase: LogoutUseCase(repository: MockAuthRepository())
         )
     )
