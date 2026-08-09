@@ -33,6 +33,8 @@ public struct GoogleSignInTokens: Sendable {
 public final class LoginViewModel {
     
     public private(set) var state: LoginState = .idle
+    public private(set) var isGoogleLoading: Bool = false
+    public var googleErrorMessage: String? = nil
     public private(set) var hasAttemptedSubmit: Bool = false
     private var isOffline = false
     private var rateLimitTask: Task<Void, Never>?
@@ -129,11 +131,12 @@ public final class LoginViewModel {
     
     public func onGoogleSignInTapped() {
         guard !isOffline else {
-            state = .failure(.network)
+            googleErrorMessage = "Network connection is offline. Please try again."
             return
         }
 
-        state = .loading
+        isGoogleLoading = true
+        googleErrorMessage = nil
         
         Task {
             do {
@@ -144,20 +147,20 @@ public final class LoginViewModel {
                 let result = try await self.googleSignInUseCase.execute(idToken: tokens.idToken, accessToken: tokens.accessToken)
                 
                 if !Task.isCancelled {
-                    self.state = .idle
+                    self.isGoogleLoading = false
                     self.onLoginSuccess?(result)
                 }
             } catch {
                 guard !Task.isCancelled else { return }
                 
+                self.isGoogleLoading = false
                 let nsError = error as NSError
                 // 8 == GIDSignInError.canceled
                 if nsError.domain == "com.google.GIDSignIn" && nsError.code == 8 {
-                    self.state = .idle
                     return
                 }
                 
-                self.state = .failure(.inline(message: error.localizedDescription))
+                self.googleErrorMessage = error.localizedDescription
             }
         }
     }
