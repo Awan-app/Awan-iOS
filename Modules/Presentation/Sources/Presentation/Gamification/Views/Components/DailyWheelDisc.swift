@@ -219,7 +219,7 @@ private struct WheelPointerShape: Shape {
 
 #Preview("Daily Wheel Light") {
     DailyWheelDisc(
-        segments: previewWheelSegments,
+        segments: DailyWheelSegment.previewSegments,
         rotation: 0,
         isSpinning: false
     )
@@ -230,7 +230,7 @@ private struct WheelPointerShape: Shape {
 
 #Preview("Daily Wheel Dark") {
     DailyWheelDisc(
-        segments: previewWheelSegments,
+        segments: DailyWheelSegment.previewSegments,
         rotation: -75,
         isSpinning: false
     )
@@ -239,13 +239,3 @@ private struct WheelPointerShape: Shape {
     .background(AppColors.screenBackground)
     .preferredColorScheme(.dark)
 }
-
-private let previewWheelSegments: [DailyWheelSegment] = [
-    .init(id: "SEG_1", coins: 1, payoutType: .coins),
-    .init(id: "SEG_2", coins: 5, payoutType: .coins),
-    .init(id: "SEG_3", coins: 10, payoutType: .coins),
-    .init(id: "SEG_4", coins: 20, payoutType: .coins),
-    .init(id: "SEG_5", coins: 50, payoutType: .coins),
-    .init(id: "SEG_6", coins: 100, payoutType: .coins),
-    .init(id: "SEG_ITEM", coins: 0, payoutType: .item)
-]
