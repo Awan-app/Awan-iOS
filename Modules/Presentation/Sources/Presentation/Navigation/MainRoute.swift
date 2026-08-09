@@ -22,6 +22,7 @@ public enum MainRoute: Hashable, Identifiable, Sendable {
     case userInfo
     case add
     case dailyZones
+    case inventory
     case inboxTaskDetail(UUID)
 
     public var id: Self { self }

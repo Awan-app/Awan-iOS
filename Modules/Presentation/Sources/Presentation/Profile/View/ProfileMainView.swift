@@ -61,7 +61,7 @@ struct ProfileMainView: View {
             VStack(spacing: 0) {
                 ZStack {
                     Text(L10n.Profile.title)
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(AppFonts.title3Bold)
                         .foregroundStyle(AppColors.brandDarkBlue)
 
                     HStack {
@@ -86,6 +86,15 @@ struct ProfileMainView: View {
                                 coordinator.mainCoordinator.push(MainRoute.userInfo)
                             }
                         ).id(languageManager.currentLanguage)
+
+                        ProfileProgressSection(
+                            points: viewModel.points,
+                            streak: viewModel.streak,
+                            onInventoryTap: {
+                                coordinator.mainCoordinator.push(MainRoute.inventory)
+                            }
+                        )
+                        .id(languageManager.currentLanguage)
 
                         // Daily Zones
                         DailyZonesCard(
