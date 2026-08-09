@@ -2,20 +2,20 @@ import Common
 import SwiftUI
 
 struct DailyWheelPresentationLayer: View {
-    let isHomeRootVisible: Bool
+    let alwaysShowsFloatingButton: Bool
     @State private var viewModel: DailyWheelViewModel
 
     init(
         viewModel: DailyWheelViewModel,
-        isHomeRootVisible: Bool
+        alwaysShowsFloatingButton: Bool
     ) {
         _viewModel = State(initialValue: viewModel)
-        self.isHomeRootVisible = isHomeRootVisible
+        self.alwaysShowsFloatingButton = alwaysShowsFloatingButton
     }
 
     var body: some View {
         ZStack {
-            if viewModel.state.showsGiftButton,
+            if (alwaysShowsFloatingButton || viewModel.state.showsGiftButton),
                viewModel.state.presentation == .hidden {
                 floatingButton
                     .transition(.scale.combined(with: .opacity))
@@ -46,10 +46,8 @@ struct DailyWheelPresentationLayer: View {
             .spring(response: 0.38, dampingFraction: 0.78),
             value: viewModel.state.presentation
         )
-        .task(id: isHomeRootVisible) {
-            if isHomeRootVisible {
-                viewModel.send(.homeAppeared)
-            }
+        .task {
+            viewModel.send(.mainFlowAppeared)
         }
         .onDisappear {
             viewModel.send(.sessionEnded)
@@ -58,7 +56,7 @@ struct DailyWheelPresentationLayer: View {
 
     private var floatingButton: some View {
         Button {
-            viewModel.send(.giftButtonTapped)
+            viewModel.send(.openRequested)
         } label: {
             Image(systemName: "gift.fill")
                 .font(.system(size: 24, weight: .black))

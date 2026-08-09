@@ -19,7 +19,6 @@ enum DailyWheelPresentation: Equatable, Sendable {
 
 enum DailyWheelResultPresentation: Equatable, Sendable {
     case spin(DailyWheelSpinResult)
-    case previousClaim(DailyWheelClaim?)
 }
 
 enum DailyWheelRetryOperation: Equatable, Sendable {
@@ -38,8 +37,8 @@ struct DailyWheelState: Equatable, Sendable {
 }
 
 enum DailyWheelAction: Sendable {
-    case homeAppeared
-    case giftButtonTapped
+    case mainFlowAppeared
+    case openRequested
     case spinTapped
     case spinAnimationCompleted
     case dismissWheel

@@ -45,7 +45,9 @@ struct DailyWheelOverlay: View {
     }
 
     private var canDismiss: Bool {
-        viewModel.state.phase == .loading || viewModel.state.phase == .ready
+        viewModel.state.phase == .loading
+            || viewModel.state.phase == .ready
+            || viewModel.state.phase == .claimed
     }
 
     private var closeButton: some View {
@@ -83,18 +85,24 @@ struct DailyWheelOverlay: View {
                     .font(AppFonts.titleBlack)
                     .foregroundStyle(AppColors.onAccent)
 
-                Text(L10n.DailyWheel.subtitle)
+                Text(wheelSubtitle)
                     .font(AppFonts.bodySemibold)
                     .foregroundStyle(AppColors.onAccent.opacity(0.78))
                     .multilineTextAlignment(.center)
             }
 
-            TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
-                DailyWheelDisc(
-                    segments: configuration.segments,
-                    rotation: rotation(at: timeline.date),
-                    isSpinning: viewModel.state.phase == .spinning
-                )
+            ZStack {
+                TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
+                    DailyWheelDisc(
+                        segments: configuration.segments,
+                        rotation: rotation(at: timeline.date),
+                        isSpinning: viewModel.state.phase == .spinning
+                    )
+                }
+
+                if viewModel.state.phase == .claimed {
+                    lockedWheelOverlay
+                }
             }
             .frame(maxWidth: 360)
             .aspectRatio(1, contentMode: .fit)
@@ -104,6 +112,17 @@ struct DailyWheelOverlay: View {
                     .font(AppFonts.title3Black)
                     .foregroundStyle(AppColors.onAccent)
                     .multilineTextAlignment(.center)
+
+                if viewModel.state.phase == .claimed {
+                    VStack(spacing: 6) {
+                        Text(L10n.DailyWheel.todaysReward)
+                            .font(AppFonts.captionBlack)
+                            .foregroundStyle(AppColors.onAccent.opacity(0.72))
+
+                        claimedRewardSummary(configuration.lastClaim)
+                    }
+                    .padding(.top, 4)
+                }
 
                 if viewModel.state.phase == .spinning
                     || viewModel.state.phase == .settling {
@@ -138,6 +157,83 @@ struct DailyWheelOverlay: View {
         }
     }
 
+    private var lockedWheelOverlay: some View {
+        ZStack {
+            Circle()
+                .fill(AppColors.shadow.opacity(0.46))
+                .padding(12)
+
+            AppDepthSurface(
+                shape: .circle,
+                surfaceColor: AppColors.surface,
+                borderColor: AppColors.reward.opacity(0.72),
+                depthColor: AppColors.wheelRimDepth,
+                borderWidth: 2.5,
+                depthOffset: 7,
+                contentInsets: EdgeInsets(
+                    top: 24,
+                    leading: 24,
+                    bottom: 24,
+                    trailing: 24
+                )
+            ) {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 46, weight: .black))
+                    .foregroundStyle(AppColors.reward)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(L10n.DailyWheel.alreadyClaimed)
+        .allowsHitTesting(false)
+    }
+
+    private var wheelSubtitle: String {
+        viewModel.state.phase == .claimed
+            ? L10n.DailyWheel.comeBackTomorrow
+            : L10n.DailyWheel.subtitle
+    }
+
+    private func claimedRewardSummary(
+        _ claim: DailyWheelClaim?
+    ) -> some View {
+        AppDepthSurface(
+            shape: .capsule,
+            surfaceColor: AppColors.surface,
+            borderColor: AppColors.reward.opacity(0.54),
+            depthColor: AppColors.wheelRimDepth,
+            borderWidth: 1.5,
+            depthOffset: 5,
+            contentInsets: EdgeInsets(
+                top: 10,
+                leading: 18,
+                bottom: 10,
+                trailing: 18
+            )
+        ) {
+            HStack(spacing: 8) {
+                if let claim,
+                   claim.itemID == nil,
+                   claim.itemName == nil {
+                    Text(claim.coinsAwarded, format: .number)
+                        .monospacedDigit()
+
+                    Image(systemName: "star.fill")
+                        .foregroundStyle(AppColors.reward)
+                } else {
+                    Image(systemName: "gift.fill")
+                        .foregroundStyle(AppColors.accentPurple)
+
+                    Text(claim?.itemName ?? L10n.DailyWheel.giftClaimed)
+                        .multilineTextAlignment(.center)
+                }
+            }
+            .font(AppFonts.title3Black)
+            .foregroundStyle(AppColors.brandDarkBlue)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityElement(children: .combine)
+    }
+
     private var promptText: String {
         switch viewModel.state.phase {
         case .ready:
@@ -146,6 +242,8 @@ struct DailyWheelOverlay: View {
             L10n.DailyWheel.choosingReward
         case .settling:
             L10n.DailyWheel.almostThere
+        case .claimed:
+            L10n.DailyWheel.alreadyClaimed
         default:
             L10n.DailyWheel.tapToSpin
         }

@@ -8549,6 +8549,13 @@
         "en": { "stringUnit": { "state": "translated", "value": "Today’s gift is claimed" } }
       }
     },
+    "daily_wheel.todays_reward": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "مكافأة اليوم" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Today’s reward" } }
+      }
+    },
     "daily_wheel.gift_claimed": {
       "extractionState": "manual",
       "localizations": {

@@ -1333,6 +1333,7 @@ public enum L10n {
         public static var almostThere: String { text("daily_wheel.almost_there") }
         public static var youWon: String { text("daily_wheel.you_won") }
         public static var alreadyClaimed: String { text("daily_wheel.already_claimed") }
+        public static var todaysReward: String { text("daily_wheel.todays_reward") }
         public static var giftClaimed: String { text("daily_wheel.gift_claimed") }
         public static var comeBackTomorrow: String { text("daily_wheel.come_back_tomorrow") }
         public static var itemAdded: String { text("daily_wheel.item_added") }

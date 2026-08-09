@@ -80,11 +80,11 @@ public struct PresentationFactory {
     }
 
     func makeDailyWheelPresentationLayer(
-        isHomeRootVisible: Bool
+        alwaysShowsFloatingButton: Bool
     ) -> some View {
         DailyWheelPresentationLayer(
             viewModel: dailyWheelViewModel,
-            isHomeRootVisible: isHomeRootVisible
+            alwaysShowsFloatingButton: alwaysShowsFloatingButton
         )
     }
 

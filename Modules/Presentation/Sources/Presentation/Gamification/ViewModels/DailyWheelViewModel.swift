@@ -21,18 +21,29 @@ public final class DailyWheelViewModel {
 
     func send(_ action: DailyWheelAction) {
         switch action {
-        case .homeAppeared:
+        case .mainFlowAppeared:
             guard !hasCheckedThisSession else { return }
             hasCheckedThisSession = true
-            loadConfiguration(presentAutomatically: true)
+            loadConfiguration(presentAutomatically: false)
 
-        case .giftButtonTapped:
-            if let configuration = state.configuration,
-               !configuration.claimedToday {
+        case .openRequested:
+            switch state.phase {
+            case .loading:
+                loadConfiguration(presentAutomatically: true)
+            case .spinning, .settling:
+                state.presentation = .wheel
+                state.showsGiftButton = false
+            case .claimed:
+                state.presentation = .wheel
+                state.showsGiftButton = false
+            case .failure:
+                state.presentation = .failure
+                state.showsGiftButton = false
+            case .ready:
                 state.phase = .ready
                 state.presentation = .wheel
                 state.showsGiftButton = false
-            } else {
+            case .idle:
                 loadConfiguration(presentAutomatically: true)
             }
 
@@ -47,7 +58,9 @@ public final class DailyWheelViewModel {
             state.showsGiftButton = false
 
         case .dismissWheel:
-            guard state.phase == .loading || state.phase == .ready else {
+            guard state.phase == .loading
+                    || state.phase == .ready
+                    || state.phase == .claimed else {
                 return
             }
             if state.phase == .loading {
@@ -55,7 +68,7 @@ public final class DailyWheelViewModel {
                 state.phase = .idle
             }
             state.presentation = .hidden
-            state.showsGiftButton = true
+            state.showsGiftButton = state.phase != .claimed
 
         case .dismissResult:
             state.presentation = .hidden
@@ -96,9 +109,7 @@ public final class DailyWheelViewModel {
                 state.configuration = configuration
                 if configuration.claimedToday {
                     state.phase = .claimed
-                    state.presentation = .result(
-                        .previousClaim(configuration.lastClaim)
-                    )
+                    state.presentation = presentAutomatically ? .wheel : .hidden
                     state.showsGiftButton = false
                 } else {
                     state.phase = .ready
@@ -109,7 +120,15 @@ public final class DailyWheelViewModel {
                 return
             } catch {
                 guard !Task.isCancelled else { return }
-                showFailure(error, retry: .load)
+                if presentAutomatically {
+                    showFailure(error, retry: .load)
+                } else {
+                    state.phase = .failure
+                    state.presentation = .hidden
+                    state.errorMessage = GamificationErrorMessageMapper.message(for: error)
+                    state.retryOperation = .load
+                    state.showsGiftButton = true
+                }
             }
         }
     }
@@ -159,11 +178,12 @@ public final class DailyWheelViewModel {
             let configuration = try await useCases.fetch.execute()
             guard !Task.isCancelled else { return }
             state.configuration = configuration
-            state.presentation = .result(.previousClaim(configuration.lastClaim))
         } catch {
-            state.presentation = .result(.previousClaim(nil))
+            // Keep the existing segment layout so the claimed state can still
+            // be represented without risking another spin.
         }
         state.phase = .claimed
+        state.presentation = .wheel
         state.showsGiftButton = false
     }
 

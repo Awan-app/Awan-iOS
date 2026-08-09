@@ -46,11 +46,6 @@ struct AppRootView: View {
         }
     }
 
-    private var isHomeRootVisible: Bool {
-        coordinator.mainCoordinator.selectedTab == .home
-            && coordinator.mainCoordinator.homePath.isEmpty
-    }
-
     init(factory: PresentationFactory) {
         self.factory = factory
     }
@@ -227,7 +222,7 @@ struct AppRootView: View {
         )
         .overlay {
             factory.makeDailyWheelPresentationLayer(
-                isHomeRootVisible: isHomeRootVisible
+                alwaysShowsFloatingButton: coordinator.mainCoordinator.selectedTab == .store
             )
             .zIndex(1100)
         }

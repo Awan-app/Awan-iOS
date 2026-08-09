@@ -65,9 +65,6 @@ struct DailyWheelResultOverlay: View {
             } else {
                 giftArtwork
             }
-        case let .previousClaim(claim)
-            where claim?.itemID != nil || claim?.itemName != nil:
-            giftArtwork
         default:
             ZStack {
                 Circle()
@@ -92,19 +89,11 @@ struct DailyWheelResultOverlay: View {
     }
 
     private var title: String {
-        switch result {
-        case .spin:
-            L10n.DailyWheel.youWon
-        case .previousClaim:
-            L10n.DailyWheel.alreadyClaimed
-        }
+        L10n.DailyWheel.youWon
     }
 
     private var dismissButtonTitle: String {
-        switch result {
-        case .spin: L10n.DailyWheel.awesome
-        case .previousClaim: L10n.Common.gotIt
-        }
+        L10n.DailyWheel.awesome
     }
 
     private var rewardText: String {
@@ -114,15 +103,6 @@ struct DailyWheelResultOverlay: View {
                 return spin.item?.name ?? L10n.DailyWheel.gift
             }
             return L10n.DailyWheel.starsAwarded(spin.coinsAwarded)
-        case let .previousClaim(claim):
-            guard let claim else { return L10n.DailyWheel.giftClaimed }
-            if let itemName = claim.itemName {
-                return itemName
-            }
-            if claim.itemID != nil {
-                return L10n.DailyWheel.gift
-            }
-            return L10n.DailyWheel.starsAwarded(claim.coinsAwarded)
         }
     }
 
@@ -133,8 +113,6 @@ struct DailyWheelResultOverlay: View {
                 return L10n.DailyWheel.newBalance(spin.newBalance)
             }
             return L10n.DailyWheel.itemAdded
-        case .previousClaim:
-            return L10n.DailyWheel.comeBackTomorrow
         }
     }
 }
@@ -154,16 +132,24 @@ struct DailyWheelResultOverlay: View {
     )
 }
 
-#Preview("Wheel Claimed RTL Dark") {
+#Preview("Wheel Item Result RTL Dark") {
     DailyWheelResultOverlay(
-        result: .previousClaim(
-            DailyWheelClaim(
+        result: .spin(
+            DailyWheelSpinResult(
                 segmentID: "SEG_ITEM",
+                payoutType: .item,
                 coinsAwarded: 0,
-                itemID: "gift-id",
-                itemName: "Aurora Frame",
-                claimDate: "2026-08-09",
-                claimedAt: "2026-08-09T10:00:00Z"
+                newBalance: 180,
+                item: GamificationRewardItem(
+                    id: "gift-id",
+                    name: "Aurora Frame",
+                    description: nil,
+                    imageURL: nil,
+                    info: nil,
+                    price: 200,
+                    version: "1.0",
+                    type: "FRAME"
+                )
             )
         ),
         onDismiss: {}
