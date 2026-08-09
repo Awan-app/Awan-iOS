@@ -7,7 +7,8 @@ struct HomeTimelineSessionCard: View {
     let onMove: (CGFloat) -> Void
     let onSetCompletion: (Bool) -> Void
     let onTap: () -> Void
-
+    let onPointsRewardHidden: () -> Void
+    
     @State private var dragOffset: CGFloat = 0
     @State private var isDragging = false
     @State private var completionScale: CGFloat = 1
@@ -34,6 +35,14 @@ struct HomeTimelineSessionCard: View {
         .contentShape(Rectangle())
         .gesture(dragGesture)
         .accessibilityIdentifier("home-timeline-session-\(item.id.uuidString)")
+        .onChange(of: item.showsCompletionPoints) { oldValue, newValue in
+                guard oldValue, !newValue else { return }
+
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(250))
+                    onPointsRewardHidden()
+                }
+            }
     }
 
     private var cardContent: some View {
@@ -41,13 +50,24 @@ struct HomeTimelineSessionCard: View {
             taskDetails
             pointsLabel
             Color.clear
-                .frame(width: completionDiameter, height: completionDiameter)
+                .frame(
+                    width: completionDiameter,
+                    height: completionDiameter
+                )
         }
         .padding(.leading, item.laneCount > 1 ? 9 : 14)
         .padding(.trailing, item.laneCount > 1 ? 7 : 10)
         .padding(.vertical, 7)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .topLeading
+        )
         .contentShape(Rectangle())
+        .animation(
+            .easeOut(duration: 0.25),
+            value: item.showsCompletionPoints
+        )
     }
 
     private var taskDetails: some View {
@@ -76,14 +96,30 @@ struct HomeTimelineSessionCard: View {
 
     @ViewBuilder
     private var pointsLabel: some View {
-        if item.points > 0 {
-            Text(item.laneCount == 1 ? "+\(item.points) pts" : "+\(item.points)")
-                .font(AppFonts.captionHeavy)
-                .foregroundStyle(cardColor)
-                .lineLimit(1)
+        Text(
+            item.laneCount == 1
+                ? "+\(item.points) pts"
+                : "+\(item.points)"
+        )
+        .font(AppFonts.captionHeavy)
+        .foregroundStyle(cardColor)
+        .lineLimit(1)
+        .opacity(
+            item.showsCompletionPoints && item.points > 0
+                ? 1
+                : 0
+        )
+        .animation(
+            .easeOut(duration: 0.25),
+            value: item.showsCompletionPoints
+        )
+        .anchorPreference(
+            key: RewardAnchorKey.self,
+            value: .bounds
+        ) {
+            ["session-points-\(item.id.uuidString)": $0]
         }
     }
-
     private var dragHandle: some View {
         VStack(spacing: 3) {
             ForEach(0..<3, id: \.self) { _ in

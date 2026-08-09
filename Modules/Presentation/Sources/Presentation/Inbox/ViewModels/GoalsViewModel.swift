@@ -37,9 +37,105 @@ public final class GoalsViewModel {
             state.searchQuery = query
         case let .selectGoal(id):
             onSelectGoal?(id)
+        case let .loadGoalTasks(goalID):
+            loadGoalTasks(goalID: goalID)
         case .dismissError:
             state.failureMessage = nil
+            state.goalTasksFailureMessage = nil
         }
+    }
+
+    public func loadGoalTasks(goalID: UUID) {
+        state.isLoadingGoalTasks = true
+        state.goalTasksFailureMessage = nil
+        state.selectedGoalTasks = []
+        state.orderedGoalTasks = []
+
+        let fetchGoalTasks = useCases.fetchGoalTasks
+
+        Task { [weak self] in
+            do {
+                let tasks = try await fetchGoalTasks.execute(goalID: goalID)
+                guard let self else { return }
+                self.state.isLoadingGoalTasks = false
+                self.state.selectedGoalTasks = tasks
+                self.state.orderedGoalTasks = Self.buildOrderedItems(from: tasks)
+            } catch {
+                guard let self else { return }
+                self.state.isLoadingGoalTasks = false
+                self.state.goalTasksFailureMessage = error.localizedDescription
+            }
+        }
+    }
+
+    
+
+    private static func buildOrderedItems(from tasks: [AwanTask]) -> [GoalDetailTaskItem] {
+        let knownIDs = Set(tasks.map(\.id))
+        let taskByID = Dictionary(uniqueKeysWithValues: tasks.map { ($0.id, $0) })
+      
+        let originalIndex = Dictionary(uniqueKeysWithValues: tasks.enumerated().map { ($0.element.id, $0.offset) })
+
+        
+        let localDepIDs: [UUID: Set<UUID>] = Dictionary(
+            uniqueKeysWithValues: tasks.map { task in
+                (task.id, task.dependencyIDs.filter { knownIDs.contains($0) })
+            }
+        )
+
+       
+        var dependents: [UUID: [UUID]] = [:]
+        for task in tasks {
+            for depID in localDepIDs[task.id, default: []] {
+                dependents[depID, default: []].append(task.id)
+            }
+        }
+
+      
+        var inDegree: [UUID: Int] = Dictionary(
+            uniqueKeysWithValues: tasks.map { ($0.id, localDepIDs[$0.id, default: []].count) }
+        )
+
+        var queue: [AwanTask] = tasks
+            .filter { (inDegree[$0.id] ?? 0) == 0 }
+            .sorted { (originalIndex[$0.id] ?? 0) < (originalIndex[$1.id] ?? 0) }
+
+        var ordered: [AwanTask] = []
+
+        while !queue.isEmpty {
+            let task = queue.removeFirst()
+            ordered.append(task)
+
+           
+            let newlyEligible = (dependents[task.id] ?? [])
+                .compactMap { taskByID[$0] }
+                .filter {
+                    inDegree[$0.id, default: 0] -= 1
+                    return inDegree[$0.id] == 0
+                }
+                .sorted { (originalIndex[$0.id] ?? 0) < (originalIndex[$1.id] ?? 0) }
+            queue.append(contentsOf: newlyEligible)
+        }
+
+       
+        if ordered.count != tasks.count {
+            ordered = tasks
+        }
+
+        let result = ordered.enumerated().map { index, sortedTask -> GoalDetailTaskItem in
+            let localDeps = localDepIDs[sortedTask.id, default: []]
+            let depNames = localDeps
+                .sorted { (originalIndex[$0] ?? 0) < (originalIndex[$1] ?? 0) }
+                .compactMap { taskByID[$0]?.title }
+            return GoalDetailTaskItem(
+                displayIndex: index + 1,
+                isDependent: !localDeps.isEmpty,
+                dependencyNames: depNames,
+                task: taskByID[sortedTask.id] ?? sortedTask
+            )
+        }
+
+        return result
     }
 
     // MARK: - Private

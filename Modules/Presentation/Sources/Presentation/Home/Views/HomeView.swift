@@ -4,23 +4,26 @@ import SwiftUI
 struct HomeView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @State private var viewModel: HomeViewModel
-
+    @State private var rewardFlightSessionID: UUID?
+    @State private var animatedPoints: Int?
+    @State private var pointsPulse = 0
+    
     init(viewModel: HomeViewModel) {
         _viewModel = State(initialValue: viewModel)
     }
-
+    
     var body: some View {
         let state = viewModel.state
-
+        
         ZStack {
             AppColors.screenBackground.ignoresSafeArea()
-
+            
             if state.failure != nil, state.success == nil {
                 failureView
             } else if let success = state.success {
                 content(state, success: success)
             }
-
+            
             if state.isLoading {
                 ProgressView()
                     .controlSize(.large)
@@ -58,22 +61,67 @@ struct HomeView: View {
         } message: {
             Text(state.failure?.message ?? L10n.Common.pleaseTryAgain)
         }
+        .overlayPreferenceValue(RewardAnchorKey.self) { anchors in
+            GeometryReader { proxy in
+                if let sessionID = rewardFlightSessionID,
+                   let animation = viewModel.state.completionRewardAnimation,
+                   animation.sessionID == sessionID,
+                   let sourceAnchor = anchors[
+                    "session-points-\(sessionID.uuidString)"
+                   ],
+                   let destinationAnchor = anchors["points-badge"] {
+                    
+                    RewardFlightOverlay(
+                        sourceRect: proxy[sourceAnchor],
+                        destinationRect: proxy[destinationAnchor],
+                        points: animation.newPoints - animation.oldPoints,
+                        onArrived: {
+                            animatePoints(
+                                from: animation.oldPoints,
+                                to: animation.newPoints
+                            )
+                        },
+                        onFinished: {
+                            rewardFlightSessionID = nil
+
+                            if let reward = viewModel.state.completionReward,
+                               let transition = reward.streakTransition {
+
+                                coordinator.mainCoordinator.presentStreakCelebration(
+                                    previousStreak: transition.oldValue,
+                                    streak: transition.newValue,
+                                    isNewRecord: reward.maxStreakBroken
+                                )
+
+                                viewModel.send(.dismissCompletionReward)
+                            }
+
+                            viewModel.send(.dismissCompletionRewardAnimation)
+                        }
+                    )
+                    .id(animation.id)
+                }
+            }
+            .allowsHitTesting(false)
+        }
     }
+
 
     private func content(_ state: HomeState, success: HomeSuccessState) -> some View {
         ScrollView {
-            LazyVStack(spacing: 18) {
+            VStack(spacing: 18) {
                 HomeHeaderView(
                     displayName: success.displayName,
                     selectedDay: state.selectedDay,
                     streakCount: success.streakCount,
-                    rewardPoints: success.rewardPoints,
+                    rewardPoints: animatedPoints ?? success.rewardPoints,
                     onOpenCalendar: {
                         coordinator.mainCoordinator.push(.calendar)
                     },
                     onSelectToday: {
                         viewModel.send(.selectDay(.now))
-                    }
+                    },
+                    pointsPulse: pointsPulse,
                 )
 
                 HomeWeekStripView(
@@ -112,7 +160,16 @@ struct HomeView: View {
                             )
                         )
                     },
-                    onTap: { viewModel.send(.presentSession($0))}
+                    onTap: { viewModel.send(.presentSession($0))},
+                    onPointsRewardHidden: { sessionID in
+                        guard let animation = viewModel.state.completionRewardAnimation,
+                              animation.sessionID == sessionID else {
+                            return
+                        }
+
+                        animatedPoints = animation.oldPoints
+                        rewardFlightSessionID = sessionID
+                    }
                 )
             }
             .padding(.horizontal, 16)
@@ -158,6 +215,36 @@ struct HomeView: View {
             set: { if $0 == nil { viewModel.send(.dismissSession) } }
         )
     }
+    private func animatePoints(
+        from oldValue: Int,
+        to newValue: Int
+    ) {
+        Task { @MainActor in
+            let difference = newValue - oldValue
 
+            guard difference > 0 else {
+                animatedPoints = newValue
+                return
+            }
+
+            let steps = min(difference, 20)
+
+            for step in 1...steps {
+                let progress = Double(step) / Double(steps)
+
+                animatedPoints =
+                    oldValue + Int(
+                        Double(difference) * progress
+                    )
+
+                try? await Task.sleep(
+                    for: .milliseconds(15)
+                )
+            }
+
+            animatedPoints = newValue
+            pointsPulse += 1
+        }
+    }
+    
 }
-

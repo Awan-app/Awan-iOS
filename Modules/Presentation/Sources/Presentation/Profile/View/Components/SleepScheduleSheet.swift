@@ -40,6 +40,18 @@ struct SleepScheduleSheet: View {
         return String(format: "%02d:%02d:00", hour, minute)
     }
 
+    private var wakeSleepTimesAreEqual: Bool {
+        WakeSleepScheduleValidator.areTimesEqual(wakeupTime: wakeUpDate, sleepTime: sleepDate)
+    }
+
+    private var availableHours: Int {
+        WakeSleepScheduleValidator.availableHours(wakeupTime: wakeUpDate, sleepTime: sleepDate)
+    }
+
+    private var isSaveDisabled: Bool {
+        !WakeSleepScheduleValidator.isValid(wakeupTime: wakeUpDate, sleepTime: sleepDate)
+    }
+
     var body: some View {
         VStack(spacing: 20) {
             // Header bar
@@ -110,6 +122,14 @@ struct SleepScheduleSheet: View {
                 .padding(.vertical, 4)
             }
 
+            if wakeSleepTimesAreEqual {
+                inlineWarning(text: L10n.Onboarding.wakeSleepSameTimeError)
+            }
+
+            if !wakeSleepTimesAreEqual && availableHours < 9 {
+                inlineWarning(text: L10n.Onboarding.shortActiveDayWarning)
+            }
+
             Spacer()
 
             // 3D Save Button using AppButton
@@ -119,12 +139,37 @@ struct SleepScheduleSheet: View {
                 color: AppColors.accentBlue,
                 size: .large,
                 onTap: {
+                    guard !isSaveDisabled else { return }
                     onSave(formatTime(wakeUpDate), formatTime(sleepDate))
                 }
             )
+            .disabled(isSaveDisabled)
+            .opacity(isSaveDisabled ? 0.6 : 1.0)
         }
         .padding(20)
         .background(AppColors.screenBackground.ignoresSafeArea())
+    }
+
+    private func inlineWarning(text: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 14, weight: .bold))
+                .padding(.top, 1)
+
+            Text(text)
+                .font(AppFonts.caption2Bold)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .foregroundStyle(AppColors.warning)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            AppColors.warning.opacity(0.1),
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
+        .transition(.move(edge: .top).combined(with: .opacity))
     }
 }
 

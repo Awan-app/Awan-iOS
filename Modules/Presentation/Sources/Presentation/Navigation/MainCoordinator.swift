@@ -17,7 +17,8 @@ public final class MainCoordinator: Coordinating {
     public var storePath = NavigationPath()
     public var youPath = NavigationPath()
     public var presentedSheet: MainRoute?
-
+    public var streakCelebration: StreakCelebrationPresentation?
+    
     public init() {}
 
     public func push(_ route: AnyHashable) {
@@ -55,7 +56,22 @@ public final class MainCoordinator: Coordinating {
     public func present(sheet route: MainRoute) {
         presentedSheet = route
     }
+    
+    public func presentStreakCelebration(
+        previousStreak: Int,
+        streak: Int,
+        isNewRecord: Bool
+    ) {
+        streakCelebration = StreakCelebrationPresentation(
+            previousStreak: previousStreak,
+            streak: streak,
+            isNewRecord: isNewRecord
+        )
+    }
 
+    public func dismissStreakCelebration() {
+        streakCelebration = nil
+    }
     private func mutateSelectedPath(_ mutation: (inout NavigationPath) -> Void) {
         switch selectedTab {
         case .home:

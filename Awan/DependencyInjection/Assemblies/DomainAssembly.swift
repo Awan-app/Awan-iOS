@@ -80,6 +80,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(GoalRepository.self, from: resolver)
             )
         }
+        container.register(FetchGoalTasksUseCase.self) { resolver in
+            DefaultFetchGoalTasksUseCase(
+                repository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
         container.register(FetchSessionsUseCase.self) { resolver in
             DefaultFetchSessionsUseCase(
                 repository: Self.resolve(SessionRepository.self, from: resolver)
@@ -158,7 +163,14 @@ struct DomainAssembly: Assembly {
         }
         container.register(SetSessionCompletionUseCase.self) { resolver in
             DefaultSetSessionCompletionUseCase(
-                repository: Self.resolve(SessionRepository.self, from: resolver)
+                sessionRepository: Self.resolve(
+                    SessionRepository.self,
+                    from: resolver
+                ),
+                userProfileRepository: Self.resolve(
+                    UserProfileRepository.self,
+                    from: resolver
+                )
             )
         }
         container.register(DeleteSessionUseCase.self) { resolver in

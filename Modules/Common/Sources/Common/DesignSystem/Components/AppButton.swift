@@ -10,6 +10,7 @@ public struct AppButton: View {
     private let title: String
     private let icon: String?
     private let iconAsset: String?
+    private let iconColor: Color?
     private let color: Color
     private let foregroundColor: Color
     private let borderColor: Color?
@@ -23,6 +24,7 @@ public struct AppButton: View {
         title: String,
         icon: String? = nil,
         iconAsset: String? = nil,
+        iconColor: Color? = nil,
         color: Color,
         foregroundColor: Color = AppColors.onAccent,
         borderColor: Color? = nil,
@@ -35,6 +37,7 @@ public struct AppButton: View {
         self.title = title
         self.icon = icon
         self.iconAsset = iconAsset
+        self.iconColor = iconColor
         self.color = color
         self.foregroundColor = foregroundColor
         self.borderColor = borderColor
@@ -51,8 +54,14 @@ public struct AppButton: View {
                 if let icon {
                     if title.isEmpty {
                         Image(systemName: icon)
+                            .foregroundStyle(iconColor ?? foregroundColor)
                     } else {
-                        Label(title, systemImage: icon)
+                        Label {
+                            Text(title)
+                        } icon: {
+                            Image(systemName: icon)
+                                .foregroundStyle(iconColor ?? foregroundColor)
+                        }
                     }
                 } else if let iconAsset {
                     if title.isEmpty {

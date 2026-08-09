@@ -12,10 +12,12 @@ public struct PresentationFactory {
     private let makeOtpViewModel: (OtpVerificationContext) -> OtpVerificationViewModel
     private let onboardingViewModel: OnboardingViewModel
     private let profileViewModel: ProfileViewModel
+    private let settingsViewModel: SettingsViewModel
     private let dailyZonesViewModel: DailyZonesViewModel
     private let makeUserInfoViewModel: () -> UserInfoViewModel
     private let inboxViewModel: InboxViewModel
-    private let goalsViewModel: GoalsViewModel?
+    private let goalsViewModel: GoalsViewModel
+    private let marketplaceViewModel: MarketplaceViewModel
 
     public init(
         appCoordinator: AppCoordinator,
@@ -28,10 +30,12 @@ public struct PresentationFactory {
         makeOtpViewModel: @escaping (OtpVerificationContext) -> OtpVerificationViewModel,
         onboardingViewModel: OnboardingViewModel,
         profileViewModel: ProfileViewModel,
+        settingsViewModel: SettingsViewModel,
         dailyZonesViewModel: DailyZonesViewModel,
         makeUserInfoViewModel: @escaping () -> UserInfoViewModel,
         inboxViewModel: InboxViewModel,
-        goalsViewModel: GoalsViewModel? = nil
+        goalsViewModel: GoalsViewModel,
+        marketplaceViewModel: MarketplaceViewModel = MarketplaceViewModel()
     ) {
         self.appCoordinator = appCoordinator
         self.authenticationState = authenticationState
@@ -43,10 +47,12 @@ public struct PresentationFactory {
         self.makeOtpViewModel = makeOtpViewModel
         self.onboardingViewModel = onboardingViewModel
         self.profileViewModel = profileViewModel
+        self.settingsViewModel = settingsViewModel
         self.dailyZonesViewModel = dailyZonesViewModel
         self.makeUserInfoViewModel = makeUserInfoViewModel
         self.inboxViewModel = inboxViewModel
         self.goalsViewModel = goalsViewModel
+        self.marketplaceViewModel = marketplaceViewModel
         if self.inboxViewModel.goalsViewModel == nil {
             self.inboxViewModel.goalsViewModel = goalsViewModel
         }
@@ -116,10 +122,18 @@ public struct PresentationFactory {
         InboxView(viewModel: inboxViewModel)
     }
 
+    func makeMarketplaceView() -> some View {
+        MarketplaceView(viewModel: marketplaceViewModel)
+    }
+
     func makeInboxTaskDetailView(taskID: UUID) -> some View {
         // Placeholder until inbox task detail is implemented.
         EmptyView()
             .accessibilityIdentifier("inbox-task-detail-\(taskID.uuidString)")
+    }
+
+    func makeGoalDetailView(goalID: UUID) -> GoalDetailView {
+        GoalDetailView(goalID: goalID, viewModel: goalsViewModel)
     }
 
     func makeYouView() -> some View {
@@ -137,10 +151,19 @@ public struct PresentationFactory {
     }
 
     public func makeProfileMainView() -> some View {
-        ProfileMainView(
-            viewModel: profileViewModel,
-            dailyZonesViewModel: dailyZonesViewModel
-        )
+        ProfileMainView(viewModel: profileViewModel)
+    }
+
+    func makePersonalizationView() -> some View {
+        PersonalizationView(viewModel: settingsViewModel)
+    }
+
+    func makeSettingsView() -> some View {
+        SettingsView()
+    }
+
+    func makeAboutAwanView() -> some View {
+        AboutAwanView()
     }
 
     func makeDailyZonesView() -> some View {

@@ -41,50 +41,24 @@ public final class OnboardingViewModel: ZoneManaging {
     public var sleepTime: Date
 
     public var availableHours: Int {
-        guard case let .valid(durationMinutes) = wakeSleepTimeValidation else {
-            return 0
-        }
-        return durationMinutes / 60
+        WakeSleepScheduleValidator.availableHours(wakeupTime: wakeupTime, sleepTime: sleepTime)
     }
 
     // MARK: - Wake/Sleep validation
 
     /// `true` when wakeup and sleep represent the same hour and minute.
     public var wakeSleepTimesAreEqual: Bool {
-        wakeSleepTimeValidation == .sameTime
+        WakeSleepScheduleValidator.areTimesEqual(wakeupTime: wakeupTime, sleepTime: sleepTime)
     }
 
+    /// `true` when sleep time is earlier in the day than wakeup time.
     public var sleepTimeIsBeforeWakeupTime: Bool {
-        wakeSleepTimeValidation == .sleepBeforeWake
+        WakeSleepScheduleValidator.isSleepTimeBeforeWakeupTime(wakeupTime: wakeupTime, sleepTime: sleepTime)
     }
 
+    /// `true` when wake and sleep times are valid (not equal, and range is positive).
     public var wakeSleepTimeRangeIsValid: Bool {
-        if case .valid = wakeSleepTimeValidation {
-            return true
-        }
-        return false
-    }
-
-    private var wakeSleepTimeValidation: WakeSleepTimeValidation {
-        let calendar = Calendar.current
-        let wakeComponents = calendar.dateComponents([.hour, .minute], from: wakeupTime)
-        let sleepComponents = calendar.dateComponents([.hour, .minute], from: sleepTime)
-
-        guard
-            let wakeHour = wakeComponents.hour,
-            let wakeMinute = wakeComponents.minute,
-            let sleepHour = sleepComponents.hour,
-            let sleepMinute = sleepComponents.minute,
-            let wake = try? LocalTime(hour: wakeHour, minute: wakeMinute),
-            let sleep = try? LocalTime(hour: sleepHour, minute: sleepMinute)
-        else {
-            return .sameTime
-        }
-
-        return WakeSleepTimeValidator().validate(
-            wakeupTime: wake,
-            sleepTime: sleep
-        )
+        WakeSleepScheduleValidator.isTimeRangeValid(wakeupTime: wakeupTime, sleepTime: sleepTime)
     }
 
     // MARK: - Suggested Zones
@@ -102,9 +76,12 @@ public final class OnboardingViewModel: ZoneManaging {
         }
     }
 
+    public static let sessionDurations = [10, 20, 30, 40, 50, 60, 75, 90, 105, 120, 150, 180]
+
     // MARK: - Task Length
 
-    public var focusDurationIndex: Int = 2
+    public var focusDurationIndex: Int = 5 // Defaults to 60 minutes
+    public var customDurationText: String = ""
 
     // MARK: - Task Simulation
 
@@ -354,15 +331,22 @@ public final class OnboardingViewModel: ZoneManaging {
         let birthDate = calendar.date(
             from: DateComponents(year: 2000, month: 1, day: 1)
         ) ?? Date(timeIntervalSince1970: 946_684_800)
-        let sessionDurations = [30, 45, 60, 90, 120, 180]
-        let durationIndex = min(max(focusDurationIndex, 0), sessionDurations.count - 1)
+        let durationIndex = min(max(focusDurationIndex, 0), Self.sessionDurations.count - 1)
+
+        let finalDuration: Int
+        if !customDurationText.isEmpty, let custom = Int(customDurationText), custom >= 10, custom <= 180 {
+            finalDuration = custom
+        } else {
+            let durationIndex = min(max(focusDurationIndex, 0), Self.sessionDurations.count - 1)
+            finalDuration = Self.sessionDurations[durationIndex]
+        }
 
         return OnboardingDraft(
             firstName: firstName,
             lastName: lastName,
             birthDate: birthDate,
             timezone: TimeZone.current.identifier,
-            preferredSessionDuration: sessionDurations[durationIndex],
+            preferredSessionDuration: finalDuration,
             bufferBetweenSessions: 10,
             wakeupTime: wakeupTime,
             sleepTime: sleepTime

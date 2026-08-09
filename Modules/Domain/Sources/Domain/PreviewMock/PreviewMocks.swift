@@ -304,7 +304,7 @@ public struct MockSetSessionLockUseCase: SetSessionLockUseCase {
 
 public struct MockSetSessionCompletionUseCase: SetSessionCompletionUseCase {
     public init() {}
-    public func execute(sessionID: UUID, isCompleted: Bool) async throws -> Session {
+    public func execute(sessionID: UUID, isCompleted: Bool) async throws -> SetSessionCompletionResult {
         fatalError()
     }
 }

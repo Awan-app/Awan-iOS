@@ -23,7 +23,8 @@ struct HomeTimelineItem: Identifiable, Hashable {
     let status: Session.Status
     let lane: Int
     let laneCount: Int
-
+    let showsCompletionPoints: Bool
+    
     var durationMinutes: Int {
         max(1, Int(end.timeIntervalSince(start) / 60))
     }
@@ -60,6 +61,8 @@ struct HomeState {
     var success: HomeSuccessState?
     var failure: HomeFailureState?
     var selectedDay: Date
+    var completionReward: HomeCompletionRewardState?
+    var completionRewardAnimation: HomeCompletionRewardAnimation?
     var selectedSessionID: UUID?
     var isMutating: Bool
    
@@ -79,6 +82,7 @@ struct HomeState {
             success: nil,
             failure: nil,
             selectedDay: selectedDay,
+            completionReward: nil,
             selectedSessionID: nil,
             isMutating: false
         )
@@ -107,4 +111,23 @@ struct HomeSuccessState {
     let timelineBedtime: Date
     let timelineZones: [HomeTimelineZoneItem]
     let timelineItems: [HomeTimelineItem]
+}
+
+struct HomeCompletionRewardState: Equatable {
+    let pointsAwarded: Int?
+    let streakTransition: HomeStreakTransition?
+    let maxStreakBroken: Bool
+}
+
+struct HomeStreakTransition: Equatable {
+    let oldValue: Int
+    let newValue: Int
+}
+
+struct HomeCompletionRewardAnimation: Equatable, Identifiable {
+    let id = UUID()
+    let sessionID: UUID
+
+    let oldPoints: Int
+    let newPoints: Int
 }

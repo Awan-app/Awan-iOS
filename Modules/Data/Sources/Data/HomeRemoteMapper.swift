@@ -84,7 +84,7 @@ enum HomeRemoteMapper {
         _ dto: SessionResponseDTO,
         timeZoneID: String
     ) throws -> Session {
-        Session(
+        return Session(
             id: dto.id,
             taskID: dto.taskID,
             zoneID: dto.zoneId,
@@ -93,7 +93,8 @@ enum HomeRemoteMapper {
                 end: parseDateTime(dto.end, timeZoneID: timeZoneID)
             ),
             blocking: dto.locked,
-            status: try sessionStatus(dto.status)
+            status: try sessionStatus(dto.status),
+            firstCompletedAt: try dto.firstCompletedAt.map(parseISO8601Date)
         )
     }
 
@@ -276,5 +277,25 @@ enum HomeRemoteMapper {
         formatter.timeZone = TimeZone(identifier: timeZoneID) ?? .current
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         return formatter
+    }
+    static func completionReward(
+        _ dto: SessionCompletionRewardDTO
+    ) -> SessionCompletionReward {
+        SessionCompletionReward(
+            points: .init(
+                awarded: dto.points.awarded,
+                amount: dto.points.amount,
+                oldValue: dto.points.oldValue,
+                newValue: dto.points.newValue
+            ),
+            streak: .init(
+                updated: dto.streak.updated,
+                oldValue: dto.streak.oldValue,
+                newValue: dto.streak.newValue,
+                maxStreakBroken: dto.streak.maxStreakBroken,
+                maxStreakOld: dto.streak.maxStreakOld,
+                maxStreakNew: dto.streak.maxStreakNew
+            )
+        )
     }
 }

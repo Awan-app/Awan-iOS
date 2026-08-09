@@ -30,9 +30,7 @@ public struct GoalProgressItem: Identifiable, Hashable, Sendable {
     public let id: UUID
     public let title: String
     public let description: String?
-    /// Formatted as "Dec 31" or nil
     public let deadlineText: String?
-    /// 0.0–1.0; always 0.0 when totalCount == 0
     public let progressFraction: Double
     public let completedCount: Int
     public let totalCount: Int
@@ -59,5 +57,27 @@ public struct GoalProgressItem: Identifiable, Hashable, Sendable {
         self.totalCount = totalCount
         self.breakdown = breakdown
         self.rawGoal = rawGoal
+    }
+}
+
+
+public struct GoalDetailTaskItem: Identifiable, Equatable, Sendable {
+    public let displayIndex: Int
+    public let isDependent: Bool
+    public let dependencyNames: [String]
+    public let task: AwanTask
+
+    public var id: UUID { task.id }
+
+    public init(
+        displayIndex: Int,
+        isDependent: Bool,
+        dependencyNames: [String],
+        task: AwanTask
+    ) {
+        self.displayIndex = displayIndex
+        self.isDependent = isDependent
+        self.dependencyNames = dependencyNames
+        self.task = task
     }
 }

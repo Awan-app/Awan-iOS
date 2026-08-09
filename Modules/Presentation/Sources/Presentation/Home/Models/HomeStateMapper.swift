@@ -72,7 +72,8 @@ struct HomeStateMapper {
                 blocking: session.blocking,
                 status: session.status,
                 lane: placement.lane,
-                laneCount: placement.laneCount
+                laneCount: placement.laneCount,
+                showsCompletionPoints: session.firstCompletedAt == nil
             )
         }
 

@@ -17,12 +17,17 @@ public protocol RemoteSessionDataSourceProtocol: Sendable {
     func getSession(sessionID: UUID) async throws -> SessionResponseDTO
 
     func updateSession(sessionID: UUID, request: UpdateSessionRequestDTO) async throws -> SessionResponseDTO
-    func updateSessionStatus(sessionID: UUID, status: String) async throws -> SessionResponseDTO
     func lockSession(sessionID: UUID) async throws -> SessionResponseDTO
     func unlockSession(sessionID: UUID) async throws -> SessionResponseDTO
     func deleteSession(sessionID: UUID) async throws
     func createTaskWithSessions(request: CreateTaskWithSessionsRequestDTO) async throws -> TaskWithSessionsResponseDTO
     func getTaskSessions(taskID: UUID) async throws -> [SessionResponseDTO]
+    func completeSession(
+        sessionID: UUID
+    ) async throws -> SessionCompleteResponseDTO
+    func uncompleteSession(
+        sessionID: UUID
+    ) async throws -> SessionResponseDTO
 }
 
 public final class RemoteSessionDataSource: RemoteSessionDataSourceProtocol {
@@ -58,10 +63,6 @@ public final class RemoteSessionDataSource: RemoteSessionDataSourceProtocol {
         try await networkService.request(SessionEndpoint.updateSession(sessionID: sessionID, request))
     }
 
-    public func updateSessionStatus(sessionID: UUID, status: String) async throws -> SessionResponseDTO {
-        try await networkService.request(SessionEndpoint.updateSessionStatus(sessionID: sessionID, status: status))
-    }
-
     public func lockSession(sessionID: UUID) async throws -> SessionResponseDTO {
         try await networkService.request(SessionEndpoint.lockSession(sessionID: sessionID))
     }
@@ -82,5 +83,20 @@ public final class RemoteSessionDataSource: RemoteSessionDataSourceProtocol {
 
     public func getTaskSessions(taskID: UUID) async throws -> [SessionResponseDTO] {
         try await networkService.request(SessionEndpoint.getTaskSessions(taskID: taskID))
+    }
+    public func completeSession(
+        sessionID: UUID
+    ) async throws -> SessionCompleteResponseDTO {
+        try await networkService.request(
+            SessionEndpoint.completeSession(sessionID: sessionID)
+        )
+    }
+
+    public func uncompleteSession(
+        sessionID: UUID
+    ) async throws -> SessionResponseDTO {
+        try await networkService.request(
+            SessionEndpoint.uncompleteSession(sessionID: sessionID)
+        )
     }
 }
