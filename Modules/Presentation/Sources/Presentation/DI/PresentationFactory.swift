@@ -56,9 +56,6 @@ public struct PresentationFactory {
         self.inboxViewModel = inboxViewModel
         self.goalsViewModel = goalsViewModel
         self.marketplaceViewModel = marketplaceViewModel
-        if self.inboxViewModel.goalsViewModel == nil {
-            self.inboxViewModel.goalsViewModel = goalsViewModel
-        }
     }
 
     public func makeAppRootView() -> some View {
@@ -131,7 +128,10 @@ public struct PresentationFactory {
     }
 
     func makeInboxView() -> some View {
-        InboxView(viewModel: inboxViewModel)
+        InboxView(
+            viewModel: inboxViewModel,
+            goalsViewModel: goalsViewModel
+        )
     }
 
     func makeMarketplaceView() -> some View {

@@ -541,6 +541,12 @@ private actor RecordingRemoteTaskDataSource: RemoteTaskDataSource {
     ) async throws -> TaskInfoResponseDTO {
         throw RepositoryWriteTestError.remoteFailure
     }
+    func completeTask(taskID: UUID) async throws -> TaskCompleteResponseDTO {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+    func uncompleteTask(taskID: UUID) async throws -> TaskInfoResponseDTO {
+        throw RepositoryWriteTestError.remoteFailure
+    }
     func deleteTask(taskID: UUID, cascade: Bool) async throws {}
     func addDependency(taskID: UUID, request: AddDependencyRequestDTO) async throws {}
     func removeDependency(taskID: UUID, dependsOnTaskID: UUID) async throws {}
@@ -579,6 +585,14 @@ private struct UnavailableRemoteTaskDataSource: RemoteTaskDataSource {
         taskID: UUID,
         request: MoveTaskRequestDTO
     ) async throws -> TaskInfoResponseDTO {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func completeTask(taskID: UUID) async throws -> TaskCompleteResponseDTO {
+        throw RepositoryWriteTestError.remoteFailure
+    }
+
+    func uncompleteTask(taskID: UUID) async throws -> TaskInfoResponseDTO {
         throw RepositoryWriteTestError.remoteFailure
     }
 

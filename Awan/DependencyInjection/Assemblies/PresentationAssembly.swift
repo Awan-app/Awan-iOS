@@ -163,7 +163,7 @@ struct PresentationAssembly: Assembly {
         container.register(InboxUseCases.self) { resolver in
             InboxUseCases(
                 fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver),
-                completeTask: Self.resolve(CompleteTaskSessionsUseCase.self, from: resolver),
+                setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver),
                 deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver)
             )
         }
@@ -190,9 +190,8 @@ struct PresentationAssembly: Assembly {
 
         container.register(InboxViewModel.self) { resolver in
             let useCases = Self.resolve(InboxUseCases.self, from: resolver)
-            let goalsVM = Self.resolve(GoalsViewModel.self, from: resolver)
             return MainActor.assumeIsolated {
-                InboxViewModel(useCases: useCases, goalsViewModel: goalsVM)
+                InboxViewModel(useCases: useCases)
             }
         }
         .inObjectScope(.container)

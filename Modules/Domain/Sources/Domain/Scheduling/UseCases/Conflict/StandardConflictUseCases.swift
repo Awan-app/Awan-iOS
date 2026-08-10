@@ -294,6 +294,7 @@ public struct DefaultMakeTaskIndependentUseCase: MakeTaskIndependentUseCase {
                 title: task.title,
                 description: task.description,
                 status: task.status,
+                completedAt: task.completedAt,
                 goalID: task.goalID,
                 duration: task.duration,
                 isSplittable: task.isSplittable,

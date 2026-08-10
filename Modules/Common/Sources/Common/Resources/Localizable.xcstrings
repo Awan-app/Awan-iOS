@@ -2268,36 +2268,36 @@
         }
       }
     },
-    "home.status_in_progress": {
+    "home.status_active": {
       "extractionState": "manual",
       "localizations": {
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "قيد التنفيذ"
+            "value": "نشطة"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "In progress"
+            "value": "Active"
           }
         }
       }
     },
-    "home.status_pending": {
+    "home.status_drafted": {
       "extractionState": "manual",
       "localizations": {
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "قيد الانتظار"
+            "value": "مسودة"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pending"
+            "value": "Drafted"
           }
         }
       }
@@ -2859,6 +2859,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d sessions"
+          }
+        }
+      }
+    },
+    "inbox.points_claimed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم التحصيل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claimed"
           }
         }
       }

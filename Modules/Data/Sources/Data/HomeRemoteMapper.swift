@@ -44,7 +44,11 @@ enum HomeRemoteMapper {
             id: dto.id,
             title: dto.title,
             description: dto.description,
-            status: taskStatus(dto.status),
+            status: taskStatus(
+                dto.status,
+                completedAt: dto.completedAt
+            ),
+            completedAt: try dto.completedAt.map(parseISO8601Date),
             goalID: dto.goalID,
             duration: TaskDuration(minutes: dto.estimatedDuration ?? defaultDuration),
             isSplittable: dto.isSplittable,
@@ -165,11 +169,17 @@ enum HomeRemoteMapper {
         dateTimeFormatter(timeZoneID: timeZoneID).string(from: date)
     }
 
-    private static func taskStatus(_ raw: String) throws -> TaskStatus {
-        switch raw.uppercased() {
-        case "DRAFTED", "ACTIVE", "SCHEDULED", "PENDING": .pending
-        case "IN_PROGRESS": .inProgress
-        case "COMPLETED": .completed
+    private static func taskStatus(
+        _ raw: String,
+        completedAt: String?
+    ) throws -> TaskStatus {
+        if completedAt != nil {
+            return .completed
+        }
+
+        return switch raw.uppercased() {
+        case "DRAFTED": .drafted
+        case "ACTIVE", "SCHEDULED", "PENDING", "IN_PROGRESS", "COMPLETED": .active
         case "CANCELLED": .cancelled
         default: throw RemoteDomainMappingError.invalidValue("task.status.\(raw)")
         }
@@ -279,9 +289,9 @@ enum HomeRemoteMapper {
         return formatter
     }
     static func completionReward(
-        _ dto: SessionCompletionRewardDTO
-    ) -> SessionCompletionReward {
-        SessionCompletionReward(
+        _ dto: CompletionRewardDTO
+    ) -> CompletionReward {
+        CompletionReward(
             points: .init(
                 awarded: dto.points.awarded,
                 amount: dto.points.amount,

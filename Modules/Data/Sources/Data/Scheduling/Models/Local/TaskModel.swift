@@ -7,6 +7,7 @@ final class TaskModel {
     var title: String
     var taskDescription: String?
     var statusRaw: String
+    var completedAt: Date?
     var goalID: UUID?
     // Retained only so existing stores can migrate without losing cached data.
     var zoneID: UUID?
@@ -23,6 +24,7 @@ final class TaskModel {
         title: String,
         taskDescription: String?,
         statusRaw: String,
+        completedAt: Date? = nil,
         goalID: UUID?,
         zoneID: UUID?,
         categoryID: UUID? = nil,
@@ -37,6 +39,7 @@ final class TaskModel {
         self.title = title
         self.taskDescription = taskDescription
         self.statusRaw = statusRaw
+        self.completedAt = completedAt
         self.goalID = goalID
         self.zoneID = zoneID
         self.categoryID = categoryID

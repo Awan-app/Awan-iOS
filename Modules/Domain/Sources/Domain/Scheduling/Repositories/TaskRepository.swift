@@ -9,6 +9,9 @@ public protocol TaskRepository: Sendable {
     func observeInboxTasks() -> AnyPublisher<[AwanTask], Error>
     func observeTasks(for date: Date) -> AnyPublisher<[AwanTask], Error>
     func updateTask(_ task: AwanTask) async throws
+    func completeTask(id: UUID) async throws -> TaskCompletionResult
+    func uncompleteTask(id: UUID) async throws -> AwanTask
+    func refreshTask(id: UUID) async throws -> AwanTask
     func deleteTask(id: UUID) async throws
     func deleteAllTasks() async throws
     func addDependency(taskID: UUID, dependsOnID: UUID) async throws
