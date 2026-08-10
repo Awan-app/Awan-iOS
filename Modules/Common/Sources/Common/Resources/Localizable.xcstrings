@@ -3703,13 +3703,13 @@
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "المتابعة باستخدام Google"
+            "value": "تسجيل الدخول باستخدام Google"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Continue with Google"
+            "value": "Sign in with Google"
           }
         }
       }
@@ -3761,6 +3761,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "You're offline — we'll send the code when you reconnect."
+          }
+        }
+      }
+    },
+    "login.error.empty_email": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يرجى إدخال بريدك الإلكتروني."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please enter your email."
+          }
+        }
+      }
+    },
+    "login.error.invalid_email": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يرجى إدخال عنوان بريد إلكتروني صالح."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please enter a valid email address."
+          }
+        }
+      }
+    },
+    "login.error.network_offline": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الاتصال بالشبكة غير متوفر. يرجى المحاولة مرة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network connection is offline. Please try again."
           }
         }
       }

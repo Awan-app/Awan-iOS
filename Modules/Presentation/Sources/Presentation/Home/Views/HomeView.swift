@@ -127,7 +127,7 @@ struct HomeView: View {
                     onSelectToday: {
                         viewModel.send(.selectDay(.now))
                     },
-                    pointsPulse: pointsPulse,
+                    pointsPulse: pointsPulse
                 )
 
                 HomeWeekStripView(

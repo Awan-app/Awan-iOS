@@ -220,7 +220,10 @@ struct PresentationAssembly: Assembly {
                 ProfileViewModel(
                     getUserProfileUseCase: useCase,
                     fetchZonesUseCase: fetchZonesUseCase,
-                    logoutUseCase: logoutUseCase
+                    logoutUseCase: logoutUseCase,
+                    onLogout: {
+                        GoogleSignInHelper.signOut()
+                    }
                 )
             }
         }

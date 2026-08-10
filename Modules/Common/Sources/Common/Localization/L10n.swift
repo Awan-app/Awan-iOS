@@ -239,6 +239,15 @@ public enum L10n {
         public static var offlineError: String {
             L10n.currentBundle.localizedString(forKey: "login.error.offline", value: nil, table: "Localizable")
         }
+        public static var emptyEmailError: String {
+            L10n.currentBundle.localizedString(forKey: "login.error.empty_email", value: nil, table: "Localizable")
+        }
+        public static var invalidEmailError: String {
+            L10n.currentBundle.localizedString(forKey: "login.error.invalid_email", value: nil, table: "Localizable")
+        }
+        public static var networkOfflineError: String {
+            L10n.currentBundle.localizedString(forKey: "login.error.network_offline", value: nil, table: "Localizable")
+        }
     }
 
     public enum OtpVerification {

@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct RewardAnchorKey: @MainActor PreferenceKey {
-    @MainActor static var defaultValue: [String: Anchor<CGRect>] = [:]
+struct RewardAnchorKey: PreferenceKey {
+    static let defaultValue: [String: Anchor<CGRect>] = [:]
 
     static func reduce(
         value: inout [String: Anchor<CGRect>],
