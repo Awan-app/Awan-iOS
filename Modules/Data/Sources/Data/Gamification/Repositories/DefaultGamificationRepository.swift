@@ -25,7 +25,13 @@ public final class DefaultGamificationRepository: GamificationRepository {
     public func buyStoreItem(itemID: String) async throws -> StorePurchase {
         do {
             let dto = try await remoteDataSource.buyStoreItem(itemID: itemID)
-            return StorePurchaseMapper.map(dto)
+            let purchase = StorePurchaseMapper.map(dto)
+
+            if let progress = try? await remoteDataSource.getProgress() {
+                try? await localProfileDataSource.updatePoints(progress.points)
+            }
+
+            return purchase
         } catch {
             throw map(error)
         }

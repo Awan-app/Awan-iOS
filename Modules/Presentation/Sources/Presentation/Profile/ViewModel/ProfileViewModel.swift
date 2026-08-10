@@ -29,6 +29,7 @@ public final class ProfileViewModel {
     private let fetchZonesUseCase: FetchZonesUseCase
     private let logoutUseCase: LogoutUseCase
     @ObservationIgnored private var zonesCancellable: AnyCancellable?
+    @ObservationIgnored private var profileCancellable: AnyCancellable?
 
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
@@ -49,14 +50,8 @@ public final class ProfileViewModel {
 
         do {
             let profile = try await getUserProfileUseCase.execute()
-            userName = [profile.firstName, profile.lastName]
-                .filter { !$0.isEmpty }
-                .joined(separator: " ")
-            userEmail = profile.email
-            points = profile.points
-            streak = profile.streak
-            maxStreak = profile.maxStreak
-            loadState = .content
+            updateProfileState(with: profile)
+            observeUserProfile()
             observeDailyZones()
         } catch is CancellationError {
             return
@@ -81,6 +76,35 @@ public final class ProfileViewModel {
         }
 
         isLoggingOut = false
+    }
+
+    private func observeUserProfile() {
+        profileCancellable?.cancel()
+        profileCancellable = getUserProfileUseCase.observe()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    guard let self else { return }
+                    if case .failure = completion, self.loadState != .content {
+                        self.loadState = .failure
+                    }
+                },
+                receiveValue: { [weak self] profile in
+                    guard let self else { return }
+                    self.updateProfileState(with: profile)
+                }
+            )
+    }
+
+    private func updateProfileState(with profile: UserProfile) {
+        userName = [profile.firstName, profile.lastName]
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+        userEmail = profile.email
+        points = profile.points
+        streak = profile.streak
+        maxStreak = profile.maxStreak
+        loadState = .content
     }
 
     private func observeDailyZones() {
