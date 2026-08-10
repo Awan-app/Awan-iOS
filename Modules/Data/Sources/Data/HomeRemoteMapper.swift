@@ -167,7 +167,7 @@ enum HomeRemoteMapper {
 
     private static func taskStatus(_ raw: String) throws -> TaskStatus {
         switch raw.uppercased() {
-        case "SCHEDULED", "PENDING": .pending
+        case "DRAFTED", "ACTIVE", "SCHEDULED", "PENDING": .pending
         case "IN_PROGRESS": .inProgress
         case "COMPLETED": .completed
         case "CANCELLED": .cancelled

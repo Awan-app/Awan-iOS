@@ -122,15 +122,21 @@ public final class GoalsViewModel {
             ordered = tasks
         }
 
+        let displayIndexByTaskID = Dictionary(
+            uniqueKeysWithValues: ordered.enumerated().map {
+                ($0.element.id, $0.offset + 1)
+            }
+        )
+
         let result = ordered.enumerated().map { index, sortedTask -> GoalDetailTaskItem in
             let localDeps = localDepIDs[sortedTask.id, default: []]
-            let depNames = localDeps
-                .sorted { (originalIndex[$0] ?? 0) < (originalIndex[$1] ?? 0) }
-                .compactMap { taskByID[$0]?.title }
+            let dependencyIndices = localDeps
+                .compactMap { displayIndexByTaskID[$0] }
+                .sorted()
             return GoalDetailTaskItem(
                 displayIndex: index + 1,
                 isDependent: !localDeps.isEmpty,
-                dependencyNames: depNames,
+                dependencyIndices: dependencyIndices,
                 task: taskByID[sortedTask.id] ?? sortedTask
             )
         }
