@@ -4,7 +4,8 @@ import Foundation
 enum GoalDecompositionEndpoint: APIEndpoint {
     case sendMessage(SendGoalDecompositionMessageRequestDTO)
     case confirm(sessionID: UUID)
-    case schedule(ScheduleGoalRequestDTO)
+    case requestSchedule(ScheduleGoalRequestDTO)
+    case confirmSchedule(ConfirmGoalScheduleRequestDTO)
 
     var baseURL: String {
         NetworkConfiguration.apiBaseURL
@@ -16,8 +17,10 @@ enum GoalDecompositionEndpoint: APIEndpoint {
             "/ai/goal-decompose"
         case .confirm(let sessionID):
             "/ai/goal-decompose/\(sessionID.uuidString)/confirm"
-        case .schedule:
-            "/schedule"
+        case .requestSchedule:
+            "/ai/schedule"
+        case .confirmSchedule:
+            "/ai/schedule/confirm"
         }
     }
 
@@ -35,7 +38,9 @@ enum GoalDecompositionEndpoint: APIEndpoint {
             request
         case .confirm:
             nil
-        case .schedule(let request):
+        case .requestSchedule(let request):
+            request
+        case .confirmSchedule(let request):
             request
         }
     }

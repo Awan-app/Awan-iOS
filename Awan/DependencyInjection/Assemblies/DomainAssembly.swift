@@ -260,8 +260,16 @@ struct DomainAssembly: Assembly {
                 )
             )
         }
-        container.register(ScheduleCreatedGoalUseCase.self) { resolver in
-            DefaultScheduleCreatedGoalUseCase(
+        container.register(RequestGoalScheduleProposalUseCase.self) { resolver in
+            DefaultRequestGoalScheduleProposalUseCase(
+                repository: Self.resolve(
+                    GoalDecompositionRepository.self,
+                    from: resolver
+                )
+            )
+        }
+        container.register(ConfirmGoalScheduleUseCase.self) { resolver in
+            DefaultConfirmGoalScheduleUseCase(
                 repository: Self.resolve(
                     GoalDecompositionRepository.self,
                     from: resolver
