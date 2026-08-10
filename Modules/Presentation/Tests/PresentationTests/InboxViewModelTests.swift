@@ -170,14 +170,14 @@ final class InboxViewModelTests: XCTestCase {
 
     // MARK: - Task Actions
 
-    func testCompleteTask_callsCompleteTaskSessionsUseCase() async throws {
+    func testCompleteTask_callsSetTaskCompletionUseCase() async throws {
         let task = try makeInboxTask(derivedStatus: .active)
         let stub = InboxUseCaseStub(tasks: [task])
-        let mockComplete = MockCompleteTaskSessionsUseCase()
+        let mockComplete = MockSetTaskCompletionUseCase()
         let viewModel = InboxViewModel(
             useCases: InboxUseCases(
                 fetchInboxTasks: stub,
-                completeTask: mockComplete
+                setTaskCompletion: mockComplete
             ),
             mapper: InboxStateMapper()
         )
@@ -278,13 +278,47 @@ private struct InboxUseCaseStub: FetchInboxTasksUseCase {
     }
 }
 
-private final class MockCompleteTaskSessionsUseCase: CompleteTaskSessionsUseCase, @unchecked Sendable {
+private final class MockSetTaskCompletionUseCase: SetTaskCompletionUseCase, @unchecked Sendable {
     var completedTaskID: UUID?
     var lastIsCompleted: Bool?
 
-    func execute(taskID: UUID, isCompleted: Bool) async throws {
+    func execute(
+        taskID: UUID,
+        isCompleted: Bool
+    ) async throws -> SetTaskCompletionResult {
         self.completedTaskID = taskID
         self.lastIsCompleted = isCompleted
+        let task = AwanTask(
+            id: taskID,
+            status: isCompleted ? .completed : .drafted,
+            duration: try TaskDuration(minutes: 30),
+            isSplittable: false
+        )
+        if !isCompleted {
+            return .uncompleted(task)
+        }
+        return .completed(
+            TaskCompletionResult(
+                task: task,
+                completedSessions: [],
+                reward: CompletionReward(
+                    points: .init(
+                        awarded: false,
+                        amount: 0,
+                        oldValue: 0,
+                        newValue: 0
+                    ),
+                    streak: .init(
+                        updated: false,
+                        oldValue: 0,
+                        newValue: 0,
+                        maxStreakBroken: false,
+                        maxStreakOld: 0,
+                        maxStreakNew: 0
+                    )
+                )
+            )
+        )
     }
 }
 

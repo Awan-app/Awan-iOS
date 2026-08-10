@@ -109,15 +109,13 @@ struct DomainAssembly: Assembly {
                 sessionRepository: Self.resolve(SessionRepository.self, from: resolver)
             )
         }
-        container.register(UpdateTaskStatusUseCase.self) { resolver in
-            DefaultUpdateTaskStatusUseCase(
-                taskRepository: Self.resolve(TaskRepository.self, from: resolver)
-            )
-        }
-        container.register(CompleteTaskSessionsUseCase.self) { resolver in
-            DefaultCompleteTaskSessionsUseCase(
-                sessionRepository: Self.resolve(SessionRepository.self, from: resolver),
-                taskRepository: Self.resolve(TaskRepository.self, from: resolver)
+        container.register(SetTaskCompletionUseCase.self) { resolver in
+            DefaultSetTaskCompletionUseCase(
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
+                userProfileRepository: Self.resolve(
+                    UserProfileRepository.self,
+                    from: resolver
+                )
             )
         }
         container.register(DeleteInboxTaskUseCase.self) { resolver in
@@ -180,6 +178,10 @@ struct DomainAssembly: Assembly {
             DefaultSetSessionCompletionUseCase(
                 sessionRepository: Self.resolve(
                     SessionRepository.self,
+                    from: resolver
+                ),
+                taskRepository: Self.resolve(
+                    TaskRepository.self,
                     from: resolver
                 ),
                 userProfileRepository: Self.resolve(
@@ -265,8 +267,16 @@ struct DomainAssembly: Assembly {
                 )
             )
         }
-        container.register(ScheduleCreatedGoalUseCase.self) { resolver in
-            DefaultScheduleCreatedGoalUseCase(
+        container.register(RequestGoalScheduleProposalUseCase.self) { resolver in
+            DefaultRequestGoalScheduleProposalUseCase(
+                repository: Self.resolve(
+                    GoalDecompositionRepository.self,
+                    from: resolver
+                )
+            )
+        }
+        container.register(ConfirmGoalScheduleUseCase.self) { resolver in
+            DefaultConfirmGoalScheduleUseCase(
                 repository: Self.resolve(
                     GoalDecompositionRepository.self,
                     from: resolver

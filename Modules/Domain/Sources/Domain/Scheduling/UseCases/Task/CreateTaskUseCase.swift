@@ -34,7 +34,7 @@ public struct DefaultCreateTaskUseCase: CreateTaskUseCase {
             id: idGenerator.makeUUID(),
             title: request.title,
             description: request.description,
-            status: .pending,
+            status: request.startsAt == nil ? .drafted : .active,
             goalID: nil,
             duration: TaskDuration(
                 minutes: request.durationMinutes

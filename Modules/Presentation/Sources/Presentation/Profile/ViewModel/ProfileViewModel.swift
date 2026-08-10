@@ -29,16 +29,23 @@ public final class ProfileViewModel {
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let fetchZonesUseCase: FetchZonesUseCase
     private let logoutUseCase: LogoutUseCase
+    private let onLogout: (() -> Void)?
     @ObservationIgnored private var zonesCancellable: AnyCancellable?
 
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
         fetchZonesUseCase: FetchZonesUseCase,
-        logoutUseCase: LogoutUseCase
+        logoutUseCase: LogoutUseCase,
+        onLogout: (() -> Void)? = nil
+
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.fetchZonesUseCase = fetchZonesUseCase
         self.logoutUseCase = logoutUseCase
+        self.onLogout = onLogout
+        
+
+
     }
 
     public func load() async {
@@ -69,12 +76,13 @@ public final class ProfileViewModel {
         }
     }
 
-    func logout() async {
+    public func logout() async {
         guard !isLoggingOut else { return }
         isLoggingOut = true
 
         do {
             try await logoutUseCase.execute()
+            onLogout?()
         } catch is CancellationError {
             isLoggingOut = false
             return

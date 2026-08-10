@@ -42,4 +42,8 @@ public enum GoogleSignInHelper {
             }
         }
     }
+
+    public static func signOut() {
+        GIDSignIn.sharedInstance.signOut()
+    }
 }

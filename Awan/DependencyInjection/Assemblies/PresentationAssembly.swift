@@ -113,8 +113,16 @@ struct PresentationAssembly: Assembly {
                         ConfirmGoalProposalUseCase.self,
                         from: resolver
                     ),
-                    scheduleGoal: Self.resolve(
-                        ScheduleCreatedGoalUseCase.self,
+                    requestSchedule: Self.resolve(
+                        RequestGoalScheduleProposalUseCase.self,
+                        from: resolver
+                    ),
+                    confirmSchedule: Self.resolve(
+                        ConfirmGoalScheduleUseCase.self,
+                        from: resolver
+                    ),
+                    fetchZones: Self.resolve(
+                        FetchZonesUseCase.self,
                         from: resolver
                     )
                 )
@@ -155,7 +163,7 @@ struct PresentationAssembly: Assembly {
         container.register(InboxUseCases.self) { resolver in
             InboxUseCases(
                 fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver),
-                completeTask: Self.resolve(CompleteTaskSessionsUseCase.self, from: resolver),
+                setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver),
                 deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver)
             )
         }
@@ -182,9 +190,8 @@ struct PresentationAssembly: Assembly {
 
         container.register(InboxViewModel.self) { resolver in
             let useCases = Self.resolve(InboxUseCases.self, from: resolver)
-            let goalsVM = Self.resolve(GoalsViewModel.self, from: resolver)
             return MainActor.assumeIsolated {
-                InboxViewModel(useCases: useCases, goalsViewModel: goalsVM)
+                InboxViewModel(useCases: useCases)
             }
         }
         .inObjectScope(.container)
@@ -213,7 +220,10 @@ struct PresentationAssembly: Assembly {
                 ProfileViewModel(
                     getUserProfileUseCase: useCase,
                     fetchZonesUseCase: fetchZonesUseCase,
-                    logoutUseCase: logoutUseCase
+                    logoutUseCase: logoutUseCase,
+                    onLogout: {
+                        GoogleSignInHelper.signOut()
+                    }
                 )
             }
         }

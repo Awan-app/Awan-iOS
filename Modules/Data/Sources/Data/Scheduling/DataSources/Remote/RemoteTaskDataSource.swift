@@ -16,6 +16,8 @@ public protocol RemoteTaskDataSource: Sendable {
     func getTask(taskID: UUID) async throws -> TaskInfoResponseDTO
     func updateTask(taskID: UUID, request: UpdateTaskRequestDTO) async throws -> TaskInfoResponseDTO
     func moveTask(taskID: UUID, request: MoveTaskRequestDTO) async throws -> TaskInfoResponseDTO
+    func completeTask(taskID: UUID) async throws -> TaskCompleteResponseDTO
+    func uncompleteTask(taskID: UUID) async throws -> TaskInfoResponseDTO
     func deleteTask(taskID: UUID, cascade: Bool) async throws
     func addDependency(taskID: UUID, request: AddDependencyRequestDTO) async throws
     func removeDependency(taskID: UUID, dependsOnTaskID: UUID) async throws
@@ -59,6 +61,14 @@ public final class DefaultRemoteTaskDataSource: RemoteTaskDataSource {
 
     public func moveTask(taskID: UUID, request: MoveTaskRequestDTO) async throws -> TaskInfoResponseDTO {
         try await networkService.request(TaskEndpoint.moveTask(taskID: taskID, request))
+    }
+
+    public func completeTask(taskID: UUID) async throws -> TaskCompleteResponseDTO {
+        try await networkService.request(TaskEndpoint.completeTask(taskID: taskID))
+    }
+
+    public func uncompleteTask(taskID: UUID) async throws -> TaskInfoResponseDTO {
+        try await networkService.request(TaskEndpoint.uncompleteTask(taskID: taskID))
     }
 
     public func deleteTask(taskID: UUID, cascade: Bool) async throws {

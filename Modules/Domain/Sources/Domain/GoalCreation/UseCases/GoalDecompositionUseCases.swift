@@ -37,18 +37,44 @@ public struct DefaultConfirmGoalProposalUseCase: ConfirmGoalProposalUseCase {
     }
 }
 
-public protocol ScheduleCreatedGoalUseCase: Sendable {
-    func execute(goalID: UUID) async throws
+public protocol RequestGoalScheduleProposalUseCase: Sendable {
+    func execute(goalID: UUID) async throws -> GoalScheduleProposal
 }
 
-public struct DefaultScheduleCreatedGoalUseCase: ScheduleCreatedGoalUseCase {
+public struct DefaultRequestGoalScheduleProposalUseCase:
+    RequestGoalScheduleProposalUseCase {
     private let repository: any GoalDecompositionRepository
 
     public init(repository: any GoalDecompositionRepository) {
         self.repository = repository
     }
 
-    public func execute(goalID: UUID) async throws {
-        try await repository.scheduleGoal(goalID: goalID)
+    public func execute(goalID: UUID) async throws -> GoalScheduleProposal {
+        try await repository.requestScheduleProposal(goalID: goalID)
+    }
+}
+
+public protocol ConfirmGoalScheduleUseCase: Sendable {
+    func execute(
+        goalID: UUID,
+        sessions: [GoalScheduleConfirmationItem]
+    ) async throws -> [ConfirmedGoalScheduleSession]
+}
+
+public struct DefaultConfirmGoalScheduleUseCase: ConfirmGoalScheduleUseCase {
+    private let repository: any GoalDecompositionRepository
+
+    public init(repository: any GoalDecompositionRepository) {
+        self.repository = repository
+    }
+
+    public func execute(
+        goalID: UUID,
+        sessions: [GoalScheduleConfirmationItem]
+    ) async throws -> [ConfirmedGoalScheduleSession] {
+        try await repository.confirmSchedule(
+            goalID: goalID,
+            sessions: sessions
+        )
     }
 }
