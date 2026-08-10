@@ -39,6 +39,7 @@ public struct UserProfileResponseDTO: Decodable, Sendable {
     public let points: Int
     public let streak: Int
     public let maxStreak: Int
+    public let profilePictureUrl: String?
     public let preferences: UserPreferencesDTO
 
     public init(
@@ -50,6 +51,7 @@ public struct UserProfileResponseDTO: Decodable, Sendable {
         points: Int,
         streak: Int,
         maxStreak: Int,
+        profilePictureUrl: String?,
         preferences: UserPreferencesDTO
     ) {
         self.id = id
@@ -60,6 +62,7 @@ public struct UserProfileResponseDTO: Decodable, Sendable {
         self.points = points
         self.streak = streak
         self.maxStreak = maxStreak
+        self.profilePictureUrl = profilePictureUrl
         self.preferences = preferences
     }
 }
