@@ -23,8 +23,15 @@ struct GoalDetailHeaderCard: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(goal.name)
-                            .font(AppFonts.title2Black)
+                            .font(AppFonts.headlineBlack)
                             .foregroundStyle(AppColors.textPrimary)
+
+                        if let description = goal.description, !description.isEmpty {
+                            Text(description)
+                                .font(AppFonts.caption2Bold)
+                                .foregroundStyle(AppColors.textSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
 
                         if let deadline = goal.deadline {
                             HStack(spacing: 6) {

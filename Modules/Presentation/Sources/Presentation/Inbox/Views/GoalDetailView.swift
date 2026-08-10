@@ -45,11 +45,6 @@ public struct GoalDetailView: View {
                             }
                         )
 
-                        if let description = item.rawGoal.description, !description.isEmpty {
-                            GoalDetailDescriptionCard(description: description)
-                        }
-
-                        GoalDetailMetadataCard(createdAt: item.rawGoal.createdAt)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 16)

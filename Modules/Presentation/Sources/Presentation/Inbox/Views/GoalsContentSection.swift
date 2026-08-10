@@ -38,12 +38,6 @@ struct GoalsContentSection: View {
 
     @ViewBuilder
     private func goalsContent(_ state: GoalsState) -> some View {
-        // Subtitle
-        Text(L10n.Goals.subtitle)
-            .font(AppFonts.subheadlineSemibold)
-            .foregroundStyle(AppColors.textSecondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-
         // Search bar — reuse InboxSearchFilterBar
         InboxSearchFilterBar(
             searchQuery: Binding(
@@ -68,12 +62,6 @@ struct GoalsContentSection: View {
                 }
             }
 
-            // Footer count
-            Text(L10n.Goals.nGoals(state.filteredGoals.count))
-                .font(AppFonts.subheadlineSemibold)
-                .foregroundStyle(AppColors.textSecondary)
-                .frame(maxWidth: .infinity)
-                .padding(.top, 4)
         }
     }
 

@@ -30,9 +30,11 @@ struct InboxHeaderView: View {
                 ]
             )
 
-            Text(selectedTopTab == .inbox ? L10n.Inbox.subtitle : L10n.Goals.subtitle)
-                .font(AppFonts.subheadlineSemibold)
-                .foregroundStyle(AppColors.textSecondary)
+            if selectedTopTab == .inbox {
+                Text(L10n.Inbox.subtitle)
+                    .font(AppFonts.subheadlineSemibold)
+                    .foregroundStyle(AppColors.textSecondary)
+            }
         }
     }
 }
