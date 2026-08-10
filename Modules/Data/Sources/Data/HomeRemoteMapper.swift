@@ -1,9 +1,18 @@
 import Domain
 import Foundation
 
-enum RemoteDomainMappingError: Error {
+enum RemoteDomainMappingError: Error, LocalizedError {
     case missingField(String)
     case invalidValue(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .missingField(let field):
+            return "Missing required field: \(field)"
+        case .invalidValue(let detail):
+            return "Invalid value: \(detail)"
+        }
+    }
 }
 
 enum HomeRemoteMapper {
@@ -46,7 +55,7 @@ enum HomeRemoteMapper {
             description: dto.description,
             status: taskStatus(dto.status),
             goalID: dto.goalID,
-            duration: TaskDuration(minutes: dto.estimatedDuration ?? defaultDuration),
+            duration: try TaskDuration(minutes: max(dto.estimatedDuration ?? defaultDuration, 1)),
             isSplittable: dto.isSplittable,
             mandatory: dto.mandatory,
             estimatedPoints: dto.estimatedPoints,
@@ -165,13 +174,21 @@ enum HomeRemoteMapper {
         dateTimeFormatter(timeZoneID: timeZoneID).string(from: date)
     }
 
-    private static func taskStatus(_ raw: String) throws -> TaskStatus {
+    private static func taskStatus(_ raw: String) -> TaskStatus {
         switch raw.uppercased() {
-        case "SCHEDULED", "PENDING": .pending
-        case "IN_PROGRESS": .inProgress
-        case "COMPLETED": .completed
-        case "CANCELLED": .cancelled
-        default: throw RemoteDomainMappingError.invalidValue("task.status.\(raw)")
+        case "SCHEDULED", "PENDING", "DRAFTED", "DRAFT", "TODO", "UNSCHEDULED", "PLANNED", "CREATED", "NEW", "NOT_STARTED":
+            return .pending
+        case "IN_PROGRESS", "INPROGRESS", "DOING", "ACTIVE":
+            return .inProgress
+        case "COMPLETED", "DONE", "FINISHED":
+            return .completed
+        case "CANCELLED", "CANCELED", "ABORTED":
+            return .cancelled
+        default:
+            #if DEBUG
+            print("[HomeRemoteMapper] Unknown task status '\(raw)', falling back to .pending")
+            #endif
+            return .pending
         }
     }
 

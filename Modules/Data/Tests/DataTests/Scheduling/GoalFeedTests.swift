@@ -68,6 +68,37 @@ final class GoalFeedTests: XCTestCase {
         XCTAssertEqual(task.goalID, goalID)
     }
 
+    func testTaskInfoResponseDTO_decodesDraftedStatusAndMapsToPending() throws {
+        let json = """
+        {
+          "status": "DRAFTED",
+          "goalId": "63c70c88-49a5-4e44-9391-7f4994a5b75e",
+          "estimatedDuration": 60,
+          "id": "00af7de5-6c96-4d27-8be6-478b92e98b9c",
+          "estimatedPoints": 10,
+          "title": "Learn OOP basics: classes and objects",
+          "mandatory": true,
+          "category": {
+            "id": "eaabc98a-b512-4fc6-98ac-8c7456c21301",
+            "name": "Learning"
+          },
+          "dependsOnTaskIds": [
+            "eb7fa76c-a325-4de0-a3ff-db729eeab5cf"
+          ],
+          "description": "Implement classes with member variables, methods, access specifiers, and constructors.",
+          "allowTaskSplitting": false
+        }
+        """
+        let dto = try JSONDecoder().decode(TaskInfoResponseDTO.self, from: Data(json.utf8))
+        XCTAssertEqual(dto.status, "DRAFTED")
+
+        let domainTask = try HomeRemoteMapper.task(dto, defaultDuration: 30)
+        XCTAssertEqual(domainTask.status, .pending)
+        XCTAssertEqual(domainTask.title, "Learn OOP basics: classes and objects")
+        XCTAssertEqual(domainTask.category?.name, "Learning")
+        XCTAssertEqual(domainTask.dependencyIDs.first?.uuidString.lowercased(), "eb7fa76c-a325-4de0-a3ff-db729eeab5cf")
+    }
+
     func testRepositoryEmitsCacheThenReconcilesRemoteActiveGoals() async throws {
         let source = SwiftDataGoalDataSource(modelContainer: try makeContainer())
         let cachedActive = Goal(
