@@ -11,6 +11,7 @@ public protocol RemoteProfileDataSource: Sendable {
     func updateName(_ request: UpdateNameRequestDTO) async throws -> UserProfileResponseDTO
     func updateBirthDate(_ request: UpdateBirthDateRequestDTO) async throws -> UserProfileResponseDTO
     func updateProfilePartial(_ request: UpdateProfilePartialRequestDTO) async throws -> UserProfileResponseDTO
+    func updateProfilePicture(_ file: MultipartFile) async throws -> UpdateProfilePictureResponseDTO
 
     func updateTimezone(_ request: UpdateTimezoneRequestDTO) async throws -> UserProfileResponseDTO
     func updateSessionSettings(_ request: UpdateSessionSettingsRequestDTO) async throws -> UserProfileResponseDTO
@@ -44,6 +45,10 @@ public final class DefaultRemoteProfileDataSource: RemoteProfileDataSource {
 
     public func updateProfilePartial(_ request: UpdateProfilePartialRequestDTO) async throws -> UserProfileResponseDTO {
         try await networkService.request(ProfileEndpoint.updateProfilePartial(request))
+    }
+
+    public func updateProfilePicture(_ file: MultipartFile) async throws -> UpdateProfilePictureResponseDTO {
+        try await networkService.uploadMultipart(ProfileEndpoint.updateProfilePicture, files: [file], parameters: nil)
     }
 
     public func updateTimezone(_ request: UpdateTimezoneRequestDTO) async throws -> UserProfileResponseDTO {
