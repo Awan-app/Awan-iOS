@@ -5,8 +5,10 @@ struct MarketplaceItemDetailSheet: View {
     let item: MarketplaceItem
     let userPoints: Int
     var isPurchasing: Bool = false
+    var isEquipping: Bool = false
     var purchaseFeedback: PurchaseFeedback? = nil
     var onBuy: () -> Void = {}
+    var onEquip: () -> Void = {}
     let onDismiss: () -> Void
 
     var body: some View {
@@ -124,7 +126,10 @@ struct MarketplaceItemDetailSheet: View {
                 MarketplaceDetailNotEnoughCard(pts: pts, userPoints: userPoints)
             }
         case .owned:
-            MarketplaceDetailOwnedCard()
+            MarketplaceDetailOwnedCard(
+                isEquipping: isEquipping,
+                onEquip: onEquip
+            )
         case .equipped:
             MarketplaceDetailEquippedCard()
         case .locked:

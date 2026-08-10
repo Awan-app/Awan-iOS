@@ -19,7 +19,23 @@ private final class StoreItemRepositoryStub: GamificationRepository, @unchecked 
         fatalError("Unimplemented")
     }
 
+    func equipStoreItem(itemID: String) async throws -> EquippedItem {
+        fatalError("Unimplemented")
+    }
+
+    func fetchEquippedItems() async throws -> [EquippedItem] {
+        []
+    }
+
     func fetchUserPoints() async throws -> Int {
+        fatalError("Unimplemented")
+    }
+
+    func fetchWheelConfig() async throws -> DailyWheelConfiguration {
+        fatalError("Unimplemented")
+    }
+
+    func spinWheel() async throws -> DailyWheelSpinResult {
         fatalError("Unimplemented")
     }
 }

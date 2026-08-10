@@ -378,6 +378,16 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(GamificationRepository.self, from: resolver)
             )
         }
+        container.register(EquipStoreItemUseCase.self) { resolver in
+            DefaultEquipStoreItemUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchEquippedItemsUseCase.self) { resolver in
+            DefaultFetchEquippedItemsUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
         container.register(FetchUserPointsUseCase.self) { resolver in
             DefaultFetchUserPointsUseCase(
                 repository: Self.resolve(GamificationRepository.self, from: resolver)

@@ -271,11 +271,15 @@ struct PresentationAssembly: Assembly {
         container.register(MarketplaceViewModel.self) { resolver in
             let fetchUseCase = Self.resolve(FetchStoreItemsUseCase.self, from: resolver)
             let buyUseCase = Self.resolve(BuyStoreItemUseCase.self, from: resolver)
+            let equipUseCase = Self.resolve(EquipStoreItemUseCase.self, from: resolver)
+            let fetchEquippedUseCase = Self.resolve(FetchEquippedItemsUseCase.self, from: resolver)
             let fetchUserPointsUseCase = Self.resolve(FetchUserPointsUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 MarketplaceViewModel(
                     fetchStoreItemsUseCase: fetchUseCase,
                     buyStoreItemUseCase: buyUseCase,
+                    equipStoreItemUseCase: equipUseCase,
+                    fetchEquippedItemsUseCase: fetchEquippedUseCase,
                     fetchUserPointsUseCase: fetchUserPointsUseCase
                 )
             }

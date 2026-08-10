@@ -19,6 +19,7 @@ public struct MarketplaceState: Sendable {
     public var errorMessage: String? = nil
 
     public var purchasingItemID: String? = nil
+    public var equippingItemID: String? = nil
     public var purchaseErrorMessage: String? = nil
     public var purchaseSuccessMessage: String? = nil
     public var purchaseFeedback: PurchaseFeedback? = nil

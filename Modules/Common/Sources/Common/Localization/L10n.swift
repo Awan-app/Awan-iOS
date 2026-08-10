@@ -1233,6 +1233,7 @@ public enum L10n {
         public static var retry: String { text("marketplace.retry") }
         public static var purchaseSuccessTitle: String { text("marketplace.purchase_success_title") }
         public static var purchaseFailedTitle: String { text("marketplace.purchase_failed_title") }
+        public static var itemNotOwned: String { text("marketplace.item_not_owned") }
 
         private static func text(_ key: String) -> String {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")

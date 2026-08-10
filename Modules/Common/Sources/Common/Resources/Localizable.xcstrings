@@ -8129,6 +8129,23 @@
         }
       }
     },
+    "marketplace.item_not_owned": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أنت لا تمتلك هذا العنصر."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You don't own this item."
+          }
+        }
+      }
+    },
     "marketplace.not_owned_desc": {
       "extractionState": "manual",
       "localizations": {

@@ -16,8 +16,16 @@ enum GamificationErrorMessageMapper {
             return L10n.DailyWheel.errorUserNotFound
         case .invalidWheelConfiguration:
             return L10n.DailyWheel.errorInvalidConfiguration
-        case .unavailable:
+        case .insufficientPoints:
+            return L10n.Marketplace.needMorePts
+        case .itemNotFound:
             return L10n.DailyWheel.errorUnavailable
+        case .itemNotOwned:
+            return L10n.Marketplace.itemNotOwned
+        case let .unknown(message):
+            return message.isEmpty ? L10n.DailyWheel.errorUnavailable : message
+        case let .unavailable(message):
+            return message.isEmpty ? L10n.DailyWheel.errorUnavailable : message
         }
     }
 }

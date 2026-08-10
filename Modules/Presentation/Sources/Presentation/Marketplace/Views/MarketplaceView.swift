@@ -52,8 +52,10 @@ public struct MarketplaceView: View {
                 item: item,
                 userPoints: state.userPoints,
                 isPurchasing: state.purchasingItemID == item.id,
+                isEquipping: state.equippingItemID == item.id,
                 purchaseFeedback: state.purchaseFeedback,
                 onBuy: { viewModel.send(.buyItem(item)) },
+                onEquip: { viewModel.send(.equipItem(item)) },
                 onDismiss: { viewModel.send(.dismissDetail) }
             )
             .presentationDetents([.large])

@@ -2,6 +2,9 @@ import Common
 import SwiftUI
 
 struct MarketplaceDetailOwnedCard: View {
+    var isEquipping: Bool = false
+    var onEquip: () -> Void = {}
+
     var body: some View {
         AppDepthSurface(
             shape: .roundedRectangle(cornerRadius: 22),
@@ -40,7 +43,9 @@ struct MarketplaceDetailOwnedCard: View {
                     title: L10n.Marketplace.statusEquipped,
                     icon: "wand.and.sparkles",
                     color: AppColors.accentGreen,
-                    size: .large, onTap: {}
+                    size: .large,
+                    isLoading: isEquipping,
+                    onTap: onEquip
                 )
             }
         }

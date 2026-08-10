@@ -8,6 +8,7 @@ import Foundation
 public enum GamificationError: Error, Equatable, Sendable {
     case insufficientPoints
     case itemNotFound
+    case itemNotOwned
     case unknown(message: String)
     case alreadyClaimed
     case authenticationFailed

@@ -10,15 +10,21 @@ public final class MarketplaceViewModel {
 
     @ObservationIgnored private let fetchStoreItemsUseCase: any FetchStoreItemsUseCase
     @ObservationIgnored private let buyStoreItemUseCase: any BuyStoreItemUseCase
+    @ObservationIgnored private let equipStoreItemUseCase: any EquipStoreItemUseCase
+    @ObservationIgnored private let fetchEquippedItemsUseCase: (any FetchEquippedItemsUseCase)?
     @ObservationIgnored private let fetchUserPointsUseCase: any FetchUserPointsUseCase
 
     public init(
         fetchStoreItemsUseCase: any FetchStoreItemsUseCase,
         buyStoreItemUseCase: any BuyStoreItemUseCase,
+        equipStoreItemUseCase: any EquipStoreItemUseCase,
+        fetchEquippedItemsUseCase: (any FetchEquippedItemsUseCase)? = nil,
         fetchUserPointsUseCase: any FetchUserPointsUseCase
     ) {
         self.fetchStoreItemsUseCase = fetchStoreItemsUseCase
         self.buyStoreItemUseCase = buyStoreItemUseCase
+        self.equipStoreItemUseCase = equipStoreItemUseCase
+        self.fetchEquippedItemsUseCase = fetchEquippedItemsUseCase
         self.fetchUserPointsUseCase = fetchUserPointsUseCase
         self.state = MarketplaceState()
     }
@@ -57,6 +63,9 @@ public final class MarketplaceViewModel {
         case let .buyItem(item):
             buyStoreItem(item)
 
+        case let .equipItem(item):
+            equipStoreItem(item)
+
         case .dismissPurchaseError:
             state.purchaseErrorMessage = nil
 
@@ -87,19 +96,20 @@ public final class MarketplaceViewModel {
         state.isLoading = true
         state.errorMessage = nil
 
-        let useCase = fetchStoreItemsUseCase
+        let fetchItemsUseCase = fetchStoreItemsUseCase
+        let fetchEquippedUseCase = fetchEquippedItemsUseCase
 
         Task { [weak self] in
             do {
                 let domainItems: [StoreItem]
                 if let apiType = category.apiType {
-                    domainItems = try await useCase.execute(type: apiType)
+                    domainItems = try await fetchItemsUseCase.execute(type: apiType)
                 } else {
                     let validTypes = ["FRAME", "SKIN", "THEME", "ICON"]
                     domainItems = try await withThrowingTaskGroup(of: [StoreItem].self) { group in
                         for type in validTypes {
                             group.addTask {
-                                try await useCase.execute(type: type)
+                                try await fetchItemsUseCase.execute(type: type)
                             }
                         }
                         var aggregated: [StoreItem] = []
@@ -110,8 +120,21 @@ public final class MarketplaceViewModel {
                     }
                 }
 
+                var equippedIDs: Set<String> = []
+                if let fetchEquippedUseCase {
+                    if let equipped = try? await fetchEquippedUseCase.execute() {
+                        equippedIDs = Set(equipped.map { $0.item.id })
+                    }
+                }
+
                 guard let self else { return }
-                self.state.allItems = domainItems.map { MarketplaceItem(storeItem: $0) }
+                self.state.allItems = domainItems.map { domainItem in
+                    var item = MarketplaceItem(storeItem: domainItem)
+                    if equippedIDs.contains(domainItem.id) {
+                        item.status = .equipped
+                    }
+                    return item
+                }
                 self.state.isLoading = false
             } catch {
                 guard let self else { return }
@@ -162,6 +185,70 @@ public final class MarketplaceViewModel {
                 } else {
                     message = error.localizedDescription
                 }
+                self.state.purchaseErrorMessage = message
+                self.state.purchaseFeedback = .failure(message: message)
+                self.scheduleFeedbackDismissal()
+            }
+        }
+    }
+
+    private func equipStoreItem(_ item: MarketplaceItem) {
+        guard state.equippingItemID == nil else { return }
+        guard item.status == .owned || item.status == .equipped else { return }
+
+        state.equippingItemID = item.id
+        state.purchaseFeedback = nil
+        state.purchaseErrorMessage = nil
+
+        let useCase = equipStoreItemUseCase
+        let itemID = item.id
+        let category = item.category
+
+        Task { [weak self] in
+            do {
+                _ = try await useCase.execute(itemID: itemID)
+
+                guard let self else { return }
+                self.state.equippingItemID = nil
+
+                // Update store items state: replace equipped item of same category with owned status
+                for i in 0..<self.state.allItems.count {
+                    if self.state.allItems[i].id == itemID {
+                        self.state.allItems[i].status = .equipped
+                    } else if self.state.allItems[i].category == category && self.state.allItems[i].status == .equipped {
+                        self.state.allItems[i].status = .owned
+                    }
+                }
+
+                if var selected = self.state.selectedItem {
+                    if selected.id == itemID {
+                        selected.status = .equipped
+                        self.state.selectedItem = selected
+                    } else if selected.category == category && selected.status == .equipped {
+                        selected.status = .owned
+                        self.state.selectedItem = selected
+                    }
+                }
+
+                self.state.purchaseSuccessMessage = L10n.Marketplace.currentlyEquipped
+                self.state.purchaseFeedback = .success(message: L10n.Marketplace.currentlyEquipped)
+                self.scheduleFeedbackDismissal()
+            } catch {
+                guard let self else { return }
+                self.state.equippingItemID = nil
+
+                let message: String
+                if let gamificationError = error as? GamificationError {
+                    switch gamificationError {
+                    case .itemNotOwned:
+                        message = L10n.Marketplace.itemNotOwned
+                    default:
+                        message = GamificationErrorMessageMapper.message(for: gamificationError)
+                    }
+                } else {
+                    message = error.localizedDescription
+                }
+
                 self.state.purchaseErrorMessage = message
                 self.state.purchaseFeedback = .failure(message: message)
                 self.scheduleFeedbackDismissal()

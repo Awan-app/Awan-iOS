@@ -4,6 +4,7 @@
 //
 //  Created by Eslam Elnady on 08/08/2026.
 //
+
 import AwaNetwork
 
 enum GamificationEndpoint: APIEndpoint {
@@ -12,6 +13,8 @@ enum GamificationEndpoint: APIEndpoint {
     case spinWheel
     case getStoreItems(type: String)
     case buyStoreItem(itemID: String)
+    case equipStoreItem(itemID: String)
+    case getEquippedItems
 
     var baseURL: String {
         NetworkConfiguration.apiBaseURL
@@ -19,35 +22,56 @@ enum GamificationEndpoint: APIEndpoint {
 
     var path: String {
         switch self {
-        case .getProgress: "/gamification/progress"
-        case .getWheelConfig: "/gamification/wheel/config"
-        case .spinWheel: "/gamification/wheel/spin"
         case .getProgress:
             return "/gamification/progress"
+
+        case .getWheelConfig:
+            return "/gamification/wheel/config"
+
+        case .spinWheel:
+            return "/gamification/wheel/spin"
+
         case .getStoreItems:
             return "/store/items"
+
         case let .buyStoreItem(itemID):
             return "/store/items/\(itemID)/buy"
+
+        case let .equipStoreItem(itemID):
+            return "/store/items/\(itemID)/equip"
+
+        case .getEquippedItems:
+            return "/store/equipped"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .getProgress, .getWheelConfig: .get
-        case .spinWheel: .post
-        case .getProgress, .getStoreItems:
+        case .getProgress,
+             .getWheelConfig,
+             .getStoreItems,
+             .getEquippedItems:
             return .get
-        case .buyStoreItem:
+
+        case .spinWheel,
+             .buyStoreItem,
+             .equipStoreItem:
             return .post
         }
     }
 
     var queryParameters: [String: String]? {
         switch self {
-        case .getProgress, .buyStoreItem:
-            return nil
         case let .getStoreItems(type):
             return ["type": type]
+
+        case .getProgress,
+             .getWheelConfig,
+             .spinWheel,
+             .buyStoreItem,
+             .equipStoreItem,
+             .getEquippedItems:
+            return nil
         }
     }
 

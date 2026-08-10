@@ -127,6 +127,8 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
     case sessionNotFound
     case zoneNotFound
     case dailyGiftAlreadyClaimed
+    case itemNotOwned
+    case itemNotFound
 
     public typealias RawValue = String
 
@@ -159,6 +161,8 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case "SESSION_NOT_FOUND":             self = .sessionNotFound
         case "ZONE_NOT_FOUND":                self = .zoneNotFound
         case "DAILY_GIFT_ALREADY_CLAIMED":    self = .dailyGiftAlreadyClaimed
+        case "ITEM_NOT_OWNED":                self = .itemNotOwned
+        case "ITEM_NOT_FOUND":                self = .itemNotFound
         default:                              self = .unknown(rawValue)
         }
     }
@@ -193,6 +197,8 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case .sessionNotFound:               return "SESSION_NOT_FOUND"
         case .zoneNotFound:                  return "ZONE_NOT_FOUND"
         case .dailyGiftAlreadyClaimed:        return "DAILY_GIFT_ALREADY_CLAIMED"
+        case .itemNotOwned:                  return "ITEM_NOT_OWNED"
+        case .itemNotFound:                  return "ITEM_NOT_FOUND"
         case .unknown(let code):             return code
         }
     }

@@ -15,6 +15,7 @@ public enum MarketplaceAction: Sendable {
     case selectItem(MarketplaceItem)
     case dismissDetail
     case buyItem(MarketplaceItem)
+    case equipItem(MarketplaceItem)
     case dismissPurchaseError
     case dismissPurchaseFeedback
     case retry
