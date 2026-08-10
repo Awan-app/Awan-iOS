@@ -19,6 +19,7 @@ public final class ProfileViewModel {
     private(set) var points = 0
     private(set) var streak = 0
     private(set) var maxStreak = 0
+    private(set) var profilePictureUrl: String?
     private(set) var dailyZones: [Zone] = []
     private(set) var areDailyZonesReady = false
     private(set) var isLoggingOut = false
@@ -56,6 +57,7 @@ public final class ProfileViewModel {
             points = profile.points
             streak = profile.streak
             maxStreak = profile.maxStreak
+            profilePictureUrl = profile.profilePictureUrl
             loadState = .content
             observeDailyZones()
         } catch is CancellationError {

@@ -11,19 +11,29 @@ public final class UserInfoViewModel {
     public var email: String = ""
     public var dateOfBirth: Date = Calendar.current.date(from: DateComponents(year: 2000, month: 7, day: 21)) ?? Date()
     public var profileImageData: Data?
+    public var profileImageMimeType: String?
+    public var profileImageFileName: String?
+    public var profilePictureUrl: String?
+    
+    public var showToast: Bool = false
+    public var toastMessage: String?
+    public var isSaving: Bool = false
     
     @ObservationIgnored
     private var profileCancellable: AnyCancellable?
     
     private let getUserProfileUseCase: any GetUserProfileUseCase
     private let updateUserProfileUseCase: any UpdateUserProfileUseCase
+    private let updateProfilePictureUseCase: any UpdateProfilePictureUseCase
     
     public init(
         getUserProfileUseCase: any GetUserProfileUseCase,
-        updateUserProfileUseCase: any UpdateUserProfileUseCase
+        updateUserProfileUseCase: any UpdateUserProfileUseCase,
+        updateProfilePictureUseCase: any UpdateProfilePictureUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.updateUserProfileUseCase = updateUserProfileUseCase
+        self.updateProfilePictureUseCase = updateProfilePictureUseCase
     }
     
     public var isSaveDisabled: Bool {
@@ -45,6 +55,7 @@ public final class UserInfoViewModel {
                     self.firstName = profile.firstName
                     self.lastName = profile.lastName
                     self.email = profile.email
+                    self.profilePictureUrl = profile.profilePictureUrl
                     
                     var components = DateComponents()
                     components.year = profile.birthDate.year
@@ -60,6 +71,8 @@ public final class UserInfoViewModel {
     }
     
     public func saveChanges() async {
+        isSaving = true
+        defer { isSaving = false }
         do {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -70,8 +83,26 @@ public final class UserInfoViewModel {
                 lastName: lastName,
                 birthDate: birthDateString
             )
+            
+            if let imageData = profileImageData,
+               let mimeType = profileImageMimeType,
+               let fileName = profileImageFileName {
+                do {
+                    try await updateProfilePictureUseCase.execute(data: imageData, fileName: fileName, mimeType: mimeType)
+                } catch {
+                    print("Failed to save profile picture: \(error)")
+                    withAnimation {
+                        self.toastMessage = error.localizedDescription
+                        self.showToast = true
+                    }
+                }
+            }
         } catch {
             print("Failed to save profile changes: \(error)")
+            withAnimation {
+                self.toastMessage = error.localizedDescription
+                self.showToast = true
+            }
         }
     }
 }
