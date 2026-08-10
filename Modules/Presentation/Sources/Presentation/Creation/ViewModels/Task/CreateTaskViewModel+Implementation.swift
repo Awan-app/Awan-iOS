@@ -80,7 +80,7 @@ extension CreateTaskViewModel {
                     id: UUID(),
                     title: prompt,
                     description: nil,
-                    status: .pending,
+                    status: .drafted,
                     goalID: nil,
                     duration: try! TaskDuration(minutes: 60),
                     isSplittable: false,

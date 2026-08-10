@@ -112,10 +112,10 @@ struct HomeSessionActionSheet: View {
 
     private var statusLabel: String {
         switch task.status {
-        case .pending:
-            L10n.Home.statusPending
-        case .inProgress:
-            L10n.Home.statusInProgress
+        case .drafted:
+            L10n.Home.statusDrafted
+        case .active:
+            L10n.Home.statusActive
         case .completed:
             L10n.Home.statusCompleted
         case .cancelled:
@@ -163,4 +163,3 @@ extension HomeTimelineItem {
     )
     .padding()
 }
-

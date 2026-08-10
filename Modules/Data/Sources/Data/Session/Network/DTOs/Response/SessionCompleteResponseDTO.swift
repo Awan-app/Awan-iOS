@@ -10,13 +10,15 @@ import Foundation
 
 public struct SessionCompleteResponseDTO: Decodable, Sendable {
     public let session: SessionResponseDTO
-    public let reward: SessionCompletionRewardDTO
+    public let reward: CompletionRewardDTO
 }
 
-public struct SessionCompletionRewardDTO: Decodable, Sendable {
+public struct CompletionRewardDTO: Decodable, Sendable {
     public let points: PointsRewardDTO
     public let streak: StreakRewardDTO
 }
+
+public typealias SessionCompletionRewardDTO = CompletionRewardDTO
 
 public struct PointsRewardDTO: Decodable, Sendable {
     public let awarded: Bool

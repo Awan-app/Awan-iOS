@@ -867,11 +867,11 @@ public enum L10n {
         public static var no: String {
             L10n.currentBundle.localizedString(forKey: "home.no", value: nil, table: "Localizable")
         }
-        public static var statusPending: String {
-            L10n.currentBundle.localizedString(forKey: "home.status_pending", value: nil, table: "Localizable")
+        public static var statusDrafted: String {
+            L10n.currentBundle.localizedString(forKey: "home.status_drafted", value: nil, table: "Localizable")
         }
-        public static var statusInProgress: String {
-            L10n.currentBundle.localizedString(forKey: "home.status_in_progress", value: nil, table: "Localizable")
+        public static var statusActive: String {
+            L10n.currentBundle.localizedString(forKey: "home.status_active", value: nil, table: "Localizable")
         }
         public static var statusCompleted: String {
             L10n.currentBundle.localizedString(forKey: "home.status_completed", value: nil, table: "Localizable")
@@ -1208,6 +1208,7 @@ public enum L10n {
         public static var emptySubtitle: String { text("inbox.empty_subtitle") }
         public static var errorTitle: String { text("inbox.error_title") }
         public static var loadFailed: String { text("inbox.load_failed") }
+        public static var pointsClaimed: String { text("inbox.points_claimed") }
 
         public static func nSessions(_ count: Int) -> String {
             String(format: text("inbox.n_sessions"), count)

@@ -37,8 +37,22 @@ public struct InboxStateMapper: Sendable {
             derivedStatus: inboxTask.derivedStatus,
             sessionsSummary: summary,
             sessionItems: sessionItems,
-            rawTask: inboxTask.task
+            rawTask: inboxTask.task,
+            availableCompletionPoints: availableCompletionPoints(
+                task: inboxTask.task,
+                sessions: inboxTask.sessions
+            )
         )
+    }
+
+    private func availableCompletionPoints(
+        task: AwanTask,
+        sessions: [Session]
+    ) -> Int {
+        let unrewardedSessionCount = sessions.filter {
+            $0.status != .cancelled && $0.firstCompletedAt == nil
+        }.count
+        return task.estimatedPoints * unrewardedSessionCount
     }
 
     public func mapSession(_ session: Session, now: Date = Date()) -> InboxSessionItem {

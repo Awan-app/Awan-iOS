@@ -107,6 +107,7 @@ private extension TaskInfoResponseDTO {
             title: title,
             description: description,
             status: mappedStatus(from: status),
+            completedAt: mappedCompletedAt,
             goalID: goalID,
             duration: try! TaskDuration(minutes: max(1, estimatedDuration ?? 60)),
             isSplittable: isSplittable,
@@ -117,13 +118,20 @@ private extension TaskInfoResponseDTO {
         )
     }
 
+    private var mappedCompletedAt: Date? {
+        guard let completedAt else { return nil }
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter.date(from: completedAt)
+    }
+
     private func mappedStatus(from raw: String) -> TaskStatus {
         switch raw.uppercased() {
-        case "SCHEDULED", "PENDING": .pending
-        case "IN_PROGRESS": .inProgress
+        case "DRAFTED": .drafted
+        case "ACTIVE", "SCHEDULED", "PENDING", "IN_PROGRESS": .active
         case "COMPLETED": .completed
         case "CANCELLED": .cancelled
-        default: .pending
+        default: .drafted
         }
     }
 }

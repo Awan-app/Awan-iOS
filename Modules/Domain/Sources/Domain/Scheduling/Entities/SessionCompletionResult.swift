@@ -8,18 +8,18 @@
 
 public struct SessionCompletionResult: Sendable {
     public let session: Session
-    public let reward: SessionCompletionReward
+    public let reward: CompletionReward
 
     public init(
         session: Session,
-        reward: SessionCompletionReward
+        reward: CompletionReward
     ) {
         self.session = session
         self.reward = reward
     }
 }
 
-public struct SessionCompletionReward: Sendable {
+public struct CompletionReward: Sendable {
     public let points: Points
     public let streak: Streak
 
@@ -75,3 +75,5 @@ public struct SessionCompletionReward: Sendable {
         }
     }
 }
+
+public typealias SessionCompletionReward = CompletionReward

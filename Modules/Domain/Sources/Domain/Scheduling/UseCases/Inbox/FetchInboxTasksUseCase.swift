@@ -41,7 +41,10 @@ public struct DefaultFetchInboxTasksUseCase: FetchInboxTasksUseCase {
 
         return inboxTasks.map { task in
             let taskSessions = sessionsByTaskID[task.id] ?? []
-            let status = deriveStatus.derive(from: taskSessions, taskStatus: task.status)
+            let status = deriveStatus.derive(
+                from: taskSessions,
+                completedAt: task.completedAt
+            )
             return InboxTask(task: task, sessions: taskSessions, derivedStatus: status)
         }
     }
@@ -55,7 +58,10 @@ public struct DefaultFetchInboxTasksUseCase: FetchInboxTasksUseCase {
             let sessionsByTaskID = Dictionary(grouping: allSessions, by: \.taskID)
             return inboxTasks.map { task in
                 let taskSessions = sessionsByTaskID[task.id] ?? []
-                let status = deriveStatus.derive(from: taskSessions, taskStatus: task.status)
+                let status = deriveStatus.derive(
+                    from: taskSessions,
+                    completedAt: task.completedAt
+                )
                 return InboxTask(task: task, sessions: taskSessions, derivedStatus: status)
             }
         }

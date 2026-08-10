@@ -91,7 +91,7 @@ final class FetchInboxTasksUseCaseTests: XCTestCase {
         XCTAssertEqual(result.first?.derivedStatus, .cancelled)
     }
 
-    func testTaskWithAllCompletedSessions_hasCompletedStatus() async throws {
+    func testTaskWithAllCompletedSessions_remainsActiveWithoutTaskCompletion() async throws {
         let task = try makeTask(goalID: inboxGoalID)
         let sessions = [
             makeSession(taskID: task.id, status: .completed),
@@ -103,7 +103,7 @@ final class FetchInboxTasksUseCaseTests: XCTestCase {
         let useCase = DefaultFetchInboxTasksUseCase(taskRepository: taskRepo, sessionRepository: sessionRepo)
 
         let result = try await useCase.execute()
-        XCTAssertEqual(result.first?.derivedStatus, .completed)
+        XCTAssertEqual(result.first?.derivedStatus, .active)
     }
 
     func testTaskWithMixedSessions_hasActiveStatus() async throws {
@@ -190,6 +190,18 @@ private actor InboxTaskRepositoryStub: TaskRepository {
     ) -> (task: AwanTask, sessions: [Session]) { (task, []) }
 
     func updateTask(_ task: AwanTask) {}
+    func completeTask(id: UUID) throws -> TaskCompletionResult {
+        throw SchedulingError.entityNotFound(id: id)
+    }
+    func uncompleteTask(id: UUID) throws -> AwanTask {
+        throw SchedulingError.entityNotFound(id: id)
+    }
+    func refreshTask(id: UUID) throws -> AwanTask {
+        guard let task = allTasks.first(where: { $0.id == id }) else {
+            throw SchedulingError.entityNotFound(id: id)
+        }
+        return task
+    }
     func deleteTask(id: UUID) {}
     func deleteAllTasks() {}
     func addDependency(taskID: UUID, dependsOnID: UUID) {}
