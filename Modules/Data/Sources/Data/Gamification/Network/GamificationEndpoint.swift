@@ -8,6 +8,8 @@ import AwaNetwork
 
 enum GamificationEndpoint: APIEndpoint {
     case getProgress
+    case getWheelConfig
+    case spinWheel
     case getStoreItems(type: String)
     case buyStoreItem(itemID: String)
 
@@ -17,6 +19,9 @@ enum GamificationEndpoint: APIEndpoint {
 
     var path: String {
         switch self {
+        case .getProgress: "/gamification/progress"
+        case .getWheelConfig: "/gamification/wheel/config"
+        case .spinWheel: "/gamification/wheel/spin"
         case .getProgress:
             return "/gamification/progress"
         case .getStoreItems:
@@ -28,6 +33,8 @@ enum GamificationEndpoint: APIEndpoint {
 
     var method: HTTPMethod {
         switch self {
+        case .getProgress, .getWheelConfig: .get
+        case .spinWheel: .post
         case .getProgress, .getStoreItems:
             return .get
         case .buyStoreItem:

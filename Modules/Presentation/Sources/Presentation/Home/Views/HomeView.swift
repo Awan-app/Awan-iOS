@@ -86,10 +86,11 @@ struct HomeView: View {
                             rewardFlightSessionID = nil
 
                             if let reward = viewModel.state.completionReward,
-                               let streak = reward.streak {
+                               let transition = reward.streakTransition {
 
                                 coordinator.mainCoordinator.presentStreakCelebration(
-                                    streak: streak,
+                                    previousStreak: transition.oldValue,
+                                    streak: transition.newValue,
                                     isNewRecord: reward.maxStreakBroken
                                 )
 
@@ -248,4 +249,3 @@ struct HomeView: View {
     }
     
 }
-

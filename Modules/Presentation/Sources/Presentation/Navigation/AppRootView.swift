@@ -162,6 +162,10 @@ struct AppRootView: View {
                         switch route {
                         case .userInfo:   factory.makeUserInfoView()
                         case .dailyZones: factory.makeDailyZonesView().environment(appearanceManager)
+                        case .inventory:  InventoryPlaceholderView()
+                        case .personalization: factory.makePersonalizationView()
+                        case .settings: factory.makeSettingsView()
+                        case .aboutAwan:  factory.makeAboutAwanView()
                         default:          EmptyView()
                         }
                     }
@@ -199,6 +203,7 @@ struct AppRootView: View {
         .overlay {
             if let celebration = coordinator.mainCoordinator.streakCelebration {
                 StreakCelebrationDialog(
+                    previousStreak: celebration.previousStreak,
                     streak: celebration.streak,
                     isNewRecord: celebration.isNewRecord
                 ) {
@@ -215,6 +220,12 @@ struct AppRootView: View {
             .spring(response: 0.38, dampingFraction: 0.72),
             value: coordinator.mainCoordinator.streakCelebration?.id
         )
+        .overlay {
+            factory.makeDailyWheelPresentationLayer(
+                alwaysShowsFloatingButton: coordinator.mainCoordinator.selectedTab == .store
+            )
+            .zIndex(1100)
+        }
         .animation(.snappy(duration: 0.3), value: shouldShowCustomTabBar)
         .sheet(item: Bindable(coordinator.mainCoordinator).presentedSheet) { route in
             switch route {
@@ -256,7 +267,8 @@ struct AppRootView: View {
                     selection: $creationSheetDetent
                 )
                 .presentationDragIndicator(.visible)
-            case .home, .tasks, .calendar, .userInfo, .dailyZones, .inboxTaskDetail:
+            case .home, .tasks, .calendar, .userInfo, .dailyZones, .inventory,
+                 .personalization, .settings, .aboutAwan, .inboxTaskDetail:
                 EmptyView()
             }
         }

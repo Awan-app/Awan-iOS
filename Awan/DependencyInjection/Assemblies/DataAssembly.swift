@@ -130,9 +130,17 @@ struct DataAssembly: Assembly {
         }
         container.register(GamificationRepository.self) { resolver in
             DefaultGamificationRepository(
-                remoteDataSource: Self.resolve(RemoteGamificationDataSource.self, from: resolver)
+                remoteDataSource: Self.resolve(
+                    RemoteGamificationDataSource.self,
+                    from: resolver
+                ),
+                localProfileDataSource: Self.resolve(
+                    LocalUserProfileDataSource.self,
+                    from: resolver
+                )
             )
         }
+        .inObjectScope(.container)
         container.register(UserProfileRepository.self) { resolver in
             DefaultUserProfileRepository(
                 localDataSource: Self.resolve(

@@ -9,4 +9,9 @@ public enum GamificationError: Error, Equatable, Sendable {
     case insufficientPoints
     case itemNotFound
     case unknown(message: String)
+    case alreadyClaimed
+    case authenticationFailed
+    case userNotFound
+    case invalidWheelConfiguration
+    case unavailable(String)
 }

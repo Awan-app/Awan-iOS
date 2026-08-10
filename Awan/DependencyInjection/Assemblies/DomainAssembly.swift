@@ -130,6 +130,16 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(UserProfileRepository.self, from: resolver)
             )
         }
+        container.register(FetchDailyWheelUseCase.self) { resolver in
+            DefaultFetchDailyWheelUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(SpinDailyWheelUseCase.self) { resolver in
+            DefaultSpinDailyWheelUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
         container.register(UpdateUserProfileUseCase.self) { resolver in
             DefaultUpdateUserProfileUseCase(
                 repository: Self.resolve(UserProfileRepository.self, from: resolver)

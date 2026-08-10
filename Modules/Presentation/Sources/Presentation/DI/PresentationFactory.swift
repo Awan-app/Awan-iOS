@@ -6,12 +6,14 @@ public struct PresentationFactory {
     private let authenticationState: AuthenticationState
     private let loginViewModel: LoginViewModel
     private let homeViewModel: HomeViewModel
+    private let dailyWheelViewModel: DailyWheelViewModel
     private let calendarViewModel: CalendarViewModel
     private let scheduleViewModel: ScheduleTimelineViewModel
     private let creationUseCases: CreationUseCases
     private let makeOtpViewModel: (OtpVerificationContext) -> OtpVerificationViewModel
     private let onboardingViewModel: OnboardingViewModel
     private let profileViewModel: ProfileViewModel
+    private let settingsViewModel: SettingsViewModel
     private let dailyZonesViewModel: DailyZonesViewModel
     private let makeUserInfoViewModel: () -> UserInfoViewModel
     private let inboxViewModel: InboxViewModel
@@ -23,12 +25,14 @@ public struct PresentationFactory {
         authenticationState: AuthenticationState,
         loginViewModel: LoginViewModel,
         homeViewModel: HomeViewModel,
+        dailyWheelViewModel: DailyWheelViewModel,
         calendarViewModel: CalendarViewModel,
         scheduleViewModel: ScheduleTimelineViewModel,
         creationUseCases: CreationUseCases,
         makeOtpViewModel: @escaping (OtpVerificationContext) -> OtpVerificationViewModel,
         onboardingViewModel: OnboardingViewModel,
         profileViewModel: ProfileViewModel,
+        settingsViewModel: SettingsViewModel,
         dailyZonesViewModel: DailyZonesViewModel,
         makeUserInfoViewModel: @escaping () -> UserInfoViewModel,
         inboxViewModel: InboxViewModel,
@@ -39,12 +43,14 @@ public struct PresentationFactory {
         self.authenticationState = authenticationState
         self.loginViewModel = loginViewModel
         self.homeViewModel = homeViewModel
+        self.dailyWheelViewModel = dailyWheelViewModel
         self.calendarViewModel = calendarViewModel
         self.scheduleViewModel = scheduleViewModel
         self.creationUseCases = creationUseCases
         self.makeOtpViewModel = makeOtpViewModel
         self.onboardingViewModel = onboardingViewModel
         self.profileViewModel = profileViewModel
+        self.settingsViewModel = settingsViewModel
         self.dailyZonesViewModel = dailyZonesViewModel
         self.makeUserInfoViewModel = makeUserInfoViewModel
         self.inboxViewModel = inboxViewModel
@@ -71,6 +77,15 @@ public struct PresentationFactory {
 
     func makeHomeView() -> some View {
         HomeView(viewModel: homeViewModel)
+    }
+
+    func makeDailyWheelPresentationLayer(
+        alwaysShowsFloatingButton: Bool
+    ) -> some View {
+        DailyWheelPresentationLayer(
+            viewModel: dailyWheelViewModel,
+            alwaysShowsFloatingButton: alwaysShowsFloatingButton
+        )
     }
 
     func makeScheduleTimelineView() -> some View {
@@ -148,10 +163,19 @@ public struct PresentationFactory {
     }
 
     public func makeProfileMainView() -> some View {
-        ProfileMainView(
-            viewModel: profileViewModel,
-            dailyZonesViewModel: dailyZonesViewModel
-        )
+        ProfileMainView(viewModel: profileViewModel)
+    }
+
+    func makePersonalizationView() -> some View {
+        PersonalizationView(viewModel: settingsViewModel)
+    }
+
+    func makeSettingsView() -> some View {
+        SettingsView()
+    }
+
+    func makeAboutAwanView() -> some View {
+        AboutAwanView()
     }
 
     func makeDailyZonesView() -> some View {

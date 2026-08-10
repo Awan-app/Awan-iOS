@@ -29,6 +29,21 @@ public enum AppColors {
 
     public static let brandDarkBlue = asset("BrandDarkBlue")
 
+    public static var wheelSegmentPalette: [Color] {
+        [
+            reward,
+            warning,
+            destructive,
+            accentPurple,
+            accentBlue,
+            accentGreen,
+            brandDarkBlue
+        ]
+    }
+
+    public static var wheelRim: Color { reward }
+    public static var wheelRimDepth: Color { warning }
+
     // TODO: These are meant to be the canonical shared colors. Once the OTP branch merges,
     // delete its OTP-specific color assets and repoint them to use these skyGradient properties instead.
     public static let skyGradientTop = asset("SkyGradientTop")

@@ -950,6 +950,12 @@ public enum L10n {
 
     public enum Profile {
         public static var title: String { L10n.currentBundle.localizedString(forKey: "profile.title", value: nil, table: "Localizable") }
+        public static var points: String { text("profile.points") }
+        public static var streak: String { text("profile.streak") }
+        public static var maxStreak: String { text("profile.max_streak") }
+        public static var inventory: String { text("profile.inventory") }
+        public static var inventorySubtitle: String { text("profile.inventory_subtitle") }
+        public static var inventoryPlaceholder: String { text("profile.inventory_placeholder") }
         public static var personalInfo: String {
             L10n.currentBundle.localizedString(forKey: "profile.personal_info", value: nil, table: "Localizable")
         }
@@ -1007,11 +1013,24 @@ public enum L10n {
         public static var system: String { L10n.currentBundle.localizedString(forKey: "profile.system", value: nil, table: "Localizable") }
         public static var logout: String { L10n.currentBundle.localizedString(forKey: "profile.logout", value: nil, table: "Localizable") }
         public static var logoutConfirmationMessage: String { L10n.currentBundle.localizedString(forKey: "profile.logout_confirmation_message", value: nil, table: "Localizable") }
+        public static var more: String { text("profile.more") }
+        public static var personalization: String { text("profile.personalization") }
+        public static var settings: String { text("profile.settings") }
+        public static var aboutAwan: String { text("profile.about_awan") }
+        public static var loading: String { text("profile.loading") }
+        public static var loadFailure: String { text("profile.load_failure") }
+        public static var updateFailureTitle: String { text("profile.update_failure_title") }
+        public static var version: String { text("profile.version") }
+        public static var build: String { text("profile.build") }
         
         public static var dummySessionTime: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_session_time", value: nil, table: "Localizable") }
         public static var dummyTimeZone: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_time_zone", value: nil, table: "Localizable") }
         public static var dummySleepSchedule: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_sleep_schedule", value: nil, table: "Localizable") }
         public static var ready: String { L10n.currentBundle.localizedString(forKey: "profile.ready", value: nil, table: "Localizable") }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
     }
 
     public enum UserInfo {
@@ -1305,11 +1324,54 @@ public enum L10n {
         }
     }
 
+    public enum DailyWheel {
+        public static var title: String { text("daily_wheel.title") }
+        public static var subtitle: String { text("daily_wheel.subtitle") }
+        public static var loading: String { text("daily_wheel.loading") }
+        public static var gift: String { text("daily_wheel.gift") }
+        public static var openGift: String { text("daily_wheel.open_gift") }
+        public static var tapToSpin: String { text("daily_wheel.tap_to_spin") }
+        public static var spin: String { text("daily_wheel.spin") }
+        public static var choosingReward: String { text("daily_wheel.choosing_reward") }
+        public static var almostThere: String { text("daily_wheel.almost_there") }
+        public static var youWon: String { text("daily_wheel.you_won") }
+        public static var alreadyClaimed: String { text("daily_wheel.already_claimed") }
+        public static var todaysReward: String { text("daily_wheel.todays_reward") }
+        public static var giftClaimed: String { text("daily_wheel.gift_claimed") }
+        public static var comeBackTomorrow: String { text("daily_wheel.come_back_tomorrow") }
+        public static var itemAdded: String { text("daily_wheel.item_added") }
+        public static var awesome: String { text("daily_wheel.awesome") }
+        public static var dismiss: String { text("daily_wheel.dismiss") }
+        public static var couldNotLoad: String { text("daily_wheel.could_not_load") }
+        public static var retry: String { text("daily_wheel.retry") }
+        public static var errorAlreadyClaimed: String { text("daily_wheel.error_already_claimed") }
+        public static var errorAuthenticationFailed: String { text("daily_wheel.error_authentication_failed") }
+        public static var errorUserNotFound: String { text("daily_wheel.error_user_not_found") }
+        public static var errorInvalidConfiguration: String { text("daily_wheel.error_invalid_configuration") }
+        public static var errorUnavailable: String { text("daily_wheel.error_unavailable") }
+
+        public static func starsAwarded(_ count: Int) -> String {
+            String(format: text("daily_wheel.stars_awarded"), count)
+        }
+
+        public static func newBalance(_ balance: Int) -> String {
+            String(format: text("daily_wheel.new_balance"), balance)
+        }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
+
     public enum StreakCelebration {
         public static func daysStreak(_ count: Int) -> String {
             String(format: text("streak_celebration.days_streak"), count)
         }
         public static var subtitle: String { text("streak_celebration.subtitle") }
+        public static var dayStreak: String { text("streak_celebration.day_streak") }
+        public static var onFire: String { text("streak_celebration.on_fire") }
+        public static var sameTimeTomorrow: String { text("streak_celebration.same_time_tomorrow") }
+        public static var dismiss: String { text("streak_celebration.dismiss") }
         public static var newBest: String { text("streak_celebration.new_best") }
         public static var keepGoing: String { text("streak_celebration.keep_going") }
 

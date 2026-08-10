@@ -1,99 +1,83 @@
-//
-//  StreakCelebrationDialog.swift
-//  Common
-//
-//  Created by Eslam Elnady on 08/08/2026.
-//
-
-
 import SwiftUI
 
 public struct StreakCelebrationDialog: View {
+    private let previousStreak: Int
     private let streak: Int
     private let isNewRecord: Bool
     private let onDismiss: () -> Void
 
-    @State private var appeared = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.locale) private var locale
+    @State private var displayedStreak: Int
+    @State private var detailsVisible = false
 
     public init(
+        previousStreak: Int,
         streak: Int,
         isNewRecord: Bool = false,
         onDismiss: @escaping () -> Void
     ) {
+        self.previousStreak = previousStreak
         self.streak = streak
         self.isNewRecord = isNewRecord
         self.onDismiss = onDismiss
+        _displayedStreak = State(initialValue: previousStreak)
     }
 
     public var body: some View {
         ZStack {
-            Color.black.opacity(0.22)
+            AppColors.shadow
+                .opacity(0.72)
                 .ignoresSafeArea()
-                .onTapGesture(perform: onDismiss)
 
-            AppDepthSurface(
-                surfaceColor: AppColors.surface,
-                borderColor: AppColors.warning.opacity(0.35),
-                depthColor: AppColors.warning.opacity(0.32),
-                contentInsets: EdgeInsets()
-            ) {
-                VStack(spacing: 18) {
-                    flame
+            VStack(spacing: 22) {
+                StreakFireView()
+                    .frame(width: 190, height: 190)
 
-                    VStack(spacing: 7) {
-                        Text(L10n.StreakCelebration.daysStreak(streak))
-                            .font(AppFonts.titleBlack)
-                            .foregroundStyle(AppColors.brandDarkBlue)
+                HStack(alignment: .firstTextBaseline, spacing: 10) {
+                    Text(
+                        displayedStreak.formatted(
+                            .number.locale(locale)
+                        )
+                    )
+                    .font(AppFonts.streakNumber)
+                    .foregroundStyle(AppColors.reward)
+                    .contentTransition(
+                        .numericText(value: Double(displayedStreak))
+                    )
 
-                        Text(L10n.StreakCelebration.subtitle)
-                            .font(AppFonts.subheadlineBold)
-                            .foregroundStyle(
-                                AppColors.textSecondary
-                            )
-                            .multilineTextAlignment(.center)
-                    }
+                    Text(L10n.StreakCelebration.dayStreak)
+                        .font(AppFonts.title3Black)
+                        .foregroundStyle(AppColors.onAccent)
+                }
+
+                VStack(spacing: 14) {
+                    Text(L10n.StreakCelebration.onFire)
+                        .font(AppFonts.title2Black)
+                        .foregroundStyle(AppColors.onAccent)
+
+                    Text(L10n.StreakCelebration.sameTimeTomorrow)
+                        .font(AppFonts.bodyBold)
+                        .foregroundStyle(AppColors.accentBlue)
+                        .multilineTextAlignment(.center)
 
                     if isNewRecord {
                         newRecordBadge
                     }
-
-                    AppButton(
-                        title: L10n.StreakCelebration.keepGoing,
-                        icon: "arrow.right",
-                        color: AppColors.warning,
-                        onTap: onDismiss
-                    )
-                    .frame(height: 48)
                 }
-                .padding(.horizontal, 22)
-                .padding(.vertical, 24)
+                .opacity(detailsVisible ? 1 : 0)
+                .accessibilityHidden(!detailsVisible)
             }
-            .frame(maxWidth: 310)
-            .scaleEffect(appeared ? 1 : 0.88)
-            .opacity(appeared ? 1 : 0)
-            .padding(.horizontal, 30)
+            .padding(.horizontal, 28)
         }
-        .onAppear {
-            withAnimation(
-                .spring(
-                    response: 0.38,
-                    dampingFraction: 0.72
-                )
-            ) {
-                appeared = true
-            }
+        .contentShape(Rectangle())
+        .onTapGesture(perform: onDismiss)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction(named: Text(L10n.StreakCelebration.dismiss)) {
+            onDismiss()
         }
-    }
-
-    private var flame: some View {
-        ZStack {
-            Circle()
-                .fill(AppColors.warning.opacity(0.13))
-                .frame(width: 72, height: 72)
-
-            Image(systemName: "flame.fill")
-                .font(.system(size: 34, weight: .black))
-                .foregroundStyle(AppColors.warning)
+        .task {
+            await runEntranceAnimation()
         }
     }
 
@@ -104,19 +88,64 @@ public struct StreakCelebrationDialog: View {
             Text(L10n.StreakCelebration.newBest)
                 .font(AppFonts.captionHeavy)
         }
-        .foregroundStyle(AppColors.warning)
+        .foregroundStyle(AppColors.reward)
         .padding(.horizontal, 12)
         .frame(height: 32)
         .background(
-            AppColors.warning.opacity(0.10),
+            AppColors.reward.opacity(0.14),
             in: Capsule()
         )
         .overlay {
             Capsule()
                 .stroke(
-                    AppColors.warning.opacity(0.28),
+                    AppColors.reward.opacity(0.36),
                     lineWidth: 1
                 )
         }
     }
+
+    @MainActor
+    private func runEntranceAnimation() async {
+        if reduceMotion {
+            displayedStreak = streak
+            detailsVisible = true
+            return
+        }
+
+        try? await Task.sleep(for: .milliseconds(420))
+        guard !Task.isCancelled else { return }
+
+        if previousStreak != streak {
+            withAnimation(.spring(response: 0.44, dampingFraction: 0.82)) {
+                displayedStreak = streak
+            }
+        }
+
+        try? await Task.sleep(for: .milliseconds(520))
+        guard !Task.isCancelled else { return }
+
+        withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) {
+            detailsVisible = true
+        }
+    }
+}
+
+#Preview("Streak Celebration Light") {
+    StreakCelebrationDialog(
+        previousStreak: 5,
+        streak: 6,
+        isNewRecord: true,
+        onDismiss: {}
+    )
+    .background(AppColors.screenBackground)
+}
+
+#Preview("Streak Celebration Dark") {
+    StreakCelebrationDialog(
+        previousStreak: 5,
+        streak: 6,
+        onDismiss: {}
+    )
+    .background(AppColors.screenBackground)
+    .preferredColorScheme(.dark)
 }
