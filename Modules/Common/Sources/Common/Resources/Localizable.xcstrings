@@ -550,13 +550,13 @@
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "تأكيد الهدف وجدولته"
+            "value": "تأكيد الهدف والحصول على اقتراحات جلسات من أوان"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Confirm and schedule goal"
+            "value": "Confirm and get AI session suggestions"
           }
         }
       }
@@ -731,6 +731,30 @@
         }
       }
     },
+    "goal_creation.schedule_review_title": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"راجع جدول هدفك"}},"en":{"stringUnit":{"state":"translated","value":"Review your goal schedule"}}}},
+    "goal_creation.schedule_review_subtitle": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"راجع الجلسات وعدّل أوقاتها قبل التأكيد."}},"en":{"stringUnit":{"state":"translated","value":"Review the sessions and adjust their times before confirming."}}}},
+    "goal_creation.requesting_schedule": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"أوان يقترح أفضل جدول..."}},"en":{"stringUnit":{"state":"translated","value":"Awan is proposing the best schedule..."}}}},
+    "goal_creation.confirming_schedule": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"جارٍ حفظ جدولك..."}},"en":{"stringUnit":{"state":"translated","value":"Saving your schedule..."}}}},
+    "goal_creation.ai_session": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"جلسة مقترحة"}},"en":{"stringUnit":{"state":"translated","value":"AI proposed session"}}}},
+    "goal_creation.manual_session": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"جلسة يدوية"}},"en":{"stringUnit":{"state":"translated","value":"Manual session"}}}},
+    "goal_creation.assigned_zone": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"نطاق محدد"}},"en":{"stringUnit":{"state":"translated","value":"Assigned zone"}}}},
+    "goal_creation.no_zone": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"بدون نطاق"}},"en":{"stringUnit":{"state":"translated","value":"No matching zone"}}}},
+    "goal_creation.accept_suggestion": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"قبول هذا الاقتراح"}},"en":{"stringUnit":{"state":"translated","value":"Accept this suggestion"}}}},
+    "goal_creation.original_conflict": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تعارض الموعد المقترح الأصلي"}},"en":{"stringUnit":{"state":"translated","value":"Original proposal conflict"}}}},
+    "goal_creation.edited": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تم التعديل"}},"en":{"stringUnit":{"state":"translated","value":"Edited"}}}},
+    "goal_creation.unscheduled_section": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"مهام غير مجدولة"}},"en":{"stringUnit":{"state":"translated","value":"Unscheduled tasks"}}}},
+    "goal_creation.add_session": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"إضافة جلسة"}},"en":{"stringUnit":{"state":"translated","value":"Add session"}}}},
+    "goal_creation.remove_session": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"حذف الجلسة"}},"en":{"stringUnit":{"state":"translated","value":"Remove session"}}}},
+    "goal_creation.confirm_schedule": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تأكيد الجدول"}},"en":{"stringUnit":{"state":"translated","value":"Confirm schedule"}}}},
+    "goal_creation.finish_without_scheduling": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"الإنهاء بدون جدولة"}},"en":{"stringUnit":{"state":"translated","value":"Finish without scheduling"}}}},
+    "goal_creation.schedule_failure_title": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تعذر إنشاء الجدول"}},"en":{"stringUnit":{"state":"translated","value":"Couldn't create the schedule"}}}},
+    "goal_creation.retry_scheduling": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"إعادة محاولة الجدولة"}},"en":{"stringUnit":{"state":"translated","value":"Retry scheduling"}}}},
+    "goal_creation.unresolved_title": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"%d مهام بلا جلسات"}},"en":{"stringUnit":{"state":"translated","value":"%d tasks still have no sessions"}}}},
+    "goal_creation.unresolved_message": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"يمكنك إضافة جلسات الآن أو المتابعة وترك هذه المهام بدون جدولة."}},"en":{"stringUnit":{"state":"translated","value":"Add sessions now, or continue and leave these tasks unscheduled."}}}},
+    "goal_creation.add_sessions": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"إضافة جلسات"}},"en":{"stringUnit":{"state":"translated","value":"Add sessions"}}}},
+    "goal_creation.continue_without_them": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"المتابعة بدونها"}},"en":{"stringUnit":{"state":"translated","value":"Continue without them"}}}},
+    "goal_creation.session_duration": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"مدة الجلسة"}},"en":{"stringUnit":{"state":"translated","value":"Session duration"}}}},
+    "goal_creation.optional": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"اختياري"}},"en":{"stringUnit":{"state":"translated","value":"Optional"}}}},
     "home.add_goal": {
       "extractionState": "manual",
       "localizations": {
@@ -3465,6 +3489,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "No tasks assigned to this goal."
+          }
+        }
+      }
+    },
+    "goals.depends_on": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يعتمد على"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Depends on"
+          }
+        }
+      }
+    },
+    "goals.more_dependencies": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%d أخرى"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%d more"
           }
         }
       }
