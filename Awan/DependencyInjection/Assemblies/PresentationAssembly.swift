@@ -113,8 +113,16 @@ struct PresentationAssembly: Assembly {
                         ConfirmGoalProposalUseCase.self,
                         from: resolver
                     ),
-                    scheduleGoal: Self.resolve(
-                        ScheduleCreatedGoalUseCase.self,
+                    requestSchedule: Self.resolve(
+                        RequestGoalScheduleProposalUseCase.self,
+                        from: resolver
+                    ),
+                    confirmSchedule: Self.resolve(
+                        ConfirmGoalScheduleUseCase.self,
+                        from: resolver
+                    ),
+                    fetchZones: Self.resolve(
+                        FetchZonesUseCase.self,
                         from: resolver
                     )
                 )
@@ -125,6 +133,21 @@ struct PresentationAssembly: Assembly {
             let useCases = Self.resolve(HomeUseCases.self, from: resolver)
             return MainActor.assumeIsolated {
                 HomeViewModel(useCases: useCases)
+            }
+        }
+        .inObjectScope(.container)
+
+        container.register(DailyWheelUseCases.self) { resolver in
+            DailyWheelUseCases(
+                fetch: Self.resolve(FetchDailyWheelUseCase.self, from: resolver),
+                spin: Self.resolve(SpinDailyWheelUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(DailyWheelViewModel.self) { resolver in
+            let useCases = Self.resolve(DailyWheelUseCases.self, from: resolver)
+            return MainActor.assumeIsolated {
+                DailyWheelViewModel(useCases: useCases)
             }
         }
         .inObjectScope(.container)
@@ -140,7 +163,7 @@ struct PresentationAssembly: Assembly {
         container.register(InboxUseCases.self) { resolver in
             InboxUseCases(
                 fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver),
-                completeTask: Self.resolve(CompleteTaskSessionsUseCase.self, from: resolver),
+                setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver),
                 deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver)
             )
         }
@@ -167,9 +190,8 @@ struct PresentationAssembly: Assembly {
 
         container.register(InboxViewModel.self) { resolver in
             let useCases = Self.resolve(InboxUseCases.self, from: resolver)
-            let goalsVM = Self.resolve(GoalsViewModel.self, from: resolver)
             return MainActor.assumeIsolated {
-                InboxViewModel(useCases: useCases, goalsViewModel: goalsVM)
+                InboxViewModel(useCases: useCases)
             }
         }
         .inObjectScope(.container)
@@ -263,6 +285,7 @@ struct PresentationAssembly: Assembly {
             let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
             let loginViewModel = Self.resolve(LoginViewModel.self, from: resolver)
             let homeViewModel = Self.resolve(HomeViewModel.self, from: resolver)
+            let dailyWheelViewModel = Self.resolve(DailyWheelViewModel.self, from: resolver)
             let calendarViewModel = Self.resolve(CalendarViewModel.self, from: resolver)
             let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
             let creationUseCases = Self.resolve(CreationUseCases.self, from: resolver)
@@ -279,6 +302,7 @@ struct PresentationAssembly: Assembly {
                     authenticationState: authenticationState,
                     loginViewModel: loginViewModel,
                     homeViewModel: homeViewModel,
+                    dailyWheelViewModel: dailyWheelViewModel,
                     calendarViewModel: calendarViewModel,
                     scheduleViewModel: scheduleViewModel,
                     creationUseCases: creationUseCases,

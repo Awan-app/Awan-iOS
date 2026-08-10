@@ -29,10 +29,6 @@ struct InboxHeaderView: View {
                     .init(value: .goals, title: L10n.Inbox.tabGoals, icon: "target")
                 ]
             )
-
-            Text(selectedTopTab == .inbox ? L10n.Inbox.subtitle : L10n.Goals.subtitle)
-                .font(AppFonts.subheadlineSemibold)
-                .foregroundStyle(AppColors.textSecondary)
         }
     }
 }

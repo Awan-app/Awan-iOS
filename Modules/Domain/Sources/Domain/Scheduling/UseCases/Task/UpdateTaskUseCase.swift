@@ -35,6 +35,7 @@ public struct DefaultUpdateTaskUseCase: UpdateTaskUseCase {
             title: request.title,
             description: previousTask.description,
             status: previousTask.status,
+            completedAt: previousTask.completedAt,
             goalID: previousTask.goalID,
             duration: TaskDuration(minutes: request.durationMinutes),
             isSplittable: request.isSplittable,

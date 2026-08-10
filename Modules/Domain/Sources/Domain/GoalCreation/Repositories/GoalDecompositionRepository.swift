@@ -7,5 +7,10 @@ public protocol GoalDecompositionRepository: Sendable {
 
     func confirmProposal(sessionID: UUID) async throws -> ConfirmedGoal
 
-    func scheduleGoal(goalID: UUID) async throws
+    func requestScheduleProposal(goalID: UUID) async throws -> GoalScheduleProposal
+
+    func confirmSchedule(
+        goalID: UUID,
+        sessions: [GoalScheduleConfirmationItem]
+    ) async throws -> [ConfirmedGoalScheduleSession]
 }

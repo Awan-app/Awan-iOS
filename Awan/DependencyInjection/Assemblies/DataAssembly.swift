@@ -78,7 +78,16 @@ struct DataAssembly: Assembly {
             )
         }
         container.register(GoalDecompositionRepository.self) { resolver in
-            DefaultGoalDecompositionRepository(remoteDataSource: Self.resolve(RemoteGoalDecompositionDataSource.self, from: resolver))
+            DefaultGoalDecompositionRepository(
+                remoteDataSource: Self.resolve(
+                    RemoteGoalDecompositionDataSource.self,
+                    from: resolver
+                ),
+                localProfileDataSource: Self.resolve(
+                    LocalUserProfileDataSource.self,
+                    from: resolver
+                )
+            )
         }
         .inObjectScope(.container)
 //        container.register(GoalDecompositionRepository.self) { resolver in
@@ -128,6 +137,19 @@ struct DataAssembly: Assembly {
                 )
             )
         }
+        container.register(GamificationRepository.self) { resolver in
+            DefaultGamificationRepository(
+                remoteDataSource: Self.resolve(
+                    RemoteGamificationDataSource.self,
+                    from: resolver
+                ),
+                localProfileDataSource: Self.resolve(
+                    LocalUserProfileDataSource.self,
+                    from: resolver
+                )
+            )
+        }
+        .inObjectScope(.container)
         container.register(UserProfileRepository.self) { resolver in
             DefaultUserProfileRepository(
                 localDataSource: Self.resolve(

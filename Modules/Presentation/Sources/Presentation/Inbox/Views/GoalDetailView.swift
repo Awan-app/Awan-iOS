@@ -26,7 +26,7 @@ public struct GoalDetailView: View {
 
             if let item = goalItem {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 10) {
+                    LazyVStack(alignment: .leading, spacing: 10) {
                         GoalDetailHeaderCard(goal: item.rawGoal)
 
                         GoalDetailProgressCard(
@@ -45,13 +45,8 @@ public struct GoalDetailView: View {
                             }
                         )
 
-                        if let description = item.rawGoal.description, !description.isEmpty {
-                            GoalDetailDescriptionCard(description: description)
-                        }
-
-                        GoalDetailMetadataCard(createdAt: item.rawGoal.createdAt)
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 16)
                     .padding(.top, 16)
                     .padding(.bottom, 32)
                 }

@@ -3,11 +3,14 @@ import Foundation
 
 public struct DefaultGoalDecompositionRepository: GoalDecompositionRepository {
     private let remoteDataSource: any RemoteGoalDecompositionDataSource
+    private let localProfileDataSource: any LocalUserProfileDataSource
 
     public init(
-        remoteDataSource: any RemoteGoalDecompositionDataSource
+        remoteDataSource: any RemoteGoalDecompositionDataSource,
+        localProfileDataSource: any LocalUserProfileDataSource
     ) {
         self.remoteDataSource = remoteDataSource
+        self.localProfileDataSource = localProfileDataSource
     }
 
     public func sendMessage(
@@ -28,12 +31,57 @@ public struct DefaultGoalDecompositionRepository: GoalDecompositionRepository {
         let response = try await remoteDataSource.confirmProposal(
             sessionID: sessionID
         )
-        return ConfirmedGoal(id: response.id, title: response.title)
+        return ConfirmedGoal(
+            id: response.id,
+            title: response.title,
+            tasks: response.tasks.map {
+                ConfirmedGoalTask(
+                    id: $0.id,
+                    title: $0.title,
+                    estimatedDuration: $0.estimatedDuration
+                )
+            }
+        )
     }
 
-    public func scheduleGoal(goalID: UUID) async throws {
-        try await remoteDataSource.scheduleGoal(
+    public func requestScheduleProposal(
+        goalID: UUID
+    ) async throws -> GoalScheduleProposal {
+        let response = try await remoteDataSource.requestSchedule(
             ScheduleGoalRequestDTO(goalID: goalID)
         )
+        return try response.toDomain(timeZoneID: await timeZoneID())
+    }
+
+    public func confirmSchedule(
+        goalID: UUID,
+        sessions: [GoalScheduleConfirmationItem]
+    ) async throws -> [ConfirmedGoalScheduleSession] {
+        let timeZoneID = await timeZoneID()
+        let response = try await remoteDataSource.confirmSchedule(
+            ConfirmGoalScheduleRequestDTO(
+                goalID: goalID,
+                sessions: sessions.map {
+                    ConfirmGoalScheduleSessionDTO(
+                        taskID: $0.taskID,
+                        zoneID: $0.zoneID,
+                        start: GoalScheduleDateMapper.string(
+                            from: $0.start,
+                            timeZoneID: timeZoneID
+                        ),
+                        end: GoalScheduleDateMapper.string(
+                            from: $0.end,
+                            timeZoneID: timeZoneID
+                        )
+                    )
+                }
+            )
+        )
+        return try response.map { try $0.toDomain(timeZoneID: timeZoneID) }
+    }
+
+    private func timeZoneID() async -> String {
+        (try? await localProfileDataSource.fetchProfile())?
+            .preferences.timezone ?? TimeZone.current.identifier
     }
 }

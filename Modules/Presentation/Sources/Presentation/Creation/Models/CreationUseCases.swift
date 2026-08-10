@@ -37,15 +37,21 @@ public struct CreationUseCases: Sendable {
 public struct GoalDecompositionUseCases: Sendable {
     public let sendMessage: any SendGoalDecompositionMessageUseCase
     public let confirmProposal: any ConfirmGoalProposalUseCase
-    public let scheduleGoal: any ScheduleCreatedGoalUseCase
+    public let requestSchedule: any RequestGoalScheduleProposalUseCase
+    public let confirmSchedule: any ConfirmGoalScheduleUseCase
+    public let fetchZones: any FetchZonesUseCase
 
     public init(
         sendMessage: any SendGoalDecompositionMessageUseCase,
         confirmProposal: any ConfirmGoalProposalUseCase,
-        scheduleGoal: any ScheduleCreatedGoalUseCase
+        requestSchedule: any RequestGoalScheduleProposalUseCase,
+        confirmSchedule: any ConfirmGoalScheduleUseCase,
+        fetchZones: any FetchZonesUseCase
     ) {
         self.sendMessage = sendMessage
         self.confirmProposal = confirmProposal
-        self.scheduleGoal = scheduleGoal
+        self.requestSchedule = requestSchedule
+        self.confirmSchedule = confirmSchedule
+        self.fetchZones = fetchZones
     }
 }

@@ -371,7 +371,7 @@ private func makeAcceptedTask(from draft: TaskWithSessionsDraft) throws -> AwanT
         id: UUID(),
         title: draft.task.title,
         description: draft.task.description,
-        status: .pending,
+        status: .drafted,
         goalID: draft.task.goalId,
         duration: try TaskDuration(minutes: draft.task.estimatedDuration),
         isSplittable: draft.task.allowTaskSplitting,

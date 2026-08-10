@@ -24,7 +24,14 @@ struct GoalDetailProgressCard: View {
     }
 
     var body: some View {
-        AppCard {
+        AppDepthSurface(
+            shape: .roundedRectangle(cornerRadius: 24),
+            surfaceColor: AppColors.surface,
+            borderColor: AppColors.outline.opacity(0.06),
+            depthColor: AppColors.outline.opacity(0.10),
+            borderWidth: 1.5,
+            depthOffset: 4
+        ) {
             VStack(alignment: .leading, spacing: 12) {
                 Text(L10n.Goals.progress)
                     .font(AppFonts.subheadlineHeavy)

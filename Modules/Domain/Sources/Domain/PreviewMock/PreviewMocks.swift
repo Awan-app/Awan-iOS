@@ -8,6 +8,18 @@
 import Foundation
 import Combine
 
+public extension DailyWheelSegment {
+    static let previewSegments: [DailyWheelSegment] = [
+        .init(id: "SEG_1", coins: 1, payoutType: .coins),
+        .init(id: "SEG_2", coins: 5, payoutType: .coins),
+        .init(id: "SEG_3", coins: 10, payoutType: .coins),
+        .init(id: "SEG_4", coins: 20, payoutType: .coins),
+        .init(id: "SEG_5", coins: 50, payoutType: .coins),
+        .init(id: "SEG_6", coins: 100, payoutType: .coins),
+        .init(id: "SEG_ITEM", coins: 0, payoutType: .item)
+    ]
+}
+
 public struct MockCompleteOnboardingUseCase: CompleteOnboardingUseCase {
     public init() {}
     public func execute(_ request: CompleteOnboardingRequest) async throws -> UserProfile {
@@ -341,7 +353,7 @@ public extension AwanTask {
             id: UUID(),
             title: "Mock Task",
             description: "Mock Task Description",
-            status: .inProgress,
+            status: .active,
             goalID: nil,
             duration: try! TaskDuration(minutes: 60),
             isSplittable: false,
@@ -358,7 +370,7 @@ public extension AITaskSheetItem {
                 id: UUID(),
                 title: "Build login page",
                 description: "Create a login page with email and password fields",
-                status: .pending,
+                status: .active,
                 goalID: UUID(),
                 duration: try! TaskDuration(minutes: 60),
                 isSplittable: false,

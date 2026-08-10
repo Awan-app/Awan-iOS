@@ -15,6 +15,8 @@ public struct InboxState: Equatable, Sendable {
     public var expandedTaskIDs: Set<UUID>
     public var allTasks: [InboxTaskItem]
     public var failureMessage: String?
+    public var streakTransition: InboxStreakTransition?
+    public var mutatingTaskIDs: Set<UUID>
 
     public init(
         selectedTopTab: InboxTopTab = .inbox,
@@ -24,7 +26,9 @@ public struct InboxState: Equatable, Sendable {
         selectedSessionFilter: InboxSessionFilter = .any,
         expandedTaskIDs: Set<UUID> = [],
         allTasks: [InboxTaskItem] = [],
-        failureMessage: String? = nil
+        failureMessage: String? = nil,
+        streakTransition: InboxStreakTransition? = nil,
+        mutatingTaskIDs: Set<UUID> = []
     ) {
         self.selectedTopTab = selectedTopTab
         self.isLoading = isLoading
@@ -34,6 +38,8 @@ public struct InboxState: Equatable, Sendable {
         self.expandedTaskIDs = expandedTaskIDs
         self.allTasks = allTasks
         self.failureMessage = failureMessage
+        self.streakTransition = streakTransition
+        self.mutatingTaskIDs = mutatingTaskIDs
       
     }
 
@@ -75,5 +81,17 @@ public struct InboxState: Equatable, Sendable {
 
             return titleMatches || descriptionMatches || sessionMatches
         }
+    }
+}
+
+public struct InboxStreakTransition: Equatable, Sendable {
+    public let oldValue: Int
+    public let newValue: Int
+    public let isNewRecord: Bool
+
+    public init(oldValue: Int, newValue: Int, isNewRecord: Bool) {
+        self.oldValue = oldValue
+        self.newValue = newValue
+        self.isNewRecord = isNewRecord
     }
 }

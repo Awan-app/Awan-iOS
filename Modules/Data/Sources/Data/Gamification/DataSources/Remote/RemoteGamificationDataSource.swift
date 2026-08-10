@@ -8,6 +8,8 @@ import AwaNetwork
 
 public protocol RemoteGamificationDataSource: Sendable {
     func getProgress() async throws -> UserProgressResponseDTO
+    func getWheelConfig() async throws -> DailyWheelConfigResponseDTO
+    func spinWheel() async throws -> DailyWheelSpinResponseDTO
 }
 
 public final class DefaultRemoteGamificationDataSource:
@@ -23,5 +25,13 @@ public final class DefaultRemoteGamificationDataSource:
         try await networkService.request(
             GamificationEndpoint.getProgress
         )
+    }
+
+    public func getWheelConfig() async throws -> DailyWheelConfigResponseDTO {
+        try await networkService.request(GamificationEndpoint.getWheelConfig)
+    }
+
+    public func spinWheel() async throws -> DailyWheelSpinResponseDTO {
+        try await networkService.request(GamificationEndpoint.spinWheel)
     }
 }

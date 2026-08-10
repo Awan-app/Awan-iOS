@@ -145,7 +145,7 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
             id: UUID(),
             title: "Task",
             description: "Description",
-            status: .inProgress,
+            status: .active,
             goalID: UUID(),
             duration: try TaskDuration(minutes: 75),
             isSplittable: true,

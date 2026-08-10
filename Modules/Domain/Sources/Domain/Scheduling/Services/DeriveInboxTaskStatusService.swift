@@ -8,8 +8,11 @@ import Foundation
 public struct DeriveInboxTaskStatusService: Sendable {
     public init() {}
 
-    public func derive(from sessions: [Session], taskStatus: TaskStatus = .pending) -> InboxTaskStatus {
-        if taskStatus == .completed {
+    public func derive(
+        from sessions: [Session],
+        completedAt: Date?
+    ) -> InboxTaskStatus {
+        if completedAt != nil {
             return .completed
         }
 
@@ -21,13 +24,6 @@ public struct DeriveInboxTaskStatusService: Sendable {
 
         if nonCancelledSessions.isEmpty {
             return .cancelled
-        }
-
-        let hasAtLeastOneCompleted = sessions.contains { $0.status == .completed }
-        let allNonCancelledAreCompleted = nonCancelledSessions.allSatisfy { $0.status == .completed }
-
-        if allNonCancelledAreCompleted && hasAtLeastOneCompleted {
-            return .completed
         }
 
         return .active

@@ -60,12 +60,121 @@ private extension GoalTaskProposalDTO {
 
 enum GoalDecompositionMappingError: LocalizedError {
     case invalidDate(String)
+    case invalidSuggestionType(String)
 
     var errorDescription: String? {
         switch self {
         case .invalidDate(let value):
             "The goal response contained an invalid date: \(value)"
+        case .invalidSuggestionType(let value):
+            "The schedule response contained an invalid suggestion type: \(value)"
         }
+    }
+}
+
+extension GoalScheduleProposalResponseDTO {
+    func toDomain(timeZoneID: String) throws -> GoalScheduleProposal {
+        GoalScheduleProposal(
+            goalID: goalID,
+            proposedSessions: try proposedSessions.map {
+                try $0.toDomain(timeZoneID: timeZoneID)
+            },
+            suggestions: try suggestions.map {
+                try $0.toDomain(timeZoneID: timeZoneID)
+            },
+            unscheduledTasks: unscheduledTasks.map {
+                GoalScheduleUnscheduledTask(
+                    taskID: $0.taskID,
+                    taskTitle: $0.taskTitle,
+                    message: $0.message
+                )
+            }
+        )
+    }
+}
+
+private extension GoalScheduleSessionResponseDTO {
+    func toDomain(timeZoneID: String) throws -> GoalScheduleSession {
+        GoalScheduleSession(
+            taskID: taskID,
+            taskTitle: taskTitle,
+            zoneID: zoneID,
+            start: try GoalScheduleDateMapper.date(start, timeZoneID: timeZoneID),
+            end: try GoalScheduleDateMapper.date(end, timeZoneID: timeZoneID)
+        )
+    }
+}
+
+private extension GoalScheduleSuggestionResponseDTO {
+    func toDomain(timeZoneID: String) throws -> GoalScheduleSuggestion {
+        let type: GoalScheduleSuggestionType = switch suggestionType {
+        case "NO_ZONE": .noZone
+        case "OVERLAP": .overlap
+        default: throw GoalDecompositionMappingError.invalidSuggestionType(
+            suggestionType
+        )
+        }
+        return GoalScheduleSuggestion(
+            session: GoalScheduleSession(
+                taskID: taskID,
+                taskTitle: taskTitle,
+                zoneID: zoneID,
+                start: try GoalScheduleDateMapper.date(start, timeZoneID: timeZoneID),
+                end: try GoalScheduleDateMapper.date(end, timeZoneID: timeZoneID)
+            ),
+            type: type,
+            reason: reason,
+            overlap: try overlapInfo.map {
+                GoalScheduleOverlapInfo(
+                    taskTitle: $0.taskTitle,
+                    start: try GoalScheduleDateMapper.date(
+                        $0.start,
+                        timeZoneID: timeZoneID
+                    ),
+                    end: try GoalScheduleDateMapper.date(
+                        $0.end,
+                        timeZoneID: timeZoneID
+                    ),
+                    mandatory: $0.mandatory,
+                    points: $0.points
+                )
+            }
+        )
+    }
+}
+
+extension ConfirmedGoalScheduleSessionResponseDTO {
+    func toDomain(timeZoneID: String) throws -> ConfirmedGoalScheduleSession {
+        ConfirmedGoalScheduleSession(
+            id: id,
+            taskID: taskID,
+            zoneID: zoneID,
+            start: try GoalScheduleDateMapper.date(start, timeZoneID: timeZoneID),
+            end: try GoalScheduleDateMapper.date(end, timeZoneID: timeZoneID)
+        )
+    }
+}
+
+enum GoalScheduleDateMapper {
+    static func date(_ value: String, timeZoneID: String) throws -> Date {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(identifier: timeZoneID) ?? .current
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        guard let date = formatter.date(from: value) else {
+            throw GoalDecompositionMappingError.invalidDate(value)
+        }
+        return date
+    }
+
+    static func string(from date: Date, timeZoneID: String) -> String {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(identifier: timeZoneID) ?? .current
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        return formatter.string(from: date)
     }
 }
 

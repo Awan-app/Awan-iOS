@@ -11,6 +11,7 @@ public protocol LocalUserProfileDataSource: Sendable {
         streak: Int,
         maxStreak: Int
     ) async throws
+    func updatePoints(_ points: Int) async throws
 }
 
 @ModelActor
@@ -97,6 +98,18 @@ public actor SwiftDataUserProfileDataSource: LocalUserProfileDataSource {
         model.streak = streak
         model.maxStreak = maxStreak
 
+        try modelContext.save()
+        changes.send()
+    }
+
+    public func updatePoints(_ points: Int) throws {
+        guard let model = try modelContext
+            .fetch(FetchDescriptor<UserProfileModel>())
+            .first else {
+            return
+        }
+
+        model.points = points
         try modelContext.save()
         changes.send()
     }

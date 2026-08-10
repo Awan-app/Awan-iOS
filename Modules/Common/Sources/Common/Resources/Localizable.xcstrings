@@ -550,13 +550,13 @@
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "تأكيد الهدف وجدولته"
+            "value": "تأكيد الهدف والحصول على اقتراحات جلسات من أوان"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Confirm and schedule goal"
+            "value": "Confirm and get AI session suggestions"
           }
         }
       }
@@ -731,6 +731,30 @@
         }
       }
     },
+    "goal_creation.schedule_review_title": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"راجع جدول هدفك"}},"en":{"stringUnit":{"state":"translated","value":"Review your goal schedule"}}}},
+    "goal_creation.schedule_review_subtitle": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"راجع الجلسات وعدّل أوقاتها قبل التأكيد."}},"en":{"stringUnit":{"state":"translated","value":"Review the sessions and adjust their times before confirming."}}}},
+    "goal_creation.requesting_schedule": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"أوان يقترح أفضل جدول..."}},"en":{"stringUnit":{"state":"translated","value":"Awan is proposing the best schedule..."}}}},
+    "goal_creation.confirming_schedule": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"جارٍ حفظ جدولك..."}},"en":{"stringUnit":{"state":"translated","value":"Saving your schedule..."}}}},
+    "goal_creation.ai_session": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"جلسة مقترحة"}},"en":{"stringUnit":{"state":"translated","value":"AI proposed session"}}}},
+    "goal_creation.manual_session": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"جلسة يدوية"}},"en":{"stringUnit":{"state":"translated","value":"Manual session"}}}},
+    "goal_creation.assigned_zone": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"نطاق محدد"}},"en":{"stringUnit":{"state":"translated","value":"Assigned zone"}}}},
+    "goal_creation.no_zone": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"بدون نطاق"}},"en":{"stringUnit":{"state":"translated","value":"No matching zone"}}}},
+    "goal_creation.accept_suggestion": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"قبول هذا الاقتراح"}},"en":{"stringUnit":{"state":"translated","value":"Accept this suggestion"}}}},
+    "goal_creation.original_conflict": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تعارض الموعد المقترح الأصلي"}},"en":{"stringUnit":{"state":"translated","value":"Original proposal conflict"}}}},
+    "goal_creation.edited": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تم التعديل"}},"en":{"stringUnit":{"state":"translated","value":"Edited"}}}},
+    "goal_creation.unscheduled_section": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"مهام غير مجدولة"}},"en":{"stringUnit":{"state":"translated","value":"Unscheduled tasks"}}}},
+    "goal_creation.add_session": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"إضافة جلسة"}},"en":{"stringUnit":{"state":"translated","value":"Add session"}}}},
+    "goal_creation.remove_session": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"حذف الجلسة"}},"en":{"stringUnit":{"state":"translated","value":"Remove session"}}}},
+    "goal_creation.confirm_schedule": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تأكيد الجدول"}},"en":{"stringUnit":{"state":"translated","value":"Confirm schedule"}}}},
+    "goal_creation.finish_without_scheduling": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"الإنهاء بدون جدولة"}},"en":{"stringUnit":{"state":"translated","value":"Finish without scheduling"}}}},
+    "goal_creation.schedule_failure_title": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"تعذر إنشاء الجدول"}},"en":{"stringUnit":{"state":"translated","value":"Couldn't create the schedule"}}}},
+    "goal_creation.retry_scheduling": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"إعادة محاولة الجدولة"}},"en":{"stringUnit":{"state":"translated","value":"Retry scheduling"}}}},
+    "goal_creation.unresolved_title": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"%d مهام بلا جلسات"}},"en":{"stringUnit":{"state":"translated","value":"%d tasks still have no sessions"}}}},
+    "goal_creation.unresolved_message": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"يمكنك إضافة جلسات الآن أو المتابعة وترك هذه المهام بدون جدولة."}},"en":{"stringUnit":{"state":"translated","value":"Add sessions now, or continue and leave these tasks unscheduled."}}}},
+    "goal_creation.add_sessions": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"إضافة جلسات"}},"en":{"stringUnit":{"state":"translated","value":"Add sessions"}}}},
+    "goal_creation.continue_without_them": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"المتابعة بدونها"}},"en":{"stringUnit":{"state":"translated","value":"Continue without them"}}}},
+    "goal_creation.session_duration": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"مدة الجلسة"}},"en":{"stringUnit":{"state":"translated","value":"Session duration"}}}},
+    "goal_creation.optional": {"extractionState":"manual","localizations":{"ar":{"stringUnit":{"state":"translated","value":"اختياري"}},"en":{"stringUnit":{"state":"translated","value":"Optional"}}}},
     "home.add_goal": {
       "extractionState": "manual",
       "localizations": {
@@ -2244,36 +2268,36 @@
         }
       }
     },
-    "home.status_in_progress": {
+    "home.status_active": {
       "extractionState": "manual",
       "localizations": {
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "قيد التنفيذ"
+            "value": "نشطة"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "In progress"
+            "value": "Active"
           }
         }
       }
     },
-    "home.status_pending": {
+    "home.status_drafted": {
       "extractionState": "manual",
       "localizations": {
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "قيد الانتظار"
+            "value": "مسودة"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pending"
+            "value": "Drafted"
           }
         }
       }
@@ -2835,6 +2859,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d sessions"
+          }
+        }
+      }
+    },
+    "inbox.points_claimed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم التحصيل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claimed"
           }
         }
       }
@@ -3465,6 +3506,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "No tasks assigned to this goal."
+          }
+        }
+      }
+    },
+    "goals.depends_on": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يعتمد على"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Depends on"
+          }
+        }
+      }
+    },
+    "goals.more_dependencies": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%d أخرى"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%d more"
           }
         }
       }
@@ -8521,6 +8596,188 @@
         "en": {
           "stringUnit": { "state": "translated", "value": "Your progress" }
         }
+      }
+    },
+    "daily_wheel.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "هدية اليوم" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Daily Gift" } }
+      }
+    },
+    "daily_wheel.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "لف العجلة واكتشف مكافأتك" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Spin the wheel and reveal your reward" } }
+      }
+    },
+    "daily_wheel.loading": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "نجهز هديتك اليومية…" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Preparing your daily gift…" } }
+      }
+    },
+    "daily_wheel.gift": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "هدية" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Gift" } }
+      }
+    },
+    "daily_wheel.open_gift": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "افتح هدية اليوم" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Open today’s gift" } }
+      }
+    },
+    "daily_wheel.tap_to_spin": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "اضغط على العجلة لتدورها" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Tap the wheel to spin" } }
+      }
+    },
+    "daily_wheel.spin": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "دور العجلة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Spin the wheel" } }
+      }
+    },
+    "daily_wheel.choosing_reward": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "نختار مكافأتك…" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Choosing your reward…" } }
+      }
+    },
+    "daily_wheel.almost_there": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "قربنا…" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Almost there…" } }
+      }
+    },
+    "daily_wheel.you_won": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "كسبت!" } },
+        "en": { "stringUnit": { "state": "translated", "value": "You won!" } }
+      }
+    },
+    "daily_wheel.already_claimed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "استلمت هدية اليوم" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Today’s gift is claimed" } }
+      }
+    },
+    "daily_wheel.todays_reward": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "مكافأة اليوم" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Today’s reward" } }
+      }
+    },
+    "daily_wheel.gift_claimed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تم استلام مكافأتك" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Your reward was collected" } }
+      }
+    },
+    "daily_wheel.come_back_tomorrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "ارجع بكرة لهدية جديدة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Come back tomorrow for another gift" } }
+      }
+    },
+    "daily_wheel.item_added": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تمت إضافة الهدية لمجموعتك" } },
+        "en": { "stringUnit": { "state": "translated", "value": "The gift was added to your collection" } }
+      }
+    },
+    "daily_wheel.awesome": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "رائع!" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Awesome!" } }
+      }
+    },
+    "daily_wheel.dismiss": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "إغلاق نتيجة الهدية" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Dismiss gift result" } }
+      }
+    },
+    "daily_wheel.could_not_load": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تعذر فتح هدية اليوم" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Couldn’t open today’s gift" } }
+      }
+    },
+    "daily_wheel.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "حاول مرة أخرى" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Try again" } }
+      }
+    },
+    "daily_wheel.stars_awarded": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "%d نجمة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "%d stars" } }
+      }
+    },
+    "daily_wheel.new_balance": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "رصيدك الآن %d نجمة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Your new balance is %d stars" } }
+      }
+    },
+    "daily_wheel.error_already_claimed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "استلمت هدية اليوم بالفعل." } },
+        "en": { "stringUnit": { "state": "translated", "value": "Today’s gift has already been claimed." } }
+      }
+    },
+    "daily_wheel.error_authentication_failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "سجّل الدخول مرة أخرى لاستلام هديتك اليومية." } },
+        "en": { "stringUnit": { "state": "translated", "value": "Please sign in again to claim your daily gift." } }
+      }
+    },
+    "daily_wheel.error_user_not_found": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تعذر العثور على ملفك الشخصي." } },
+        "en": { "stringUnit": { "state": "translated", "value": "Your profile could not be found." } }
+      }
+    },
+    "daily_wheel.error_invalid_configuration": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "عجلة الهدايا غير متاحة مؤقتًا." } },
+        "en": { "stringUnit": { "state": "translated", "value": "The daily wheel is temporarily unavailable." } }
+      }
+    },
+    "daily_wheel.error_unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تعذر تحميل هدية اليوم. حاول مرة أخرى." } },
+        "en": { "stringUnit": { "state": "translated", "value": "We couldn’t load today’s gift. Please try again." } }
       }
     }
   },

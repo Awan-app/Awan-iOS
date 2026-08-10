@@ -2,14 +2,22 @@ import Domain
 
 extension TaskModel {
     func toDomain() throws -> AwanTask {
-        guard let status = TaskStatus(rawValue: statusRaw) else {
-            throw SchedulingError.invalidTaskStatus(raw: statusRaw)
+        let status: TaskStatus
+        switch statusRaw {
+        case "pending", "inProgress":
+            status = .active
+        default:
+            guard let currentStatus = TaskStatus(rawValue: statusRaw) else {
+                throw SchedulingError.invalidTaskStatus(raw: statusRaw)
+            }
+            status = currentStatus
         }
         return try AwanTask(
             id: id,
             title: title,
             description: taskDescription,
             status: status,
+            completedAt: completedAt,
             goalID: goalID,
             duration: TaskDuration(minutes: estimatedDurationMinutes),
             isSplittable: allowTaskSplitting,
@@ -28,6 +36,7 @@ extension TaskModel {
             title: task.title,
             taskDescription: task.description,
             statusRaw: task.status.rawValue,
+            completedAt: task.completedAt,
             goalID: task.goalID,
             zoneID: nil,
             categoryID: task.category?.id,
@@ -44,6 +53,7 @@ extension TaskModel {
         title = task.title
         taskDescription = task.description
         statusRaw = task.status.rawValue
+        completedAt = task.completedAt
         goalID = task.goalID
         categoryID = task.category?.id
         categoryName = task.category?.name

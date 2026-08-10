@@ -442,6 +442,34 @@ public enum L10n {
             value("goal_creation.confirm")
         }
 
+        public static var scheduleReviewTitle: String { value("goal_creation.schedule_review_title") }
+        public static var scheduleReviewSubtitle: String { value("goal_creation.schedule_review_subtitle") }
+        public static var requestingSchedule: String { value("goal_creation.requesting_schedule") }
+        public static var confirmingSchedule: String { value("goal_creation.confirming_schedule") }
+        public static var aiSession: String { value("goal_creation.ai_session") }
+        public static var manualSession: String { value("goal_creation.manual_session") }
+        public static var assignedZone: String { value("goal_creation.assigned_zone") }
+        public static var noZone: String { value("goal_creation.no_zone") }
+        public static var acceptSuggestion: String { value("goal_creation.accept_suggestion") }
+        public static var originalConflict: String { value("goal_creation.original_conflict") }
+        public static var edited: String { value("goal_creation.edited") }
+        public static var unscheduledSection: String { value("goal_creation.unscheduled_section") }
+        public static var addSession: String { value("goal_creation.add_session") }
+        public static var removeSession: String { value("goal_creation.remove_session") }
+        public static var confirmSchedule: String { value("goal_creation.confirm_schedule") }
+        public static var finishWithoutScheduling: String { value("goal_creation.finish_without_scheduling") }
+        public static var scheduleFailureTitle: String { value("goal_creation.schedule_failure_title") }
+        public static var retryScheduling: String { value("goal_creation.retry_scheduling") }
+        public static var unresolvedMessage: String { value("goal_creation.unresolved_message") }
+        public static var addSessions: String { value("goal_creation.add_sessions") }
+        public static var continueWithoutThem: String { value("goal_creation.continue_without_them") }
+        public static var sessionDuration: String { value("goal_creation.session_duration") }
+        public static var optional: String { value("goal_creation.optional") }
+
+        public static func unresolvedTitle(_ count: Int) -> String {
+            String(format: value("goal_creation.unresolved_title"), count)
+        }
+
         private static func value(_ key: String) -> String {
             L10n.currentBundle.localizedString(
                 forKey: key,
@@ -848,11 +876,11 @@ public enum L10n {
         public static var no: String {
             L10n.currentBundle.localizedString(forKey: "home.no", value: nil, table: "Localizable")
         }
-        public static var statusPending: String {
-            L10n.currentBundle.localizedString(forKey: "home.status_pending", value: nil, table: "Localizable")
+        public static var statusDrafted: String {
+            L10n.currentBundle.localizedString(forKey: "home.status_drafted", value: nil, table: "Localizable")
         }
-        public static var statusInProgress: String {
-            L10n.currentBundle.localizedString(forKey: "home.status_in_progress", value: nil, table: "Localizable")
+        public static var statusActive: String {
+            L10n.currentBundle.localizedString(forKey: "home.status_active", value: nil, table: "Localizable")
         }
         public static var statusCompleted: String {
             L10n.currentBundle.localizedString(forKey: "home.status_completed", value: nil, table: "Localizable")
@@ -1189,6 +1217,7 @@ public enum L10n {
         public static var emptySubtitle: String { text("inbox.empty_subtitle") }
         public static var errorTitle: String { text("inbox.error_title") }
         public static var loadFailed: String { text("inbox.load_failed") }
+        public static var pointsClaimed: String { text("inbox.points_claimed") }
 
         public static func nSessions(_ count: Int) -> String {
             String(format: text("inbox.n_sessions"), count)
@@ -1290,6 +1319,11 @@ public enum L10n {
         public static var tasks: String { text("goals.tasks") }
         public static var loadingTasks: String { text("goals.loading_tasks") }
         public static var noTasksAssigned: String { text("goals.no_tasks_assigned") }
+        public static var dependsOn: String { text("goals.depends_on") }
+
+        public static func moreDependencies(_ count: Int) -> String {
+            String(format: text("goals.more_dependencies"), count)
+        }
 
         public static func dependsOnNames(_ names: String) -> String {
             String(format: text("goals.depends_on_names"), names)
@@ -1324,6 +1358,45 @@ public enum L10n {
 
         public static var created: String { text("goals.created") }
         public static var managementPlaceholder: String { text("goals.management_placeholder") }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
+
+    public enum DailyWheel {
+        public static var title: String { text("daily_wheel.title") }
+        public static var subtitle: String { text("daily_wheel.subtitle") }
+        public static var loading: String { text("daily_wheel.loading") }
+        public static var gift: String { text("daily_wheel.gift") }
+        public static var openGift: String { text("daily_wheel.open_gift") }
+        public static var tapToSpin: String { text("daily_wheel.tap_to_spin") }
+        public static var spin: String { text("daily_wheel.spin") }
+        public static var choosingReward: String { text("daily_wheel.choosing_reward") }
+        public static var almostThere: String { text("daily_wheel.almost_there") }
+        public static var youWon: String { text("daily_wheel.you_won") }
+        public static var alreadyClaimed: String { text("daily_wheel.already_claimed") }
+        public static var todaysReward: String { text("daily_wheel.todays_reward") }
+        public static var giftClaimed: String { text("daily_wheel.gift_claimed") }
+        public static var comeBackTomorrow: String { text("daily_wheel.come_back_tomorrow") }
+        public static var itemAdded: String { text("daily_wheel.item_added") }
+        public static var awesome: String { text("daily_wheel.awesome") }
+        public static var dismiss: String { text("daily_wheel.dismiss") }
+        public static var couldNotLoad: String { text("daily_wheel.could_not_load") }
+        public static var retry: String { text("daily_wheel.retry") }
+        public static var errorAlreadyClaimed: String { text("daily_wheel.error_already_claimed") }
+        public static var errorAuthenticationFailed: String { text("daily_wheel.error_authentication_failed") }
+        public static var errorUserNotFound: String { text("daily_wheel.error_user_not_found") }
+        public static var errorInvalidConfiguration: String { text("daily_wheel.error_invalid_configuration") }
+        public static var errorUnavailable: String { text("daily_wheel.error_unavailable") }
+
+        public static func starsAwarded(_ count: Int) -> String {
+            String(format: text("daily_wheel.stars_awarded"), count)
+        }
+
+        public static func newBalance(_ balance: Int) -> String {
+            String(format: text("daily_wheel.new_balance"), balance)
+        }
 
         private static func text(_ key: String) -> String {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
