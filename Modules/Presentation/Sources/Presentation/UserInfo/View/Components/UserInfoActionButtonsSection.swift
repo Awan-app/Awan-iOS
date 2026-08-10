@@ -12,6 +12,7 @@ struct UserInfoActionButtonsSection: View {
                 icon: "checkmark.circle.fill",
                 color: AppColors.accentBlue,
                 foregroundColor: AppColors.onAccent,
+                isLoading: viewModel.isSaving,
                 onTap: {
                     Task {
                         await viewModel.saveChanges()

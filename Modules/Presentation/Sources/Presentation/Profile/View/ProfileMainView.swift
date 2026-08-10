@@ -73,7 +73,7 @@ struct ProfileMainView: View {
     private var profileContent: some View {
         VStack(spacing: 14) {
             ProfileHeroCard(
-                avatarImage: Image("user-avatar"),
+                avatarUrl: viewModel.profilePictureUrl,
                 name: viewModel.userName,
                 email: viewModel.userEmail,
                 points: viewModel.points,

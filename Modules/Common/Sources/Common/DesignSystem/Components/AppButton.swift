@@ -18,6 +18,7 @@ public struct AppButton: View {
     private let size: Size
     private let expandsHorizontally: Bool
     private let useGradient: Bool
+    private let isLoading: Bool
     private let onTap: () -> Void
 
     public init(
@@ -32,6 +33,7 @@ public struct AppButton: View {
         size: Size = .regular,
         expandsHorizontally: Bool = true,
         useGradient: Bool = true,
+        isLoading: Bool = false,
         onTap: @escaping () -> Void
     ) {
         self.title = title
@@ -45,13 +47,17 @@ public struct AppButton: View {
         self.size = size
         self.expandsHorizontally = expandsHorizontally
         self.useGradient = useGradient
+        self.isLoading = isLoading
         self.onTap = onTap
     }
 
     public var body: some View {
         Button(action: onTap) {
             Group {
-                if let icon {
+                if isLoading {
+                    ProgressView()
+                        .tint(foregroundColor)
+                } else if let icon {
                     if title.isEmpty {
                         Image(systemName: icon)
                             .foregroundStyle(iconColor ?? foregroundColor)
@@ -90,6 +96,7 @@ public struct AppButton: View {
             .lineLimit(1)
             .frame(maxWidth: expandsHorizontally ? .infinity : nil)
         }
+        .disabled(isLoading)
         .buttonStyle(
             PressedDepthButtonStyle(
                 color: color,
