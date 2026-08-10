@@ -22,6 +22,8 @@ enum GamificationErrorMessageMapper {
             return L10n.DailyWheel.errorUnavailable
         case .itemNotOwned:
             return L10n.Marketplace.itemNotOwned
+        case .typeMismatch:
+            return L10n.DailyWheel.errorUnavailable
         case let .unknown(message):
             return message.isEmpty ? L10n.DailyWheel.errorUnavailable : message
         case let .unavailable(message):
