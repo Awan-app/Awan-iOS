@@ -25,6 +25,7 @@ enum OnboardingMapper {
             points: response.points,
             streak: response.streak,
             maxStreak: response.maxStreak,
+            profilePictureUrl: nil,
             preferences: UserPreferences(
                 timezone: response.preferences.timezone,
                 preferredSessionDuration: response.preferences.preferredSessionDuration,

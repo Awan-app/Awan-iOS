@@ -1,6 +1,7 @@
 import Common
 import Domain
 import SwiftUI
+import Foundation
 
 struct DailyWheelDisc: View {
     let segments: [DailyWheelSegment]
@@ -145,8 +146,8 @@ struct DailyWheelDisc: View {
             let angle = Double(index) * 10 * .pi / 180
             let dotRadius = radius * (0.42 + CGFloat(index % 4) * 0.12)
             let point = CGPoint(
-                x: center.x + cos(angle) * dotRadius,
-                y: center.y + sin(angle) * dotRadius
+                x: center.x + CGFloat(Foundation.cos(angle)) * dotRadius,
+                y: center.y + CGFloat(Foundation.sin(angle)) * dotRadius
             )
             let rect = CGRect(x: point.x - 1.5, y: point.y - 1.5, width: 3, height: 3)
             context.fill(

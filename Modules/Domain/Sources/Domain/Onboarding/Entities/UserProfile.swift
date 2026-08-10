@@ -31,6 +31,7 @@ public struct UserProfile: Equatable, Sendable {
     public let points: Int
     public let streak: Int
     public let maxStreak: Int
+    public let profilePictureUrl: String?
     public let preferences: UserPreferences
 
     public init(
@@ -42,6 +43,7 @@ public struct UserProfile: Equatable, Sendable {
         points: Int,
         streak: Int,
         maxStreak: Int,
+        profilePictureUrl: String?,
         preferences: UserPreferences
     ) {
         self.id = id
@@ -52,6 +54,7 @@ public struct UserProfile: Equatable, Sendable {
         self.points = points
         self.streak = streak
         self.maxStreak = maxStreak
+        self.profilePictureUrl = profilePictureUrl
         self.preferences = preferences
     }
 }

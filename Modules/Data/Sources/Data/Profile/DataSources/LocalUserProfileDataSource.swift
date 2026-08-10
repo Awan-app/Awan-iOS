@@ -44,6 +44,7 @@ public actor SwiftDataUserProfileDataSource: LocalUserProfileDataSource {
             points: model.points,
             streak: model.streak,
             maxStreak: model.maxStreak,
+            profilePictureUrl: model.profilePictureUrl,
             preferences: UserPreferences(
                 timezone: model.timezone,
                 preferredSessionDuration: model.preferredSessionDuration,
@@ -70,6 +71,7 @@ public actor SwiftDataUserProfileDataSource: LocalUserProfileDataSource {
                 points: profile.points,
                 streak: profile.streak,
                 maxStreak: profile.maxStreak,
+                profilePictureUrl: profile.profilePictureUrl,
                 timezone: profile.preferences.timezone,
                 preferredSessionDuration: profile.preferences.preferredSessionDuration,
                 bufferBetweenSessions: profile.preferences.bufferBetweenSessions,

@@ -143,6 +143,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(UserProfileRepository.self, from: resolver)
             )
         }
+        container.register(UpdateProfilePictureUseCase.self) { resolver in
+            DefaultUpdateProfilePictureUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
 
         container.register(UpdateSessionDurationUseCase.self) { resolver in
             DefaultUpdateSessionDurationUseCase(

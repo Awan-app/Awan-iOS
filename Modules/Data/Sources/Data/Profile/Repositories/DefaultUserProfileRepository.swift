@@ -1,5 +1,7 @@
 import Combine
+import AwaNetwork
 import Domain
+import Foundation
 
 public struct DefaultUserProfileRepository: UserProfileRepository {
    
@@ -104,6 +106,14 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
         let response = try await remoteDataSource.updateProfilePartial(request)
         let profile = try HomeRemoteMapper.profile(response)
         try await localDataSource.replaceProfile(profile)
+    }
+
+    public func updateProfilePicture(data: Foundation.Data, fileName: String, mimeType: String) async throws {
+        let file = MultipartFile(data: data, name: "image", fileName: fileName, mimeType: mimeType)
+        _ = try await remoteDataSource.updateProfilePicture(file)
+        
+        // Refresh the profile to get the newly updated picture URL
+        _ = try await loadRemoteUser()
     }
     
     public func refreshGamificationProgress() async throws {

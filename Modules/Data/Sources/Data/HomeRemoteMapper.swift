@@ -26,6 +26,7 @@ enum HomeRemoteMapper {
             points: dto.points,
             streak: dto.streak,
             maxStreak: dto.maxStreak,
+            profilePictureUrl: dto.profilePictureUrl,
             preferences: UserPreferences(
                 timezone: dto.preferences.timezone,
                 preferredSessionDuration: dto.preferences.preferredSessionDuration,
