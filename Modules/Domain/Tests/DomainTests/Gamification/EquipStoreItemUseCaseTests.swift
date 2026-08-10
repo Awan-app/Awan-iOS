@@ -32,7 +32,9 @@ final class EquipStoreItemUseCaseTests: XCTestCase {
             )
         }
 
+        func unequipStoreItem(type: String) async throws {}
         func fetchEquippedItems() async throws -> [EquippedItem] { [] }
+        func fetchStoreInventory() async throws -> [InventoryItem] { [] }
         func fetchUserPoints() async throws -> Int { 0 }
         func fetchWheelConfig() async throws -> DailyWheelConfiguration {
             fatalError("Unimplemented")

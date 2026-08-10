@@ -39,14 +39,18 @@ struct MarketplaceDetailOwnedCard: View {
                         .fill(AppColors.accentGreen.opacity(0.06))
                 )
 
-                AppButton(
-                    title: L10n.Marketplace.statusEquipped,
-                    icon: "wand.and.sparkles",
-                    color: AppColors.accentGreen,
-                    size: .large,
-                    isLoading: isEquipping,
-                    onTap: onEquip
-                )
+                if isEquipping {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: 48)
+                } else {
+                    AppButton(
+                        title: L10n.Marketplace.equip,
+                        icon: "wand.and.sparkles",
+                        color: AppColors.accentGreen,
+                        size: .large,
+                        onTap: onEquip
+                    )
+                }
             }
         }
     }

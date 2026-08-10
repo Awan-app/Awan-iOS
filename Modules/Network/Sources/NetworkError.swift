@@ -129,6 +129,7 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
     case dailyGiftAlreadyClaimed
     case itemNotOwned
     case itemNotFound
+    case typeMismatch
 
     public typealias RawValue = String
 
@@ -163,6 +164,7 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case "DAILY_GIFT_ALREADY_CLAIMED":    self = .dailyGiftAlreadyClaimed
         case "ITEM_NOT_OWNED":                self = .itemNotOwned
         case "ITEM_NOT_FOUND":                self = .itemNotFound
+        case "TYPE_MISMATCH":                self = .typeMismatch
         default:                              self = .unknown(rawValue)
         }
     }
@@ -199,6 +201,7 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case .dailyGiftAlreadyClaimed:        return "DAILY_GIFT_ALREADY_CLAIMED"
         case .itemNotOwned:                  return "ITEM_NOT_OWNED"
         case .itemNotFound:                  return "ITEM_NOT_FOUND"
+        case .typeMismatch:                  return "TYPE_MISMATCH"
         case .unknown(let code):             return code
         }
     }

@@ -23,7 +23,13 @@ private final class StoreItemRepositoryStub: GamificationRepository, @unchecked 
         fatalError("Unimplemented")
     }
 
+    func unequipStoreItem(type: String) async throws {}
+
     func fetchEquippedItems() async throws -> [EquippedItem] {
+        []
+    }
+
+    func fetchStoreInventory() async throws -> [InventoryItem] {
         []
     }
 

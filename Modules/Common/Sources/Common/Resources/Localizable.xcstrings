@@ -8670,7 +8670,57 @@
         "ar": { "stringUnit": { "state": "translated", "value": "تعذر تحميل هدية اليوم. حاول مرة أخرى." } },
         "en": { "stringUnit": { "state": "translated", "value": "We couldn’t load today’s gift. Please try again." } }
       }
+    },
+    "marketplace.equip": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "تفعيل" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Equip" } }
+      }
+    },
+    "marketplace.unequip": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "إلغاء التفعيل" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Unequip" } }
+      }
+    },
+    "profile.equipped_items": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "العناصر المفعّلة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Equipped Items" } }
+      }
+    },
+    "profile.owned_items": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "العناصر المملوكة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Owned Items" } }
+      }
+    },
+    "profile.filter_owned": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "المملوكة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Owned" } }
+      }
+    },
+    "profile.empty_inventory_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "مفيش عناصر في حقيبتك" } },
+        "en": { "stringUnit": { "state": "translated", "value": "No Items in Inventory" } }
+      }
+    },
+    "profile.empty_inventory_subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "المشتريات وجوائز عجلة الحظ هتظهر هنا." } },
+        "en": { "stringUnit": { "state": "translated", "value": "Purchases and daily wheel rewards will appear here." } }
+      }
     }
   },
   "version": "1.1"
 }
+

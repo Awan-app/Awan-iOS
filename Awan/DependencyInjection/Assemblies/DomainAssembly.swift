@@ -393,6 +393,16 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(GamificationRepository.self, from: resolver)
             )
         }
+        container.register(FetchStoreInventoryUseCase.self) { resolver in
+            DefaultFetchStoreInventoryUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(UnequipStoreItemUseCase.self) { resolver in
+            DefaultUnequipStoreItemUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
     }
 
     private func registerConflictUseCases(in container: Container) {

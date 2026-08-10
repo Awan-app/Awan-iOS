@@ -40,10 +40,27 @@ public final class DefaultGamificationRepository: GamificationRepository {
         }
     }
 
+    public func unequipStoreItem(type: String) async throws {
+        do {
+            try await remoteDataSource.unequipStoreItem(type: type)
+        } catch {
+            throw map(error)
+        }
+    }
+
     public func fetchEquippedItems() async throws -> [EquippedItem] {
         do {
             let dtos = try await remoteDataSource.getEquippedItems()
             return dtos.map { EquippedItemMapper.map($0) }
+        } catch {
+            throw map(error)
+        }
+    }
+
+    public func fetchStoreInventory() async throws -> [InventoryItem] {
+        do {
+            let dtos = try await remoteDataSource.getStoreInventory()
+            return dtos.map { InventoryItemMapper.map($0) }
         } catch {
             throw map(error)
         }
@@ -107,6 +124,10 @@ public final class DefaultGamificationRepository: GamificationRepository {
             return GamificationError.authenticationFailed
         }
 
+        if statusCode == 400 || apiError?.errorCode == .typeMismatch {
+            return GamificationError.typeMismatch
+        }
+
         switch apiError?.errorCode {
         case .insufficientPoints:
             return GamificationError.insufficientPoints
@@ -116,6 +137,8 @@ public final class DefaultGamificationRepository: GamificationRepository {
             return GamificationError.itemNotFound
         case .userNotFound:
             return GamificationError.userNotFound
+        case .typeMismatch:
+            return GamificationError.typeMismatch
         case .refreshTokenInvalid, .refreshTokenExpired, .refreshTokenReuseDetected:
             return GamificationError.authenticationFailed
         default:

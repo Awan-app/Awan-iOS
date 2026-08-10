@@ -284,6 +284,20 @@ struct PresentationAssembly: Assembly {
                 )
             }
         }
+        container.register(ProfileInventoryViewModel.self) { resolver in
+            let fetchInventoryUseCase = Self.resolve(FetchStoreInventoryUseCase.self, from: resolver)
+            let fetchEquippedUseCase = Self.resolve(FetchEquippedItemsUseCase.self, from: resolver)
+            let equipUseCase = Self.resolve(EquipStoreItemUseCase.self, from: resolver)
+            let unequipUseCase = Self.resolve(UnequipStoreItemUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                ProfileInventoryViewModel(
+                    fetchStoreInventoryUseCase: fetchInventoryUseCase,
+                    fetchEquippedItemsUseCase: fetchEquippedUseCase,
+                    equipStoreItemUseCase: equipUseCase,
+                    unequipStoreItemUseCase: unequipUseCase
+                )
+            }
+        }
         .inObjectScope(.container)
 
         container.register(PresentationFactory.self) { resolver in
@@ -302,6 +316,7 @@ struct PresentationAssembly: Assembly {
             let inboxViewModel = Self.resolve(InboxViewModel.self, from: resolver)
             let goalsViewModel = Self.resolve(GoalsViewModel.self, from: resolver)
             let marketplaceViewModel = Self.resolve(MarketplaceViewModel.self, from: resolver)
+            let profileInventoryViewModel = Self.resolve(ProfileInventoryViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
@@ -329,7 +344,8 @@ struct PresentationAssembly: Assembly {
                     },
                     inboxViewModel: inboxViewModel,
                     goalsViewModel: goalsViewModel,
-                    marketplaceViewModel: marketplaceViewModel
+                    marketplaceViewModel: marketplaceViewModel,
+                    profileInventoryViewModel: profileInventoryViewModel
                 )
             }
         }

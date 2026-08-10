@@ -14,7 +14,9 @@ enum GamificationEndpoint: APIEndpoint {
     case getStoreItems(type: String)
     case buyStoreItem(itemID: String)
     case equipStoreItem(itemID: String)
+    case unequipStoreItem(type: String)
     case getEquippedItems
+    case getStoreInventory
 
     var baseURL: String {
         NetworkConfiguration.apiBaseURL
@@ -40,8 +42,14 @@ enum GamificationEndpoint: APIEndpoint {
         case let .equipStoreItem(itemID):
             return "/store/items/\(itemID)/equip"
 
+        case let .unequipStoreItem(type):
+            return "/store/equipped/\(type)"
+
         case .getEquippedItems:
             return "/store/equipped"
+
+        case .getStoreInventory:
+            return "/store/inventory"
         }
     }
 
@@ -50,13 +58,17 @@ enum GamificationEndpoint: APIEndpoint {
         case .getProgress,
              .getWheelConfig,
              .getStoreItems,
-             .getEquippedItems:
+             .getEquippedItems,
+             .getStoreInventory:
             return .get
 
         case .spinWheel,
              .buyStoreItem,
              .equipStoreItem:
             return .post
+
+        case .unequipStoreItem:
+            return .delete
         }
     }
 
@@ -70,7 +82,9 @@ enum GamificationEndpoint: APIEndpoint {
              .spinWheel,
              .buyStoreItem,
              .equipStoreItem,
-             .getEquippedItems:
+             .unequipStoreItem,
+             .getEquippedItems,
+             .getStoreInventory:
             return nil
         }
     }
