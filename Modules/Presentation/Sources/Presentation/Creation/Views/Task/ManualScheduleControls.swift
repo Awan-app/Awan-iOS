@@ -16,47 +16,22 @@ struct ManualScheduleControls: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            controlRow(
-                icon: "hourglass",
-                title: L10n.Home.estimatedDuration
-            ) {
-                HStack(spacing: 10) {
-                    stepButton(icon: "minus") {
-                        durationMinutes = max(15, durationMinutes - 15)
-                    }
-
-                    Text(durationText)
-                        .font(AppFonts.bodyBold)
-                        .foregroundStyle(AppColors.brandDarkBlue)
-                        .monospacedDigit()
-                        .lineLimit(1)
-                        .fixedSize(horizontal: true, vertical: false)
-
-                    stepButton(icon: "plus") {
-                        durationMinutes = min(480, durationMinutes + 15)
-                    }
-                }
+            controlRow(icon: "hourglass", title: L10n.Home.estimatedDuration) {
+                DurationStepperControl(durationMinutes: $durationMinutes)
             }
 
             Divider()
                 .overlay(AppColors.accentBlue.opacity(0.14))
                 .padding(.leading, 46)
 
-            controlRow(
-                icon: "square.grid.2x2.fill",
-                title: L10n.Schedule.category
-            ) {
-                Button {
-                    isCategoryPickerPresented = true
-                } label: {
+            controlRow(icon: "square.grid.2x2.fill", title: L10n.Schedule.category) {
+                Button { isCategoryPickerPresented = true } label: {
                     HStack(spacing: 7) {
                         selectedCategoryIndicator
-
                         Text(selectedCategoryName)
                             .font(AppFonts.subheadlineHeavy)
                             .foregroundStyle(AppColors.brandDarkBlue)
                             .lineLimit(1)
-
                         Image(systemName: "chevron.up.chevron.down")
                             .font(.system(size: 10, weight: .bold))
                             .foregroundStyle(AppColors.textSecondary)
@@ -82,10 +57,7 @@ struct ManualScheduleControls: View {
                     .overlay(AppColors.accentBlue.opacity(0.14))
                     .padding(.leading, 46)
 
-                controlRow(
-                    icon: "calendar",
-                    title: L10n.Home.sessionDay
-                ) {
+                controlRow(icon: "calendar", title: L10n.Home.sessionDay) {
                     DatePicker(
                         L10n.Home.sessionDay,
                         selection: $startsAt,
@@ -99,10 +71,7 @@ struct ManualScheduleControls: View {
                     .overlay(AppColors.accentBlue.opacity(0.14))
                     .padding(.leading, 46)
 
-                controlRow(
-                    icon: "clock.fill",
-                    title: L10n.Home.startTime
-                ) {
+                controlRow(icon: "clock.fill", title: L10n.Home.startTime) {
                     DatePicker(
                         L10n.Home.startTime,
                         selection: $startsAt,
@@ -117,10 +86,7 @@ struct ManualScheduleControls: View {
                 .overlay(AppColors.accentBlue.opacity(0.14))
                 .padding(.leading, 46)
 
-            controlRow(
-                icon: "calendar.badge.plus",
-                title: L10n.Home.addSchedule
-            ) {
+            controlRow(icon: "calendar.badge.plus", title: L10n.Home.addSchedule) {
                 Toggle("", isOn: $isSchedulingEnabled)
                     .labelsHidden()
                     .tint(AppColors.accentBlue)
@@ -131,7 +97,6 @@ struct ManualScheduleControls: View {
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .fill(AppColors.accentBlueDepth.opacity(0.45))
                     .offset(y: 5)
-
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .fill(AppColors.surface)
             }
@@ -156,64 +121,25 @@ struct ManualScheduleControls: View {
                 .foregroundStyle(AppColors.accentBlue)
                 .frame(width: 34, height: 34)
                 .background(AppColors.infoSurface, in: Circle())
-
             Text(title)
                 .font(AppFonts.subheadlineHeavy)
                 .foregroundStyle(AppColors.brandDarkBlue)
-
             Spacer(minLength: 8)
-
             content()
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
     }
 
-    private func stepButton(
-        icon: String,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 12, weight: .black))
-                .foregroundStyle(AppColors.accentBlue)
-                .frame(width: 28, height: 28)
-                .background(AppColors.infoSurface, in: Circle())
-                .overlay {
-                    Circle()
-                        .stroke(AppColors.accentBlue.opacity(0.24), lineWidth: 1)
-                }
-        }
-        .buttonStyle(.plain)
-    }
-
-    private var durationText: String {
-        if durationMinutes >= 60 {
-            let hours = durationMinutes / 60
-            let minutes = durationMinutes % 60
-            return minutes == 0
-                ? L10n.Home.hoursShort(hours)
-                : L10n.Home.hoursMinutesShort(hours, minutes)
-        }
-        return L10n.Home.minutesShort(durationMinutes)
-    }
-
     private var selectedCategoryName: String {
-        guard let selectedCategoryID else {
-            return L10n.Schedule.standalone
-        }
-        return categories
-            .first(where: { $0.id == selectedCategoryID })?
-            .name
+        guard let selectedCategoryID else { return L10n.Schedule.standalone }
+        return categories.first(where: { $0.id == selectedCategoryID })?.name
             ?? L10n.Schedule.chooseCategory
     }
 
     private var categoryOptions: [ManualCategoryOption] {
         categories.map {
-            ManualCategoryOption(
-                category: $0,
-                colors: zoneColors(for: $0.id)
-            )
+            ManualCategoryOption(category: $0, colors: zoneColors(for: $0.id))
         }
     }
 
@@ -236,7 +162,6 @@ struct ManualScheduleControls: View {
 private struct ManualCategoryOption: Identifiable {
     let category: TaskCategory
     let colors: [ZoneColor]
-
     var id: UUID { category.id }
 }
 
@@ -253,21 +178,16 @@ private struct CategoryPickerPopover: View {
                 title: L10n.Schedule.standalone,
                 colors: [],
                 isSelected: selectedCategoryID == nil
-            ) {
-                onSelect(nil)
-            }
+            ) { onSelect(nil) }
 
-            Divider()
-                .overlay(AppColors.accentBlue.opacity(0.14))
+            Divider().overlay(AppColors.accentBlue.opacity(0.14))
 
             ForEach(options) { option in
                 categoryButton(
                     title: option.category.name,
                     colors: option.colors,
                     isSelected: selectedCategoryID == option.id
-                ) {
-                    onSelect(option.id)
-                }
+                ) { onSelect(option.id) }
             }
 
             if let errorMessage {
@@ -300,14 +220,11 @@ private struct CategoryPickerPopover: View {
                 } else {
                     ZoneColorSwatches(colors: colors)
                 }
-
                 Text(title)
                     .font(AppFonts.subheadlineHeavy)
                     .foregroundStyle(AppColors.brandDarkBlue)
                     .lineLimit(1)
-
                 Spacer(minLength: 12)
-
                 if isSelected {
                     Image(systemName: "checkmark")
                         .font(.system(size: 12, weight: .bold))
@@ -332,9 +249,7 @@ private struct ZoneColorSwatches: View {
     var body: some View {
         HStack(spacing: 3) {
             if colors.isEmpty {
-                Circle()
-                    .fill(AppColors.accentBlue)
-                    .frame(width: 10, height: 10)
+                Circle().fill(AppColors.accentBlue).frame(width: 10, height: 10)
             } else {
                 ForEach(colors, id: \.self) { color in
                     Circle()
@@ -357,5 +272,5 @@ private struct ZoneColorSwatches: View {
         durationMinutes: .constant(60),
         selectedCategoryID: .constant(nil)
     )
-        .padding()
+    .padding()
 }

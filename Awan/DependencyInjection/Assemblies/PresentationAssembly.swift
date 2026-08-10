@@ -113,8 +113,16 @@ struct PresentationAssembly: Assembly {
                         ConfirmGoalProposalUseCase.self,
                         from: resolver
                     ),
-                    scheduleGoal: Self.resolve(
-                        ScheduleCreatedGoalUseCase.self,
+                    requestSchedule: Self.resolve(
+                        RequestGoalScheduleProposalUseCase.self,
+                        from: resolver
+                    ),
+                    confirmSchedule: Self.resolve(
+                        ConfirmGoalScheduleUseCase.self,
+                        from: resolver
+                    ),
+                    fetchZones: Self.resolve(
+                        FetchZonesUseCase.self,
                         from: resolver
                     )
                 )

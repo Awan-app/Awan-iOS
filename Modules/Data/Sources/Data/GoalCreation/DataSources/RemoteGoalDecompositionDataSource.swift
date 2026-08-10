@@ -10,7 +10,13 @@ public protocol RemoteGoalDecompositionDataSource: Sendable {
         sessionID: UUID
     ) async throws -> ConfirmedGoalResponseDTO
 
-    func scheduleGoal(_ request: ScheduleGoalRequestDTO) async throws
+    func requestSchedule(
+        _ request: ScheduleGoalRequestDTO
+    ) async throws -> GoalScheduleProposalResponseDTO
+
+    func confirmSchedule(
+        _ request: ConfirmGoalScheduleRequestDTO
+    ) async throws -> [ConfirmedGoalScheduleSessionResponseDTO]
 }
 
 public final class DefaultRemoteGoalDecompositionDataSource:
@@ -38,9 +44,19 @@ public final class DefaultRemoteGoalDecompositionDataSource:
         )
     }
 
-    public func scheduleGoal(_ request: ScheduleGoalRequestDTO) async throws {
-        let _: EmptyResponse = try await networkService.request(
-            GoalDecompositionEndpoint.schedule(request)
+    public func requestSchedule(
+        _ request: ScheduleGoalRequestDTO
+    ) async throws -> GoalScheduleProposalResponseDTO {
+        try await networkService.request(
+            GoalDecompositionEndpoint.requestSchedule(request)
+        )
+    }
+
+    public func confirmSchedule(
+        _ request: ConfirmGoalScheduleRequestDTO
+    ) async throws -> [ConfirmedGoalScheduleSessionResponseDTO] {
+        try await networkService.request(
+            GoalDecompositionEndpoint.confirmSchedule(request)
         )
     }
 }

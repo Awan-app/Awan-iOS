@@ -27,20 +27,10 @@ struct GoalCard: View {
                     HStack(alignment: .top, spacing: 12) {
                         goalIcon
 
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(goal.title)
-                                .font(AppFonts.headlineBlack)
-                                .foregroundStyle(AppColors.textPrimary)
-                                .multilineTextAlignment(.leading)
-
-                            if let desc = goal.description, !desc.isEmpty {
-                                Text(desc)
-                                    .font(AppFonts.subheadlineSemibold)
-                                    .foregroundStyle(AppColors.textSecondary)
-                                    .multilineTextAlignment(.leading)
-                                    .lineLimit(2)
-                            }
-                        }
+                        Text(goal.title)
+                            .font(AppFonts.headlineBlack)
+                            .foregroundStyle(AppColors.textPrimary)
+                            .multilineTextAlignment(.leading)
 
                         Spacer(minLength: 4)
 
@@ -97,16 +87,6 @@ struct GoalCard: View {
                         breakdownRow
                     }
 
-                    // Footer note
-                    HStack(spacing: 4) {
-                        Image(systemName: "info.circle")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(AppColors.textSecondary.opacity(0.6))
-                        Text(L10n.Goals.calculatedFromSessions)
-                            .font(AppFonts.caption2Bold)
-                            .foregroundStyle(AppColors.textSecondary.opacity(0.6))
-                        Spacer()
-                    }
                 }
             }
         }

@@ -74,10 +74,36 @@ public actor MockGoalDecompositionRepository: GoalDecompositionRepository {
         )
     }
 
-    public func scheduleGoal(goalID: UUID) async throws {
+    public func requestScheduleProposal(
+        goalID: UUID
+    ) async throws -> GoalScheduleProposal {
         try await Task.sleep(for: .milliseconds(650))
         guard isConfirmed, goalID == self.goalID else {
             throw MockGoalDecompositionError.goalNotConfirmed
+        }
+        return GoalScheduleProposal(
+            goalID: goalID,
+            proposedSessions: [],
+            suggestions: [],
+            unscheduledTasks: []
+        )
+    }
+
+    public func confirmSchedule(
+        goalID: UUID,
+        sessions: [GoalScheduleConfirmationItem]
+    ) async throws -> [ConfirmedGoalScheduleSession] {
+        guard isConfirmed, goalID == self.goalID else {
+            throw MockGoalDecompositionError.goalNotConfirmed
+        }
+        return sessions.map {
+            ConfirmedGoalScheduleSession(
+                id: UUID(),
+                taskID: $0.taskID,
+                zoneID: $0.zoneID,
+                start: $0.start,
+                end: $0.end
+            )
         }
     }
 
