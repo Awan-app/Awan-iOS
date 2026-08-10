@@ -287,12 +287,14 @@ struct PresentationAssembly: Assembly {
         container.register(ProfileInventoryViewModel.self) { resolver in
             let fetchInventoryUseCase = Self.resolve(FetchStoreInventoryUseCase.self, from: resolver)
             let fetchEquippedUseCase = Self.resolve(FetchEquippedItemsUseCase.self, from: resolver)
+            let fetchCatalogUseCase = Self.resolve(FetchStoreItemsUseCase.self, from: resolver)
             let equipUseCase = Self.resolve(EquipStoreItemUseCase.self, from: resolver)
             let unequipUseCase = Self.resolve(UnequipStoreItemUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 ProfileInventoryViewModel(
                     fetchStoreInventoryUseCase: fetchInventoryUseCase,
                     fetchEquippedItemsUseCase: fetchEquippedUseCase,
+                    fetchStoreItemsUseCase: fetchCatalogUseCase,
                     equipStoreItemUseCase: equipUseCase,
                     unequipStoreItemUseCase: unequipUseCase
                 )

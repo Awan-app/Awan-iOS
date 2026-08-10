@@ -24,7 +24,9 @@ struct MarketplaceItemCard: View {
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 90)
 
-                            if let imageURLString = item.imageURL, let url = URL(string: imageURLString) {
+                            if let imageURLString = item.imageURL,
+                                let url = URL(string: imageURLString)
+                            {
                                 AsyncImage(url: url) { phase in
                                     switch phase {
                                     case .success(let image):
@@ -88,13 +90,14 @@ struct MarketplaceItemCard: View {
             }
         }
         .buttonStyle(.plain)
+        .opacity(item.status == .locked ? 0.65 : 1.0)
         .accessibilityLabel(item.name)
     }
 
     @ViewBuilder
     private var statusBadge: some View {
         switch item.status {
-        case let .price(pts):
+        case .price(let pts):
             AppDepthSurface(
                 shape: .roundedRectangle(cornerRadius: 12),
                 surfaceColor: AppColors.surface,
@@ -173,41 +176,41 @@ struct MarketplaceItemCard: View {
 
     private var categoryTitle: String {
         switch item.category {
-        case .all:      return ""
-        case .frames:   return L10n.Marketplace.filterFrames
-        case .skins:    return L10n.Marketplace.filterSkins
-        case .themes:   return L10n.Marketplace.filterThemes
+        case .all: return ""
+        case .frames: return L10n.Marketplace.filterFrames
+        case .skins: return L10n.Marketplace.filterSkins
+        case .themes: return L10n.Marketplace.filterThemes
         case .appIcons: return L10n.Marketplace.filterAppIcons
         }
     }
 
     private var categoryColor: Color {
         switch item.category {
-        case .frames:   return AppColors.accentBlue
-        case .skins:    return AppColors.accentPurple
-        case .themes:   return AppColors.accentGreen
+        case .frames: return AppColors.accentBlue
+        case .skins: return AppColors.accentPurple
+        case .themes: return AppColors.accentGreen
         case .appIcons: return AppColors.warning
-        case .all:      return AppColors.textSecondary
+        case .all: return AppColors.textSecondary
         }
     }
 
     private var imageBackground: Color {
         switch item.category {
-        case .frames:   return AppColors.accentBlue.opacity(0.10)
-        case .skins:    return AppColors.accentPurple.opacity(0.10)
-        case .themes:   return AppColors.accentGreen.opacity(0.10)
+        case .frames: return AppColors.accentBlue.opacity(0.10)
+        case .skins: return AppColors.accentPurple.opacity(0.10)
+        case .themes: return AppColors.accentGreen.opacity(0.10)
         case .appIcons: return AppColors.warning.opacity(0.10)
-        case .all:      return AppColors.infoSurface
+        case .all: return AppColors.infoSurface
         }
     }
 
     private var imageForeground: Color {
         switch item.category {
-        case .frames:   return AppColors.accentBlue
-        case .skins:    return AppColors.accentPurple
-        case .themes:   return AppColors.accentGreen
+        case .frames: return AppColors.accentBlue
+        case .skins: return AppColors.accentPurple
+        case .themes: return AppColors.accentGreen
         case .appIcons: return AppColors.warning
-        case .all:      return AppColors.textSecondary
+        case .all: return AppColors.textSecondary
         }
     }
 }

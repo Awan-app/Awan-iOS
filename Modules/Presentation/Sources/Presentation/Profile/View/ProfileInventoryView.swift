@@ -28,6 +28,12 @@ public struct ProfileInventoryView: View {
         .navigationTitle(L10n.Profile.inventory)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                AwanMascotView(state: .normal)
+                    .frame(width: 42, height: 32)
+            }
+        }
         .task {
             viewModel.send(.appeared)
         }
@@ -45,7 +51,7 @@ public struct ProfileInventoryView: View {
                 onEquip: {
                     if item.status == .equipped {
                         viewModel.send(.unequipItem(item))
-                    } else {
+                    } else if item.status == .owned {
                         viewModel.send(.equipItem(item))
                     }
                 },
@@ -77,35 +83,25 @@ public struct ProfileInventoryView: View {
             .padding(24)
         } else {
             ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
+                VStack(alignment: .leading, spacing: 20) {
                     categoryFilterBar
-
-                    ownershipFilterBar
 
                     ProfileEquippedItemsSection(
                         equippedItems: viewModel.displayedEquippedItems,
-                        isUnequipping: viewModel.unequippingItemType != nil,
+                        unequippingItemType: viewModel.unequippingItemType,
                         onUnequip: { item in
                             viewModel.send(.unequipItem(item))
                         }
                     )
 
-                    SectionHeaderLabel(
-                        title: L10n.Profile.ownedItems,
-                        accentColor: AppColors.accentBlue
-                    )
+                    ownedItemsSection
 
-                    if viewModel.displayedItems.isEmpty {
-                        emptyView
-                    } else {
-                        LazyVGrid(columns: gridColumns, spacing: 12) {
-                            ForEach(viewModel.displayedItems) { item in
-                                MarketplaceItemCard(item: item) {
-                                    viewModel.send(.selectItem(item))
-                                }
-                            }
+                    ProfileLockedItemsSection(
+                        lockedItems: viewModel.displayedLockedItems,
+                        onItemTap: { item in
+                            viewModel.send(.selectItem(item))
                         }
-                    }
+                    )
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
@@ -126,52 +122,26 @@ public struct ProfileInventoryView: View {
         )
     }
 
-    private var ownershipFilterBar: some View {
-        HStack(spacing: 10) {
-            filterChip(
-                title: L10n.Marketplace.filterAll,
-                isSelected: !viewModel.showOwnedOnly,
-                onTap: {
-                    if viewModel.showOwnedOnly {
-                        viewModel.send(.toggleOwnedFilter)
-                    }
-                }
+    @ViewBuilder
+    private var ownedItemsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeaderLabel(
+                title: "\(L10n.Profile.ownedItems) (\(viewModel.displayedOwnedItems.count))",
+                accentColor: AppColors.accentBlue
             )
 
-            filterChip(
-                title: L10n.Profile.filterOwned,
-                isSelected: viewModel.showOwnedOnly,
-                onTap: {
-                    if !viewModel.showOwnedOnly {
-                        viewModel.send(.toggleOwnedFilter)
+            if viewModel.displayedOwnedItems.isEmpty {
+                emptyView
+            } else {
+                LazyVGrid(columns: gridColumns, spacing: 12) {
+                    ForEach(viewModel.displayedOwnedItems) { item in
+                        MarketplaceItemCard(item: item) {
+                            viewModel.send(.selectItem(item))
+                        }
                     }
                 }
-            )
-
-            Spacer()
+            }
         }
-    }
-
-    private func filterChip(title: String, isSelected: Bool, onTap: @escaping () -> Void) -> some View {
-        Button(action: onTap) {
-            Text(title)
-                .font(AppFonts.subheadlineBold)
-                .foregroundStyle(isSelected ? AppColors.onAccent : AppColors.textPrimary)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(
-                    Capsule()
-                        .fill(isSelected ? AppColors.accentPurple : AppColors.surface)
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(
-                            isSelected ? AppColors.accentPurple : AppColors.outline.opacity(0.18),
-                            lineWidth: 1.5
-                        )
-                )
-        }
-        .buttonStyle(.plain)
     }
 
     private var emptyView: some View {

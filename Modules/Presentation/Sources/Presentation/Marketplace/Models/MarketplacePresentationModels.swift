@@ -35,7 +35,7 @@ public enum MarketplaceItemCategory: String, CaseIterable, Identifiable, Sendabl
 
 // MARK: - Status
 
-public enum MarketplaceItemStatus: Sendable, Equatable {
+public enum MarketplaceItemStatus: Sendable, Equatable,Hashable {
     case price(Int)
     case owned
     case equipped
@@ -101,8 +101,13 @@ public struct MarketplaceItem: Identifiable, Hashable, Sendable {
         }
     }
 
-    public static func == (lhs: MarketplaceItem, rhs: MarketplaceItem) -> Bool { lhs.id == rhs.id }
-    public func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    public static func == (lhs: MarketplaceItem, rhs: MarketplaceItem) -> Bool {
+        lhs.id == rhs.id && lhs.status == rhs.status
+    }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(status)
+    }
 }
 
 // MARK: - Filter

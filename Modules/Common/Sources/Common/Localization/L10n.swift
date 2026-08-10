@@ -961,6 +961,8 @@ public enum L10n {
         public static var filterOwned: String { text("profile.filter_owned") }
         public static var emptyInventoryTitle: String { text("profile.empty_inventory_title") }
         public static var emptyInventorySubtitle: String { text("profile.empty_inventory_subtitle") }
+        public static var lockedItems: String { text("profile.locked_items") }
+        public static var myCollection: String { text("profile.my_collection") }
         public static var personalInfo: String {
             L10n.currentBundle.localizedString(forKey: "profile.personal_info", value: nil, table: "Localizable")
         }

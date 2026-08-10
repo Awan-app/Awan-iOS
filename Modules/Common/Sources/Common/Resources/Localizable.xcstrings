@@ -8719,6 +8719,20 @@
         "ar": { "stringUnit": { "state": "translated", "value": "المشتريات وجوائز عجلة الحظ هتظهر هنا." } },
         "en": { "stringUnit": { "state": "translated", "value": "Purchases and daily wheel rewards will appear here." } }
       }
+    },
+    "profile.locked_items": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "العناصر المقفلة" } },
+        "en": { "stringUnit": { "state": "translated", "value": "Locked Items" } }
+      }
+    },
+    "profile.my_collection": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": { "stringUnit": { "state": "translated", "value": "مجموعتي" } },
+        "en": { "stringUnit": { "state": "translated", "value": "My Collection" } }
+      }
     }
   },
   "version": "1.1"

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileEquippedItemsSection: View {
     let equippedItems: [EquippedItem]
-    var isUnequipping: Bool = false
+    var unequippingItemType: String? = nil
     let onUnequip: (MarketplaceItem) -> Void
 
     var body: some View {
@@ -85,7 +85,8 @@ struct ProfileEquippedItemsSection: View {
                     }
                 }
 
-                if isUnequipping {
+                let isItemUnequipping = (unequippingItemType?.uppercased() == equipped.type.uppercased())
+                if isItemUnequipping {
                     ProgressView()
                         .frame(maxWidth: .infinity, minHeight: 32)
                 } else {

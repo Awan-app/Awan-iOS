@@ -13,7 +13,6 @@ public enum ProfileInventoryAction: Sendable {
     case refresh
     case retry
     case selectCategory(MarketplaceItemCategory)
-    case toggleOwnedFilter
     case selectItem(MarketplaceItem)
     case dismissDetail
     case equipItem(MarketplaceItem)
@@ -24,10 +23,10 @@ public enum ProfileInventoryAction: Sendable {
 @Observable
 @MainActor
 public final class ProfileInventoryViewModel {
+    public private(set) var catalogItems: [StoreItem] = []
     public private(set) var inventoryItems: [InventoryItem] = []
     public private(set) var equippedItems: [EquippedItem] = []
     public var selectedCategory: MarketplaceItemCategory = .all
-    public var showOwnedOnly: Bool = false
 
     public private(set) var isLoading: Bool = false
     public private(set) var errorMessage: String? = nil
@@ -39,17 +38,20 @@ public final class ProfileInventoryViewModel {
 
     @ObservationIgnored private let fetchStoreInventoryUseCase: any FetchStoreInventoryUseCase
     @ObservationIgnored private let fetchEquippedItemsUseCase: any FetchEquippedItemsUseCase
+    @ObservationIgnored private let fetchStoreItemsUseCase: any FetchStoreItemsUseCase
     @ObservationIgnored private let equipStoreItemUseCase: any EquipStoreItemUseCase
     @ObservationIgnored private let unequipStoreItemUseCase: any UnequipStoreItemUseCase
 
     public init(
         fetchStoreInventoryUseCase: any FetchStoreInventoryUseCase,
         fetchEquippedItemsUseCase: any FetchEquippedItemsUseCase,
+        fetchStoreItemsUseCase: any FetchStoreItemsUseCase,
         equipStoreItemUseCase: any EquipStoreItemUseCase,
         unequipStoreItemUseCase: any UnequipStoreItemUseCase
     ) {
         self.fetchStoreInventoryUseCase = fetchStoreInventoryUseCase
         self.fetchEquippedItemsUseCase = fetchEquippedItemsUseCase
+        self.fetchStoreItemsUseCase = fetchStoreItemsUseCase
         self.equipStoreItemUseCase = equipStoreItemUseCase
         self.unequipStoreItemUseCase = unequipStoreItemUseCase
     }
@@ -61,9 +63,6 @@ public final class ProfileInventoryViewModel {
 
         case let .selectCategory(category):
             selectedCategory = category
-
-        case .toggleOwnedFilter:
-            showOwnedOnly.toggle()
 
         case let .selectItem(item):
             selectedItem = item
@@ -82,7 +81,17 @@ public final class ProfileInventoryViewModel {
         }
     }
 
-    public var displayedItems: [MarketplaceItem] {
+    // MARK: - Derived State
+
+    public var displayedEquippedItems: [EquippedItem] {
+        if selectedCategory == .all {
+            return equippedItems
+        }
+        guard let apiType = selectedCategory.apiType else { return equippedItems }
+        return equippedItems.filter { $0.type.uppercased() == apiType.uppercased() }
+    }
+
+    public var displayedOwnedItems: [MarketplaceItem] {
         let equippedIDs = Set(equippedItems.map { $0.item.id })
 
         return inventoryItems.compactMap { inventoryItem -> MarketplaceItem? in
@@ -97,13 +106,24 @@ public final class ProfileInventoryViewModel {
         }
     }
 
-    public var displayedEquippedItems: [EquippedItem] {
-        if selectedCategory == .all {
-            return equippedItems
+    public var displayedLockedItems: [MarketplaceItem] {
+        let ownedIDs = Set(inventoryItems.map { $0.item.id })
+
+        return catalogItems.compactMap { storeItem -> MarketplaceItem? in
+            guard !ownedIDs.contains(storeItem.id) else { return nil }
+
+            var item = MarketplaceItem(storeItem: storeItem)
+            item.status = .locked
+
+            if selectedCategory != .all && item.category != selectedCategory {
+                return nil
+            }
+
+            return item
         }
-        guard let apiType = selectedCategory.apiType else { return equippedItems }
-        return equippedItems.filter { $0.type.uppercased() == apiType.uppercased() }
     }
+
+    // MARK: - Async Operations
 
     public func loadInventoryAndEquipped() {
         isLoading = true
@@ -111,17 +131,20 @@ public final class ProfileInventoryViewModel {
 
         let fetchInventory = fetchStoreInventoryUseCase
         let fetchEquipped = fetchEquippedItemsUseCase
+        let fetchCatalog = fetchStoreItemsUseCase
 
         Task { [weak self] in
             do {
                 async let inventoryTask = fetchInventory.execute()
                 async let equippedTask = fetchEquipped.execute()
+                async let catalogTask = fetchCatalog.execute(type: "") 
 
-                let (inventory, equipped) = try await (inventoryTask, equippedTask)
+                let (inventory, equipped, catalog) = try await (inventoryTask, equippedTask, catalogTask)
 
                 guard let self else { return }
                 self.inventoryItems = inventory
                 self.equippedItems = equipped
+                self.catalogItems = catalog
                 self.isLoading = false
             } catch {
                 guard let self else { return }
@@ -148,12 +171,11 @@ public final class ProfileInventoryViewModel {
                 guard let self else { return }
                 self.equippingItemID = nil
 
-                // Update equippedItems array: replace or append for this type
+                // Update equippedItems array: replace existing of same type, or append
                 var updatedEquipped = self.equippedItems.filter { $0.type.uppercased() != newlyEquipped.type.uppercased() }
                 updatedEquipped.append(newlyEquipped)
                 self.equippedItems = updatedEquipped
 
-                // Update selected item status if sheet is active
                 if var selected = self.selectedItem, selected.id == itemID {
                     selected.status = .equipped
                     self.selectedItem = selected
@@ -199,7 +221,6 @@ public final class ProfileInventoryViewModel {
                 // Remove item of that type from equippedItems
                 self.equippedItems.removeAll { $0.type.uppercased() == apiType.uppercased() }
 
-                // Update selected item status if sheet is active
                 if var selected = self.selectedItem, selected.id == item.id {
                     selected.status = .owned
                     self.selectedItem = selected
