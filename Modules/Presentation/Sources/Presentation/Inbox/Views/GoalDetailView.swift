@@ -26,7 +26,7 @@ public struct GoalDetailView: View {
 
             if let item = goalItem {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 10) {
+                    LazyVStack(alignment: .leading, spacing: 10) {
                         GoalDetailHeaderCard(goal: item.rawGoal)
 
                         GoalDetailProgressCard(
@@ -46,7 +46,7 @@ public struct GoalDetailView: View {
                         )
 
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 16)
                     .padding(.top, 16)
                     .padding(.bottom, 32)
                 }

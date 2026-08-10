@@ -19,7 +19,14 @@ struct GoalDetailTasksCard: View {
     private var dependentCount: Int   { tasks.filter {  $0.isDependent }.count }
 
     var body: some View {
-        AppCard {
+        AppDepthSurface(
+            shape: .roundedRectangle(cornerRadius: 24),
+            surfaceColor: AppColors.surface,
+            borderColor: AppColors.outline.opacity(0.06),
+            depthColor: AppColors.outline.opacity(0.10),
+            borderWidth: 1.5,
+            depthOffset: 4
+        ) {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center, spacing: 0) {
                     VStack(alignment: .leading, spacing: 2) {
@@ -58,7 +65,7 @@ struct GoalDetailTasksCard: View {
     // MARK: - Sub-views
 
     private var taskRoadmap: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        LazyVStack(alignment: .leading, spacing: 0) {
             ForEach(Array(tasks.enumerated()), id: \.element.id) { listIndex, item in
                 GoalDetailTaskRow(
                     item: item,

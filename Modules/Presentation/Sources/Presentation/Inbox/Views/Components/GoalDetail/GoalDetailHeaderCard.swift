@@ -18,7 +18,14 @@ struct GoalDetailHeaderCard: View {
     }()
 
     var body: some View {
-        AppCard {
+        AppDepthSurface(
+            shape: .roundedRectangle(cornerRadius: 24),
+            surfaceColor: AppColors.surface,
+            borderColor: AppColors.outline.opacity(0.06),
+            depthColor: AppColors.outline.opacity(0.10),
+            borderWidth: 1.5,
+            depthOffset: 4
+        ) {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 6) {
@@ -31,6 +38,7 @@ struct GoalDetailHeaderCard: View {
                                 .font(AppFonts.caption2Bold)
                                 .foregroundStyle(AppColors.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
+                                .padding(.top, 4)
                         }
 
                         if let deadline = goal.deadline {

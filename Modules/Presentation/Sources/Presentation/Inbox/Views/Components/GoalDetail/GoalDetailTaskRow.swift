@@ -12,7 +12,7 @@ struct GoalDetailTaskRow: View {
             timelineColumn
             VStack(alignment: .leading, spacing: 0) {
                 contentRow
-                    .padding(.bottom, isLast ? 0 : 12)
+                    .padding(.bottom, isLast ? 0 : 20)
             }
         }
     }
@@ -73,16 +73,7 @@ struct GoalDetailTaskRow: View {
 
     private var connector: some View {
         Rectangle()
-            .fill(
-                LinearGradient(
-                    colors: [
-                        AppColors.outline.opacity(0.25),
-                        AppColors.outline.opacity(0.10)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
+            .fill(AppColors.outline.opacity(0.18))
             .frame(width: 1.5)
             .frame(maxHeight: .infinity)
             .padding(.horizontal, (32 - 1.5) / 2)
