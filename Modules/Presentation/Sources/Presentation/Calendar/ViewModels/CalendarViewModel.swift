@@ -12,8 +12,8 @@ public final class CalendarViewModel {
     @ObservationIgnored private let fetchGoalsUseCase: any FetchGoalsUseCase
     @ObservationIgnored private let fetchActivityDaysUseCase: any FetchActivityDaysUseCase
     @ObservationIgnored private var calendar: Calendar
-    @ObservationIgnored private var locale: Locale
-    @ObservationIgnored private let nowProvider: () -> Date
+    @ObservationIgnored private var activityDayMapper: CalendarActivityDayMapper
+    @ObservationIgnored private var goalUIModelMapper: CalendarGoalUIModelMapper
     @ObservationIgnored private var domainGoals: [Goal] = []
     @ObservationIgnored private var loadCancellable: AnyCancellable?
     @ObservationIgnored private var activityLoadTask: Task<Void, Never>?
@@ -29,8 +29,12 @@ public final class CalendarViewModel {
         self.fetchGoalsUseCase = fetchGoalsUseCase
         self.fetchActivityDaysUseCase = fetchActivityDaysUseCase
         self.calendar = calendar
-        self.locale = locale
-        self.nowProvider = nowProvider
+        self.activityDayMapper = CalendarActivityDayMapper(calendar: calendar)
+        self.goalUIModelMapper = CalendarGoalUIModelMapper(
+            calendar: calendar,
+            locale: locale,
+            nowProvider: nowProvider
+        )
         self.state = .initial(date: initialDate, calendar: calendar)
     }
 
@@ -79,7 +83,7 @@ public final class CalendarViewModel {
                 receiveValue: { [weak self] goals in
                     guard let self else { return }
                     domainGoals = goals
-                    state.goals = goals.map(makeGoalUIModel)
+                    state.goals = goalUIModelMapper.map(goals)
                     state.isLoading = false
                 }
             )
@@ -90,7 +94,7 @@ public final class CalendarViewModel {
     private func loadActivityDays(for month: Date) {
         activityLoadTask?.cancel()
 
-        guard let range = activityRange(for: month) else {
+        guard let range = activityDayMapper.activityRange(for: month) else {
             return
         }
 
@@ -108,7 +112,7 @@ public final class CalendarViewModel {
                 }
 
                 state.activityDays.formUnion(
-                    fetched.map(calendarDayKey)
+                    fetched.map(activityDayMapper.calendarDayKey)
                 )
 
             } catch {
@@ -142,105 +146,21 @@ public final class CalendarViewModel {
         loadActivityDays(for: state.displayedMonth)
     }
 
-    // MARK: - Helpers
-
-    private func activityRange(
-        for month: Date
-    ) -> (start: ActivityDay, end: ActivityDay)? {
-        let start = CalendarMonthGrid.startOfMonth(
-            containing: month,
-            calendar: calendar
-        )
-
-        guard let dayRange = calendar.range(of: .day, in: .month, for: start),
-              let end = calendar.date(
-                  byAdding: .day,
-                  value: dayRange.count - 1,
-                  to: start
-              )
-        else {
-            return nil
-        }
-
-        return (activityDay(from: start), activityDay(from: end))
-    }
-
-    private func activityDay(from date: Date) -> ActivityDay {
-        let components = calendar.dateComponents([.year, .month, .day], from: date)
-        return ActivityDay(
-            year: components.year ?? 0,
-            month: components.month ?? 0,
-            day: components.day ?? 0
-        )
-    }
-
-    private func calendarDayKey(from day: ActivityDay) -> CalendarDayKey {
-        CalendarDayKey(year: day.year, month: day.month, day: day.day)
-    }
-
     private func updatePresentationContext(
         calendar: Calendar,
         locale: Locale
     ) {
         self.calendar = calendar
-        self.locale = locale
+        activityDayMapper = activityDayMapper.updating(calendar: calendar)
+        goalUIModelMapper = goalUIModelMapper.updating(
+            calendar: calendar,
+            locale: locale
+        )
         state.selectedDate = calendar.startOfDay(for: state.selectedDate)
         state.displayedMonth = CalendarMonthGrid.startOfMonth(
             containing: state.displayedMonth,
             calendar: calendar
         )
-        state.goals = domainGoals.map(makeGoalUIModel)
-    }
-
-    private func makeGoalUIModel(_ goal: Goal) -> CalendarGoalUIModel {
-        let trimmedDescription = goal.description?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        return CalendarGoalUIModel(
-            id: goal.id,
-            title: goal.name,
-            description: trimmedDescription?.isEmpty == true
-                ? nil
-                : trimmedDescription,
-            deadline: goal.deadline,
-            deadlineText: makeDeadlineText(goal.deadline)
-        )
-    }
-
-    private func makeDeadlineText(_ deadline: Date?) -> String {
-        guard let deadline else {
-            return L10n.CalendarScreen.noDeadline
-        }
-
-        let today = calendar.startOfDay(for: nowProvider())
-        let targetDay = calendar.startOfDay(for: deadline)
-        let daysRemaining = calendar.dateComponents(
-            [.day],
-            from: today,
-            to: targetDay
-        ).day
-
-        if let daysRemaining {
-            switch daysRemaining {
-            case 0:
-                return L10n.CalendarScreen.dueToday
-            case 1:
-                return L10n.CalendarScreen.oneDayLeft
-            case 2..<14:
-                return L10n.CalendarScreen.daysLeft(
-                    daysRemaining.formatted(.number.locale(locale))
-                )
-            default:
-                break
-            }
-        }
-
-        return deadline.formatted(
-            .dateTime
-                .day()
-                .month(.wide)
-                .year()
-                .locale(locale)
-        )
+        state.goals = goalUIModelMapper.map(domainGoals)
     }
 }
