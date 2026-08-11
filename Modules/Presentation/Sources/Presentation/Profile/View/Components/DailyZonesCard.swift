@@ -31,26 +31,15 @@ struct DailyZonesCard: View {
 
 // MARK: - Previews
 
-private var mockZones: [Zone] {
-    do {
-        return [
-            Zone(id: UUID(), name: "Work", color: try ZoneColor(hex: "#7459D9"), startTime: try LocalTime(hour: 9, minute: 0), endTime: try LocalTime(hour: 12, minute: 0)),
-            Zone(id: UUID(), name: "Lunch", color: try ZoneColor(hex: "#3F8CFA"), startTime: try LocalTime(hour: 12, minute: 0), endTime: try LocalTime(hour: 13, minute: 0))
-        ]
-    } catch {
-        return []
-    }
-}
-
 #Preview("DailyZonesCard – Light") {
-    DailyZonesCard(zones: mockZones, isReady: true, onTap: {})
+    DailyZonesCard(zones: Zone.mockDailyZones, isReady: true, onTap: {})
         .padding()
         .background(AppColors.screenBackground)
         .preferredColorScheme(.light)
 }
 
 #Preview("DailyZonesCard – Dark") {
-    DailyZonesCard(zones: mockZones, isReady: true, onTap: {})
+    DailyZonesCard(zones: Zone.mockDailyZones, isReady: true, onTap: {})
         .padding()
         .background(AppColors.screenBackground)
         .preferredColorScheme(.dark)

@@ -16,7 +16,8 @@ extension SessionModel {
             zoneID: zoneID,
             timeRange: try TimeRange(start: startDate, end: endDate),
             blocking: blocking,
-            status: status
+            status: status,
+            firstCompletedAt: firstCompletedAt
         )
     }
 
@@ -28,7 +29,8 @@ extension SessionModel {
             startDate: session.timeRange.start,
             endDate: session.timeRange.end,
             blocking: session.blocking,
-            statusRaw: Self.rawValue(for: session.status)
+            statusRaw: Self.rawValue(for: session.status),
+            firstCompletedAt: session.firstCompletedAt
         )
     }
 
@@ -39,6 +41,7 @@ extension SessionModel {
         endDate = session.timeRange.end
         blocking = session.blocking
         statusRaw = Self.rawValue(for: session.status)
+        firstCompletedAt = session.firstCompletedAt
     }
 
     private static func rawValue(for status: Session.Status) -> String {

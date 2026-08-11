@@ -220,15 +220,18 @@ public protocol RestoreTaskZoneUseCase: Sendable {
 }
 
 public struct DefaultRestoreTaskZoneUseCase: RestoreTaskZoneUseCase {
+    private let workspaceProvider: any ScheduleWorkspaceProviding
     private let taskRepository: any TaskRepository
     private let sessionRepository: any SessionRepository
     private let reconciler: any TaskScheduleReconciling
 
     public init(
+        workspaceProvider: any ScheduleWorkspaceProviding,
         taskRepository: any TaskRepository,
         sessionRepository: any SessionRepository,
         reconciler: any TaskScheduleReconciling
     ) {
+        self.workspaceProvider = workspaceProvider
         self.taskRepository = taskRepository
         self.sessionRepository = sessionRepository
         self.reconciler = reconciler
@@ -241,19 +244,24 @@ public struct DefaultRestoreTaskZoneUseCase: RestoreTaskZoneUseCase {
         guard let task = tasks.first(where: { $0.id == request.taskID }) else {
             throw SchedulingError.entityNotFound(id: request.taskID)
         }
+        let workspace = try await workspaceProvider.load(for: request.selectedDay)
+        let previousCategory = request.previousZoneID.flatMap { previousZoneID in
+            workspace.zones.first(where: { $0.id == previousZoneID })?.category
+        }
         try await taskRepository.updateTask(
             AwanTask(
                 id: task.id,
                 title: task.title,
                 description: task.description,
                 status: task.status,
+                completedAt: task.completedAt,
                 goalID: task.goalID,
-                zoneID: request.previousZoneID,
                 duration: task.duration,
                 isSplittable: task.isSplittable,
                 mandatory: task.mandatory,
                 estimatedPoints: task.estimatedPoints,
-                dependencyIDs: task.dependencyIDs
+                dependencyIDs: task.dependencyIDs,
+                category: previousCategory
             )
         )
         let sessions = try await sessionRepository.fetchSessions()

@@ -12,6 +12,8 @@ public struct UpdateProfilePartialRequestDTO: Encodable, Sendable {
     public let timezone: String?
     public let preferredSessionDuration: Int?
     public let bufferBetweenSessions: Int?
+    public let wakeupTime: String?
+    public let sleepTime: String?
 
     public init(
         firstName: String? = nil,
@@ -19,7 +21,10 @@ public struct UpdateProfilePartialRequestDTO: Encodable, Sendable {
         birthDate: String? = nil,
         timezone: String? = nil,
         preferredSessionDuration: Int? = nil,
-        bufferBetweenSessions: Int? = nil
+        bufferBetweenSessions: Int? = nil,
+        wakeupTime: String? = nil,
+        sleepTime: String? = nil
+        
     ) {
         self.firstName = firstName
         self.lastName = lastName
@@ -27,5 +32,7 @@ public struct UpdateProfilePartialRequestDTO: Encodable, Sendable {
         self.timezone = timezone
         self.preferredSessionDuration = preferredSessionDuration
         self.bufferBetweenSessions = bufferBetweenSessions
+        self.wakeupTime=wakeupTime
+        self.sleepTime=sleepTime
     }
 }

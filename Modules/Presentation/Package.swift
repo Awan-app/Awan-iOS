@@ -16,13 +16,20 @@ let package = Package(
         // Local Common package — provides the Coordinating protocol.
         .package(path: "../Common"),
         .package(path: "../Domain"),
+        .package(url: "https://github.com/google/GoogleSignIn-iOS.git", from: "7.0.0"),
+        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "7.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "Presentation",
-            dependencies: ["Common", "Domain"]),
+            dependencies: [
+                "Common",
+                "Domain",
+                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
+                .product(name: "Kingfisher", package: "Kingfisher")
+            ]),
         .testTarget(
             name: "PresentationTests",
             dependencies: ["Presentation"]

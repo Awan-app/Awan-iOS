@@ -7,10 +7,13 @@
 
 import SwiftUI
 import Common
+import GoogleSignIn
 
 struct AppRootView: View {
     private static let compactCreationDetent = PresentationDetent.height(370)
     private static let expandedCreationDetent = PresentationDetent.height(590)
+    private static let scheduledCreationDetent = PresentationDetent.height(700)
+    private static let customTabBarContentClearance: CGFloat = 90
 
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(AuthenticationState.self) private var authenticationState
@@ -19,7 +22,7 @@ struct AppRootView: View {
     private var appearanceManager
     @State private var creationSheetDetent = Self.compactCreationDetent
     private let factory: PresentationFactory
-    
+
     private var currentLayoutDirection: LayoutDirection {
         languageManager.currentLanguage == .arabic
             ? .rightToLeft
@@ -29,7 +32,20 @@ struct AppRootView: View {
     private var currentLocale: Locale {
         Locale(identifier: languageManager.currentLanguage.rawValue)
     }
-    
+
+    private var shouldShowCustomTabBar: Bool {
+        switch coordinator.mainCoordinator.selectedTab {
+        case .home:
+            coordinator.mainCoordinator.homePath.isEmpty
+        case .you:
+            coordinator.mainCoordinator.youPath.isEmpty
+        case .tasks:
+            coordinator.mainCoordinator.tasksPath.isEmpty
+        case .store, .add:
+            true
+        }
+    }
+
     init(factory: PresentationFactory) {
         self.factory = factory
     }
@@ -56,6 +72,9 @@ struct AppRootView: View {
             if status == .unauthenticated {
                 coordinator.authCoordinator.popToRoot()
             }
+        }
+        .onOpenURL { url in
+            GIDSignIn.sharedInstance.handle(url)
         }
     }
 
@@ -95,71 +114,133 @@ struct AppRootView: View {
 
     private var mainFlow: some View {
         TabView(selection: Bindable(coordinator.mainCoordinator).selectedTab) {
-            Tab(value: MainTab.home) {
-                NavigationStack(path: Bindable(coordinator.mainCoordinator).homePath) {
-                    factory.makeHomeView()
-                }
-            } label: {
-                Label(L10n.Home.today, systemImage: "sun.max.fill")
-            }
-
-//            Tab(value: MainTab.calendar) {
-//                NavigationStack(path: Bindable(coordinator.mainCoordinator).calendarPath) {
-//                    factory.makeCalendarView()
-//                }
-//            } label: {
-//                Label(L10n.Home.calendar, systemImage: "calendar")
-//            }
-
-            Tab(value: MainTab.rewards) {
-                NavigationStack(path: Bindable(coordinator.mainCoordinator).rewardsPath) {
-                    factory.makeRewardsView()
-                }
-            } label: {
-                Label(L10n.Home.rewards, systemImage: "gift.fill")
-            }
-            
-            Tab(value: MainTab.you) {
-                NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
-                    factory.makeProfileMainView()
-                        .navigationDestination(for: MainRoute.self) { route in
-                            switch route {
-                            case .dailyZones:
-                                factory.makeDailyZonesView()
-                                    .environment(appearanceManager)
-                            default:
-                                EmptyView()
-                            }
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).homePath) {
+                factory.makeHomeView()
+                    .navigationDestination(for: MainRoute.self) { route in
+                        switch route {
+                        case .calendar: factory.makeCalendarView()
+                        default: EmptyView()
                         }
-                }
-            } label: {
-                Label(L10n.Home.you, systemImage: "person.fill")
+                    }
             }
+            .tag(MainTab.home)
+            .toolbar(.hidden, for: .tabBar)
 
-            // Floats independently beside the tab bar — acts as a button, not a real destination
-            Tab(value: MainTab.add, role: .search) {
-                Color.clear
-            } label: {
-                Label("Add", systemImage: "wand.and.sparkles")
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).tasksPath) {
+                factory.makeInboxView()
+                    .navigationDestination(for: MainRoute.self) { route in
+                        switch route {
+                        case let .inboxTaskDetail(taskID):
+                            factory.makeInboxTaskDetailView(taskID: taskID)
+                        default:
+                            EmptyView()
+                        }
+                    }
+                    .navigationDestination(for: AnyHashable.self) { route in
+                        if let inboxRoute = route.base as? InboxRoute {
+                            switch inboxRoute {
+                            case let .goalDetail(goalID):
+                                factory.makeGoalDetailView(goalID: goalID)
+                            }
+                        } else {
+                            EmptyView()
+                        }
+                    }
+            }
+            .tag(MainTab.tasks)
+            .toolbar(.hidden, for: .tabBar)
+
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).storePath) {
+                factory.makeMarketplaceView()
+            }
+            .tag(MainTab.store)
+            .toolbar(.hidden, for: .tabBar)
+
+            NavigationStack(path: Bindable(coordinator.mainCoordinator).youPath) {
+                factory.makeProfileMainView()
+                    .navigationDestination(for: MainRoute.self) { route in
+                        switch route {
+                        case .userInfo:   factory.makeUserInfoView()
+                        case .dailyZones: factory.makeDailyZonesView().environment(appearanceManager)
+                        case .inventory:  InventoryPlaceholderView()
+                        case .personalization: factory.makePersonalizationView()
+                        case .settings: factory.makeSettingsView()
+                        case .aboutAwan:  factory.makeAboutAwanView()
+                        default:          EmptyView()
+                        }
+                    }
+            }
+            .tag(MainTab.you)
+            .toolbar(.hidden, for: .tabBar)
+        }
+        .safeAreaPadding(
+            .bottom,
+            shouldShowCustomTabBar ? Self.customTabBarContentClearance : 0
+        )
+        .id(languageManager.currentLanguage)
+        .overlay {
+            opaqueTopSafeArea
+        }
+        .safeAreaInset(edge: .bottom) {
+            if shouldShowCustomTabBar {
+                CustomTabBar(
+                    selectedTab: Bindable(coordinator.mainCoordinator).selectedTab,
+                    onAddTapped: {
+                        creationSheetDetent = Self.compactCreationDetent
+                        coordinator.mainCoordinator.presentAddItem()
+                    }
+                )
+                .environment(\.layoutDirection, currentLayoutDirection)
+                .padding(.top, 12)
+                .padding(.bottom, 6)
+                .background {
+                    AppColors.screenBackground
+                        .ignoresSafeArea(edges: .bottom)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .id(languageManager.currentLanguage)
-        .tint(AppColors.accentBlue)
-        .onChange(of: coordinator.mainCoordinator.selectedTab) { oldValue, newValue in
-            guard newValue == .add else { return }
-            creationSheetDetent = Self.compactCreationDetent
-            coordinator.mainCoordinator.presentAddItem()
-            coordinator.mainCoordinator.selectedTab = oldValue
+        .overlay {
+            if let celebration = coordinator.mainCoordinator.streakCelebration {
+                StreakCelebrationDialog(
+                    previousStreak: celebration.previousStreak,
+                    streak: celebration.streak,
+                    isNewRecord: celebration.isNewRecord
+                ) {
+                    coordinator.mainCoordinator.dismissStreakCelebration()
+                }
+                .transition(
+                    .scale(scale: 0.88)
+                    .combined(with: .opacity)
+                )
+                .zIndex(1000)
+            }
         }
+        .animation(
+            .spring(response: 0.38, dampingFraction: 0.72),
+            value: coordinator.mainCoordinator.streakCelebration?.id
+        )
+        .overlay {
+            factory.makeDailyWheelPresentationLayer(
+                alwaysShowsFloatingButton: coordinator.mainCoordinator.selectedTab == .store
+            )
+            .zIndex(1100)
+        }
+        .animation(.snappy(duration: 0.3), value: shouldShowCustomTabBar)
         .sheet(item: Bindable(coordinator.mainCoordinator).presentedSheet) { route in
             switch route {
             case .add:
                 factory.makeGlobalCreationSheet {
                     coordinator.mainCoordinator.dismissSheet()
-                } onTaskSchedulingModeChanged: { isAwanSchedulingEnabled in
-                    creationSheetDetent = isAwanSchedulingEnabled
-                        ? Self.compactCreationDetent
-                        : Self.expandedCreationDetent
+                    factory.refreshScheduleTimeline()
+                } onTaskLayoutModeChanged: { isAIEnabled, isScheduleEnabled in
+                    if isAIEnabled {
+                        creationSheetDetent = Self.compactCreationDetent
+                    } else if isScheduleEnabled {
+                        creationSheetDetent = Self.scheduledCreationDetent
+                    } else {
+                        creationSheetDetent = Self.expandedCreationDetent
+                    }
                 } onGoalFullScreenChanged: { requiresFullScreen in
                     creationSheetDetent = requiresFullScreen
                         ? .large
@@ -180,14 +261,30 @@ struct AppRootView: View {
                     [
                         Self.compactCreationDetent,
                         Self.expandedCreationDetent,
+                        Self.scheduledCreationDetent,
                         .large
                     ],
                     selection: $creationSheetDetent
                 )
                 .presentationDragIndicator(.visible)
-            case .home, .dailyZones:
+            case .home, .tasks, .calendar, .userInfo, .dailyZones, .inventory,
+                 .personalization, .settings, .aboutAwan, .inboxTaskDetail:
                 EmptyView()
             }
         }
+    }
+
+    private var opaqueTopSafeArea: some View {
+        GeometryReader { proxy in
+            VStack(spacing: 0) {
+                AppColors.screenBackground
+                    .frame(height: proxy.safeAreaInsets.top)
+
+                Spacer(minLength: 0)
+            }
+            .ignoresSafeArea()
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }

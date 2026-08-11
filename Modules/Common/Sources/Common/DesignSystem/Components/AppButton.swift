@@ -10,6 +10,7 @@ public struct AppButton: View {
     private let title: String
     private let icon: String?
     private let iconAsset: String?
+    private let iconColor: Color?
     private let color: Color
     private let foregroundColor: Color
     private let borderColor: Color?
@@ -17,12 +18,14 @@ public struct AppButton: View {
     private let size: Size
     private let expandsHorizontally: Bool
     private let useGradient: Bool
+    private let isLoading: Bool
     private let onTap: () -> Void
 
     public init(
         title: String,
         icon: String? = nil,
         iconAsset: String? = nil,
+        iconColor: Color? = nil,
         color: Color,
         foregroundColor: Color = AppColors.onAccent,
         borderColor: Color? = nil,
@@ -30,11 +33,13 @@ public struct AppButton: View {
         size: Size = .regular,
         expandsHorizontally: Bool = true,
         useGradient: Bool = true,
+        isLoading: Bool = false,
         onTap: @escaping () -> Void
     ) {
         self.title = title
         self.icon = icon
         self.iconAsset = iconAsset
+        self.iconColor = iconColor
         self.color = color
         self.foregroundColor = foregroundColor
         self.borderColor = borderColor
@@ -42,17 +47,27 @@ public struct AppButton: View {
         self.size = size
         self.expandsHorizontally = expandsHorizontally
         self.useGradient = useGradient
+        self.isLoading = isLoading
         self.onTap = onTap
     }
 
     public var body: some View {
         Button(action: onTap) {
             Group {
-                if let icon {
+                if isLoading {
+                    ProgressView()
+                        .tint(foregroundColor)
+                } else if let icon {
                     if title.isEmpty {
                         Image(systemName: icon)
+                            .foregroundStyle(iconColor ?? foregroundColor)
                     } else {
-                        Label(title, systemImage: icon)
+                        Label {
+                            Text(title)
+                        } icon: {
+                            Image(systemName: icon)
+                                .foregroundStyle(iconColor ?? foregroundColor)
+                        }
                     }
                 } else if let iconAsset {
                     if title.isEmpty {
@@ -81,6 +96,7 @@ public struct AppButton: View {
             .lineLimit(1)
             .frame(maxWidth: expandsHorizontally ? .infinity : nil)
         }
+        .disabled(isLoading)
         .buttonStyle(
             PressedDepthButtonStyle(
                 color: color,
@@ -123,6 +139,7 @@ private struct PressedDepthButtonStyle: ButtonStyle {
                 )
                 .stroke(borderColor ?? AppColors.onAccent.opacity(0.22), lineWidth: 1.5)
             }
+            .compositingGroup()
             .shadow(
                 color: shadowColor ?? color.opacity(0.75),
                 radius: 0,

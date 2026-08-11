@@ -4,18 +4,15 @@ import Foundation
 
 public struct DefaultSessionRepository: SessionRepository {
     private let localDataSource: any LocalSessionDataSource
-    private let localTaskDataSource: any LocalTaskDataSource
     private let localProfileDataSource: any LocalUserProfileDataSource
     private let remoteDataSource: any RemoteSessionDataSourceProtocol
 
     public init(
         localDataSource: any LocalSessionDataSource,
-        localTaskDataSource: any LocalTaskDataSource,
         localProfileDataSource: any LocalUserProfileDataSource,
         remoteDataSource: any RemoteSessionDataSourceProtocol
     ) {
         self.localDataSource = localDataSource
-        self.localTaskDataSource = localTaskDataSource
         self.localProfileDataSource = localProfileDataSource
         self.remoteDataSource = remoteDataSource
     }
@@ -25,27 +22,31 @@ public struct DefaultSessionRepository: SessionRepository {
     }
 
     public func fetchSessions(for date: Date) async throws -> [Session] {
-        let profile = try await requireProfile()
+        let timeZoneID = await getTimeZoneID()
         let dayKey = LocalDateKey.value(
             for: date,
-            timeZoneID: profile.preferences.timezone
+            timeZoneID: timeZoneID
         )
         return try await localDataSource.fetchSessions()
             .filter {
                 LocalDateKey.value(
                     for: $0.timeRange.start,
-                    timeZoneID: profile.preferences.timezone
+                    timeZoneID: timeZoneID
                 ) == dayKey
             }
             .sorted(by: sessionOrder)
     }
 
+    public func observeSessions() -> AnyPublisher<[Session], Error> {
+        localDataSource.observeSessions()
+    }
+
     public func observeSessions(for date: Date) -> AnyPublisher<[Session], Error> {
-        AsyncValuePublisher.make { try await requireProfile() }
-            .flatMap { profile -> AnyPublisher<[Session], Error> in
+        AsyncValuePublisher.make { await getTimeZoneID() }
+            .flatMap { timeZoneID -> AnyPublisher<[Session], Error> in
                 let dayKey = LocalDateKey.value(
                     for: date,
-                    timeZoneID: profile.preferences.timezone
+                    timeZoneID: timeZoneID
                 )
                 let local = localDataSource.observeSessions()
                     .map { sessions in
@@ -53,7 +54,7 @@ public struct DefaultSessionRepository: SessionRepository {
                             .filter {
                                 LocalDateKey.value(
                                     for: $0.timeRange.start,
-                                    timeZoneID: profile.preferences.timezone
+                                    timeZoneID: timeZoneID
                                 ) == dayKey
                             }
                             .sorted(by: sessionOrder)
@@ -62,7 +63,7 @@ public struct DefaultSessionRepository: SessionRepository {
                 let remote = AsyncValuePublisher.make {
                     try await loadRemoteSessions(
                         dayKey: dayKey,
-                        profile: profile
+                        timeZoneID: timeZoneID
                     )
                 }
                 .catch { _ in Empty<[Session], Error>() }
@@ -77,41 +78,26 @@ public struct DefaultSessionRepository: SessionRepository {
 
     private func loadRemoteSessions(
         dayKey: String,
-        profile: UserProfile
+        timeZoneID: String
     ) async throws -> [Session] {
         let sessions = try await remoteDataSource.getSessions(date: dayKey)
             .map {
                 try HomeRemoteMapper.session(
                     $0,
-                    timeZoneID: profile.preferences.timezone
+                    timeZoneID: timeZoneID
                 )
             }
             .sorted(by: sessionOrder)
         try await localDataSource.replaceSessions(
             sessions,
             forDay: dayKey,
-            timeZoneID: profile.preferences.timezone
+            timeZoneID: timeZoneID
         )
-        let sessionsByTaskID = Dictionary(grouping: sessions, by: \.taskID)
-        for taskID in sessionsByTaskID.keys {
-            guard let task = try await localTaskDataSource.fetchTask(id: taskID) else { continue }
-            let inferredZoneID = sessionsByTaskID[taskID]?
-                .sorted { $0.timeRange.start < $1.timeRange.start }
-                .compactMap(\.zoneID)
-                .first
-            guard let inferredZoneID, inferredZoneID != task.zoneID else { continue }
-            try await localTaskDataSource.updateTask(
-                replacingZone(of: task, with: inferredZoneID)
-            )
-        }
         return sessions
     }
 
-    private func requireProfile() async throws -> UserProfile {
-        guard let profile = try await localProfileDataSource.fetchProfile() else {
-            throw RemoteDomainMappingError.missingField("cachedProfile")
-        }
-        return profile
+    private func getTimeZoneID() async -> String {
+        (try? await localProfileDataSource.fetchProfile())?.preferences.timezone ?? TimeZone.current.identifier
     }
 
     private func sessionOrder(_ lhs: Session, _ rhs: Session) -> Bool {
@@ -124,57 +110,66 @@ public struct DefaultSessionRepository: SessionRepository {
         try await localDataSource.addSession(session)
     }
     public func updateSession(_ session: Session) async throws {
-        guard let profile = try await localProfileDataSource.fetchProfile() else {
-            throw RemoteDomainMappingError.missingField("cachedProfile")
-        }
+        let timeZoneID = await getTimeZoneID()
         guard let original = try await localDataSource.fetchSessions()
             .first(where: { $0.id == session.id }) else {
             throw SchedulingError.entityNotFound(id: session.id)
         }
-        let timeZoneID = profile.preferences.timezone
         let timeChanged = original.timeRange != session.timeRange
-        let statusChanged = original.status != session.status
         let lockChanged = original.blocking != session.blocking
-        guard timeChanged || statusChanged || lockChanged else { return }
+        guard timeChanged || lockChanged else { return }
 
         var response: SessionResponseDTO
+
         if timeChanged {
             response = try await remoteDataSource.updateSession(
                 sessionID: session.id,
-                request: updateRequest(for: session, timeZoneID: timeZoneID)
+                request: updateRequest(
+                    for: session,
+                    timeZoneID: timeZoneID
+                )
             )
-        } else if statusChanged {
-            response = try await remoteDataSource.updateSessionStatus(
-                sessionID: session.id,
-                status: remoteStatus(session.status)
-            )
-        } else if session.blocking {
-            response = try await remoteDataSource.lockSession(sessionID: session.id)
         } else {
-            response = try await remoteDataSource.unlockSession(sessionID: session.id)
+            response = if session.blocking {
+                try await remoteDataSource.lockSession(
+                    sessionID: session.id
+                )
+            } else {
+                try await remoteDataSource.unlockSession(
+                    sessionID: session.id
+                )
+            }
         }
 
-        if lockChanged, timeChanged || statusChanged {
+        if timeChanged && lockChanged {
             do {
                 response = if session.blocking {
-                    try await remoteDataSource.lockSession(sessionID: session.id)
+                    try await remoteDataSource.lockSession(
+                        sessionID: session.id
+                    )
                 } else {
-                    try await remoteDataSource.unlockSession(sessionID: session.id)
-                }
-            } catch {
-                if timeChanged {
-                    _ = try? await remoteDataSource.updateSession(
-                        sessionID: original.id,
-                        request: updateRequest(for: original, timeZoneID: timeZoneID)
+                    try await remoteDataSource.unlockSession(
+                        sessionID: session.id
                     )
                 }
+            } catch {
+                _ = try? await remoteDataSource.updateSession(
+                    sessionID: original.id,
+                    request: updateRequest(
+                        for: original,
+                        timeZoneID: timeZoneID
+                    )
+                )
+
                 throw error
             }
         }
+
         let accepted = try HomeRemoteMapper.session(
             response,
             timeZoneID: timeZoneID
         )
+
         try await localDataSource.updateSession(accepted)
     }
     public func deleteSession(id: UUID) async throws {
@@ -187,7 +182,50 @@ public struct DefaultSessionRepository: SessionRepository {
     public func deleteAllSessions() async throws {
         try await localDataSource.deleteAllSessions()
     }
+    public func completeSession(
+        id: UUID
+    ) async throws -> SessionCompletionResult {
+        let timeZoneID = await getTimeZoneID()
 
+        let response = try await remoteDataSource.completeSession(
+            sessionID: id
+        )
+
+        let session = try HomeRemoteMapper.session(
+            response.session,
+            timeZoneID: timeZoneID
+        )
+
+        let reward = HomeRemoteMapper.completionReward(
+            response.reward
+        )
+
+        try await localDataSource.updateSession(session)
+
+        return SessionCompletionResult(
+            session: session,
+            reward: reward
+        )
+    }
+    public func uncompleteSession(
+        id: UUID
+    ) async throws -> Session {
+        let timeZoneID = await getTimeZoneID()
+
+        let response = try await remoteDataSource.uncompleteSession(
+            sessionID: id
+        )
+
+        let session = try HomeRemoteMapper.session(
+            response,
+            timeZoneID: timeZoneID
+        )
+
+        try await localDataSource.updateSession(session)
+
+        return session
+    }
+    
     private func updateRequest(
         for session: Session,
         timeZoneID: String
@@ -201,32 +239,7 @@ public struct DefaultSessionRepository: SessionRepository {
                 session.timeRange.end,
                 timeZoneID: timeZoneID
             ),
-            status: remoteStatus(session.status)
-        )
-    }
-
-    private func remoteStatus(_ status: Session.Status) -> String {
-        switch status {
-        case .planned: "SCHEDULED"
-        case .completed: "COMPLETED"
-        case .missed: "SKIPPED"
-        case .cancelled: "CANCELLED"
-        }
-    }
-
-    private func replacingZone(of task: AwanTask, with zoneID: UUID) -> AwanTask {
-        AwanTask(
-            id: task.id,
-            title: task.title,
-            description: task.description,
-            status: task.status,
-            goalID: task.goalID,
-            zoneID: zoneID,
-            duration: task.duration,
-            isSplittable: task.isSplittable,
-            mandatory: task.mandatory,
-            estimatedPoints: task.estimatedPoints,
-            dependencyIDs: task.dependencyIDs
+            status: nil
         )
     }
 }

@@ -14,6 +14,7 @@ public struct SessionResponseDTO: Decodable, Sendable {
     public let status: String
     public let locked: Bool
     public let zoneId: UUID?
+    public let firstCompletedAt: String?
     public let taskID: UUID
 
     private enum CodingKeys: String, CodingKey {
@@ -23,6 +24,7 @@ public struct SessionResponseDTO: Decodable, Sendable {
         case status
         case locked
         case zoneId
+        case firstCompletedAt
         case taskID = "taskId"
     }
 
@@ -33,7 +35,8 @@ public struct SessionResponseDTO: Decodable, Sendable {
         status: String,
         locked: Bool,
         zoneId: UUID?,
-        taskID: UUID
+        taskID: UUID,
+        firstCompletedAt: String?
     ) {
         self.id = id
         self.start = start
@@ -42,5 +45,6 @@ public struct SessionResponseDTO: Decodable, Sendable {
         self.locked = locked
         self.zoneId = zoneId
         self.taskID = taskID
+        self.firstCompletedAt = firstCompletedAt
     }
 }

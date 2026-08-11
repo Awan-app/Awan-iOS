@@ -1,133 +1,184 @@
-//
-//  SwiftUIView.swift
-//  Presentation
-//
-//  Created by AndrewMagdy on 21/07/2026.
-//
-
-import SwiftUI
 import Common
 import Domain
+import SwiftUI
 
 struct ProfileMainView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(LanguageManager.self) private var languageManager
     @State private var viewModel: ProfileViewModel
-    var dailyZonesViewModel: DailyZonesViewModel
-    @State private var isLanguageSheetPresented = false
-    
-    init(viewModel: ProfileViewModel, dailyZonesViewModel: DailyZonesViewModel) {
+
+    init(viewModel: ProfileViewModel) {
         self.viewModel = viewModel
-        self.dailyZonesViewModel = dailyZonesViewModel
-    }
-
-    private var formattedSessionTime: String {
-        guard viewModel.sessionTime > 0 else { return "" }
-        return "\(viewModel.sessionTime) min"
-    }
-
-    private var formattedSleepSchedule: String {
-        guard let wake = viewModel.sleepTime, let sleep = viewModel.wakeupTime else { return "" }
-        
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        formatter.locale = languageManager.locale
-        
-        var wakeComponents = DateComponents()
-        wakeComponents.hour = wake.hour
-        wakeComponents.minute = wake.minute
-        
-        var sleepComponents = DateComponents()
-        sleepComponents.hour = sleep.hour
-        sleepComponents.minute = sleep.minute
-        
-        guard let wakeDate = Calendar.current.date(from: wakeComponents),
-              let sleepDate = Calendar.current.date(from: sleepComponents) else {
-            return ""
-        }
-        
-        return "\(formatter.string(from: sleepDate)) - \(formatter.string(from: wakeDate))"
     }
 
     var body: some View {
         ZStack {
-            // Background
             AppColors.screenBackground
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-
-                    // Header Area
-                    Text(L10n.Profile.title)
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundStyle(AppColors.brandDarkBlue)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top, 40)
+                ScrollView {
+                    content
                         .padding(.horizontal, 24)
-                        .padding(.bottom, 8)
-                        .overlay(alignment: .trailing) {
-                            GifImageView("Animated AWAN mascot")
-                                .frame(width: 80, height: 80)
-                                .padding(.trailing, 24)
-                                .padding(.top, 40)
-                        }
-
-                    VStack(spacing: 10) {
-                        PersonalInfoCard(
-                            avatarImage: Image("user-avatar"), // Using actual asset
-                            name: viewModel.userName,
-                            email: viewModel.userEmail,
-                            onEdit: {}
-                        ).id(languageManager.currentLanguage)
-
-                        // Daily Zones
-                        DailyZonesCard(
-                            zones: viewModel.dailyZones,
-                            isReady: viewModel.isReady,
-                            onTap: {
-                                coordinator.mainCoordinator.push(MainRoute.dailyZones)
-                            }
-                        ).id(languageManager.currentLanguage)
-
-                        // Preferences
-                        PreferencesCard(preferences: [
-                            PreferenceItem(icon: "clock", title: L10n.Profile.sessionTime, value: formattedSessionTime, onTap: {
-                                //go to session time view
-                            }),
-                            PreferenceItem(icon: "globe", title: L10n.Profile.timeZone, value: viewModel.timeZone, onTap: {
-                                //go to time zone view
-                            }),
-                            PreferenceItem(icon: "moon", title: L10n.Profile.sleepSchedule, value: formattedSleepSchedule, onTap: {
-                                //go to sleep schedule view
-                            })
-                        ])
-
-                        // Language & Theme
-                        LanguageThemeCard(
-                            language: languageManager.currentLanguage == .arabic ? L10n.Profile.languageArabic : L10n.Profile.languageEnglish,
-                            onLanguageTap: {
-                                isLanguageSheetPresented = true
-                            }
-                        )
-
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 40)
+                        .padding(.bottom, 90)
                 }
+                .refreshable {
+                    await viewModel.load()
+                }
+            }
         }
         .navigationBarHidden(true)
-        .sheet(isPresented: $isLanguageSheetPresented) {
-            LanguageSelectionView()
+        .alert(
+            L10n.Profile.logout,
+            isPresented: Bindable(viewModel).showLogoutConfirmation
+        ) {
+            Button(L10n.Common.cancel, role: .cancel) {}
+            Button(L10n.Profile.logout, role: .destructive) {
+                Task { await viewModel.logout() }
+            }
+        } message: {
+            Text(L10n.Profile.logoutConfirmationMessage)
+        }
+        .alert(
+            L10n.Profile.updateFailureTitle,
+            isPresented: Bindable(viewModel).showLogoutError
+        ) {
+            Button(L10n.Common.gotIt, role: .cancel) {}
+        } message: {
+            Text(L10n.Common.pleaseTryAgain)
         }
         .task {
-            await viewModel.fetchUserProfile()
+            await viewModel.load()
         }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch viewModel.loadState {
+        case .idle, .loading:
+            ProgressView()
+                .tint(AppColors.accentBlue)
+                .frame(maxWidth: .infinity, minHeight: 360)
+                .accessibilityLabel(L10n.Profile.loading)
+
+        case .failure:
+            loadFailure
+
+        case .content:
+            profileContent
+                .id(languageManager.currentLanguage)
+        }
+    }
+
+    private var profileContent: some View {
+        VStack(spacing: 14) {
+            ProfileHeroCard(
+                avatarUrl: viewModel.profilePictureUrl,
+                name: viewModel.userName,
+                email: viewModel.userEmail,
+                points: viewModel.points,
+                streak: viewModel.streak,
+                maxStreak: viewModel.maxStreak,
+                onEdit: {
+                    coordinator.mainCoordinator.push(MainRoute.userInfo)
+                }
+            )
+
+            ProfileNavigationButton(
+                icon: "shippingbox.fill",
+                title: L10n.Profile.inventory,
+                subtitle: nil,
+                color: AppColors.accentPurple,
+                action: {
+                    coordinator.mainCoordinator.push(MainRoute.inventory)
+                }
+            )
+
+            DailyZonesCard(
+                zones: viewModel.dailyZones,
+                isReady: viewModel.areDailyZonesReady,
+                onTap: {
+                    coordinator.mainCoordinator.push(MainRoute.dailyZones)
+                }
+            )
+
+            VStack(alignment: .leading, spacing: 12) {
+                SectionHeaderLabel(
+                    title: L10n.Profile.more,
+                    accentColor: AppColors.accentBlue
+                )
+
+                ProfileMenuCard(items: [
+                    ProfileMenuItem(
+                        icon: "wand.and.stars",
+                        title: L10n.Profile.personalization,
+                        color: AppColors.accentBlue,
+                        action: {
+                            coordinator.mainCoordinator.push(MainRoute.personalization)
+                        }
+                    ),
+                    ProfileMenuItem(
+                        icon: "slider.horizontal.3",
+                        title: L10n.Profile.settings,
+                        color: AppColors.warning,
+                        action: {
+                            coordinator.mainCoordinator.push(MainRoute.settings)
+                        }
+                    )
+                ])
+            }
+
+            AppButton(
+                title: L10n.Profile.logout,
+                color: AppColors.destructive,
+                onTap: {
+                    viewModel.showLogoutConfirmation = true
+                }
+            )
+            .padding(.top, 8)
+            .disabled(viewModel.isLoggingOut)
+        }
+        .padding(.top, 6)
+    }
+
+    private var loadFailure: some View {
+        AppDepthSurface(
+            surfaceColor: AppColors.warningSurface,
+            borderColor: AppColors.warning.opacity(0.34),
+            depthColor: AppColors.warning.opacity(0.42)
+        ) {
+            VStack(spacing: 16) {
+                Image(systemName: "exclamationmark.cloud.fill")
+                    .font(AppFonts.heroSymbol)
+                    .foregroundStyle(AppColors.warning)
+
+                Text(L10n.Profile.loadFailure)
+                    .font(AppFonts.bodySemibold)
+                    .foregroundStyle(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+
+                AppButton(
+                    title: L10n.Home.retry,
+                    color: AppColors.accentBlue,
+                    onTap: {
+                        Task { await viewModel.load() }
+                    }
+                )
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(.top, 40)
     }
 }
 
-//#Preview {
-//    ProfileMainView(viewModel: ProfileViewModel(
-//        getUserProfileUseCase: MockGetUserProfileUseCase(),
-//        fetchZonesUseCase: MockFetchZonesUseCase()
-//    ))
-//}
+#Preview {
+    ProfileMainView(
+        viewModel: ProfileViewModel(
+            getUserProfileUseCase: MockGetUserProfileUseCase(),
+            fetchZonesUseCase: MockFetchZonesUseCase(),
+            logoutUseCase: LogoutUseCase(repository: MockAuthRepository())
+        )
+    )
+    .environment(AppCoordinator())
+    .environment(LanguageManager())
+}

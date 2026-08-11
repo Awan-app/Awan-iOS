@@ -60,9 +60,29 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(ZoneRepository.self, from: resolver)
             )
         }
+        container.register(FetchCategoriesUseCase.self) { resolver in
+            DefaultFetchCategoriesUseCase(
+                repository: Self.resolve(CategoryRepository.self, from: resolver)
+            )
+        }
+        container.register(CreateCategoryUseCase.self) { resolver in
+            DefaultCreateCategoryUseCase(
+                repository: Self.resolve(CategoryRepository.self, from: resolver)
+            )
+        }
         container.register(FetchTasksUseCase.self) { resolver in
             DefaultFetchTasksUseCase(
                 repository: Self.resolve(TaskRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchGoalsUseCase.self) { resolver in
+            DefaultFetchGoalsUseCase(
+                repository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchGoalTasksUseCase.self) { resolver in
+            DefaultFetchGoalTasksUseCase(
+                repository: Self.resolve(GoalRepository.self, from: resolver)
             )
         }
         container.register(FetchSessionsUseCase.self) { resolver in
@@ -70,8 +90,77 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(SessionRepository.self, from: resolver)
             )
         }
+        container.register(FetchInboxTasksUseCase.self) { resolver in
+            DefaultFetchInboxTasksUseCase(
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
+                sessionRepository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchGoalsWithTasksUseCase.self) { resolver in
+            DefaultFetchGoalsWithTasksUseCase(
+                goalRepository: Self.resolve(GoalRepository.self, from: resolver),
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
+                sessionRepository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(DefaultFetchInboxTasksUseCase.self) { resolver in
+            DefaultFetchInboxTasksUseCase(
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
+                sessionRepository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(SetTaskCompletionUseCase.self) { resolver in
+            DefaultSetTaskCompletionUseCase(
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
+                userProfileRepository: Self.resolve(
+                    UserProfileRepository.self,
+                    from: resolver
+                )
+            )
+        }
+        container.register(DeleteInboxTaskUseCase.self) { resolver in
+            DefaultDeleteInboxTaskUseCase(
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver)
+            )
+        }
         container.register(GetUserProfileUseCase.self) { resolver in
             DefaultGetUserProfileUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchDailyWheelUseCase.self) { resolver in
+            DefaultFetchDailyWheelUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(SpinDailyWheelUseCase.self) { resolver in
+            DefaultSpinDailyWheelUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateUserProfileUseCase.self) { resolver in
+            DefaultUpdateUserProfileUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateProfilePictureUseCase.self) { resolver in
+            DefaultUpdateProfilePictureUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
+
+        container.register(UpdateSessionDurationUseCase.self) { resolver in
+            DefaultUpdateSessionDurationUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTimezoneUseCase.self) { resolver in
+            DefaultUpdateTimezoneUseCase(
+                repository: Self.resolve(UserProfileRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateSleepScheduleUseCase.self) { resolver in
+            DefaultUpdateSleepScheduleUseCase(
                 repository: Self.resolve(UserProfileRepository.self, from: resolver)
             )
         }
@@ -87,7 +176,18 @@ struct DomainAssembly: Assembly {
         }
         container.register(SetSessionCompletionUseCase.self) { resolver in
             DefaultSetSessionCompletionUseCase(
-                repository: Self.resolve(SessionRepository.self, from: resolver)
+                sessionRepository: Self.resolve(
+                    SessionRepository.self,
+                    from: resolver
+                ),
+                taskRepository: Self.resolve(
+                    TaskRepository.self,
+                    from: resolver
+                ),
+                userProfileRepository: Self.resolve(
+                    UserProfileRepository.self,
+                    from: resolver
+                )
             )
         }
         container.register(DeleteSessionUseCase.self) { resolver in
@@ -103,15 +203,36 @@ struct DomainAssembly: Assembly {
         container.register(CreateTaskUseCase.self) { resolver in
             DefaultCreateTaskUseCase(
                 taskRepository: Self.resolve(TaskRepository.self, from: resolver),
-                reconciler: Self.resolve(TaskScheduleReconciling.self, from: resolver)
+                workspaceProvider: Self.resolve(
+                    ScheduleWorkspaceProviding.self,
+                    from: resolver
+                )
+            )
+        }
+        container.register(CreateAITaskUseCase.self) { resolver in
+            DefaultCreateAITaskUseCase(
+                repository: Self.resolve(AiTaskRepository.self, from: resolver)
+            )
+        }
+        container.register(ImageToTasksUseCase.self) { resolver in
+            DefaultImageToTasksUseCase(
+                repository: Self.resolve(AiTaskRepository.self, from: resolver)
+            )
+        }
+        container.register(AcceptProposedTaskUseCase.self) { resolver in
+            DefaultAcceptProposedTaskUseCase(
+                repository: Self.resolve(AiTaskRepository.self, from: resolver)
+            )
+        }
+        container.register(AcceptProposedTasksUseCase.self) { resolver in
+            DefaultAcceptProposedTasksUseCase(
+                repository: Self.resolve(AiTaskRepository.self, from: resolver)
             )
         }
         container.register(UpdateTaskUseCase.self) { resolver in
             DefaultUpdateTaskUseCase(
                 workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),
-                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
-                sessionRepository: Self.resolve(SessionRepository.self, from: resolver),
-                reconciler: Self.resolve(TaskScheduleReconciling.self, from: resolver)
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver)
             )
         }
         container.register(DeleteTaskUseCase.self) { resolver in
@@ -146,8 +267,16 @@ struct DomainAssembly: Assembly {
                 )
             )
         }
-        container.register(ScheduleCreatedGoalUseCase.self) { resolver in
-            DefaultScheduleCreatedGoalUseCase(
+        container.register(RequestGoalScheduleProposalUseCase.self) { resolver in
+            DefaultRequestGoalScheduleProposalUseCase(
+                repository: Self.resolve(
+                    GoalDecompositionRepository.self,
+                    from: resolver
+                )
+            )
+        }
+        container.register(ConfirmGoalScheduleUseCase.self) { resolver in
+            DefaultConfirmGoalScheduleUseCase(
                 repository: Self.resolve(
                     GoalDecompositionRepository.self,
                     from: resolver
@@ -168,6 +297,11 @@ struct DomainAssembly: Assembly {
         container.register(VerifyOTPUseCase.self) { resolver in
             VerifyOTPUseCase(
                 repository: Self.resolve(AuthRepository.self, from: resolver)
+            )
+        }
+        container.register(GoogleSignInUseCase.self) { resolver in
+            DefaultGoogleSignInUseCase(
+                authRepository: Self.resolve(AuthRepository.self, from: resolver)
             )
         }
         container.register(ObserveAuthenticationUseCase.self) { resolver in
@@ -195,10 +329,53 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(TemplateRepository.self, from: resolver)
             )
         }
-        container.register(UpdateTemplateUseCase.self) { resolver in
-            DefaultUpdateTemplateUseCase(
+        container.register(FetchTemplateOverridesUseCase.self) { resolver in
+            DefaultFetchTemplateOverridesUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(CreateTemplateUseCase.self) { resolver in
+            DefaultCreateTemplateUseCase(
                 repository: Self.resolve(TemplateRepository.self, from: resolver)
             )
+        }
+        container.register(UpdateTemplateUseCase.self) { resolver in
+            DefaultBulkUpdateTemplateUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTemplateDetailsUseCase.self) { resolver in
+            DefaultUpdateTemplateDetailsUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateBulkTemplateOverrideUseCase.self) { resolver in
+            DefaultUpdateBulkTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(DeleteTemplateOverrideUseCase.self) { resolver in
+            DefaultDeleteTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(CreateTemplateOverrideUseCase.self) { resolver in
+            DefaultCreateTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateTemplateOverrideUseCase.self) { resolver in
+            DefaultUpdateTemplateOverrideUseCase(
+                repository: Self.resolve(TemplateOverrideRepository.self, from: resolver)
+            )
+        }
+        container.register(DeleteTemplateUseCase.self) { resolver in
+            DefaultDeleteTemplateUseCase(
+                repository: Self.resolve(TemplateRepository.self, from: resolver)
+            )
+        }
+        container.register(ResolveTemplateWeekdayAvailabilityUseCase.self) { _ in
+            DefaultResolveTemplateWeekdayAvailabilityUseCase()
         }
         container.register(ManageZoneScheduleUseCase.self) { _ in
             ManageZoneScheduleUseCaseImpl()
@@ -288,6 +465,7 @@ struct DomainAssembly: Assembly {
         }
         container.register(RestoreTaskZoneUseCase.self) { resolver in
             DefaultRestoreTaskZoneUseCase(
+                workspaceProvider: Self.resolve(ScheduleWorkspaceProviding.self, from: resolver),
                 taskRepository: Self.resolve(TaskRepository.self, from: resolver),
                 sessionRepository: Self.resolve(SessionRepository.self, from: resolver),
                 reconciler: Self.resolve(TaskScheduleReconciling.self, from: resolver)

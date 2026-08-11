@@ -13,7 +13,7 @@ public struct GoalInfoResponseDTO: Decodable, Sendable {
     public let targetDate: String?
     public let createdAt: String
     public let inbox: Bool
-    public let tasks: [TaskInfoResponseDTO]
+    public let tasks: [TaskInfoResponseDTO]?
 
     public init(
         id: UUID,
@@ -23,7 +23,7 @@ public struct GoalInfoResponseDTO: Decodable, Sendable {
         targetDate: String?,
         createdAt: String,
         inbox: Bool,
-        tasks: [TaskInfoResponseDTO]
+        tasks: [TaskInfoResponseDTO]?
     ) {
         self.id = id
         self.title = title

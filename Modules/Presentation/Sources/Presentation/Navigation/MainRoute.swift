@@ -9,16 +9,24 @@ import Foundation
 
 public enum MainTab: Hashable, Sendable {
     case home
-    case calendar
-    case rewards
+    case tasks
+    case store
     case you
     case add
 }
 
 public enum MainRoute: Hashable, Identifiable, Sendable {
     case home
+    case tasks
+    case calendar
+    case userInfo
     case add
     case dailyZones
+    case inventory
+    case personalization
+    case settings
+    case aboutAwan
+    case inboxTaskDetail(UUID)
 
     public var id: Self { self }
 }

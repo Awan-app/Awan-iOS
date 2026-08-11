@@ -108,9 +108,27 @@ public struct GoalProposalCategory: Equatable, Sendable {
 public struct ConfirmedGoal: Equatable, Sendable {
     public let id: UUID
     public let title: String
+    public let tasks: [ConfirmedGoalTask]
 
-    public init(id: UUID, title: String) {
+    public init(
+        id: UUID,
+        title: String,
+        tasks: [ConfirmedGoalTask] = []
+    ) {
         self.id = id
         self.title = title
+        self.tasks = tasks
+    }
+}
+
+public struct ConfirmedGoalTask: Identifiable, Equatable, Sendable {
+    public let id: UUID
+    public let title: String
+    public let estimatedDuration: Int
+
+    public init(id: UUID, title: String, estimatedDuration: Int) {
+        self.id = id
+        self.title = title
+        self.estimatedDuration = estimatedDuration
     }
 }

@@ -13,11 +13,12 @@ import Common
 public final class MainCoordinator: Coordinating {
     public var selectedTab: MainTab = .home
     public var homePath = NavigationPath()
-    public var calendarPath = NavigationPath()
-    public var rewardsPath = NavigationPath()
+    public var tasksPath = NavigationPath()
+    public var storePath = NavigationPath()
     public var youPath = NavigationPath()
     public var presentedSheet: MainRoute?
-
+    public var streakCelebration: StreakCelebrationPresentation?
+    
     public init() {}
 
     public func push(_ route: AnyHashable) {
@@ -55,15 +56,30 @@ public final class MainCoordinator: Coordinating {
     public func present(sheet route: MainRoute) {
         presentedSheet = route
     }
+    
+    public func presentStreakCelebration(
+        previousStreak: Int,
+        streak: Int,
+        isNewRecord: Bool
+    ) {
+        streakCelebration = StreakCelebrationPresentation(
+            previousStreak: previousStreak,
+            streak: streak,
+            isNewRecord: isNewRecord
+        )
+    }
 
+    public func dismissStreakCelebration() {
+        streakCelebration = nil
+    }
     private func mutateSelectedPath(_ mutation: (inout NavigationPath) -> Void) {
         switch selectedTab {
         case .home:
             mutation(&homePath)
-        case .calendar:
-            mutation(&calendarPath)
-        case .rewards:
-            mutation(&rewardsPath)
+        case .tasks:
+            mutation(&tasksPath)
+        case .store:
+            mutation(&storePath)
         case .you:
             mutation(&youPath)
         case .add:

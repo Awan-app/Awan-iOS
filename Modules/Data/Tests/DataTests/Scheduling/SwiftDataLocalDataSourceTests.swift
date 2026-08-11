@@ -139,18 +139,20 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
 
     func testAllPersistenceModelsRoundTripToDomain() throws {
         let dependencyIDs: Set<UUID> = [UUID(), UUID()]
+        let category = TaskCategory(id: UUID(), name: "Work")
+        let zoneID = UUID()
         let task = AwanTask(
             id: UUID(),
             title: "Task",
             description: "Description",
-            status: .inProgress,
+            status: .active,
             goalID: UUID(),
-            zoneID: UUID(),
             duration: try TaskDuration(minutes: 75),
             isSplittable: true,
             mandatory: false,
             estimatedPoints: 8,
-            dependencyIDs: dependencyIDs
+            dependencyIDs: dependencyIDs,
+            category: category
         )
         XCTAssertEqual(try TaskModel(domain: task).toDomain(), task)
 
@@ -167,7 +169,7 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
         let session = Session(
             id: UUID(),
             taskID: task.id,
-            zoneID: task.zoneID,
+            zoneID: zoneID,
             timeRange: try TimeRange(
                 start: Date(timeIntervalSince1970: 300),
                 end: Date(timeIntervalSince1970: 600)
@@ -182,7 +184,8 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
             name: "Work",
             color: ZoneColor(hex: "#123ABC"),
             startTime: LocalTime(hour: 9, minute: 15),
-            endTime: LocalTime(hour: 17, minute: 45)
+            endTime: LocalTime(hour: 17, minute: 45),
+            category: category
         )
         XCTAssertEqual(
             try ZoneModel(
@@ -306,7 +309,8 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
             name: "Work",
             color: ZoneColor(hex: "#FFFFFF"),
             startTime: LocalTime(hour: 9, minute: 0),
-            endTime: LocalTime(hour: 17, minute: 0)
+            endTime: LocalTime(hour: 17, minute: 0),
+            category: TaskCategory(id: UUID(), name: "Work")
         )
         let day = try localDate(year: 2026, month: 7, day: 20)
         try await templateSource.addTemplate(
@@ -324,7 +328,10 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
             dataSource: taskSource,
             sessionDataSource: sessionSource
         )
-        let goalRepository = DefaultGoalRepository(localDataSource: goalSource)
+        let goalRepository = DefaultGoalRepository(
+            localDataSource: goalSource,
+            remoteDataSource: GoalRemoteDataSourceTestStub(mode: .failure)
+        )
         let sessionRepository = LocalSessionRepositoryStub(dataSource: sessionSource)
         let zoneRepository = makeZoneRepository(
             zoneDataSource: zoneSource,
@@ -333,6 +340,7 @@ final class SwiftDataLocalDataSourceTests: XCTestCase {
         )
         _ = try await taskRepository.addTask(
             task,
+            sessionZoneID: nil,
             startsAt: nil,
             durationMinutes: task.duration.minutes,
             timeZoneID: TimeZone.current.identifier

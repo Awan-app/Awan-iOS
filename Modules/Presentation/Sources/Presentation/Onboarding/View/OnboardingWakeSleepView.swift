@@ -7,6 +7,7 @@
 
 import Common
 import SwiftUI
+import Domain
 
 struct OnboardingWakeSleepView: View {
     @Bindable var viewModel: OnboardingViewModel
@@ -19,11 +20,20 @@ struct OnboardingWakeSleepView: View {
                     headerSection
                     ChangeAnytimeTag()
                     timePickerSection
+                    if viewModel.wakeSleepTimesAreEqual {
+                        sameTimeWarning
+                    }
+                    if viewModel.sleepTimeIsBeforeWakeupTime {
+                        sleepBeforeWakeWarning
+                    }
+                    if viewModel.wakeSleepTimeRangeIsValid && viewModel.availableHours < 9 {
+                        shortDayWarning
+                    }
                     dayPreview
-                    midnightNote
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
+                
             }
 
             Spacer(minLength: 0)
@@ -42,6 +52,36 @@ struct OnboardingWakeSleepView: View {
             .foregroundStyle(AppColors.brandDarkBlue)
     }
 
+    private var sameTimeWarning: some View {
+        inlineWarning(text: L10n.Onboarding.wakeSleepSameTimeError)
+    }
+
+    private var shortDayWarning: some View {
+        inlineWarning(text: L10n.Onboarding.shortActiveDayWarning)
+    }
+
+    private var sleepBeforeWakeWarning: some View {
+        inlineWarning(text: L10n.Onboarding.sleepBeforeWakeError)
+    }
+
+    private func inlineWarning(text: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 14, weight: .bold))
+            Text(text)
+                .font(AppFonts.caption2Bold)
+        }
+        .foregroundStyle(AppColors.warning)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            AppColors.warning.opacity(0.1),
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
+        .transition(.move(edge: .top).combined(with: .opacity))
+    }
+
     private var timePickerSection: some View {
         VStack(spacing: 12) {
             timeRow(
@@ -56,7 +96,7 @@ struct OnboardingWakeSleepView: View {
                 label: L10n.Onboarding.sleepLabel,
                 time: $viewModel.sleepTime,
                 isHighlighted: false
-            )
+            ).padding(.top,10)
         }
     }
 
@@ -108,28 +148,33 @@ struct OnboardingWakeSleepView: View {
         )
     }
 
-    private var midnightNote: some View {
-        Text(L10n.Onboarding.midnightNote)
-            .font(AppFonts.captionHeavy)
-            .foregroundStyle(AppColors.textSecondary)
-            .frame(maxWidth: .infinity)
-            .multilineTextAlignment(.center)
-    }
-
     private var continueButton: some View {
-        AppButton(
+        let isDisabled = !viewModel.wakeSleepTimeRangeIsValid
+            || viewModel.availableHours < 9
+        return AppButton(
             title: L10n.Common.continue,
             icon: nil,
             color: AppColors.accentBlue,
             foregroundColor: AppColors.onAccent,
             size: .large,
             onTap: {
+                guard !isDisabled else { return }
                 onContinue()
             }
         )
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.5 : 1.0)
     }
 }
 
 #Preview {
-    OnboardingWakeSleepView(viewModel: .preview, onContinue: {})
+    OnboardingWakeSleepView(
+        viewModel: OnboardingViewModel(
+            completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
+            createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl(),
+            fetchCategoriesUseCase: MockFetchCategoriesUseCase()
+        ),
+        onContinue: {}
+    )
 }

@@ -16,7 +16,7 @@ struct PreferenceRowView: View {
 
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 10) {
+            HStack(spacing: 5) {
                 Image(systemName: icon)
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(AppColors.accentBlue)
@@ -26,7 +26,7 @@ struct PreferenceRowView: View {
                     .font(AppFonts.subheadlineBold)
                     .foregroundStyle(AppColors.textPrimary)
 
-                Spacer()
+                Spacer(minLength:1)
 
                 Text(value)
                     .font(AppFonts.subheadlineSemibold)
@@ -41,4 +41,9 @@ struct PreferenceRowView: View {
         }
         .buttonStyle(.plain)
     }
+}
+
+#Preview {
+    PreferenceRowView(icon: "star", title: "Test", value: "Value", onTap: {})
+        .padding()
 }

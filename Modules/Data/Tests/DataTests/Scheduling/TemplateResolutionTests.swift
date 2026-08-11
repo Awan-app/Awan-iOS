@@ -113,7 +113,8 @@ final class TemplateResolutionTests: XCTestCase {
             name: "Changed",
             color: retained.color,
             startTime: retained.startTime,
-            endTime: retained.endTime
+            endTime: retained.endTime,
+            category: retained.category
         )
 
         try await system.templateSource.updateTemplate(
@@ -175,7 +176,8 @@ final class TemplateResolutionTests: XCTestCase {
             name: "Changed",
             color: retained.color,
             startTime: retained.startTime,
-            endTime: retained.endTime
+            endTime: retained.endTime,
+            category: retained.category
         )
         try await system.overrideSource.updateTemplateOverride(
             TemplateOverrideData(
@@ -340,7 +342,8 @@ final class TemplateResolutionTests: XCTestCase {
             name: name,
             color: ZoneColor(hex: "#FFFFFF"),
             startTime: LocalTime(hour: 9, minute: 0),
-            endTime: LocalTime(hour: 17, minute: 0)
+            endTime: LocalTime(hour: 17, minute: 0),
+            category: TaskCategory(id: UUID(), name: name)
         )
     }
 

@@ -35,12 +35,16 @@ struct OnboardingContainerView: View {
                 case .wakeSleep:
                     OnboardingWakeSleepView(
                         viewModel: viewModel,
-                        onContinue: { advance(to: .suggestedZones) }
+                        onContinue: {
+                            viewModel.resetSuggestedZones()
+                            advance(to: .suggestedZones)
+                        }
                     )
                 case .suggestedZones:
                     OnboardingSuggestedZonesView(
                         viewModel: viewModel,
-                        onContinue: { advance(to: .taskLength) }
+                        onContinue: { advance(to: .taskLength) },
+                        onLater: { advance(to: .taskLength) }
                     )
                 case .taskLength:
                     TaskLength(
@@ -64,8 +68,6 @@ struct OnboardingContainerView: View {
                             Task { await viewModel.completeOnboarding() }
                         }
                     )
-                default:
-                    EmptyView()  // .addRealTask is pushed externally, never matched here
                 }
             }
             .id(coordinator.onboardingCoordinator.containerStep)

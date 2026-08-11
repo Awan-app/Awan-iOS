@@ -4,23 +4,25 @@ import XCTest
 @testable import Data
 
 final class HomeRemoteMapperTests: XCTestCase {
-    func testTaskStatusesMapSemanticallyAndPreserveZone() throws {
-        let zoneID = UUID()
+    func testTaskStatusesMapSemanticallyAndPreserveCategory() throws {
+        let categoryID = UUID()
         let values: [(String, TaskStatus)] = [
-            ("SCHEDULED", .pending),
-            ("IN_PROGRESS", .inProgress),
+            ("DRAFTED", .drafted),
+            ("ACTIVE", .active),
+            ("SCHEDULED", .active),
+            ("IN_PROGRESS", .active),
             ("COMPLETED", .completed),
             ("CANCELLED", .cancelled),
         ]
 
         for (rawStatus, expected) in values {
             let mapped = try HomeRemoteMapper.task(
-                taskDTO(status: rawStatus),
-                zoneID: zoneID,
+                taskDTO(status: rawStatus, categoryID: categoryID),
                 defaultDuration: 45
             )
             XCTAssertEqual(mapped.status, expected)
-            XCTAssertEqual(mapped.zoneID, zoneID)
+            XCTAssertEqual(mapped.category?.id, categoryID)
+            XCTAssertEqual(mapped.category?.name, "Focus")
             XCTAssertEqual(mapped.duration.minutes, 45)
         }
     }
@@ -56,6 +58,7 @@ final class HomeRemoteMapperTests: XCTestCase {
     }
 
     func testZoneWithoutRemoteColorUsesStableFallback() throws {
+        let categoryID = UUID()
         let zone = try HomeRemoteMapper.zone(
             ZoneResponseDTO(
                 id: UUID(),
@@ -63,12 +66,92 @@ final class HomeRemoteMapperTests: XCTestCase {
                 startTime: "09:00:00",
                 endTime: "11:00:00",
                 color: nil,
+                category: CategoryResponseDTO(id: categoryID, name: "Focus"),
                 templateId: nil,
                 templateOverrideId: nil
             )
         )
 
         XCTAssertEqual(zone.color.hex, "#6C63FF")
+        XCTAssertEqual(zone.category, TaskCategory(id: categoryID, name: "Focus"))
+    }
+
+    func testTemplateResponseDecodesNestedZoneCategory() throws {
+        let templateID = UUID()
+        let zoneID = UUID()
+        let categoryID = UUID()
+        let json = """
+        {
+          "id": "\(templateID.uuidString)",
+          "name": "Updated Work Week",
+          "daysOfWeek": ["FRIDAY", "MONDAY", "WEDNESDAY"],
+          "zones": [{
+            "id": "\(zoneID.uuidString)",
+            "name": "Evening Review",
+            "startTime": "18:00:00",
+            "endTime": "19:00:00",
+            "color": "#FF9800",
+            "category": {
+              "id": "\(categoryID.uuidString)",
+              "name": "Evening Review"
+            },
+            "templateId": "\(templateID.uuidString)",
+            "templateOverrideId": null
+          }]
+        }
+        """
+
+        let response = try JSONDecoder().decode(
+            TemplateResponseDTO.self,
+            from: Data(json.utf8)
+        )
+        let zone = try HomeRemoteMapper.zone(try XCTUnwrap(response.zones.first))
+
+        XCTAssertEqual(response.id, templateID)
+        XCTAssertEqual(zone.id, zoneID)
+        XCTAssertEqual(
+            zone.category,
+            TaskCategory(id: categoryID, name: "Evening Review")
+        )
+    }
+
+    func testTemplateOverrideResponseDecodesNestedZoneCategory() throws {
+        let overrideID = UUID()
+        let zoneID = UUID()
+        let categoryID = UUID()
+        let json = """
+        {
+          "id": "\(overrideID.uuidString)",
+          "name": "Special Day",
+          "dateOfDay": "2026-07-29",
+          "zones": [{
+            "id": "\(zoneID.uuidString)",
+            "name": "Morning Focus",
+            "startTime": "09:00:00",
+            "endTime": "11:00:00",
+            "color": "#4CAF50",
+            "category": {
+              "id": "\(categoryID.uuidString)",
+              "name": "Morning Focus"
+            },
+            "templateId": null,
+            "templateOverrideId": "\(overrideID.uuidString)"
+          }]
+        }
+        """
+
+        let response = try JSONDecoder().decode(
+            TemplateOverrideResponseDTO.self,
+            from: Data(json.utf8)
+        )
+        let zone = try HomeRemoteMapper.zone(try XCTUnwrap(response.zones.first))
+
+        XCTAssertEqual(response.id, overrideID)
+        XCTAssertEqual(zone.id, zoneID)
+        XCTAssertEqual(
+            zone.category,
+            TaskCategory(id: categoryID, name: "Morning Focus")
+        )
     }
 
     func testProfileRequiresOnboardingFields() {
@@ -77,18 +160,22 @@ final class HomeRemoteMapperTests: XCTestCase {
         )
     }
 
-    private func taskDTO(status: String) -> TaskInfoResponseDTO {
+    private func taskDTO(status: String, categoryID: UUID) -> TaskInfoResponseDTO {
         TaskInfoResponseDTO(
             id: UUID(),
             title: "Task",
             description: nil,
             status: status,
+            completedAt: status == "COMPLETED"
+                ? "2026-08-10T06:07:40.829849069Z"
+                : nil,
             goalID: nil,
             estimatedDuration: nil,
             mandatory: false,
             estimatedPoints: 0,
             isSplittable: false,
-            dependencyIDs: []
+            dependencyIDs: [],
+            category: CategoryResponseDTO(id: categoryID, name: "Focus")
         )
     }
 

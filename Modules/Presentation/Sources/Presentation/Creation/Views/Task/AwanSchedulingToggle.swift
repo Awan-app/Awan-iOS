@@ -11,7 +11,7 @@ struct AwanSchedulingToggle: View {
             }
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: isOn ? "wand.and.sparkles" : "clock.fill")
+                Image(systemName: "wand.and.sparkles")
                     .font(.system(size: 17, weight: .heavy))
                     .foregroundStyle(isOn ? AppColors.onAccent : AppColors.accentBlue)
                     .frame(width: 38, height: 38)
@@ -21,18 +21,14 @@ struct AwanSchedulingToggle: View {
                     )
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(L10n.Home.chipAutoScheduled)
+                    Text(L10n.Home.aiTaskOptionTitle)
                         .font(AppFonts.bodyBold)
                         .foregroundStyle(AppColors.brandDarkBlue)
 
-                    Text(
-                        isOn
-                            ? L10n.Home.quickAddCaption
-                            : L10n.Home.fieldStartsAtHint
-                    )
-                    .font(AppFonts.captionHeavy)
+                    Text(L10n.Home.aiTaskOptionHint)
+                    .font(AppFonts.caption2Bold)
                     .foregroundStyle(AppColors.textSecondary)
-                    .lineLimit(1)
+                    .lineLimit(2)
                 }
 
                 Spacer(minLength: 8)
@@ -50,7 +46,7 @@ struct AwanSchedulingToggle: View {
                         .fill(AppColors.surface)
                         .frame(width: 25, height: 25)
                         .overlay {
-                            Image(systemName: isOn ? "sparkles" : "clock")
+                            Image(systemName: "sparkles")
                                 .font(.system(size: 10, weight: .black))
                                 .foregroundStyle(
                                     isOn
@@ -79,4 +75,10 @@ struct AwanSchedulingToggle: View {
         .buttonStyle(.plain)
         .accessibilityValue(isOn ? L10n.Home.yes : L10n.Home.no)
     }
+}
+
+
+#Preview {
+    AwanSchedulingToggle(isOn: .constant(false))
+        .padding()
 }

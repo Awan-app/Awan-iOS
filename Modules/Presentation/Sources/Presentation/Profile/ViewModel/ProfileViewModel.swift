@@ -1,83 +1,108 @@
-//
-//  ProfileViewModel.swift
-//  Presentation
-//
-//  Created by AndrewMagdy on 21/07/2026.
-//
-
-import SwiftUI
-import Observation
-import Common
-import Domain
 import Combine
+import Domain
+import Foundation
+import Observation
 
+enum ProfileLoadState: Equatable {
+    case idle
+    case loading
+    case content
+    case failure
+}
 
 @MainActor
 @Observable
 public final class ProfileViewModel {
-    
-    // MARK: - State
-    
-    /// The user's zones fetched from the backend, mapped to the Domain model.
-    var dailyZones: [Zone] = []
-    
-    /// Indicates if the profile data is fully loaded and ready
-    var isReady: Bool = false
-    
-    /// User's real name and email
-    var userName: String = ""
-    var userEmail: String = ""
-    
-    // MARK: - Profile Preferences
-    var sessionTime: Int = 0
-    var timeZone: String = ""
-    var wakeupTime: LocalTime? = nil
-    var sleepTime: LocalTime? = nil
-    
-    @ObservationIgnored private var fetchZonesCancellable: AnyCancellable?
-    
-    // MARK: - Init
-    
+    private(set) var loadState: ProfileLoadState = .idle
+    private(set) var userName = ""
+    private(set) var userEmail = ""
+    private(set) var points = 0
+    private(set) var streak = 0
+    private(set) var maxStreak = 0
+    private(set) var profilePictureUrl: String?
+    private(set) var dailyZones: [Zone] = []
+    private(set) var areDailyZonesReady = false
+    private(set) var isLoggingOut = false
+    var showLogoutConfirmation = false
+    var showLogoutError = false
+
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let fetchZonesUseCase: FetchZonesUseCase
-    
+    private let logoutUseCase: LogoutUseCase
+    private let onLogout: (() -> Void)?
+    @ObservationIgnored private var zonesCancellable: AnyCancellable?
+
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
-        fetchZonesUseCase: FetchZonesUseCase
+        fetchZonesUseCase: FetchZonesUseCase,
+        logoutUseCase: LogoutUseCase,
+        onLogout: (() -> Void)? = nil
+
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.fetchZonesUseCase = fetchZonesUseCase
+        self.logoutUseCase = logoutUseCase
+        self.onLogout = onLogout
+        
+
+
     }
-    
-    // MARK: - Actions
-    
-    /// Fetch real user profile from backend via domain use case
-    public func fetchUserProfile() async {
+
+    public func load() async {
+        guard loadState != .loading else { return }
+        let hadContent = loadState == .content
+        if !hadContent {
+            loadState = .loading
+        }
+
         do {
             let profile = try await getUserProfileUseCase.execute()
-            self.userName = profile.firstName + " " + profile.lastName
-            self.userEmail = profile.email
-            self.sessionTime = profile.preferences.preferredSessionDuration
-            self.timeZone = profile.preferences.timezone
-            self.wakeupTime = profile.preferences.wakeupTime
-            self.sleepTime = profile.preferences.sleepTime
-            
-            // Fetch daily zones AFTER profile is cached locally
-            fetchDailyZones()
+            userName = [profile.firstName, profile.lastName]
+                .filter { !$0.isEmpty }
+                .joined(separator: " ")
+            userEmail = profile.email
+            points = profile.points
+            streak = profile.streak
+            maxStreak = profile.maxStreak
+            profilePictureUrl = profile.profilePictureUrl
+            loadState = .content
+            observeDailyZones()
+        } catch is CancellationError {
+            return
         } catch {
-            print("Failed to fetch user profile: \(error)")
+            if !hadContent {
+                loadState = .failure
+            }
         }
     }
 
-    private func fetchDailyZones() {
-        fetchZonesCancellable?.cancel()
-        fetchZonesCancellable = fetchZonesUseCase.observe(for: Date())
+    public func logout() async {
+        guard !isLoggingOut else { return }
+        isLoggingOut = true
+
+        do {
+            try await logoutUseCase.execute()
+            onLogout?()
+        } catch is CancellationError {
+            isLoggingOut = false
+            return
+        } catch {
+            showLogoutError = true
+        }
+
+        isLoggingOut = false
+    }
+
+    private func observeDailyZones() {
+        zonesCancellable?.cancel()
+        areDailyZonesReady = false
+        zonesCancellable = fetchZonesUseCase.observe(for: Date())
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { _ in },
                 receiveValue: { [weak self] zones in
                     self?.dailyZones = zones
-                    self?.isReady = true
+                    self?.areDailyZonesReady = true
                 }
             )
     }

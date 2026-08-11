@@ -7,14 +7,14 @@ import XCTest
 final class HomeStateMapperTests: XCTestCase {
     private let timeZone = TimeZone(secondsFromGMT: 0) ?? .gmt
 
-    func testMapsOvernightWindowAndSummaryFromDisplayedSessions() throws {
+    func testMapsFullSelectedDayAndSummaryFromDisplayedSessions() throws {
         let zone = try makeZone()
-        let firstTask = try makeTask(title: "Evening", zoneID: zone.id)
-        let secondTask = try makeTask(title: "After midnight", zoneID: zone.id)
+        let firstTask = try makeTask(title: "Midnight", category: zone.category)
+        let secondTask = try makeTask(title: "Evening", category: zone.category)
         let sessions = [
-            try makeSession(taskID: firstTask.id, zoneID: zone.id, day: 22, hour: 22, status: .completed),
+            try makeSession(taskID: firstTask.id, zoneID: zone.id, day: 22, hour: 0, minute: 30),
+            try makeSession(taskID: secondTask.id, zoneID: zone.id, day: 22, hour: 22, status: .completed),
             try makeSession(taskID: secondTask.id, zoneID: zone.id, day: 23, hour: 0, minute: 30),
-            try makeSession(taskID: secondTask.id, zoneID: zone.id, day: 23, hour: 1),
             try makeSession(taskID: UUID(), zoneID: zone.id, day: 22, hour: 20),
         ]
 
@@ -26,12 +26,14 @@ final class HomeStateMapperTests: XCTestCase {
             selectedDay: date(day: 22)
         )
 
-        XCTAssertEqual(content.timelineWindow.start, date(day: 22, hour: 8))
-        XCTAssertEqual(content.timelineWindow.end, date(day: 23, hour: 1))
+        XCTAssertEqual(content.timelineWindow.start, date(day: 22))
+        XCTAssertEqual(content.timelineWindow.end, date(day: 23))
+        XCTAssertEqual(content.timelineWakeupTime, date(day: 22, hour: 8))
+        XCTAssertEqual(content.timelineBedtime, date(day: 22, hour: 1))
         XCTAssertEqual(content.timelineZones.map(\.name), ["Focus"])
         XCTAssertEqual(content.timelineZones.first?.start, date(day: 22, hour: 8))
-        XCTAssertEqual(content.timelineZones.first?.end, date(day: 23, hour: 1))
-        XCTAssertEqual(content.timelineItems.map(\.title), ["Evening", "After midnight"])
+        XCTAssertEqual(content.timelineZones.first?.end, date(day: 23))
+        XCTAssertEqual(content.timelineItems.map(\.title), ["Midnight", "Evening"])
         XCTAssertEqual(content.taskCount, 2)
         XCTAssertEqual(content.scheduledMinutes, 120)
         XCTAssertEqual(content.completedSessionCount, 1)
@@ -39,7 +41,7 @@ final class HomeStateMapperTests: XCTestCase {
     }
 
     func testUsesFallbackColorWhenSessionZoneIsMissing() throws {
-        let task = try makeTask(title: "Unzoned", zoneID: nil)
+        let task = try makeTask(title: "Unzoned", category: nil)
         let content = HomeStateMapper(fallbackTimeZone: timeZone).map(
             tasks: [task],
             sessions: [try makeSession(taskID: task.id, zoneID: UUID(), day: 22, hour: 10)],
@@ -51,7 +53,7 @@ final class HomeStateMapperTests: XCTestCase {
         XCTAssertEqual(content.timelineItems.first?.color, AppColors.runtimeFallback)
     }
 
-    func testClipsZoneBandsToTheAwakeWindow() throws {
+    func testDisplaysZoneBandsAcrossTheFullDay() throws {
         let earlyZone = try Zone(
             id: UUID(),
             name: "Early",
@@ -76,16 +78,16 @@ final class HomeStateMapperTests: XCTestCase {
         )
 
         XCTAssertEqual(content.timelineZones.map(\.name), ["Early", "Late"])
-        XCTAssertEqual(content.timelineZones[0].start, date(day: 22, hour: 8))
+        XCTAssertEqual(content.timelineZones[0].start, date(day: 22, hour: 6))
         XCTAssertEqual(content.timelineZones[0].end, date(day: 22, hour: 10))
         XCTAssertEqual(content.timelineZones[1].start, date(day: 22, hour: 18))
-        XCTAssertEqual(content.timelineZones[1].end, date(day: 22, hour: 20))
+        XCTAssertEqual(content.timelineZones[1].end, date(day: 22, hour: 23))
     }
 
     func testOverlappingSessionsUseSideBySideLanesAndMapPoints() throws {
         let zone = try makeZone()
-        let firstTask = try makeTask(title: "First", zoneID: zone.id, points: 30)
-        let secondTask = try makeTask(title: "Second", zoneID: zone.id, points: 45)
+        let firstTask = try makeTask(title: "First", category: zone.category, points: 30)
+        let secondTask = try makeTask(title: "Second", category: zone.category, points: 45)
         let content = HomeStateMapper(fallbackTimeZone: timeZone).map(
             tasks: [firstTask, secondTask],
             sessions: [
@@ -109,18 +111,19 @@ final class HomeStateMapperTests: XCTestCase {
         XCTAssertEqual(content.taskAllocations.map(\.taskCount), [2])
     }
 
-    func testTaskAllocationGroupsDistinctVisibleTasksByZone() throws {
+    func testTaskAllocationGroupsDistinctVisibleTasksByCategory() throws {
         let focusZone = try makeZone()
         let adminZone = try Zone(
             id: UUID(),
             name: "Admin",
             color: ZoneColor(hex: "#6C63FF"),
             startTime: LocalTime(hour: 8, minute: 0),
-            endTime: LocalTime(hour: 20, minute: 0)
+            endTime: LocalTime(hour: 20, minute: 0),
+            category: TaskCategory(id: UUID(), name: "Admin")
         )
-        let first = try makeTask(title: "First", zoneID: focusZone.id)
-        let second = try makeTask(title: "Second", zoneID: focusZone.id)
-        let third = try makeTask(title: "Third", zoneID: adminZone.id)
+        let first = try makeTask(title: "First", category: focusZone.category)
+        let second = try makeTask(title: "Second", category: focusZone.category)
+        let third = try makeTask(title: "Third", category: adminZone.category)
 
         let content = HomeStateMapper(fallbackTimeZone: timeZone).map(
             tasks: [first, second, third],
@@ -137,14 +140,18 @@ final class HomeStateMapperTests: XCTestCase {
         XCTAssertEqual(content.taskAllocations.map(\.taskCount), [2, 1])
     }
 
-    private func makeTask(title: String, zoneID: UUID?, points: Int = 0) throws -> AwanTask {
+    private func makeTask(
+        title: String,
+        category: TaskCategory?,
+        points: Int = 0
+    ) throws -> AwanTask {
         try AwanTask(
             id: UUID(),
             title: title,
-            zoneID: zoneID,
             duration: TaskDuration(minutes: 60),
             isSplittable: false,
-            estimatedPoints: points
+            estimatedPoints: points,
+            category: category
         )
     }
 
@@ -176,7 +183,8 @@ final class HomeStateMapperTests: XCTestCase {
             name: "Focus",
             color: ZoneColor(hex: "#58CC02"),
             startTime: LocalTime(hour: 8, minute: 0),
-            endTime: LocalTime(hour: 1, minute: 0)
+            endTime: LocalTime(hour: 1, minute: 0),
+            category: TaskCategory(id: UUID(), name: "Focus")
         )
     }
 

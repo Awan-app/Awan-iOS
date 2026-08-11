@@ -112,10 +112,10 @@ struct HomeSessionActionSheet: View {
 
     private var statusLabel: String {
         switch task.status {
-        case .pending:
-            L10n.Home.statusPending
-        case .inProgress:
-            L10n.Home.statusInProgress
+        case .drafted:
+            L10n.Home.statusDrafted
+        case .active:
+            L10n.Home.statusActive
         case .completed:
             L10n.Home.statusCompleted
         case .cancelled:
@@ -126,4 +126,40 @@ struct HomeSessionActionSheet: View {
     private func booleanLabel(_ value: Bool) -> String {
         value ? L10n.Home.yes : L10n.Home.no
     }
+}
+
+
+
+import Domain
+extension HomeTimelineItem {
+    static var mock: HomeTimelineItem {
+        HomeTimelineItem(
+            id: UUID(),
+            taskID: UUID(),
+            title: "Test Timeline Item",
+            points: 10,
+            color: AppColors.accentBlue,
+            start: Date(),
+            end: Date().addingTimeInterval(3600),
+            blocking: false,
+            status: .planned,
+            lane: 0,
+            laneCount: 1,
+            showsCompletionPoints: true
+        )
+    }
+}
+
+#Preview {
+    HomeSessionActionSheet(
+        item: .mock,
+        task: .mock,
+        window: nil,
+        isMutating: false,
+        onReschedule: { _ in },
+        onSetLock: { _ in },
+        onDelete: {},
+        onDismiss: {}
+    )
+    .padding()
 }

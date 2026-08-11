@@ -13,6 +13,7 @@ final class UserProfileModel {
     var points: Int
     var streak: Int
     var maxStreak: Int
+    var profilePictureUrl: String?
     var timezone: String
     var preferredSessionDuration: Int
     var bufferBetweenSessions: Int
@@ -32,6 +33,7 @@ final class UserProfileModel {
         points: Int,
         streak: Int,
         maxStreak: Int,
+        profilePictureUrl: String?,
         timezone: String,
         preferredSessionDuration: Int,
         bufferBetweenSessions: Int,
@@ -50,6 +52,7 @@ final class UserProfileModel {
         self.points = points
         self.streak = streak
         self.maxStreak = maxStreak
+        self.profilePictureUrl = profilePictureUrl
         self.timezone = timezone
         self.preferredSessionDuration = preferredSessionDuration
         self.bufferBetweenSessions = bufferBetweenSessions

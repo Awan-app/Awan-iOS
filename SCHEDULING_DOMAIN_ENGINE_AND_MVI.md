@@ -37,18 +37,18 @@ The most important dependency rule is that Domain knows nothing about SwiftUI, O
 
 - A UUID and title.
 - An optional goal UUID.
-- An optional zone UUID.
+- An optional category.
 - An estimated duration.
 - Whether the work may be split into multiple sessions.
 - UUIDs of tasks that must be completed before it.
 
-A task describes **what** is required. It does not contain a scheduled date or time.
+A task describes **what** is required and its scheduling classification. It does not contain a zone, scheduled date, or scheduled time.
 
 Source: [`AwanTask.swift`](Modules/Domain/Sources/Domain/Scheduling/Entities/AwanTask.swift)
 
 ### Session
 
-`Session` is the smallest scheduled unit. It connects a task to an exact `TimeRange` and optionally to a zone.
+`Session` is the smallest scheduled unit. It connects a task to an exact `TimeRange` and optionally to a zone. Zone IDs belong to sessions because sessions occupy concrete time inside zones.
 
 Its status is one of:
 
@@ -73,7 +73,7 @@ Source: [`Session.swift`](Modules/Domain/Sources/Domain/Scheduling/Entities/Sess
 
 ### Zone
 
-A `Zone` is a named recurring part of the day. It has a UUID, name, color, local start time, and local end time. The engine receives the latest zones on every planning request, so reconfiguration is not hard-coded into the algorithm.
+A `Zone` is a named recurring part of the day. It has a UUID, name, color, local start time, local end time, and an optional category. Synced template and override zones provide a category; the optional representation permits local drafts and migrated stores. Multiple zones may share a category.
 
 The current Data seed provides:
 
@@ -91,6 +91,12 @@ Sources: [`Zone.swift`](Modules/Domain/Sources/Domain/Scheduling/Entities/Zone.s
 ### Goal and dependencies
 
 A `Goal` currently contains a UUID, name, and deadline. Tasks belong to a goal through `task.goalID`, rather than the goal storing task objects.
+
+#### Inbox goal
+
+The Inbox is a backend-owned default goal created for the user when the user account is created. Consequently, an Inbox task has a non-`nil` `goalID`: that value is the UUID of the user's Inbox goal.
+
+Inbox membership must come from the backend's dedicated Inbox resource (`GET /goals/inbox`) and must not be inferred from `task.goalID == nil`. The Data repository loads the Inbox goal, persists its returned tasks, and uses the returned goal UUID when observing the cached task collection. Domain use cases consume the repository's explicit `fetchInboxTasks` and `observeInboxTasks` operations without reclassifying tasks by goal nullability.
 
 Task dependencies form a directed graph. If task B contains task A's UUID in `dependencyIDs`, A must be fully scheduled before B can start.
 
@@ -180,7 +186,7 @@ Each collaborator is injected behind a protocol, making the policy replaceable a
 
 For each request, the engine performs these steps:
 
-1. Index zones by UUID and validate every task's zone reference.
+1. Resolve each task category to the earliest matching zone.
 2. Topologically order tasks so dependencies are considered before dependents.
 3. Build occupied time from sessions whose status occupies time, plus externally unavailable ranges.
 4. Calculate which tasks are already complete from planned/completed session minutes.
@@ -188,8 +194,8 @@ For each request, the engine performs these steps:
    1. Subtract existing scheduled minutes from the task estimate.
    2. Skip the task if no work remains.
    3. Return a dependency issue if a predecessor is not fully scheduled.
-   4. Return a zone-required issue if the task is standalone and therefore cannot be automatically placed.
-   5. Resolve that task's zone into an exact window for the planning day.
+   4. Return a zone-required issue if the task has no matching categorized zone and therefore cannot be automatically placed.
+   5. Resolve the selected matching zone into an exact window for the planning day.
    6. Restrict the earliest start to the latest dependency completion.
    7. Subtract occupied ranges to obtain sorted free ranges.
    8. If one free range fits all remaining minutes, create a today draft at the earliest fit.
@@ -210,11 +216,12 @@ for task in orderedTasks:
         add dependency issue
         continue
 
-    if task has no zone:
+    zone = earliest zone whose category matches task.category
+    if no zone matches:
         add zone-required issue
         continue
 
-    window = datedWindow(task.zone, planningDay, timeZone)
+    window = datedWindow(zone, planningDay, timeZone)
     free = window - occupied, not before dependency completion
 
     if an earliest free range fits remaining:
@@ -283,11 +290,11 @@ Source: [`ResolutionCandidateGenerator.swift`](Modules/Domain/Sources/Domain/Sch
 
 ## 5. Reconciliation: Protecting User Time
 
-The engine plans from a snapshot, while `DefaultTaskScheduleReconciler` coordinates a changed task with existing sessions. This separation is central to the design.
+The engine and `DefaultTaskScheduleReconciler` remain for simulations and legacy conflict flows. Their compatibility rule is intentionally narrow: resolve a task category to the earliest matching zone and write that zone ID only to session drafts. They do not pool capacity across multiple zones in a category.
 
 ```mermaid
 flowchart TD
-    Change["Task create/update"] --> Reconciler["TaskScheduleReconciler"]
+    Change["Legacy or simulation task change"] --> Reconciler["TaskScheduleReconciler"]
     Reconciler --> Protected["Count completed + blocking minutes"]
     Protected --> Over{"Over allocated?"}
     Over -- Yes --> OverNudge["Return keep/trim nudge"]
@@ -315,13 +322,13 @@ Completed minutes and planned blocking minutes are protected. The reconciler nev
 
 If protected time exceeds the new task estimate, it returns a keep/trim nudge. Trimming is allowed only when completed history alone does not exceed the estimate and a planned blocking session exists.
 
-If a zone changes but a blocking session's exact range falls outside the new zone, reconciliation returns actions to keep the time, move it into the zone, or restore the old task zone.
+If a selected category changes but a blocking session's exact range falls outside its compatibility-selected zone, reconciliation returns actions to keep the time, move it into the zone, or restore the previous category through its zone.
 
-### Automatic persistence boundary
+### Production persistence authority
 
-After the checks pass, the reconciler invokes the engine with the current workspace. It persists only `todaySessionDrafts` for the edited task, always as `blocking == false`.
+Manual task creation presents unique categories, sends the selected category ID on the task payload, and sends the first matching zone ID on the session payload. A flow with an explicit zone selection sends that exact zone ID on the session payload and derives the task category from the zone. Normal task update PATCHes the derived category, fetches `/tasks/{id}/sessions`, and replaces the cached sessions for that task with the backend-authoritative response. The production create/update flows do not locally rewrite session zones or invoke reconciliation.
 
-Future candidates remain proposals until the user explicitly approves one. This is the code-level enforcement of “no scheduling tomorrow without the user knowing.”
+The local engine, candidate generation, reconciler, conflict types, and simulations remain available for compatibility. They are not authoritative for normal backend-backed task create/update behavior.
 
 Source: [`TaskScheduleReconciler.swift`](Modules/Domain/Sources/Domain/Scheduling/Services/TaskScheduleReconciler.swift)
 
@@ -335,11 +342,9 @@ Use cases represent user-visible Domain intentions. They are grouped by subject 
 
 ### Task
 
-- `CreateTaskUseCase` saves a task and asks the reconciler to schedule it.
-- `UpdateTaskUseCase` distinguishes metadata-only changes from scheduling changes, handles blocking session ownership, and invokes reconciliation.
+- `CreateTaskUseCase` accepts either a category selection or an explicit zone selection. Category creation assigns the first matching zone ID to the session; explicit-zone creation assigns the chosen zone's category to the task and its ID to the session.
+- `UpdateTaskUseCase` resolves the selected zone to a category, updates the task, and reloads the backend-authoritative cached workspace.
 - `DeleteTaskUseCase` removes the task's sessions and removes its UUID from dependent tasks.
-
-For a blocking duration increase, `UpdateTaskUseCase` preserves the existing planned session ID/start and extends its end by the duration difference. Because the blocking minutes then equal the new estimate, reconciliation does not create a second session.
 
 ### Session
 
@@ -526,31 +531,29 @@ Sources: [`DomainAssembly.swift`](Awan/DependencyInjection/Assemblies/DomainAsse
 ### Creating a task that fits today
 
 ```text
-TaskEditorSheet saves draft
--> View sends .createTask(submission)
+Manual task composer saves draft
+-> Category picker supplies TaskCategory.id
 -> ViewModel builds CreateTaskRequest
--> CreateTaskUseCase saves AwanTask
--> TaskScheduleReconciler loads current workspace
--> ScheduleEngine finds earliest free range in task zone
--> Reconciler persists today's SessionDraft as non-blocking Session
+-> CreateTaskUseCase validates the selected category
+-> CreateTaskUseCase resolves the first zone matching TaskCategory.id
+-> Repository sends TaskCategory.id on the task and Zone.id on the session
+-> Backend creates and schedules the task
+-> Repository caches the returned task and sessions
 -> ScheduleOperationResult returns refreshed workspace
 -> StateMapper builds TimelineSessionItem
 -> View redraws the card
 ```
 
-### Creating a task that does not fit
+### Updating a task's selected zone
 
 ```text
-Engine finds insufficient zone time
--> Candidate generator builds possible resolutions
--> Reconciler persists no future candidate
--> Operation result contains a scheduling nudge
--> Nudge presenter creates visible action models
--> User selects an action
--> View sends .performNudgeAction(id)
--> ViewModel invokes the matching focused conflict use case
--> Approved drafts are persisted
--> Returned workspace remaps into state
+TaskEditorSheet saves the selected Zone.id
+-> UpdateTaskUseCase derives Zone.category
+-> Repository PATCHes task.categoryId
+-> Backend reschedules the task
+-> Repository fetches /tasks/{id}/sessions
+-> Cached sessions for the task are replaced
+-> Reloaded workspace redraws the timeline
 ```
 
 ### Dragging a session
@@ -613,4 +616,5 @@ Read in this order to build the model gradually:
 - Conflict resolutions are focused use cases, not one broad resolution method.
 - The SwiftUI view sends actions and renders state; it does not make Domain decisions.
 - `ScheduleTimelineState` is the only mutable observable screen state.
-- Repositories can change from local to remote without changing the scheduling engine.
+- Tasks are classified by category; sessions occupy time in exact zones.
+- Backend task create/update responses are authoritative for production scheduling.

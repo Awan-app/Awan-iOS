@@ -122,8 +122,11 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
     case templateNotFound
     case templateOverrideNotFound
     case dayAlreadyAssigned
+    case zoneOverlap
+    case invalidZoneTimeRange
     case sessionNotFound
     case zoneNotFound
+    case dailyGiftAlreadyClaimed
 
     public typealias RawValue = String
 
@@ -151,8 +154,11 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case "TEMPLATE_NOT_FOUND":            self = .templateNotFound
         case "TEMPLATE_OVERRIDE_NOT_FOUND":   self = .templateOverrideNotFound
         case "DAY_ALREADY_ASSIGNED":          self = .dayAlreadyAssigned
+        case "ZONE_OVERLAP":                  self = .zoneOverlap
+        case "INVALID_ZONE_TIME_RANGE":       self = .invalidZoneTimeRange
         case "SESSION_NOT_FOUND":             self = .sessionNotFound
         case "ZONE_NOT_FOUND":                self = .zoneNotFound
+        case "DAILY_GIFT_ALREADY_CLAIMED":    self = .dailyGiftAlreadyClaimed
         default:                              self = .unknown(rawValue)
         }
     }
@@ -182,8 +188,11 @@ public enum APIErrorCode: RawRepresentable, Decodable, Sendable, Equatable {
         case .templateNotFound:              return "TEMPLATE_NOT_FOUND"
         case .templateOverrideNotFound:      return "TEMPLATE_OVERRIDE_NOT_FOUND"
         case .dayAlreadyAssigned:            return "DAY_ALREADY_ASSIGNED"
+        case .zoneOverlap:                   return "ZONE_OVERLAP"
+        case .invalidZoneTimeRange:          return "INVALID_ZONE_TIME_RANGE"
         case .sessionNotFound:               return "SESSION_NOT_FOUND"
         case .zoneNotFound:                  return "ZONE_NOT_FOUND"
+        case .dailyGiftAlreadyClaimed:        return "DAILY_GIFT_ALREADY_CLAIMED"
         case .unknown(let code):             return code
         }
     }

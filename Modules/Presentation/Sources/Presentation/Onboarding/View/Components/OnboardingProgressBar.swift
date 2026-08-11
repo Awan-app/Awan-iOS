@@ -32,3 +32,10 @@ struct OnboardingProgressBar: View {
     }
     .padding()
 }
+
+
+#Preview {
+    OnboardingProgressBar(currentStep: 2, totalSteps: 5)
+        .padding()
+}
+

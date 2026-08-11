@@ -8,7 +8,9 @@ extension HomeViewModel {
             return
         }
         let rawMinutes = verticalPoints / hourHeight * 60
-        let snappedMinutes = Int((rawMinutes / 15).rounded()) * 15
+        let snapIntervalMinutes: CGFloat = 5
+        let snappedMinutes = Int((rawMinutes / snapIntervalMinutes).rounded())
+            * Int(snapIntervalMinutes)
         guard snappedMinutes != 0 else { return }
 
         let start = item.start.addingTimeInterval(Double(snappedMinutes) * 60)
@@ -32,7 +34,8 @@ extension HomeViewModel {
             zoneID: original.zoneID,
             timeRange: range,
             blocking: true,
-            status: original.status
+            status: original.status,
+            firstCompletedAt: original.firstCompletedAt
         )
 
         state.isMutating = true
@@ -74,7 +77,8 @@ extension HomeViewModel {
             zoneID: original.zoneID,
             timeRange: original.timeRange,
             blocking: isLocked,
-            status: original.status
+            status: original.status,
+            firstCompletedAt: original.firstCompletedAt
         )
 
         state.isMutating = true
@@ -115,7 +119,8 @@ extension HomeViewModel {
             zoneID: original.zoneID,
             timeRange: original.timeRange,
             blocking: original.blocking,
-            status: isCompleted ? .completed : .planned
+            status: isCompleted ? .completed : .planned,
+            firstCompletedAt: original.firstCompletedAt
         )
 
         state.isMutating = true
@@ -128,11 +133,43 @@ extension HomeViewModel {
             guard let self else { return }
             defer { state.isMutating = false }
             do {
-                let accepted = try await useCases.sessions.setCompletion.execute(
+                let result = try await useCases.sessions.setCompletion.execute(
                     sessionID: id,
                     isCompleted: isCompleted
                 )
-                replaceSession(accepted)
+
+                replaceSession(result.session)
+
+                switch result {
+                case .completed(let completion):
+                    let reward = completion.reward
+
+                    if reward.points.awarded || reward.streak.updated {
+                        state.completionReward = HomeCompletionRewardState(
+                            pointsAwarded: reward.points.awarded ? reward.points.amount: nil,
+                            streakTransition: reward.streak.updated
+                                ? HomeStreakTransition(
+                                    oldValue: reward.streak.oldValue,
+                                    newValue: reward.streak.newValue
+                                )
+                                : nil,
+                            maxStreakBroken: reward.streak.maxStreakBroken
+                        )
+                    }
+                    
+                    if reward.points.awarded, reward.points.amount > 0 {
+                        state.completionRewardAnimation =
+                            HomeCompletionRewardAnimation(
+                                sessionID: completion.session.id,
+                                oldPoints: reward.points.oldValue,
+                                newPoints: reward.points.newValue
+                            )
+                        }
+
+                case .uncompleted:
+                    state.completionReward = nil
+                    state.completionRewardAnimation = nil
+                }
             } catch is CancellationError {
                 replaceSession(original)
             } catch {

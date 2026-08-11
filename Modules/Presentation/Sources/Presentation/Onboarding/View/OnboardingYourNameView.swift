@@ -7,6 +7,7 @@
 
 import Common
 import SwiftUI
+import Domain
 
 struct OnboardingYourNameView: View {
     @Bindable var viewModel: OnboardingViewModel
@@ -175,5 +176,13 @@ struct OnboardingYourNameView: View {
 }
 
 #Preview {
-    OnboardingYourNameView(viewModel: .preview, onContinue: {})
+    OnboardingYourNameView(
+        viewModel: OnboardingViewModel(
+            completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
+            createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl(),
+            fetchCategoriesUseCase: MockFetchCategoriesUseCase()
+        ),
+        onContinue: {}
+    )
 }

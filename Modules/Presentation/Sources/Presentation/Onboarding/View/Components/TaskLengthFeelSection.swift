@@ -21,21 +21,21 @@ struct TaskLengthFeelSection: View {
             HStack(spacing: 12) {
                 BlockFeelOptionView(
                     title: "30m", subtitle: L10n.Onboarding.feelShortLight, numberOfBlocks: 3,
-                    isSelected: focusDurationIndex == 0
+                    isSelected: focusDurationIndex == 4
                 )
-                .onTapGesture { withAnimation { focusDurationIndex = 0 } }
+                .onTapGesture { withAnimation { focusDurationIndex = 4 } }
                 
                 BlockFeelOptionView(
                     title: "1h", subtitle: L10n.Onboarding.feelBalanced, numberOfBlocks: 2,
-                    isSelected: focusDurationIndex == 2
+                    isSelected: focusDurationIndex == 10
                 )
-                .onTapGesture { withAnimation { focusDurationIndex = 2 } }
+                .onTapGesture { withAnimation { focusDurationIndex = 10 } }
                 
                 BlockFeelOptionView(
                     title: "3h", subtitle: L10n.Onboarding.feelDeepFew, numberOfBlocks: 1,
-                    isSelected: focusDurationIndex == 5
+                    isSelected: focusDurationIndex == 16
                 )
-                .onTapGesture { withAnimation { focusDurationIndex = 5 } }
+                .onTapGesture { withAnimation { focusDurationIndex = 16 } }
             }
         }
         .padding(.horizontal, 24)
@@ -43,6 +43,13 @@ struct TaskLengthFeelSection: View {
     }
 }
 
-//#Preview {
-//    TaskLengthFeelSection()
-//}
+#Preview {
+    TaskLengthFeelSection(focusDurationIndex: .constant(2))
+}
+
+
+#Preview {
+    TaskLengthFeelSection(focusDurationIndex: .constant(0))
+        .padding()
+}
+

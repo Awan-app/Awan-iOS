@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Common
-import UIKit
 
 struct LoginView: View {
     @Environment(AppCoordinator.self) private var appCoordinator
@@ -59,6 +58,45 @@ struct LoginView: View {
                 )
             }
         }
+        .overlay {
+            if viewModel.isGoogleLoading {
+                ZStack {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+                    
+                    ProgressView()
+                        .controlSize(.large)
+                        .tint(.white)
+                        .padding(24)
+                        .background(Color.black.opacity(0.7))
+                        .cornerRadius(16)
+                }
+                .zIndex(1)
+            }
+        }
+        .overlay(alignment: .bottom) {
+            if let errorMessage = viewModel.googleErrorMessage {
+                Text(errorMessage)
+                    .font(.system(.subheadline, design: .rounded, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.red.opacity(0.9))
+                    .cornerRadius(10)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 40)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation {
+                                viewModel.googleErrorMessage = nil
+                            }
+                        }
+                    }
+                    .zIndex(2)
+            }
+        }
+        .animation(.easeInOut, value: viewModel.isGoogleLoading)
+        .animation(.spring(), value: viewModel.googleErrorMessage)
     }
 
     private var logoAndHeaderSection: some View {
@@ -187,12 +225,9 @@ struct LoginView: View {
                 title: L10n.Login.continueWithGoogle,
                 icon: nil,
                 iconAsset: "google-icon",
-                color: AppColors.surface,
-                foregroundColor: AppColors.brandDarkBlue,
-                borderColor: AppColors.accentBlue,
-                shadowColor: .clear,
-                size: .regular,
-                useGradient: false,
+                color: Color.white,
+                foregroundColor: .black,
+                shadowColor: Color.black.opacity(0.15),
                 onTap: {
                     triggerHaptic()
                     viewModel.onGoogleSignInTapped()
@@ -224,3 +259,4 @@ struct LoginView: View {
         generator.impactOccurred()
     }
 }
+

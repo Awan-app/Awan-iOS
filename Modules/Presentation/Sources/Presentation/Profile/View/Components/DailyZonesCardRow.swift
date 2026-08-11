@@ -21,3 +21,11 @@ struct DailyZonesCardRow: View {
         }
     }
 }
+
+
+import Domain
+#Preview {
+    DailyZonesCardRow(zones: Zone.mockDailyZones, isReady: true)
+        .padding()
+}
+

@@ -25,6 +25,13 @@ struct TaskLengthValueDisplay: View {
     }
 }
 
-//#Preview {
-//    TaskLengthValueDisplay()
-//}
+#Preview {
+    TaskLengthValueDisplay(focusDurationText: "1 hr")
+}
+
+
+#Preview {
+    TaskLengthValueDisplay(focusDurationText: "25 min")
+        .padding()
+}
+

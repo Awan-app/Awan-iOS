@@ -6,7 +6,6 @@ struct GoalCreationLoadingView: View {
 
     var body: some View {
         VStack(spacing: 18) {
-            Spacer(minLength: 30)
 
             AwanMascotView()
                 .frame(width: 190, height: 150)
@@ -28,3 +27,12 @@ struct GoalCreationLoadingView: View {
         .padding(.horizontal, 32)
     }
 }
+#Preview{
+    GoalCreationLoadingView(message: "")
+}
+
+
+#Preview {
+    GoalCreationLoadingView(message: "Loading...")
+}
+

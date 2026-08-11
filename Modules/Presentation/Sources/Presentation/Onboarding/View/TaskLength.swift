@@ -7,22 +7,39 @@
 
 import Common
 import SwiftUI
+import Domain
 
 struct TaskLength: View {
     @Bindable var viewModel: OnboardingViewModel
     let onContinue: () -> Void
 
-    let labels = ["30", "45", "60", "90", "120", "3h"]
+    let labels = ["10m", "", "", "", "", "1h", "", "", "", "2h", "", "3h"]
+    @State private var showValidationError: Bool = false
 
     var focusDurationText: String {
-        switch viewModel.focusDurationIndex {
-        case 0: return L10n.Onboarding.aboutMinutes(30)
-        case 1: return L10n.Onboarding.aboutMinutes(45)
-        case 2: return L10n.Onboarding.aboutHours(1)
-        case 3: return L10n.Onboarding.aboutHours(1.5)
-        case 4: return L10n.Onboarding.aboutHours(2)
-        case 5: return L10n.Onboarding.aboutHours(3)
-        default: return L10n.Onboarding.aboutHours(1)
+        if !viewModel.customDurationText.isEmpty, let custom = Int(viewModel.customDurationText), custom >= 10, custom <= 180 {
+            if custom < 60 {
+                return L10n.Onboarding.durationMinutes(custom)
+            } else if custom == 60 {
+                return L10n.Onboarding.durationOneHour
+            } else if custom % 60 == 0 {
+                return L10n.Onboarding.durationHours(custom / 60)
+            } else {
+                return L10n.Onboarding.durationHoursMinutes(custom / 60, custom % 60)
+            }
+        }
+
+        let index = min(max(viewModel.focusDurationIndex, 0), OnboardingViewModel.sessionDurations.count - 1)
+        let minutes = OnboardingViewModel.sessionDurations[index]
+        
+        if minutes < 60 {
+            return L10n.Onboarding.durationMinutes(minutes)
+        } else if minutes == 60 {
+            return L10n.Onboarding.durationOneHour
+        } else if minutes % 60 == 0 {
+            return L10n.Onboarding.durationHours(minutes / 60)
+        } else {
+            return L10n.Onboarding.durationHoursMinutes(minutes / 60, minutes % 60)
         }
     }
 
@@ -34,8 +51,26 @@ struct TaskLength: View {
                     TaskLengthValueDisplay(focusDurationText: focusDurationText)
                     TaskLengthSlider(
                         focusDurationIndex: $viewModel.focusDurationIndex, labels: labels)
+                    
+                    VStack(spacing: 8) {
+                        AppTextField(
+                            text: $viewModel.customDurationText,
+                            placeholder: L10n.Onboarding.customTimePlaceholder
+                        )
+                        .keyboardType(.numberPad)
+                        .padding(.horizontal, 24)
+                        
+                        if showValidationError {
+                            Text(L10n.Onboarding.timeValidationError)
+                                .foregroundColor(AppColors.destructive)
+                                .font(AppFonts.captionHeavy)
+                        }
+                    }
+                    .onChange(of: viewModel.customDurationText) { _, _ in
+                        showValidationError = false
+                    }
+
                     TaskLengthExplanation()
-                    TaskLengthFeelSection(focusDurationIndex: $viewModel.focusDurationIndex)
                 }
                 .padding(.bottom, 24)
             //}
@@ -48,7 +83,7 @@ struct TaskLength: View {
                     color: AppColors.accentBlue,
                     foregroundColor: AppColors.onAccent,
                     size: .large,
-                    onTap: { onContinue() }
+                    onTap: { handleContinue() }
                 )
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
@@ -63,6 +98,20 @@ struct TaskLength: View {
                 }
                 .padding(.vertical, 8)
             }
+        }
+    }
+
+    private func handleContinue() {
+        if !viewModel.customDurationText.isEmpty {
+            if let custom = Int(viewModel.customDurationText), custom >= 10, custom <= 180 {
+                showValidationError = false
+                onContinue()
+            } else {
+                showValidationError = true
+            }
+        } else {
+            showValidationError = false
+            onContinue()
         }
     }
 }
@@ -80,5 +129,13 @@ private struct TaskLengthExplanation: View {
 }
 
 #Preview {
-    TaskLength(viewModel: .preview, onContinue: {})
+    TaskLength(
+        viewModel: OnboardingViewModel(
+            completeOnboardingUseCase: MockCompleteOnboardingUseCase(),
+            createOnboardingTemplateUseCase: MockCreateOnboardingTemplateUseCase(),
+            manageZoneScheduleUseCase: ManageZoneScheduleUseCaseImpl(),
+            fetchCategoriesUseCase: MockFetchCategoriesUseCase()
+        ),
+        onContinue: {}
+    )
 }

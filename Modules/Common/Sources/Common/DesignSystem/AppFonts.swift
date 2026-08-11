@@ -89,5 +89,8 @@ public enum AppFonts {
     public static let heroSymbol = Font.system(size: 52, weight: .black)
     public static let goalHeroSymbol = Font.system(size: 58, weight: .black)
     public static let bigTitle = Font.system(size: 24, weight: .black, design: .rounded)
+    public static let profileStatNumber = Font.system(size: 42, weight: .black, design: .rounded)
+    public static let profileStatWatermark = Font.system(size: 76, weight: .black)
+    public static let streakNumber = Font.system(size: 64, weight: .black, design: .rounded)
     
 }

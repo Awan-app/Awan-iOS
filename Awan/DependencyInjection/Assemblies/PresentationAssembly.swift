@@ -20,9 +20,17 @@ struct PresentationAssembly: Assembly {
         .inObjectScope(.container)
 
         container.register(LoginViewModel.self) { resolver in
-            let useCase = Self.resolve(RequestOTPUseCase.self, from: resolver)
+            let requestUseCase = Self.resolve(RequestOTPUseCase.self, from: resolver)
+            let googleSignInUseCase = Self.resolve(GoogleSignInUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
-                LoginViewModel(requestOTPUseCase: useCase)
+                LoginViewModel(
+                    requestOTPUseCase: requestUseCase,
+                    googleSignInUseCase: googleSignInUseCase,
+                    googleSignInTokenProvider: {
+                        let tokens = try await GoogleSignInHelper.signIn()
+                        return GoogleSignInTokens(idToken: tokens.idToken, accessToken: tokens.accessToken)
+                    }
+                )
             }
         }
 
@@ -89,8 +97,12 @@ struct PresentationAssembly: Assembly {
         container.register(CreationUseCases.self) { resolver in
             CreationUseCases(
                 fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
+                fetchCategories: Self.resolve(FetchCategoriesUseCase.self, from: resolver),
                 createTask: Self.resolve(CreateTaskUseCase.self, from: resolver),
-                createTaskWithAwan: EmptyCreateTaskWithAwanUseCase(),
+                createAITask: Self.resolve(CreateAITaskUseCase.self, from: resolver),
+                imageToTasks: Self.resolve(ImageToTasksUseCase.self, from: resolver),
+                acceptProposedTask: Self.resolve(AcceptProposedTaskUseCase.self, from: resolver),
+                acceptProposedTasks: Self.resolve(AcceptProposedTasksUseCase.self, from: resolver),
                 userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 goalDecomposition: GoalDecompositionUseCases(
                     sendMessage: Self.resolve(
@@ -101,8 +113,16 @@ struct PresentationAssembly: Assembly {
                         ConfirmGoalProposalUseCase.self,
                         from: resolver
                     ),
-                    scheduleGoal: Self.resolve(
-                        ScheduleCreatedGoalUseCase.self,
+                    requestSchedule: Self.resolve(
+                        RequestGoalScheduleProposalUseCase.self,
+                        from: resolver
+                    ),
+                    confirmSchedule: Self.resolve(
+                        ConfirmGoalScheduleUseCase.self,
+                        from: resolver
+                    ),
+                    fetchZones: Self.resolve(
+                        FetchZonesUseCase.self,
                         from: resolver
                     )
                 )
@@ -117,15 +137,76 @@ struct PresentationAssembly: Assembly {
         }
         .inObjectScope(.container)
 
+        container.register(DailyWheelUseCases.self) { resolver in
+            DailyWheelUseCases(
+                fetch: Self.resolve(FetchDailyWheelUseCase.self, from: resolver),
+                spin: Self.resolve(SpinDailyWheelUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(DailyWheelViewModel.self) { resolver in
+            let useCases = Self.resolve(DailyWheelUseCases.self, from: resolver)
+            return MainActor.assumeIsolated {
+                DailyWheelViewModel(useCases: useCases)
+            }
+        }
+        .inObjectScope(.container)
+
+        container.register(CalendarViewModel.self) { resolver in
+            let useCase = Self.resolve(FetchGoalsUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                CalendarViewModel(fetchGoalsUseCase: useCase)
+            }
+        }
+        .inObjectScope(.container)
+
+        container.register(InboxUseCases.self) { resolver in
+            InboxUseCases(
+                fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver),
+                setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver),
+                deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(GoalsUseCases.self) { resolver in
+            GoalsUseCases(
+                fetchGoalsWithTasks: Self.resolve(FetchGoalsWithTasksUseCase.self, from: resolver),
+                fetchGoalTasks: Self.resolve(FetchGoalTasksUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(GoalsViewModel.self) { resolver in
+            let useCases = Self.resolve(GoalsUseCases.self, from: resolver)
+            let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
+            return MainActor.assumeIsolated {
+                let vm = GoalsViewModel(useCases: useCases)
+                vm.onSelectGoal = { goalID in
+                    appCoordinator.mainCoordinator.push(InboxRoute.goalDetail(goalID))
+                }
+                return vm
+            }
+        }
+        .inObjectScope(.container)
+
+        container.register(InboxViewModel.self) { resolver in
+            let useCases = Self.resolve(InboxUseCases.self, from: resolver)
+            return MainActor.assumeIsolated {
+                InboxViewModel(useCases: useCases)
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(OnboardingViewModel.self) { resolver in
             let useCase = Self.resolve(CompleteOnboardingUseCase.self, from: resolver)
             let createTemplateUseCase = Self.resolve(CreateOnboardingTemplateUseCase.self, from: resolver)
             let manageZoneScheduleUseCase = Self.resolve(ManageZoneScheduleUseCase.self, from: resolver)
+            let fetchCategoriesUseCase = Self.resolve(FetchCategoriesUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 OnboardingViewModel(
                     completeOnboardingUseCase: useCase,
                     createOnboardingTemplateUseCase: createTemplateUseCase,
-                    manageZoneScheduleUseCase: manageZoneScheduleUseCase
+                    manageZoneScheduleUseCase: manageZoneScheduleUseCase,
+                    fetchCategoriesUseCase: fetchCategoriesUseCase
                 )
             }
         }
@@ -134,28 +215,69 @@ struct PresentationAssembly: Assembly {
         container.register(ProfileViewModel.self) { resolver in
             let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
             let fetchZonesUseCase = Self.resolve(FetchZonesUseCase.self, from: resolver)
+            let logoutUseCase = Self.resolve(LogoutUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 ProfileViewModel(
                     getUserProfileUseCase: useCase,
-                    fetchZonesUseCase: fetchZonesUseCase
+                    fetchZonesUseCase: fetchZonesUseCase,
+                    logoutUseCase: logoutUseCase,
+                    onLogout: {
+                        GoogleSignInHelper.signOut()
+                    }
                 )
             }
         }
         .inObjectScope(.container)
 
-        container.register(DailyZonesViewModel.self) { resolver in
-            let fetchTemplatesUseCase = Self.resolve(FetchTemplatesUseCase.self, from: resolver)
-            let updateTemplateUseCase = Self.resolve(UpdateTemplateUseCase.self, from: resolver)
+        container.register(SettingsViewModel.self) { resolver in
             let getUserProfileUseCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
-            let manageDailyZoneScheduleUseCase = Self.resolve(ManageDailyZoneScheduleUseCase.self, from: resolver)
-            
+            let updateSessionDurationUseCase = Self.resolve(UpdateSessionDurationUseCase.self, from: resolver)
+            let updateTimezoneUseCase = Self.resolve(UpdateTimezoneUseCase.self, from: resolver)
+            let updateSleepScheduleUseCase = Self.resolve(UpdateSleepScheduleUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
-                DailyZonesViewModel(
-                    fetchTemplatesUseCase: fetchTemplatesUseCase,
-                    updateTemplateUseCase: updateTemplateUseCase,
+                SettingsViewModel(
                     getUserProfileUseCase: getUserProfileUseCase,
-                    manageDailyZoneScheduleUseCase: manageDailyZoneScheduleUseCase
+                    updateSessionDurationUseCase: updateSessionDurationUseCase,
+                    updateTimezoneUseCase: updateTimezoneUseCase,
+                    updateSleepScheduleUseCase: updateSleepScheduleUseCase
                 )
+            }
+        }
+        .inObjectScope(.container)
+
+        container.register(UserInfoViewModel.self) { resolver in
+            let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
+            let updateUseCase = Self.resolve(UpdateUserProfileUseCase.self, from: resolver)
+            let updatePictureUseCase = Self.resolve(UpdateProfilePictureUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                UserInfoViewModel(
+                    getUserProfileUseCase: useCase,
+                    updateUserProfileUseCase: updateUseCase,
+                    updateProfilePictureUseCase: updatePictureUseCase
+                )
+            }
+        }
+
+        container.register(DailyZonesViewModel.self) { resolver in
+            let useCases = DailyZonesUseCases(
+                fetchTemplates: Self.resolve(FetchTemplatesUseCase.self, from: resolver),
+                fetchCategories: Self.resolve(FetchCategoriesUseCase.self, from: resolver),
+                createCategory: Self.resolve(CreateCategoryUseCase.self, from: resolver),
+                fetchOverrides: Self.resolve(FetchTemplateOverridesUseCase.self, from: resolver),
+                createTemplate: Self.resolve(CreateTemplateUseCase.self, from: resolver),
+                updateTemplateZones: Self.resolve(UpdateTemplateUseCase.self, from: resolver),
+                updateTemplateDetails: Self.resolve(UpdateTemplateDetailsUseCase.self, from: resolver),
+                deleteTemplate: Self.resolve(DeleteTemplateUseCase.self, from: resolver),
+                createOverride: Self.resolve(CreateTemplateOverrideUseCase.self, from: resolver),
+                updateOverrideZones: Self.resolve(UpdateBulkTemplateOverrideUseCase.self, from: resolver),
+                updateOverrideDetails: Self.resolve(UpdateTemplateOverrideUseCase.self, from: resolver),
+                deleteOverride: Self.resolve(DeleteTemplateOverrideUseCase.self, from: resolver),
+                getUserProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
+                manageSchedule: Self.resolve(ManageDailyZoneScheduleUseCase.self, from: resolver),
+                resolveWeekdays: Self.resolve(ResolveTemplateWeekdayAvailabilityUseCase.self, from: resolver)
+            )
+            return MainActor.assumeIsolated {
+                DailyZonesViewModel(useCases: useCases)
             }
         }
         .inObjectScope(.container)
@@ -165,11 +287,16 @@ struct PresentationAssembly: Assembly {
             let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
             let loginViewModel = Self.resolve(LoginViewModel.self, from: resolver)
             let homeViewModel = Self.resolve(HomeViewModel.self, from: resolver)
+            let dailyWheelViewModel = Self.resolve(DailyWheelViewModel.self, from: resolver)
+            let calendarViewModel = Self.resolve(CalendarViewModel.self, from: resolver)
             let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
             let creationUseCases = Self.resolve(CreationUseCases.self, from: resolver)
             let onboardingViewModel = Self.resolve(OnboardingViewModel.self, from: resolver)
             let profileViewModel = Self.resolve(ProfileViewModel.self, from: resolver)
+            let settingsViewModel = Self.resolve(SettingsViewModel.self, from: resolver)
             let dailyZonesViewModel = Self.resolve(DailyZonesViewModel.self, from: resolver)
+            let inboxViewModel = Self.resolve(InboxViewModel.self, from: resolver)
+            let goalsViewModel = Self.resolve(GoalsViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
@@ -177,6 +304,8 @@ struct PresentationAssembly: Assembly {
                     authenticationState: authenticationState,
                     loginViewModel: loginViewModel,
                     homeViewModel: homeViewModel,
+                    dailyWheelViewModel: dailyWheelViewModel,
+                    calendarViewModel: calendarViewModel,
                     scheduleViewModel: scheduleViewModel,
                     creationUseCases: creationUseCases,
                     makeOtpViewModel: { context in
@@ -188,7 +317,13 @@ struct PresentationAssembly: Assembly {
                     },
                     onboardingViewModel: onboardingViewModel,
                     profileViewModel: profileViewModel,
-                    dailyZonesViewModel: dailyZonesViewModel
+                    settingsViewModel: settingsViewModel,
+                    dailyZonesViewModel: dailyZonesViewModel,
+                    makeUserInfoViewModel: {
+                        Self.resolve(UserInfoViewModel.self, from: resolver)
+                    },
+                    inboxViewModel: inboxViewModel,
+                    goalsViewModel: goalsViewModel
                 )
             }
         }

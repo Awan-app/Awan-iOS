@@ -15,8 +15,18 @@ public struct SuggestedZone: Identifiable, Equatable, Hashable, Sendable {
     public var colorRed: Double
     public var colorGreen: Double
     public var colorBlue: Double
+    public var category: TaskCategory?
 
-    public init(id: UUID, name: String, startTime: String, endTime: String, colorRed: Double, colorGreen: Double, colorBlue: Double) {
+    public init(
+        id: UUID,
+        name: String,
+        startTime: String,
+        endTime: String,
+        colorRed: Double,
+        colorGreen: Double,
+        colorBlue: Double,
+        category: TaskCategory? = nil
+    ) {
         self.id = id
         self.name = name
         self.startTime = startTime
@@ -24,6 +34,7 @@ public struct SuggestedZone: Identifiable, Equatable, Hashable, Sendable {
         self.colorRed = colorRed
         self.colorGreen = colorGreen
         self.colorBlue = colorBlue
+        self.category = category
     }
 }
 
@@ -50,7 +61,8 @@ public extension SuggestedZone {
             name: name,
             color: color,
             startTime: (try? LocalTime(hour: startHour, minute: startMin)) ?? (try! LocalTime(hour: 0, minute: 0)),
-            endTime: (try? LocalTime(hour: endHour, minute: endMin)) ?? (try! LocalTime(hour: 0, minute: 0))
+            endTime: (try? LocalTime(hour: endHour, minute: endMin)) ?? (try! LocalTime(hour: 0, minute: 0)),
+            category: category
         )
     }
 
@@ -78,7 +90,8 @@ public extension Zone {
             endTime: formatTime(endTime),
             colorRed: red,
             colorGreen: green,
-            colorBlue: blue
+            colorBlue: blue,
+            category: category
         )
     }
 

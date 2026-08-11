@@ -7,7 +7,7 @@ final class GoalModel {
     var title: String
     var goalDescription: String?
     var statusRaw: String
-    var deadline: Date
+    var deadline: Date?
     var createdAt: Date
 
     init(
@@ -15,7 +15,7 @@ final class GoalModel {
         title: String,
         goalDescription: String?,
         statusRaw: String,
-        deadline: Date,
+        deadline: Date?,
         createdAt: Date
     ) {
         self.id = id

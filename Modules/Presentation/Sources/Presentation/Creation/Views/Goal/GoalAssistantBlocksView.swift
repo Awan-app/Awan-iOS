@@ -39,6 +39,8 @@ struct GoalAssistantBlocksView: View {
                         Text(option)
                             .font(AppFonts.subheadlineHeavy)
                             .foregroundStyle(AppColors.accentBlue)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
                             .padding(.horizontal, 15)
                             .padding(.vertical, 11)
                             .background(
@@ -111,7 +113,7 @@ private struct FlowLayout: Layout {
         for (index, point) in result.points.enumerated() {
             subviews[index].place(
                 at: CGPoint(x: bounds.minX + point.x, y: bounds.minY + point.y),
-                proposal: .unspecified
+                proposal: ProposedViewSize(result.sizes[index])
             )
         }
     }
@@ -119,21 +121,29 @@ private struct FlowLayout: Layout {
     private func layout(
         proposal: ProposedViewSize,
         subviews: Subviews
-    ) -> (size: CGSize, points: [CGPoint]) {
+    ) -> (size: CGSize, points: [CGPoint], sizes: [CGSize]) {
         let maxWidth = proposal.width ?? .infinity
         var points: [CGPoint] = []
+        var sizes: [CGSize] = []
         var x: CGFloat = 0
         var y: CGFloat = 0
         var rowHeight: CGFloat = 0
 
         for subview in subviews {
-            let size = subview.sizeThatFits(.unspecified)
+            let idealSize = subview.sizeThatFits(.unspecified)
+            let proposedWidth = maxWidth.isFinite
+                ? min(idealSize.width, maxWidth)
+                : idealSize.width
+            let size = subview.sizeThatFits(
+                ProposedViewSize(width: proposedWidth, height: nil)
+            )
             if x > 0, x + size.width > maxWidth {
                 x = 0
                 y += rowHeight + spacing
                 rowHeight = 0
             }
             points.append(CGPoint(x: x, y: y))
+            sizes.append(size)
             x += size.width + spacing
             rowHeight = max(rowHeight, size.height)
         }
@@ -143,7 +153,14 @@ private struct FlowLayout: Layout {
                 width: proposal.width ?? max(0, x - spacing),
                 height: y + rowHeight
             ),
-            points
+            points,
+            sizes
         )
     }
+}
+
+
+#Preview {
+    GoalAssistantBlocksView(blocks: [], onOptionSelected: { _ in })
+        .padding()
 }

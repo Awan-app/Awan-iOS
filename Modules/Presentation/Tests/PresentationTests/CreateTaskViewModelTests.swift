@@ -10,11 +10,26 @@ final class CreateTaskViewModelTests: XCTestCase {
         let stub = CreateTaskUseCaseStub(zones: [zone])
         let viewModel = makeViewModel(stub: stub)
 
-        await viewModel.loadZones()
+        await viewModel.loadCreationData()
 
-        XCTAssertEqual(viewModel.zones, [zone])
-        XCTAssertFalse(viewModel.isLoadingZones)
-        XCTAssertNil(viewModel.errorMessage)
+        XCTAssertEqual(viewModel.state.zones, [zone])
+        let category = try XCTUnwrap(zone.category)
+        XCTAssertEqual(viewModel.state.categories, [category])
+        XCTAssertFalse(viewModel.state.isLoadingZones)
+        XCTAssertNil(viewModel.state.errorMessage)
+    }
+
+    func testLoadZonesPublishesEachSharedCategoryOnce() async throws {
+        let category = TaskCategory(id: UUID(), name: "Work")
+        let morning = try makeZone(name: "Morning Work", category: category)
+        let afternoon = try makeZone(name: "Afternoon Work", category: category)
+        let stub = CreateTaskUseCaseStub(zones: [morning, afternoon])
+        let viewModel = makeViewModel(stub: stub)
+
+        await viewModel.loadCreationData()
+
+        XCTAssertEqual(viewModel.state.categories, [category])
+        XCTAssertEqual(viewModel.state.selectedCategoryID, category.id)
     }
 
     func testLoadCreationDataUsesPreferredSessionDuration() async {
@@ -23,18 +38,20 @@ final class CreateTaskViewModelTests: XCTestCase {
 
         await viewModel.loadCreationData()
 
-        XCTAssertEqual(viewModel.durationMinutes, 45)
+        XCTAssertEqual(viewModel.state.durationMinutes, 45)
     }
 
     func testManualSubmissionUsesSelectedStartAndPreferredDuration() async {
-        let stub = CreateTaskUseCaseStub(zones: [])
+        let zone = try? makeZone()
+        let stub = CreateTaskUseCaseStub(zones: zone.map { [$0] } ?? [])
         let viewModel = makeViewModel(stub: stub)
         let startsAt = date(hour: 14)
 
         await viewModel.loadCreationData()
-        viewModel.isAwanSchedulingEnabled = false
-        viewModel.quickText = "Read Clean Code"
-        viewModel.startsAt = startsAt
+        viewModel.state.isAwanSchedulingEnabled = false
+        viewModel.state.quickText = "Read Clean Code"
+        viewModel.state.startsAt = startsAt
+        viewModel.state.selectedCategoryID = zone?.category?.id
 
         await viewModel.submitCurrentTask()
 
@@ -42,6 +59,8 @@ final class CreateTaskViewModelTests: XCTestCase {
         XCTAssertEqual(request?.title, "Read Clean Code")
         XCTAssertEqual(request?.durationMinutes, 45)
         XCTAssertEqual(request?.startsAt, startsAt)
+        XCTAssertEqual(request?.categoryID, zone?.category?.id)
+        XCTAssertNil(request?.zoneID)
     }
 
     func testCreateTaskBuildsRequestAndMarksCompletion() async throws {
@@ -58,7 +77,7 @@ final class CreateTaskViewModelTests: XCTestCase {
             title: "Read Clean Code",
             description: "Chapter one",
             durationMinutes: 60,
-            zoneID: zone.id,
+            categoryID: zone.category?.id,
             isSplittable: true,
             mandatory: true,
             startsAt: startsAt
@@ -68,13 +87,14 @@ final class CreateTaskViewModelTests: XCTestCase {
         XCTAssertEqual(request?.title, "Read Clean Code")
         XCTAssertEqual(request?.description, "Chapter one")
         XCTAssertEqual(request?.durationMinutes, 60)
-        XCTAssertEqual(request?.zoneID, zone.id)
+        XCTAssertEqual(request?.categoryID, zone.category?.id)
+        XCTAssertNil(request?.zoneID)
         XCTAssertEqual(request?.startsAt, startsAt)
         XCTAssertEqual(request?.selectedDay, selectedDay)
         XCTAssertEqual(request?.estimatedPoints, 10)
-        XCTAssertTrue(viewModel.didCreateTask)
-        XCTAssertFalse(viewModel.isSubmitting)
-        XCTAssertNil(viewModel.errorMessage)
+        XCTAssertTrue(viewModel.state.didCreateTask)
+        XCTAssertFalse(viewModel.state.isSubmitting)
+        XCTAssertNil(viewModel.state.errorMessage)
     }
 
     func testCreateFailureKeepsSheetStateAvailableForRetry() async throws {
@@ -85,15 +105,15 @@ final class CreateTaskViewModelTests: XCTestCase {
             title: "Retry me",
             description: nil,
             durationMinutes: 30,
-            zoneID: nil,
+            categoryID: nil,
             isSplittable: false,
             mandatory: true,
             startsAt: date(hour: 9)
         )
 
-        XCTAssertFalse(viewModel.didCreateTask)
-        XCTAssertFalse(viewModel.isSubmitting)
-        XCTAssertNotNil(viewModel.errorMessage)
+        XCTAssertFalse(viewModel.state.didCreateTask)
+        XCTAssertFalse(viewModel.state.isSubmitting)
+        XCTAssertNotNil(viewModel.state.errorMessage)
     }
 
     func testReleasingRecordingPublishesTranscribedTaskText() async throws {
@@ -105,12 +125,12 @@ final class CreateTaskViewModelTests: XCTestCase {
         )
 
         await viewModel.beginRecording()
-        XCTAssertTrue(viewModel.isRecording)
+        XCTAssertTrue(viewModel.state.isRecording)
 
         await viewModel.finishRecording()
 
-        XCTAssertFalse(viewModel.isRecording)
-        XCTAssertEqual(viewModel.quickText, "Read Clean Code")
+        XCTAssertFalse(viewModel.state.isRecording)
+        XCTAssertEqual(viewModel.state.quickText, "Read Clean Code")
         XCTAssertEqual(speechStub.startCallCount, 1)
         XCTAssertEqual(speechStub.stopCallCount, 1)
     }
@@ -129,11 +149,38 @@ final class CreateTaskViewModelTests: XCTestCase {
         await viewModel.beginRecording()
         await viewModel.finishRecording()
 
-        XCTAssertEqual(viewModel.quickText, "Read Clean Code")
+        XCTAssertEqual(viewModel.state.quickText, "Read Clean Code")
+    }
+
+    func testCreateTaskWithAwanUpdatesPhaseAndItemsInState() async throws {
+        let stub = CreateTaskUseCaseStub(zones: [])
+        let aiResponse = TaskProposal(sourceSummary: nil, tasks: [], timestamp: Date())
+        let aiUseCase = CreateAITaskUseCaseStub(response: aiResponse)
+        let viewModel = makeViewModel(stub: stub, aiUseCase: aiUseCase)
+
+        await viewModel.createTaskWithAwan(prompt: "Study math")
+
+        XCTAssertEqual(viewModel.state.phase, .aiTasksResult(aiResponse))
+        XCTAssertFalse(viewModel.state.isSubmitting)
+    }
+
+    func testDismissAITaskResultResetsState() async throws {
+        let stub = CreateTaskUseCaseStub(zones: [])
+        let aiResponse = TaskProposal(sourceSummary: nil, tasks: [], timestamp: Date())
+        let aiUseCase = CreateAITaskUseCaseStub(response: aiResponse)
+        let viewModel = makeViewModel(stub: stub, aiUseCase: aiUseCase)
+
+        await viewModel.createTaskWithAwan(prompt: "Study math")
+        XCTAssertEqual(viewModel.state.phase, .aiTasksResult(aiResponse))
+
+        viewModel.dismissAITaskResult()
+
+        XCTAssertEqual(viewModel.state.phase, .composer)
     }
 
     private func makeViewModel(
         stub: CreateTaskUseCaseStub,
+        aiUseCase: CreateAITaskUseCase? = nil,
         selectedDay: Date? = nil,
         speechTranscriber: SpeechTranscriberStub? = nil
     ) -> CreateTaskViewModel {
@@ -141,7 +188,10 @@ final class CreateTaskViewModelTests: XCTestCase {
             useCases: CreationUseCases(
                 fetchZones: stub,
                 createTask: stub,
-                createTaskWithAwan: EmptyCreateTaskWithAwanUseCase(),
+                createAITask: aiUseCase ?? MockCreateAITaskUseCase(),
+                imageToTasks: MockImageToTasksUseCase(),
+                acceptProposedTask: MockAcceptProposedTaskUseCase(),
+                acceptProposedTasks: MockAcceptProposedTasksUseCase(),
                 userProfile: UserProfileUseCaseStub(),
                 goalDecomposition: GoalDecompositionUseCases(
                     sendMessage: GoalMessageUseCaseStub(),
@@ -155,13 +205,17 @@ final class CreateTaskViewModelTests: XCTestCase {
         )
     }
 
-    private func makeZone() throws -> Zone {
+    private func makeZone(
+        name: String = "Learning",
+        category: TaskCategory? = TaskCategory(id: UUID(), name: "Learning")
+    ) throws -> Zone {
         try Zone(
             id: UUID(),
-            name: "Learning",
+            name: name,
             color: ZoneColor(hex: "#58CC02"),
             startTime: LocalTime(hour: 8, minute: 0),
-            endTime: LocalTime(hour: 12, minute: 0)
+            endTime: LocalTime(hour: 12, minute: 0),
+            category: category
         )
     }
 
@@ -186,8 +240,7 @@ private struct GoalMessageUseCaseStub: SendGoalDecompositionMessageUseCase {
         GoalDecompositionResponse(
             sessionID: UUID(),
             blocks: [],
-            hasProposal: false,
-            timestamp: Date()
+            hasProposal: false
         )
     }
 }
@@ -292,5 +345,45 @@ private actor CreateTaskUseCaseStub: FetchZonesUseCase, CreateTaskUseCase {
 
     func createdRequest() -> CreateTaskRequest? {
         request
+    }
+}
+
+private struct MockImageToTasksUseCase: ImageToTasksUseCase {
+    func execute(imageData: Data, mimeType: String, note: String?) async throws -> TaskProposal {
+        TaskProposal(sourceSummary: "Test Summary", tasks: [], timestamp: Date())
+    }
+}
+
+private struct MockAcceptProposedTaskUseCase: AcceptProposedTaskUseCase {
+    func execute(_ draft: TaskWithSessionsDraft) async throws -> AwanTask {
+        try makeAcceptedTask(from: draft)
+    }
+}
+
+private struct MockAcceptProposedTasksUseCase: AcceptProposedTasksUseCase {
+    func execute(_ drafts: [TaskWithSessionsDraft]) async throws -> [AwanTask] {
+        try drafts.map(makeAcceptedTask(from:))
+    }
+}
+
+private func makeAcceptedTask(from draft: TaskWithSessionsDraft) throws -> AwanTask {
+    AwanTask(
+        id: UUID(),
+        title: draft.task.title,
+        description: draft.task.description,
+        status: .drafted,
+        goalID: draft.task.goalId,
+        duration: try TaskDuration(minutes: draft.task.estimatedDuration),
+        isSplittable: draft.task.allowTaskSplitting,
+        mandatory: draft.task.mandatory,
+        estimatedPoints: draft.task.estimatedPoints,
+        dependencyIDs: [],
+        category: nil
+    )
+}
+private struct CreateAITaskUseCaseStub: CreateAITaskUseCase {
+    let response: TaskProposal
+    func execute(_ request: CreateAITaskRequest) async throws -> TaskProposal {
+        response
     }
 }

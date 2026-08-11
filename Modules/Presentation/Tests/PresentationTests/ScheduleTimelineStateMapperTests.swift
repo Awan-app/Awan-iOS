@@ -12,7 +12,8 @@ final class ScheduleTimelineStateMapperTests: XCTestCase {
             name: "Work",
             color: ZoneColor(hex: "#4A90E2"),
             startTime: LocalTime(hour: 9, minute: 0),
-            endTime: LocalTime(hour: 17, minute: 0)
+            endTime: LocalTime(hour: 17, minute: 0),
+            category: TaskCategory(id: UUID(), name: "Work")
         )
         let ranges = [
             (startHour: 9, startMinute: 0, endHour: 10, endMinute: 15),
@@ -24,9 +25,9 @@ final class ScheduleTimelineStateMapperTests: XCTestCase {
             try AwanTask(
                 id: UUID(),
                 title: "Task \(index)",
-                zoneID: zone.id,
                 duration: TaskDuration(minutes: 60),
-                isSplittable: false
+                isSplittable: false,
+                category: zone.category
             )
         }
         let sessions = try zip(tasks, ranges).map { task, range in

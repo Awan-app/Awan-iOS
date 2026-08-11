@@ -26,6 +26,7 @@ enum HomeRemoteMapper {
             points: dto.points,
             streak: dto.streak,
             maxStreak: dto.maxStreak,
+            profilePictureUrl: dto.profilePictureUrl,
             preferences: UserPreferences(
                 timezone: dto.preferences.timezone,
                 preferredSessionDuration: dto.preferences.preferredSessionDuration,
@@ -38,21 +39,49 @@ enum HomeRemoteMapper {
 
     static func task(
         _ dto: TaskInfoResponseDTO,
-        zoneID: UUID?,
         defaultDuration: Int
     ) throws -> AwanTask {
         try AwanTask(
             id: dto.id,
             title: dto.title,
             description: dto.description,
-            status: taskStatus(dto.status),
+            status: taskStatus(
+                dto.status,
+                completedAt: dto.completedAt
+            ),
+            completedAt: try dto.completedAt.map(parseISO8601Date),
             goalID: dto.goalID,
-            zoneID: zoneID,
             duration: TaskDuration(minutes: dto.estimatedDuration ?? defaultDuration),
             isSplittable: dto.isSplittable,
             mandatory: dto.mandatory,
             estimatedPoints: dto.estimatedPoints,
-            dependencyIDs: Set(dto.dependencyIDs)
+            dependencyIDs: Set(dto.dependencyIDs),
+            category: dto.category.map {
+                TaskCategory(id: $0.id, name: $0.name)
+            }
+        )
+    }
+
+    static func goal(_ dto: GoalInfoResponseDTO) throws -> Goal {
+        let deadline: Date?
+        if let targetDate = dto.targetDate {
+            guard let parsedDeadline = LocalDateKey.date(from: targetDate) else {
+                throw RemoteDomainMappingError.invalidValue(
+                    "goal.targetDate.\(targetDate)"
+                )
+            }
+            deadline = parsedDeadline
+        } else {
+            deadline = nil
+        }
+
+        return Goal(
+            id: dto.id,
+            name: dto.title,
+            description: dto.description,
+            status: try goalStatus(dto.status),
+            deadline: deadline,
+            createdAt: try parseISO8601Date(dto.createdAt)
         )
     }
 
@@ -60,7 +89,7 @@ enum HomeRemoteMapper {
         _ dto: SessionResponseDTO,
         timeZoneID: String
     ) throws -> Session {
-        Session(
+        return Session(
             id: dto.id,
             taskID: dto.taskID,
             zoneID: dto.zoneId,
@@ -69,7 +98,8 @@ enum HomeRemoteMapper {
                 end: parseDateTime(dto.end, timeZoneID: timeZoneID)
             ),
             blocking: dto.locked,
-            status: try sessionStatus(dto.status)
+            status: try sessionStatus(dto.status),
+            firstCompletedAt: try dto.firstCompletedAt.map(parseISO8601Date)
         )
     }
 
@@ -79,17 +109,60 @@ enum HomeRemoteMapper {
             name: dto.name,
             color: ZoneColor(hex: dto.color ?? "#6C63FF"),
             startTime: parseTime(dto.startTime),
-            endTime: parseTime(dto.endTime)
+            endTime: parseTime(dto.endTime),
+            category: TaskCategory(id: dto.category.id, name: dto.category.name)
         )
     }
 
     static func template(_ dto: TemplateResponseDTO) throws -> Template {
-        let mappedZones = try dto.zones.map(zone)
+        let data = try templateData(dto)
         return Template(
+            id: data.id,
+            name: data.name,
+            daysOfWeek: Set(try dto.daysOfWeek.map(templateWeekday)),
+            zones: data.zones
+        )
+    }
+
+    static func templateData(_ dto: TemplateResponseDTO) throws -> TemplateData {
+        let weekDays = try Set(dto.daysOfWeek.map(weekDay))
+        guard !weekDays.isEmpty else {
+            throw RemoteDomainMappingError.missingField("template.daysOfWeek")
+        }
+        return TemplateData(
             id: dto.id,
             name: dto.name,
-            daysOfWeek: dto.daysOfWeek,
-            zones: mappedZones
+            weekDays: weekDays,
+            zones: try dto.zones.map(zone)
+        )
+    }
+
+    static func templateOverrideData(
+        _ dto: TemplateOverrideResponseDTO
+    ) throws -> TemplateOverrideData {
+        guard let date = LocalDateKey.date(from: dto.dateOfDay),
+              LocalDateKey.value(for: date, timeZoneID: "GMT") == dto.dateOfDay else {
+            throw RemoteDomainMappingError.invalidValue(
+                "templateOverride.dateOfDay.\(dto.dateOfDay)"
+            )
+        }
+        return TemplateOverrideData(
+            id: dto.id,
+            name: dto.name ?? "Override",
+            dateKey: dto.dateOfDay,
+            dateOfDay: date,
+            zones: try dto.zones.map(zone)
+        )
+    }
+
+    static func templateOverride(
+        _ dto: TemplateOverrideResponseDTO
+    ) throws -> TemplateOverride {
+        return TemplateOverride(
+            id: dto.id,
+            name: dto.name,
+            dateOfDay: try TemplateOverrideDate(iso8601: dto.dateOfDay),
+            zones: try dto.zones.map(zone)
         )
     }
 
@@ -97,14 +170,54 @@ enum HomeRemoteMapper {
         dateTimeFormatter(timeZoneID: timeZoneID).string(from: date)
     }
 
-    private static func taskStatus(_ raw: String) throws -> TaskStatus {
-        switch raw.uppercased() {
-        case "SCHEDULED", "PENDING": .pending
-        case "IN_PROGRESS": .inProgress
-        case "COMPLETED": .completed
+    private static func taskStatus(
+        _ raw: String,
+        completedAt: String?
+    ) throws -> TaskStatus {
+        if completedAt != nil {
+            return .completed
+        }
+
+        return switch raw.uppercased() {
+        case "DRAFTED": .drafted
+        case "ACTIVE", "SCHEDULED", "PENDING", "IN_PROGRESS", "COMPLETED": .active
         case "CANCELLED": .cancelled
         default: throw RemoteDomainMappingError.invalidValue("task.status.\(raw)")
         }
+    }
+
+    private static func goalStatus(_ raw: String) throws -> GoalStatus {
+        switch raw.uppercased() {
+        case "ACTIVE": .active
+        case "COMPLETED": .completed
+        case "CANCELLED": .cancelled
+        default: throw RemoteDomainMappingError.invalidValue("goal.status.\(raw)")
+        }
+    }
+
+    private static func weekDay(_ raw: String) throws -> Int {
+        switch raw.uppercased() {
+        case "SUNDAY": 1
+        case "MONDAY": 2
+        case "TUESDAY": 3
+        case "WEDNESDAY": 4
+        case "THURSDAY": 5
+        case "FRIDAY": 6
+        case "SATURDAY": 7
+        default:
+            throw RemoteDomainMappingError.invalidValue(
+                "template.daysOfWeek.\(raw)"
+            )
+        }
+    }
+
+    private static func templateWeekday(_ raw: String) throws -> TemplateWeekday {
+        guard let weekday = TemplateWeekday(rawValue: raw.uppercased()) else {
+            throw RemoteDomainMappingError.invalidValue(
+                "template.daysOfWeek.\(raw)"
+            )
+        }
+        return weekday
     }
 
     private static func sessionStatus(_ raw: String) throws -> Session.Status {
@@ -139,8 +252,31 @@ enum HomeRemoteMapper {
     }
 
     private static func parseDateTime(_ value: String, timeZoneID: String) throws -> Date {
+        if let date = try? parseISO8601Date(value) {
+            return date
+        }
         guard let date = dateTimeFormatter(timeZoneID: timeZoneID).date(from: value) else {
             throw RemoteDomainMappingError.invalidValue("dateTime.\(value)")
+        }
+        return date
+    }
+
+    private static func parseISO8601Date(_ value: String) throws -> Date {
+        let fractionalFormatter = ISO8601DateFormatter()
+        fractionalFormatter.formatOptions = [
+            .withInternetDateTime,
+            .withFractionalSeconds,
+        ]
+        if let date = fractionalFormatter.date(from: value) {
+            return date
+        }
+
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        guard let date = formatter.date(from: value) else {
+            throw RemoteDomainMappingError.invalidValue(
+                "goal.createdAt.\(value)"
+            )
         }
         return date
     }
@@ -152,5 +288,25 @@ enum HomeRemoteMapper {
         formatter.timeZone = TimeZone(identifier: timeZoneID) ?? .current
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         return formatter
+    }
+    static func completionReward(
+        _ dto: CompletionRewardDTO
+    ) -> CompletionReward {
+        CompletionReward(
+            points: .init(
+                awarded: dto.points.awarded,
+                amount: dto.points.amount,
+                oldValue: dto.points.oldValue,
+                newValue: dto.points.newValue
+            ),
+            streak: .init(
+                updated: dto.streak.updated,
+                oldValue: dto.streak.oldValue,
+                newValue: dto.streak.newValue,
+                maxStreakBroken: dto.streak.maxStreakBroken,
+                maxStreakOld: dto.streak.maxStreakOld,
+                maxStreakNew: dto.streak.maxStreakNew
+            )
+        )
     }
 }

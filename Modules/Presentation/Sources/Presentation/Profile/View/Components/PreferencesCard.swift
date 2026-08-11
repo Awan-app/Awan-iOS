@@ -7,6 +7,7 @@
 
 import Common
 import SwiftUI
+import Domain
 
 // MARK: - Preference Item Model
 
@@ -56,8 +57,8 @@ struct PreferencesCard: View {
 
 #Preview("PreferencesCard – Light") {
     PreferencesCard(preferences: [
-        PreferenceItem(icon: "clock", title: "Session time", value: "60 min", onTap: {}),
-        PreferenceItem(icon: "globe", title: "Time zone", value: "Cairo · GMT+3", onTap: {}),
+        PreferenceItem(icon: "clock", title: "Session time", value: "\(UserProfile.mock.preferences.preferredSessionDuration) min", onTap: {}),
+        PreferenceItem(icon: "globe", title: "Time zone", value: UserProfile.mock.preferences.timezone, onTap: {}),
         PreferenceItem(
             icon: "moon", title: "Sleep schedule", value: "11:00 PM – 7:00 AM", onTap: {}),
     ])
@@ -68,8 +69,8 @@ struct PreferencesCard: View {
 
 #Preview("PreferencesCard – Dark") {
     PreferencesCard(preferences: [
-        PreferenceItem(icon: "clock", title: "Session time", value: "60 min", onTap: {}),
-        PreferenceItem(icon: "globe", title: "Time zone", value: "Cairo · GMT+3", onTap: {}),
+        PreferenceItem(icon: "clock", title: "Session time", value: "\(UserProfile.mock.preferences.preferredSessionDuration) min", onTap: {}),
+        PreferenceItem(icon: "globe", title: "Time zone", value: UserProfile.mock.preferences.timezone, onTap: {}),
         PreferenceItem(
             icon: "moon", title: "Sleep schedule", value: "11:00 PM – 7:00 AM", onTap: {}),
     ])

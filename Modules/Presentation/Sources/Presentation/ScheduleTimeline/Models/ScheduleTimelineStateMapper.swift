@@ -58,7 +58,17 @@ struct ScheduleTimelineStateMapper {
                             id: task.id,
                             title: task.title,
                             durationMinutes: task.duration.minutes,
-                            zoneID: task.zoneID,
+                            zoneID: workspace.sessions
+                                .filter {
+                                    $0.taskID == task.id
+                                        && $0.status == .planned
+                                }
+                                .sorted { $0.timeRange.start < $1.timeRange.start }
+                                .compactMap(\.zoneID)
+                                .first
+                                ?? workspace.zones.first {
+                                    $0.category?.id == task.category?.id
+                                }?.id,
                             isSplittable: task.isSplittable,
                             blocking: workspace.sessions.contains { session in
                                 session.taskID == task.id

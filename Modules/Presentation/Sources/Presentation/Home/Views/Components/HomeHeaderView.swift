@@ -6,44 +6,158 @@ struct HomeHeaderView: View {
     let selectedDay: Date
     let streakCount: Int
     let rewardPoints: Int
-
+    let onOpenCalendar: () -> Void
+    let onSelectToday: () -> Void
+    let pointsPulse: Int
+    
     @Environment(LanguageManager.self) private var languageManager
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text(greeting)
-                        .font(AppFonts.titleBlack)
-                        .foregroundStyle(AppColors.brandDarkBlue)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.72)
+        VStack(alignment: .leading, spacing: 16) {
+            greetingHero
 
-                    HStack(spacing: 10) {
-                        HomeStatChip(
-                            icon: "flame.fill",
-                            value: streakCount.formatted(.number.locale(languageManager.locale)),
-                            color: AppColors.warning
-                        )
-                        HomeStatChip(
-                            icon: "star.fill",
-                            value: rewardPoints.formatted(.number.locale(languageManager.locale)),
-                            color: AppColors.reward
-                        )
+            dateHeader
+        }
+    }
+
+    private var greetingHero: some View {
+        AppDepthSurface(
+            surfaceColor: AppColors.infoSurface,
+            borderColor: AppColors.accentBlue.opacity(0.22),
+            depthColor: AppColors.accentBlueDepth.opacity(0.28),
+            contentInsets: EdgeInsets()
+        ) {
+            ZStack(alignment: .topTrailing) {
+                heroDecorations
+
+                HStack(alignment: .top, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 14) {
+                        Text(greeting)
+                            .font(AppFonts.titleBlack)
+                            .foregroundStyle(AppColors.brandDarkBlue)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.72)
+
+                        HStack(spacing: 10) {
+                            HomeStatChip(
+                                icon: "flame.fill",
+                                value: streakCount.formatted(
+                                    .number.locale(languageManager.locale)
+                                ),
+                                color: AppColors.warning
+                            )
+                            HomeStatChip(
+                                icon: "star.fill",
+                                value: rewardPoints.formatted(
+                                    .number.locale(languageManager.locale)
+                                ),
+                                color: AppColors.reward
+                            )
+                            .symbolEffect(.bounce, value: pointsPulse)
+                            .background(
+                                GeometryReader { proxy in
+                                    Color.clear
+                                        .anchorPreference(
+                                            key: RewardAnchorKey.self,
+                                            value: .bounds
+                                        ) { ["points-badge": $0] }
+                                }
+                            )
+                        }
                     }
+
+                    Spacer(minLength: 4)
+
+                    AwanMascotView()
+                        .frame(width: 82, height: 82)
+                        .shadow(
+                            color: AppColors.accentBlueDepth.opacity(0.16),
+                            radius: 10,
+                            y: 6
+                        )
                 }
+                .padding(18)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .clipShape(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+            )
+        }
+    }
 
-                Spacer(minLength: 4)
+    private var heroDecorations: some View {
+        ZStack {
+            Circle()
+                .fill(AppColors.accentBlue.opacity(0.10))
+                .frame(width: 142, height: 142)
+                .offset(x: 46, y: -58)
 
-                AwanMascotView()
-                    .frame(width: 76, height: 76)
-                    .shadow(color: AppColors.shadow.opacity(0.12), radius: 10, y: 5)
+            Circle()
+                .fill(AppColors.reward.opacity(0.14))
+                .frame(width: 42, height: 42)
+                .offset(x: -78, y: 22)
+
+            Image(systemName: "sparkles")
+                .font(AppFonts.tabSymbol)
+                .foregroundStyle(AppColors.accentBlue.opacity(0.38))
+                .offset(x: -112, y: 82)
+        }
+        .accessibilityHidden(true)
+    }
+
+    private var dateHeader: some View {
+        HStack(spacing: 10) {
+            RoundedRectangle(cornerRadius: 3, style: .continuous)
+                .fill(AppColors.accentBlue.gradient)
+                .frame(width: 5, height: 30)
+
+            Text(
+                selectedDay.formatted(
+                    .dateTime
+                        .weekday(.wide)
+                        .month(.wide)
+                        .day()
+                        .locale(languageManager.locale)
+                )
+            )
+            .font(AppFonts.title3Black)
+            .foregroundStyle(AppColors.textPrimary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.72)
+
+            Spacer(minLength: 4)
+
+            if !languageManager.calendar.isDateInToday(selectedDay) {
+                Button(action: onSelectToday) {
+                    Label(
+                        L10n.CalendarScreen.jumpToPresent,
+                        systemImage: "arrow.uturn.backward"
+                    )
+                    .font(AppFonts.captionHeavy)
+                    .foregroundStyle(AppColors.accentBlue)
+                    .padding(.horizontal, 10)
+                    .frame(height: 34)
+                }
+                .buttonStyle(
+                    AppDepthButtonStyle(
+                        shape: .capsule,
+                        borderColor: AppColors.accentBlue.opacity(0.55),
+                        depthColor: AppColors.accentBlueDepth
+                    )
+                )
+                .transition(.scale.combined(with: .opacity))
             }
 
-            Text(selectedDay.formatted(.dateTime.weekday(.wide).month(.wide).day().locale(languageManager.locale)))
-                .font(AppFonts.title3Black)
-                .foregroundStyle(AppColors.textPrimary)
+            dateActionButton(
+                icon: "calendar",
+                accessibilityLabel: L10n.Home.calendar,
+                action: onOpenCalendar
+            )
         }
+        .animation(
+            .spring(response: 0.38, dampingFraction: 0.84),
+            value: languageManager.calendar.isDateInToday(selectedDay)
+        )
     }
 
     private var greeting: String {
@@ -60,6 +174,27 @@ struct HomeHeaderView: View {
         guard let displayName, !displayName.isEmpty else { return base }
         return "\(base), \(displayName)"
     }
+
+    private func dateActionButton(
+        icon: String,
+        accessibilityLabel: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(AppFonts.captionIconBlack)
+                .foregroundStyle(AppColors.accentBlue)
+                .frame(width: 34, height: 34)
+        }
+        .buttonStyle(
+            AppDepthButtonStyle(
+                shape: .circle,
+                borderColor: AppColors.accentBlue.opacity(0.55),
+                depthColor: AppColors.accentBlueDepth
+            )
+        )
+        .accessibilityLabel(accessibilityLabel)
+    }
 }
 
 private struct HomeStatChip: View {
@@ -68,20 +203,40 @@ private struct HomeStatChip: View {
     let color: Color
 
     var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(AppFonts.statSymbol)
-            Text(value)
-                .font(AppFonts.headlineBlack)
+        AppDepthSurface(
+            shape: .roundedRectangle(cornerRadius: 14),
+            borderColor: color.opacity(0.55),
+            depthColor: color.opacity(0.72),
+            depthOffset: 4,
+            contentInsets: EdgeInsets(
+                top: 9,
+                leading: 14,
+                bottom: 9,
+                trailing: 14
+            )
+        ) {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(AppFonts.statSymbol)
+                Text(value)
+                    .font(AppFonts.headlineBlack)
+            }
+            .foregroundStyle(color)
         }
-        .foregroundStyle(color)
-        .padding(.horizontal, 14)
-        .padding(.vertical, 9)
-        .background(AppColors.surface, in: RoundedRectangle(cornerRadius: 14))
-        .overlay {
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(color.opacity(0.42), lineWidth: 1.5)
-        }
-        .shadow(color: color.opacity(0.28), radius: 0, y: 3)
     }
+}
+
+
+#Preview {
+    HomeHeaderView(
+        displayName: "Andrew",
+        selectedDay: Date(),
+        streakCount: 5,
+        rewardPoints: 100,
+        onOpenCalendar: {},
+        onSelectToday: {},
+        pointsPulse: 0
+    )
+        .padding()
+        .environment(LanguageManager())
 }

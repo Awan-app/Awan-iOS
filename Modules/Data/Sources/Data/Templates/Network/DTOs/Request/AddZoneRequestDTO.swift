@@ -12,16 +12,19 @@ public struct AddZoneRequestDTO: Encodable, Sendable {
     public let startTime: String
     public let endTime: String
     public let color: String?
+    public let categoryId: UUID
 
     public init(
         name: String,
         startTime: String,
         endTime: String,
-        color: String? = nil
+        color: String? = nil,
+        categoryId: UUID
     ) {
         self.name = name
         self.startTime = startTime
         self.endTime = endTime
         self.color = color
+        self.categoryId = categoryId
     }
 }

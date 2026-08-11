@@ -52,23 +52,47 @@ public struct DefaultSetSessionLockUseCase: SetSessionLockUseCase {
 }
 
 public protocol SetSessionCompletionUseCase: Sendable {
-    func execute(sessionID: UUID, isCompleted: Bool) async throws -> Session
+    func execute(sessionID: UUID, isCompleted: Bool) async throws -> SetSessionCompletionResult
 }
 
 public struct DefaultSetSessionCompletionUseCase: SetSessionCompletionUseCase {
-    private let repository: any SessionRepository
-
-    public init(repository: any SessionRepository) {
-        self.repository = repository
+    
+    private let sessionRepository: any SessionRepository
+    private let taskRepository: any TaskRepository
+    private let userProfileRepository: any UserProfileRepository
+    
+    public init(
+        sessionRepository: any SessionRepository,
+        taskRepository: any TaskRepository,
+        userProfileRepository: any UserProfileRepository
+    ) {
+        self.sessionRepository = sessionRepository
+        self.taskRepository = taskRepository
+        self.userProfileRepository = userProfileRepository
     }
 
-    public func execute(sessionID: UUID, isCompleted: Bool) async throws -> Session {
-        guard let session = try await repository.fetchSessions().first(where: { $0.id == sessionID }) else {
-            throw SchedulingError.entityNotFound(id: sessionID)
+    public func execute(
+        sessionID: UUID,
+        isCompleted: Bool
+    ) async throws -> SetSessionCompletionResult {
+
+        if isCompleted {
+            let result = try await sessionRepository.completeSession(
+                id: sessionID
+            )
+
+            try? await userProfileRepository.refreshGamificationProgress()
+
+            return .completed(result)
         }
-        let updated = session.replacing(status: isCompleted ? .completed : .planned)
-        try await repository.updateSession(updated)
-        return updated
+
+        let session = try await sessionRepository.uncompleteSession(
+            id: sessionID
+        )
+
+        _ = try? await taskRepository.refreshTask(id: session.taskID)
+
+        return .uncompleted(session)
     }
 }
 

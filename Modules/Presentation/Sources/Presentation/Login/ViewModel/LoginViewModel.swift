@@ -9,6 +9,7 @@ import Foundation
 import Observation
 import Domain
 import Network
+import Common
 
 public enum LoginState: Equatable, Sendable {
     case idle
@@ -17,16 +18,30 @@ public enum LoginState: Equatable, Sendable {
     case failure(AuthenticationErrorState)
 }
 
+public struct GoogleSignInTokens: Sendable {
+    public let idToken: String
+    public let accessToken: String
+    
+    public init(idToken: String, accessToken: String) {
+        self.idToken = idToken
+        self.accessToken = accessToken
+    }
+}
+
 
 @Observable
 @MainActor
 public final class LoginViewModel {
     
     public private(set) var state: LoginState = .idle
+    public private(set) var isGoogleLoading: Bool = false
+    public var googleErrorMessage: String? = nil
     public private(set) var hasAttemptedSubmit: Bool = false
     private var isOffline = false
     private var rateLimitTask: Task<Void, Never>?
     private let requestOTPUseCase: RequestOTPUseCase
+    private let googleSignInUseCase: GoogleSignInUseCase
+    private let googleSignInTokenProvider: @MainActor @Sendable () async throws -> GoogleSignInTokens
     private let monitor = NWPathMonitor()
         
     public var email: String = "" {
@@ -51,20 +66,27 @@ public final class LoginViewModel {
         guard hasAttemptedSubmit else { return nil }
         
         if email.isEmpty {
-            return "Please enter your email."
+            return L10n.Login.emptyEmailError
         }
         
         if !isValidEmail {
-            return "Please enter a valid email address."
+            return L10n.Login.invalidEmailError
         }
         
         return nil
     }
 
     public var onSuccess: ((String, OTPRequestResult) -> Void)?
+    public var onLoginSuccess: ((VerifyOTPResult) -> Void)?
         
-    public init(requestOTPUseCase: RequestOTPUseCase) {
+    public init(
+        requestOTPUseCase: RequestOTPUseCase,
+        googleSignInUseCase: GoogleSignInUseCase,
+        googleSignInTokenProvider: @MainActor @Sendable @escaping () async throws -> GoogleSignInTokens
+    ) {
         self.requestOTPUseCase = requestOTPUseCase
+        self.googleSignInUseCase = googleSignInUseCase
+        self.googleSignInTokenProvider = googleSignInTokenProvider
         startNetworkMonitoring()
     }
     
@@ -109,6 +131,40 @@ public final class LoginViewModel {
     }
     
     public func onGoogleSignInTapped() {
+        guard !isOffline else {
+            googleErrorMessage = L10n.Login.networkOfflineError
+            return
+        }
+
+        isGoogleLoading = true
+        googleErrorMessage = nil
+        
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let tokens = try await googleSignInTokenProvider()
+                
+                if Task.isCancelled { return }
+                
+                let result = try await googleSignInUseCase.execute(idToken: tokens.idToken, accessToken: tokens.accessToken)
+                
+                if !Task.isCancelled {
+                    isGoogleLoading = false
+                    onLoginSuccess?(result)
+                }
+            } catch {
+                guard !Task.isCancelled else { return }
+                
+                isGoogleLoading = false
+                let nsError = error as NSError
+                // 8 == GIDSignInError.canceled
+                if nsError.domain == "com.google.GIDSignIn" && nsError.code == 8 {
+                    return
+                }
+                
+                googleErrorMessage = error.localizedDescription
+            }
+        }
     }
     
     

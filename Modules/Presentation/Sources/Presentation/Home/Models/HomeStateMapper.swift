@@ -19,7 +19,16 @@ struct HomeStateMapper {
         let calendar = calendar(for: profile)
         let window = makeWindow(
             selectedDay: selectedDay,
-            preferences: profile.preferences,
+            calendar: calendar
+        )
+        let timelineWakeupTime = time(
+            profile.preferences.wakeupTime,
+            on: selectedDay,
+            calendar: calendar
+        )
+        let timelineBedtime = time(
+            profile.preferences.sleepTime,
+            on: selectedDay,
             calendar: calendar
         )
         let tasksByID = Dictionary(uniqueKeysWithValues: tasks.map { ($0.id, $0) })
@@ -63,7 +72,8 @@ struct HomeStateMapper {
                 blocking: session.blocking,
                 status: session.status,
                 lane: placement.lane,
-                laneCount: placement.laneCount
+                laneCount: placement.laneCount,
+                showsCompletionPoints: session.firstCompletedAt == nil
             )
         }
 
@@ -83,6 +93,8 @@ struct HomeStateMapper {
             totalSessionCount: displayedSessions.count,
             taskAllocations: taskAllocations,
             timelineWindow: window,
+            timelineWakeupTime: timelineWakeupTime,
+            timelineBedtime: timelineBedtime,
             timelineZones: timelineZones,
             timelineItems: items
         )
@@ -92,20 +104,26 @@ struct HomeStateMapper {
         tasks: [AwanTask],
         zones: [Zone]
     ) -> [HomeTaskAllocationItem] {
-        let knownZoneIDs = Set(zones.map(\.id))
-        var allocations = zones.compactMap { zone -> HomeTaskAllocationItem? in
-            let count = tasks.filter { $0.zoneID == zone.id }.count
+        var emittedCategoryIDs = Set<UUID>()
+        let categorizedZones = zones.filter { zone in
+            guard let categoryID = zone.category?.id else { return false }
+            return emittedCategoryIDs.insert(categoryID).inserted
+        }
+        let knownCategoryIDs = Set(categorizedZones.compactMap(\.category?.id))
+        var allocations = categorizedZones.compactMap { zone -> HomeTaskAllocationItem? in
+            guard let categoryID = zone.category?.id else { return nil }
+            let count = tasks.filter { $0.category?.id == categoryID }.count
             guard count > 0 else { return nil }
             return HomeTaskAllocationItem(
-                id: .zone(zone.id),
+                id: .category(categoryID),
                 color: AppColors.runtime(hex: zone.color.hex),
                 taskCount: count
             )
         }
 
         let fallbackCount = tasks.filter { task in
-            guard let zoneID = task.zoneID else { return true }
-            return !knownZoneIDs.contains(zoneID)
+            guard let categoryID = task.category?.id else { return true }
+            return !knownCategoryIDs.contains(categoryID)
         }.count
         if fallbackCount > 0 {
             allocations.append(
@@ -215,26 +233,26 @@ struct HomeStateMapper {
 
     private func makeWindow(
         selectedDay: Date,
-        preferences: UserPreferences,
         calendar: Calendar
     ) -> HomeTimelineWindow {
-        let day = calendar.startOfDay(for: selectedDay)
-        let start = calendar.date(
-            bySettingHour: preferences.wakeupTime.hour,
-            minute: preferences.wakeupTime.minute,
-            second: 0,
-            of: day
-        ) ?? day
-        var end = calendar.date(
-            bySettingHour: preferences.sleepTime.hour,
-            minute: preferences.sleepTime.minute,
-            second: 0,
-            of: day
-        ) ?? day
-        if preferences.sleepTime <= preferences.wakeupTime {
-            end = calendar.date(byAdding: .day, value: 1, to: end) ?? end
-        }
+        let start = calendar.startOfDay(for: selectedDay)
+        let end = calendar.date(byAdding: .day, value: 1, to: start)
+            ?? start.addingTimeInterval(24 * 60 * 60)
         return HomeTimelineWindow(start: start, end: end)
+    }
+
+    private func time(
+        _ localTime: LocalTime,
+        on selectedDay: Date,
+        calendar: Calendar
+    ) -> Date {
+        let day = calendar.startOfDay(for: selectedDay)
+        return calendar.date(
+            bySettingHour: localTime.hour,
+            minute: localTime.minute,
+            second: 0,
+            of: day
+        ) ?? day
     }
 }
 

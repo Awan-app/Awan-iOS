@@ -27,10 +27,20 @@ struct DataAssembly: Assembly {
                     LocalUserProfileDataSource.self,
                     from: resolver
                 ),
-                remoteDataSource: Self.resolve(
-                    RemoteZoneDataSourceProtocol.self,
+                remoteTemplateDataSource: Self.resolve(
+                    RemoteTemplateDataSourceProtocol.self,
+                    from: resolver
+                ),
+                remoteTemplateOverrideDataSource: Self.resolve(
+                    RemoteTemplateOverrideDataSourceProtocol.self,
                     from: resolver
                 )
+            )
+        }
+        container.register(CategoryRepository.self) { resolver in
+            DefaultCategoryRepository(
+                localDataSource: Self.resolve(LocalCategoryDataSource.self, from: resolver),
+                remoteDataSource: Self.resolve(RemoteCategoryDataSource.self, from: resolver)
             )
         }
         container.register(TaskRepository.self) { resolver in
@@ -60,11 +70,24 @@ struct DataAssembly: Assembly {
         }
         container.register(GoalRepository.self) { resolver in
             DefaultGoalRepository(
-                localDataSource: Self.resolve(LocalGoalDataSource.self, from: resolver)
+                localDataSource: Self.resolve(LocalGoalDataSource.self, from: resolver),
+                remoteDataSource: Self.resolve(
+                    RemoteGoalDataSource.self,
+                    from: resolver
+                )
             )
         }
         container.register(GoalDecompositionRepository.self) { resolver in
-            DefaultGoalDecompositionRepository(remoteDataSource: Self.resolve(RemoteGoalDecompositionDataSource.self, from: resolver))
+            DefaultGoalDecompositionRepository(
+                remoteDataSource: Self.resolve(
+                    RemoteGoalDecompositionDataSource.self,
+                    from: resolver
+                ),
+                localProfileDataSource: Self.resolve(
+                    LocalUserProfileDataSource.self,
+                    from: resolver
+                )
+            )
         }
         .inObjectScope(.container)
 //        container.register(GoalDecompositionRepository.self) { resolver in
@@ -74,7 +97,6 @@ struct DataAssembly: Assembly {
         container.register(SessionRepository.self) { resolver in
             DefaultSessionRepository(
                 localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver),
-                localTaskDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver),
                 localProfileDataSource: Self.resolve(
                     LocalUserProfileDataSource.self,
                     from: resolver
@@ -90,20 +112,55 @@ struct DataAssembly: Assembly {
                 networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
             )
         }
+        container.register(RemoteTemplateOverrideDataSourceProtocol.self) { resolver in
+            RemoteTemplateOverrideDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
         container.register(TemplateRepository.self) { resolver in
             DefaultTemplateRepository(
                 remoteDataSource: Self.resolve(RemoteTemplateDataSourceProtocol.self, from: resolver),
                 localDataSource: Self.resolve(LocalTemplateDataSource.self, from: resolver)
             )
         }
-
+        container.register(TemplateOverrideRepository.self) { resolver in
+            DefaultTemplateOverrideRepository(
+                remoteDataSource: Self.resolve(RemoteTemplateOverrideDataSourceProtocol.self, from: resolver),
+                localDataSource: Self.resolve(LocalTemplateOverrideDataSource.self, from: resolver)
+            )
+        }
+        container.register(RemoteGamificationDataSource.self) { resolver in
+            DefaultRemoteGamificationDataSource(
+                networkService: Self.resolve(
+                    NetworkServiceProtocol.self,
+                    from: resolver
+                )
+            )
+        }
+        container.register(GamificationRepository.self) { resolver in
+            DefaultGamificationRepository(
+                remoteDataSource: Self.resolve(
+                    RemoteGamificationDataSource.self,
+                    from: resolver
+                ),
+                localProfileDataSource: Self.resolve(
+                    LocalUserProfileDataSource.self,
+                    from: resolver
+                )
+            )
+        }
+        .inObjectScope(.container)
         container.register(UserProfileRepository.self) { resolver in
             DefaultUserProfileRepository(
                 localDataSource: Self.resolve(
                     LocalUserProfileDataSource.self,
                     from: resolver
                 ),
-                remoteDataSource: Self.resolve(RemoteProfileDataSource.self, from: resolver)
+                remoteDataSource: Self.resolve(RemoteProfileDataSource.self, from: resolver),
+                remoteGamificationDataSource: Self.resolve(
+                    RemoteGamificationDataSource.self,
+                    from: resolver
+                )
             )
         }
         .inObjectScope(.container)
@@ -127,10 +184,16 @@ struct DataAssembly: Assembly {
         }
         .inObjectScope(.container)
 
+        container.register(LocalDataWiper.self) { [self] _ in
+            SwiftDataLocalDataWiper(modelContainer: self.modelContainer)
+        }
+        .inObjectScope(.container)
+
         container.register(AuthRepository.self) { resolver in
             AuthRepositoryImpl(
                 remoteDataSource: Self.resolve(AuthDataSource.self, from: resolver),
-                sessionDataSource: Self.resolve(AuthSessionDataSource.self, from: resolver)
+                sessionDataSource: Self.resolve(AuthSessionDataSource.self, from: resolver),
+                localDataWiper: Self.resolve(LocalDataWiper.self, from: resolver)
             )
         }
         .inObjectScope(.container)
@@ -149,6 +212,21 @@ struct DataAssembly: Assembly {
             )
         }
         .inObjectScope(.container)
+
+        container.register(AiTaskRemoteDataSource.self) { resolver in
+            DefaultAiTaskRemoteDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+
+        container.register(AiTaskRepository.self) { resolver in
+            DefaultAiTaskRepository(
+                remoteDataSource: Self.resolve(AiTaskRemoteDataSource.self, from: resolver),
+                remoteGoalDataSource: Self.resolve(RemoteGoalDataSource.self, from: resolver),
+                localTaskDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver),
+                localSessionDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver)
+            )
+        }
     }
 
     private func registerSchedulingDataSources(in container: Container) {
@@ -178,6 +256,10 @@ struct DataAssembly: Assembly {
         .inObjectScope(.container)
         container.register(LocalUserProfileDataSource.self) { _ in
             SwiftDataUserProfileDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+        container.register(LocalCategoryDataSource.self) { _ in
+            SwiftDataCategoryDataSource(modelContainer: modelContainer)
         }
         .inObjectScope(.container)
     }
@@ -213,6 +295,11 @@ struct DataAssembly: Assembly {
         }
         container.register(RemoteZoneDataSourceProtocol.self) { resolver in
             RemoteZoneDataSource(
+                networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
+            )
+        }
+        container.register(RemoteCategoryDataSource.self) { resolver in
+            DefaultRemoteCategoryDataSource(
                 networkService: Self.resolve(NetworkServiceProtocol.self, from: resolver)
             )
         }

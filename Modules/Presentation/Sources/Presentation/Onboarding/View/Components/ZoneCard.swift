@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Common
+import Domain
 
 extension SuggestedZone {
     var uiColor: Color {
@@ -79,19 +80,22 @@ struct AddZoneButton: View {
     }
 }
 
-//#Preview {
-//    VStack(spacing: 12) {
-//        ZoneCard(
-//            zone: SuggestedZone(
-//                id: UUID(),
-//                name: "Study",
-//                startTime: "7:00 AM",
-//                endTime: "9:30 AM",
-//                color: .teal
-//            ),
-//            onDelete: {}
-//        )
-//        AddZoneButton(onTap: {})
-//    }
-//    .padding()
-//}
+#Preview {
+    VStack(spacing: 12) {
+        ZoneCard(
+            zone: SuggestedZone(
+                id: UUID(),
+                name: "Study",
+                startTime: "7:00 AM",
+                endTime: "9:30 AM",
+                colorRed: 0.5,
+                colorGreen: 0.5,
+                colorBlue: 0.5,
+                category: TaskCategory(id: UUID(), name: "Learning")
+            ),
+            onDelete: {}
+        )
+        AddZoneButton(onTap: {})
+    }
+    .padding()
+}

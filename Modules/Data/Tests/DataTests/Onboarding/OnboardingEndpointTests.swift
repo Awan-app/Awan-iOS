@@ -7,7 +7,10 @@ final class OnboardingEndpointTests: XCTestCase {
     func testCompleteEndpointUsesAuthenticatedOnboardingRoute() throws {
         let endpoint = OnboardingEndpoint.complete(makeRequest())
 
-        XCTAssertEqual(endpoint.fullURL?.absoluteString, "http://localhost:8080/api/v1/onboarding")
+        XCTAssertEqual(
+            endpoint.fullURL?.absoluteString,
+            "\(NetworkConfiguration.apiBaseURL)/onboarding"
+        )
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertTrue(endpoint.requiresAuthentication)
         XCTAssertNil(endpoint.queryParameters)

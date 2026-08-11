@@ -7,8 +7,8 @@ final class ScheduleEngineTests: XCTestCase {
 
     func testEngineSchedulesAfterUserFixedSessionWithoutMovingIt() throws {
         let zone = try makeZone(startHour: 9, endHour: 17)
-        let fixedTask = try makeTask(id: uuid(1), zoneID: zone.id, minutes: 60)
-        let taskToSchedule = try makeTask(id: uuid(2), zoneID: zone.id, minutes: 60)
+        let fixedTask = try makeTask(id: uuid(1), category: zone.category, minutes: 60)
+        let taskToSchedule = try makeTask(id: uuid(2), category: zone.category, minutes: 60)
         let fixedRange = try TimeRange(
             start: date(day: 17, hour: 9),
             end: date(day: 17, hour: 10)
@@ -41,10 +41,10 @@ final class ScheduleEngineTests: XCTestCase {
 
     func testEngineReturnsApprovalCandidatesInsteadOfSchedulingTomorrowSilently() throws {
         let zone = try makeZone(startHour: 9, endHour: 17)
-        let occupyingTask = try makeTask(id: uuid(1), zoneID: zone.id, minutes: 450)
+        let occupyingTask = try makeTask(id: uuid(1), category: zone.category, minutes: 450)
         let overflowTask = try makeTask(
             id: uuid(2),
-            zoneID: zone.id,
+            category: zone.category,
             minutes: 60,
             isSplittable: true
         )
@@ -83,9 +83,9 @@ final class ScheduleEngineTests: XCTestCase {
 
     func testEngineAcceptsOverlappingUserFixedSessionsAndSchedulesAroundTheirUnion() throws {
         let zone = try makeZone(startHour: 9, endHour: 17)
-        let firstFixedTask = try makeTask(id: uuid(1), zoneID: zone.id, minutes: 120)
-        let secondFixedTask = try makeTask(id: uuid(2), zoneID: zone.id, minutes: 120)
-        let taskToSchedule = try makeTask(id: uuid(3), zoneID: zone.id, minutes: 60)
+        let firstFixedTask = try makeTask(id: uuid(1), category: zone.category, minutes: 120)
+        let secondFixedTask = try makeTask(id: uuid(2), category: zone.category, minutes: 120)
+        let taskToSchedule = try makeTask(id: uuid(3), category: zone.category, minutes: 60)
         let sessions = [
             Session(
                 id: uuid(20),
@@ -128,10 +128,10 @@ final class ScheduleEngineTests: XCTestCase {
 
     func testDependencyIsScheduledAfterItsPredecessor() throws {
         let zone = try makeZone(startHour: 9, endHour: 17)
-        let predecessor = try makeTask(id: uuid(1), zoneID: zone.id, minutes: 60)
+        let predecessor = try makeTask(id: uuid(1), category: zone.category, minutes: 60)
         let successor = try makeTask(
             id: uuid(2),
-            zoneID: zone.id,
+            category: zone.category,
             minutes: 60,
             dependencyIDs: [predecessor.id]
         )
@@ -156,13 +156,13 @@ final class ScheduleEngineTests: XCTestCase {
         let secondID = uuid(2)
         let first = try makeTask(
             id: firstID,
-            zoneID: zone.id,
+            category: zone.category,
             minutes: 60,
             dependencyIDs: [secondID]
         )
         let second = try makeTask(
             id: secondID,
-            zoneID: zone.id,
+            category: zone.category,
             minutes: 60,
             dependencyIDs: [firstID]
         )
@@ -189,29 +189,66 @@ final class ScheduleEngineTests: XCTestCase {
         XCTAssertEqual(range.durationMinutes, 180)
     }
 
+    func testEngineUsesEarliestZoneWhenMultipleZonesShareCategory() throws {
+        let category = TaskCategory(id: uuid(11), name: "Focus")
+        let laterZone = try Zone(
+            id: uuid(12),
+            name: "Afternoon Focus",
+            color: ZoneColor(hex: "#112233"),
+            startTime: LocalTime(hour: 13, minute: 0),
+            endTime: LocalTime(hour: 17, minute: 0),
+            category: category
+        )
+        let earlierZone = try Zone(
+            id: uuid(13),
+            name: "Morning Focus",
+            color: ZoneColor(hex: "#445566"),
+            startTime: LocalTime(hour: 9, minute: 0),
+            endTime: LocalTime(hour: 11, minute: 0),
+            category: category
+        )
+        let task = try makeTask(id: uuid(1), category: category, minutes: 60)
+        let snapshot = SchedulingSnapshot(
+            planningDay: date(day: 17),
+            timeZone: timeZone,
+            zones: [laterZone, earlierZone],
+            goals: [],
+            tasks: [task],
+            sessions: []
+        )
+
+        let draft = try XCTUnwrap(
+            DefaultScheduleEngine().makePlan(for: snapshot).todaySessionDrafts.first
+        )
+
+        XCTAssertEqual(draft.zoneID, earlierZone.id)
+        XCTAssertEqual(draft.timeRange.start, date(day: 17, hour: 9))
+    }
+
     private func makeZone(startHour: Int, endHour: Int) throws -> Zone {
         try Zone(
             id: uuid(10),
             name: "Work",
             color: ZoneColor(hex: "#112233"),
             startTime: LocalTime(hour: startHour, minute: 0),
-            endTime: LocalTime(hour: endHour, minute: 0)
+            endTime: LocalTime(hour: endHour, minute: 0),
+            category: TaskCategory(id: uuid(11), name: "Work")
         )
     }
 
     private func makeTask(
         id: UUID,
-        zoneID: UUID,
+        category: TaskCategory?,
         minutes: Int,
         isSplittable: Bool = false,
         dependencyIDs: Set<UUID> = []
     ) throws -> AwanTask {
         try AwanTask(
             id: id,
-            zoneID: zoneID,
             duration: TaskDuration(minutes: minutes),
             isSplittable: isSplittable,
-            dependencyIDs: dependencyIDs
+            dependencyIDs: dependencyIDs,
+            category: category
         )
     }
 
