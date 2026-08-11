@@ -73,8 +73,9 @@ public final class DefaultRemoteGamificationDataSource:
     }
 
     public func getStoreInventory() async throws -> [InventoryItemResponseDTO] {
-        try await networkService.request(
-            GamificationEndpoint.getStoreInventory
+        try await networkService.request(GamificationEndpoint.getStoreInventory)
+    }
+    
     public func getActivityDates(
         startDate: String,
         endDate: String

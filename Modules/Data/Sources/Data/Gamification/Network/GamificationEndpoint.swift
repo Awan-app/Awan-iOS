@@ -92,7 +92,7 @@ enum GamificationEndpoint: APIEndpoint {
              .getStoreInventory:
             return nil
         case let .activityDates(startDate, endDate):
-            ["startDate": startDate, "endDate": endDate]
+            return ["startDate": startDate, "endDate": endDate]
         }
     }
 
