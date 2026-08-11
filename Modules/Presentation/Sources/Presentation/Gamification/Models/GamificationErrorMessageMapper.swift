@@ -18,6 +18,9 @@ enum GamificationErrorMessageMapper {
             return L10n.DailyWheel.errorInvalidConfiguration
         case .unavailable:
             return L10n.DailyWheel.errorUnavailable
+        case .invalidActivityDate,
+             .invalidActivityRange:
+            return L10n.DailyWheel.errorUnavailable
         }
     }
 }

@@ -38,6 +38,46 @@ public final class DefaultGamificationRepository: GamificationRepository {
         }
     }
 
+    public func fetchActivityDays(
+        from startDay: ActivityDay,
+        through endDay: ActivityDay
+    ) async throws -> Set<ActivityDay> {
+        do {
+            let calendar = ActivityDayMapper.gregorianCalendar
+
+            let requestedStart = try ActivityDayMapper.date(from: startDay)
+            let requestedEnd = try ActivityDayMapper.date(from: endDay)
+
+            guard requestedStart <= requestedEnd else {
+                throw GamificationError.invalidActivityRange
+            }
+
+            guard let dayDifference = calendar.dateComponents(
+                [.day],
+                from: requestedStart,
+                to: requestedEnd
+            ).day else {
+                throw GamificationError.invalidActivityRange
+            }
+
+            let inclusiveDayCount = dayDifference + 1
+
+            guard inclusiveDayCount <= 31 else {
+                throw GamificationError.invalidActivityRange
+            }
+
+            let response = try await remoteDataSource.getActivityDates(
+                startDate: ActivityDayMapper.string(from: startDay),
+                endDate: ActivityDayMapper.string(from: endDay)
+            )
+
+            return try ActivityDayMapper.map(response)
+
+        } catch {
+            throw map(error)
+        }
+    }
+
     private func map(_ error: any Error) -> any Error {
         if error is CancellationError {
             return CancellationError()

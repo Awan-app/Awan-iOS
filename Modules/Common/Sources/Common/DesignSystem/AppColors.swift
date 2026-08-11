@@ -60,6 +60,14 @@ public enum AppColors {
         )
     }
 
+    public static var streakGradient: LinearGradient {
+        LinearGradient(
+            colors: [reward, warning],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+
     public static func runtime(hex: String) -> Color {
         let cleaned = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         guard cleaned.count == 6,

@@ -983,6 +983,13 @@ public enum L10n {
                 table: "Localizable"
             )
         }
+        public static var streakDay: String {
+            L10n.currentBundle.localizedString(
+                forKey: "calendar.streak_day",
+                value: nil,
+                table: "Localizable"
+            )
+        }
     }
 
     public enum Profile {
