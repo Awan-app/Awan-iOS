@@ -28,6 +28,8 @@ public struct ProfileInventoryView: View {
             content
         }
         .navigationTitle(L10n.Profile.inventory)
+        .foregroundColor(AppColors.brandDarkBlue)
+        .font( AppFonts.titleBlack)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
         .toolbar {

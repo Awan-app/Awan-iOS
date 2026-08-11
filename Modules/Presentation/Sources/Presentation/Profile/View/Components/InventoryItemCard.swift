@@ -20,6 +20,7 @@ public struct InventoryItemCard: View {
     public let symbolName: String
     public let state: InventoryItemCardState
     public let onTap: (() -> Void)?
+    public let onCheckmarkTap: (() -> Void)?
 
     public init(
         title: String,
@@ -27,7 +28,8 @@ public struct InventoryItemCard: View {
         imageURL: String? = nil,
         symbolName: String = "sparkles",
         state: InventoryItemCardState = .owned,
-        onTap: (() -> Void)? = nil
+        onTap: (() -> Void)? = nil,
+        onCheckmarkTap: (() -> Void)? = nil
     ) {
         self.title = title
         self.category = category
@@ -35,12 +37,14 @@ public struct InventoryItemCard: View {
         self.symbolName = symbolName
         self.state = state
         self.onTap = state == .locked ? nil : onTap
+        self.onCheckmarkTap = onCheckmarkTap
     }
 
     public init(
         item: MarketplaceItem,
         overrideState: InventoryItemCardState? = nil,
-        onTap: (() -> Void)? = nil
+        onTap: (() -> Void)? = nil,
+        onCheckmarkTap: (() -> Void)? = nil
     ) {
         let cardState: InventoryItemCardState
         if let overrideState {
@@ -62,13 +66,15 @@ public struct InventoryItemCard: View {
             imageURL: item.imageURL,
             symbolName: item.symbolName,
             state: cardState,
-            onTap: onTap
+            onTap: onTap,
+            onCheckmarkTap: onCheckmarkTap
         )
     }
 
     public init(
         equipped: EquippedItem,
-        onTap: (() -> Void)? = nil
+        onTap: (() -> Void)? = nil,
+        onCheckmarkTap: (() -> Void)? = nil
     ) {
         let item = MarketplaceItem(storeItem: equipped.item)
         self.init(
@@ -77,7 +83,8 @@ public struct InventoryItemCard: View {
             imageURL: item.imageURL,
             symbolName: item.symbolName,
             state: .equipped,
-            onTap: onTap
+            onTap: onTap,
+            onCheckmarkTap: onCheckmarkTap
         )
     }
 
@@ -97,7 +104,9 @@ public struct InventoryItemCard: View {
             AppDepthSurface(
                 shape: .roundedRectangle(cornerRadius: 16),
                 surfaceColor: AppColors.surface,
-                borderColor: state == .equipped ? AppColors.accentGreen.opacity(0.40) : AppColors.outline.opacity(0.12),
+                borderColor: state == .equipped ? AppColors.accentGreen.opacity(0.40)
+                :state == .owned ? AppColors.accentBlue.opacity(0.40)
+                :AppColors.outline.opacity(0.12),
                 depthColor: state == .equipped ? AppColors.accentGreenDepth.opacity(0.35) : AppColors.outline.opacity(0.16),
                 borderWidth: 1.5,
                 depthOffset: 4,
@@ -111,10 +120,21 @@ public struct InventoryItemCard: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 80)
+                .frame(height: 76)
                 .overlay(alignment: .topTrailing) {
                     if state == .equipped {
-                        checkBadge
+                        if let onCheckmarkTap {
+                            Button {
+                                onCheckmarkTap()
+                            } label: {
+                                checkBadge
+                            }
+                            .buttonStyle(.plain)
+                            .offset(x: 4, y: -4)
+                        } else {
+                            checkBadge
+                                .offset(x: 4, y: -4)
+                        }
                     }
                 }
             }
@@ -200,7 +220,7 @@ public struct InventoryItemCard: View {
 #Preview("Inventory Item Card") {
     HStack(spacing: 16) {
         InventoryItemCard(
-            title: "Cloud Frame with Very Long Title",
+            title: "Cloud Frame",
             category: "Frame",
             symbolName: "cloud.fill",
             state: .equipped
