@@ -14,7 +14,7 @@ public struct ProfileInventoryView: View {
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
+        GridItem(.flexible(), spacing: 12),
     ]
 
     public init(viewModel: ProfileInventoryViewModel) {
@@ -27,12 +27,15 @@ public struct ProfileInventoryView: View {
 
             content
         }
-        .navigationTitle(L10n.Profile.inventory)
-        .foregroundColor(AppColors.brandDarkBlue)
-        .font( AppFonts.titleBlack)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text(L10n.Profile.inventory)
+                    .font(AppFonts.titleBlack)
+                    .foregroundStyle(AppColors.brandDarkBlue)
+            }
+
             ToolbarItem(placement: .topBarTrailing) {
                 AwanMascotView(state: .normal)
                     .frame(width: 42, height: 32)
@@ -41,10 +44,12 @@ public struct ProfileInventoryView: View {
         .task {
             viewModel.send(.appeared)
         }
-        .sheet(item: Binding(
-            get: { viewModel.selectedItem },
-            set: { if $0 == nil { viewModel.send(.dismissDetail) } }
-        )) { item in
+        .sheet(
+            item: Binding(
+                get: { viewModel.selectedItem },
+                set: { if $0 == nil { viewModel.send(.dismissDetail) } }
+            )
+        ) { item in
             MarketplaceItemDetailSheet(
                 item: item,
                 userPoints: 0,
