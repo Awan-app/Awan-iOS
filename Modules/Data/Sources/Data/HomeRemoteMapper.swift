@@ -1,9 +1,18 @@
 import Domain
 import Foundation
 
-enum RemoteDomainMappingError: Error {
+enum RemoteDomainMappingError: Error, LocalizedError {
     case missingField(String)
     case invalidValue(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .missingField(let field):
+            return "Missing required field: \(field)"
+        case .invalidValue(let detail):
+            return "Invalid value: \(detail)"
+        }
+    }
 }
 
 enum HomeRemoteMapper {
@@ -51,7 +60,7 @@ enum HomeRemoteMapper {
             ),
             completedAt: try dto.completedAt.map(parseISO8601Date),
             goalID: dto.goalID,
-            duration: TaskDuration(minutes: dto.estimatedDuration ?? defaultDuration),
+            duration: try TaskDuration(minutes: max(dto.estimatedDuration ?? defaultDuration, 1)),
             isSplittable: dto.isSplittable,
             mandatory: dto.mandatory,
             estimatedPoints: dto.estimatedPoints,
@@ -170,19 +179,31 @@ enum HomeRemoteMapper {
         dateTimeFormatter(timeZoneID: timeZoneID).string(from: date)
     }
 
+
     private static func taskStatus(
         _ raw: String,
         completedAt: String?
     ) throws -> TaskStatus {
+        // If the task has a completion timestamp, it is always completed.
         if completedAt != nil {
             return .completed
         }
 
         return switch raw.uppercased() {
-        case "DRAFTED": .drafted
-        case "ACTIVE", "SCHEDULED", "PENDING", "IN_PROGRESS", "COMPLETED": .active
-        case "CANCELLED": .cancelled
-        default: throw RemoteDomainMappingError.invalidValue("task.status.\(raw)")
+        case "DRAFTED", "DRAFT":
+            .drafted
+
+        case "ACTIVE", "IN_PROGRESS", "INPROGRESS", "DOING", "SCHEDULED", "PENDING", "TODO", "UNSCHEDULED", "PLANNED", "CREATED", "NEW", "NOT_STARTED":
+            .active
+
+        case "COMPLETED", "DONE", "FINISHED":
+            .completed
+
+        case "CANCELLED", "CANCELED", "ABORTED":
+            .cancelled
+
+        default:
+            throw RemoteDomainMappingError.invalidValue("task.status.\(raw)")
         }
     }
 

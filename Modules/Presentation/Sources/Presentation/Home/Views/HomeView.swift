@@ -7,6 +7,7 @@ struct HomeView: View {
     @State private var rewardFlightSessionID: UUID?
     @State private var animatedPoints: Int?
     @State private var pointsPulse = 0
+    @State private var pointsAnimationTask: Task<Void, Never>?
     
     init(viewModel: HomeViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -38,6 +39,7 @@ struct HomeView: View {
         .toolbar(.hidden, for: .navigationBar)
         .toolbarBackground(.hidden, for: .navigationBar)
         .task { viewModel.send(.appeared) }
+        .onAppear { viewModel.send(.appeared) }
         .sheet(item: selectedSessionBinding) { detail in
             HomeSessionActionSheet(
                 item: detail.item,
@@ -82,6 +84,9 @@ struct HomeView: View {
                             )
                         },
                         onFinished: {
+                            pointsAnimationTask?.cancel()
+                            pointsAnimationTask = nil
+                            animatedPoints = nil
                             rewardFlightSessionID = nil
 
                             if let reward = viewModel.state.completionReward,
@@ -225,30 +230,40 @@ struct HomeView: View {
         from oldValue: Int,
         to newValue: Int
     ) {
-        Task { @MainActor in
+        pointsAnimationTask?.cancel()
+
+        pointsAnimationTask = Task { @MainActor in
+            defer {
+                if !Task.isCancelled {
+                    animatedPoints = nil
+                }
+            }
+
             let difference = newValue - oldValue
 
             guard difference > 0 else {
-                animatedPoints = newValue
+                if !Task.isCancelled {
+                    pointsPulse += 1
+                }
                 return
             }
 
             let steps = min(difference, 20)
 
             for step in 1...steps {
+                guard !Task.isCancelled else { return }
+
                 let progress = Double(step) / Double(steps)
+                animatedPoints = oldValue + Int(Double(difference) * progress)
 
-                animatedPoints =
-                    oldValue + Int(
-                        Double(difference) * progress
-                    )
-
-                try? await Task.sleep(
-                    for: .milliseconds(15)
-                )
+                do {
+                    try await Task.sleep(for: .milliseconds(15))
+                } catch {
+                    return
+                }
             }
 
-            animatedPoints = newValue
+            guard !Task.isCancelled else { return }
             pointsPulse += 1
         }
     }

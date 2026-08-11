@@ -1000,6 +1000,13 @@ public enum L10n {
         public static var inventory: String { text("profile.inventory") }
         public static var inventorySubtitle: String { text("profile.inventory_subtitle") }
         public static var inventoryPlaceholder: String { text("profile.inventory_placeholder") }
+        public static var equippedItems: String { text("profile.equipped_items") }
+        public static var ownedItems: String { text("profile.owned_items") }
+        public static var filterOwned: String { text("profile.filter_owned") }
+        public static var emptyInventoryTitle: String { text("profile.empty_inventory_title") }
+        public static var emptyInventorySubtitle: String { text("profile.empty_inventory_subtitle") }
+        public static var lockedItems: String { text("profile.locked_items") }
+        public static var myCollection: String { text("profile.my_collection") }
         public static var personalInfo: String {
             L10n.currentBundle.localizedString(forKey: "profile.personal_info", value: nil, table: "Localizable")
         }
@@ -1268,6 +1275,9 @@ public enum L10n {
         public static var emptySubtitle: String { text("marketplace.empty_subtitle") }
         public static var clearFilters: String { text("marketplace.clear_filters") }
         public static var needMorePts: String { text("marketplace.need_more_pts") }
+        public static func needMorePts(_ count: Int) -> String {
+            String(format: text("marketplace.need_more_pts"), count)
+        }
         public static var earnMoreHint: String { text("marketplace.earn_more_hint") }
         public static var itsYours: String { text("marketplace.its_yours") }
         public static var ownedHint: String { text("marketplace.owned_hint") }
@@ -1275,6 +1285,12 @@ public enum L10n {
         public static var equippedHint: String { text("marketplace.equipped_hint") }
         public static var lockedHint: String { text("marketplace.locked_hint") }
         public static var progressLabel: String { text("marketplace.progress_label") }
+        public static var retry: String { text("marketplace.retry") }
+        public static var purchaseSuccessTitle: String { text("marketplace.purchase_success_title") }
+        public static var purchaseFailedTitle: String { text("marketplace.purchase_failed_title") }
+        public static var itemNotOwned: String { text("marketplace.item_not_owned") }
+        public static var equip: String { text("marketplace.equip") }
+        public static var unequip: String { text("marketplace.unequip") }
 
         private static func text(_ key: String) -> String {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")

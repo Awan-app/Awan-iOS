@@ -5,134 +5,324 @@
     "profile.points": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "النقاط" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Points" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "النقاط"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Points"
+          }
+        }
       }
     },
     "profile.streak": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "سلسلة الأيام" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Day streak" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سلسلة الأيام"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Day streak"
+          }
+        }
       }
     },
     "profile.max_streak": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "أطول سلسلة" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Max streak" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أطول سلسلة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max streak"
+          }
+        }
       }
     },
     "profile.more": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "المزيد" } },
-        "en": { "stringUnit": { "state": "translated", "value": "MORE" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المزيد"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MORE"
+          }
+        }
       }
     },
     "profile.personalization": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "التخصيص" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Personalization" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التخصيص"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personalization"
+          }
+        }
       }
     },
     "profile.settings": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "الإعدادات" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Settings" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الإعدادات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        }
       }
     },
     "profile.about_awan": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "عن أوان" } },
-        "en": { "stringUnit": { "state": "translated", "value": "About Awan" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عن أوان"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About Awan"
+          }
+        }
       }
     },
     "profile.loading": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "جارٍ تحميل ملفك الشخصي" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Loading your profile" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جارٍ تحميل ملفك الشخصي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading your profile"
+          }
+        }
       }
     },
     "profile.load_failure": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "تعذر تحميل معلوماتك. حاول مرة أخرى." } },
-        "en": { "stringUnit": { "state": "translated", "value": "We couldn't load your information. Please try again." } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذر تحميل معلوماتك. حاول مرة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We couldn't load your information. Please try again."
+          }
+        }
       }
     },
     "profile.update_failure_title": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "تعذر حفظ التغييرات" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Couldn't Save Changes" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذر حفظ التغييرات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't Save Changes"
+          }
+        }
       }
     },
     "profile.version": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "الإصدار" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Version" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الإصدار"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version"
+          }
+        }
       }
     },
     "profile.build": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "رقم البناء" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Build" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رقم البناء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Build"
+          }
+        }
       }
     },
     "profile.inventory": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "المقتنيات" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Inventory" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المقتنيات"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inventory"
+          }
+        }
       }
     },
     "profile.inventory_subtitle": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "اعرض العناصر التي جمعتها" } },
-        "en": { "stringUnit": { "state": "translated", "value": "View the items you've collected" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اعرض العناصر التي جمعتها"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View the items you've collected"
+          }
+        }
       }
     },
     "profile.inventory_placeholder": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "ستظهر مقتنياتك هنا قريبًا." } },
-        "en": { "stringUnit": { "state": "translated", "value": "Your collected items will appear here soon." } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ستظهر مقتنياتك هنا قريبًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your collected items will appear here soon."
+          }
+        }
       }
     },
     "streak_celebration.day_streak": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "أيام متتالية" } },
-        "en": { "stringUnit": { "state": "translated", "value": "day streak" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أيام متتالية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "day streak"
+          }
+        }
       }
     },
     "streak_celebration.on_fire": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "أنت متألق!" } },
-        "en": { "stringUnit": { "state": "translated", "value": "You're on fire!" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أنت متألق!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're on fire!"
+          }
+        }
       }
     },
     "streak_celebration.same_time_tomorrow": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "لا يمكن إيقافك. نفس الموعد غدًا؟" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Unstoppable. Same time tomorrow?" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يمكن إيقافك. نفس الموعد غدًا؟"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unstoppable. Same time tomorrow?"
+          }
+        }
       }
     },
     "streak_celebration.dismiss": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "إغلاق الاحتفال" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Dismiss celebration" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إغلاق الاحتفال"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dismiss celebration"
+          }
+        }
       }
     },
     "streak_celebration.days_streak": {
@@ -8272,6 +8462,23 @@
         }
       }
     },
+    "marketplace.item_not_owned": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أنت لا تمتلك هذا العنصر."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You don't own this item."
+          }
+        }
+      }
+    },
     "marketplace.not_owned_desc": {
       "extractionState": "manual",
       "localizations": {
@@ -8531,10 +8738,16 @@
       "extractionState": "manual",
       "localizations": {
         "ar": {
-          "stringUnit": { "state": "translated", "value": "باقيلك %lld pts" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "باقيلك %lld pts"
+          }
         },
         "en": {
-          "stringUnit": { "state": "translated", "value": "%lld pts to go" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pts to go"
+          }
         }
       }
     },
@@ -8542,10 +8755,16 @@
       "extractionState": "manual",
       "localizations": {
         "ar": {
-          "stringUnit": { "state": "translated", "value": "أكمل مهامك وارجع تشتريه!" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "أكمل مهامك وارجع تشتريه!"
+          }
         },
         "en": {
-          "stringUnit": { "state": "translated", "value": "Complete your tasks and come back for it!" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete your tasks and come back for it!"
+          }
         }
       }
     },
@@ -8553,10 +8772,16 @@
       "extractionState": "manual",
       "localizations": {
         "ar": {
-          "stringUnit": { "state": "translated", "value": "ده بالفعل ملكك" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "ده بالفعل ملكك"
+          }
         },
         "en": {
-          "stringUnit": { "state": "translated", "value": "Already yours" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Already yours"
+          }
         }
       }
     },
@@ -8564,10 +8789,16 @@
       "extractionState": "manual",
       "localizations": {
         "ar": {
-          "stringUnit": { "state": "translated", "value": "جهّزه واستمتع بيه في أي وقت" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "جهّزه واستمتع بيه في أي وقت"
+          }
         },
         "en": {
-          "stringUnit": { "state": "translated", "value": "Equip it and enjoy it anytime" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Equip it and enjoy it anytime"
+          }
         }
       }
     },
@@ -8575,10 +8806,16 @@
       "extractionState": "manual",
       "localizations": {
         "ar": {
-          "stringUnit": { "state": "translated", "value": "شغّال دلوقتي" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "شغّال دلوقتي"
+          }
         },
         "en": {
-          "stringUnit": { "state": "translated", "value": "Active right now" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active right now"
+          }
         }
       }
     },
@@ -8586,10 +8823,16 @@
       "extractionState": "manual",
       "localizations": {
         "ar": {
-          "stringUnit": { "state": "translated", "value": "العنصر ده هو الـ active بتاعك حالياً" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "العنصر ده هو الـ active بتاعك حالياً"
+          }
         },
         "en": {
-          "stringUnit": { "state": "translated", "value": "This item is your current active selection" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "This item is your current active selection"
+          }
         }
       }
     },
@@ -8597,10 +8840,16 @@
       "extractionState": "manual",
       "localizations": {
         "ar": {
-          "stringUnit": { "state": "translated", "value": "أكمل مهامك عشان يتفتحلك" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "أكمل مهامك عشان يتفتحلك"
+          }
         },
         "en": {
-          "stringUnit": { "state": "translated", "value": "Complete your tasks to unlock this item" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete your tasks to unlock this item"
+          }
         }
       }
     },
@@ -8608,193 +8857,663 @@
       "extractionState": "manual",
       "localizations": {
         "ar": {
-          "stringUnit": { "state": "translated", "value": "تقدمك" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "تقدمك"
+          }
         },
         "en": {
-          "stringUnit": { "state": "translated", "value": "Your progress" }
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your progress"
+          }
         }
       }
     },
     "daily_wheel.title": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "هدية اليوم" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Daily Gift" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هدية اليوم"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daily Gift"
+          }
+        }
       }
     },
     "daily_wheel.subtitle": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "لف العجلة واكتشف مكافأتك" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Spin the wheel and reveal your reward" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لف العجلة واكتشف مكافأتك"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spin the wheel and reveal your reward"
+          }
+        }
       }
     },
     "daily_wheel.loading": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "نجهز هديتك اليومية…" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Preparing your daily gift…" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نجهز هديتك اليومية…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing your daily gift…"
+          }
+        }
       }
     },
     "daily_wheel.gift": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "هدية" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Gift" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هدية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gift"
+          }
+        }
       }
     },
     "daily_wheel.open_gift": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "افتح هدية اليوم" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Open today’s gift" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "افتح هدية اليوم"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open today’s gift"
+          }
+        }
       }
     },
     "daily_wheel.tap_to_spin": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "اضغط على العجلة لتدورها" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Tap the wheel to spin" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اضغط على العجلة لتدورها"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap the wheel to spin"
+          }
+        }
       }
     },
     "daily_wheel.spin": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "دور العجلة" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Spin the wheel" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دور العجلة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spin the wheel"
+          }
+        }
       }
     },
     "daily_wheel.choosing_reward": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "نختار مكافأتك…" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Choosing your reward…" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نختار مكافأتك…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choosing your reward…"
+          }
+        }
       }
     },
     "daily_wheel.almost_there": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "قربنا…" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Almost there…" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قربنا…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Almost there…"
+          }
+        }
       }
     },
     "daily_wheel.you_won": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "كسبت!" } },
-        "en": { "stringUnit": { "state": "translated", "value": "You won!" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كسبت!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You won!"
+          }
+        }
       }
     },
     "daily_wheel.already_claimed": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "استلمت هدية اليوم" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Today’s gift is claimed" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "استلمت هدية اليوم"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today’s gift is claimed"
+          }
+        }
       }
     },
     "daily_wheel.todays_reward": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "مكافأة اليوم" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Today’s reward" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مكافأة اليوم"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today’s reward"
+          }
+        }
       }
     },
     "daily_wheel.gift_claimed": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "تم استلام مكافأتك" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Your reward was collected" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم استلام مكافأتك"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your reward was collected"
+          }
+        }
       }
     },
     "daily_wheel.come_back_tomorrow": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "ارجع بكرة لهدية جديدة" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Come back tomorrow for another gift" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ارجع بكرة لهدية جديدة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Come back tomorrow for another gift"
+          }
+        }
       }
     },
     "daily_wheel.item_added": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "تمت إضافة الهدية لمجموعتك" } },
-        "en": { "stringUnit": { "state": "translated", "value": "The gift was added to your collection" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تمت إضافة الهدية لمجموعتك"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The gift was added to your collection"
+          }
+        }
       }
     },
     "daily_wheel.awesome": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "رائع!" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Awesome!" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رائع!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Awesome!"
+          }
+        }
       }
     },
     "daily_wheel.dismiss": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "إغلاق نتيجة الهدية" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Dismiss gift result" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إغلاق نتيجة الهدية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dismiss gift result"
+          }
+        }
       }
     },
     "daily_wheel.could_not_load": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "تعذر فتح هدية اليوم" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Couldn’t open today’s gift" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذر فتح هدية اليوم"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t open today’s gift"
+          }
+        }
       }
     },
     "daily_wheel.retry": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "حاول مرة أخرى" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Try again" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حاول مرة أخرى"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        }
       }
     },
     "daily_wheel.stars_awarded": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "%d نجمة" } },
-        "en": { "stringUnit": { "state": "translated", "value": "%d stars" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d نجمة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d stars"
+          }
+        }
       }
     },
     "daily_wheel.new_balance": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "رصيدك الآن %d نجمة" } },
-        "en": { "stringUnit": { "state": "translated", "value": "Your new balance is %d stars" } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رصيدك الآن %d نجمة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your new balance is %d stars"
+          }
+        }
       }
     },
     "daily_wheel.error_already_claimed": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "استلمت هدية اليوم بالفعل." } },
-        "en": { "stringUnit": { "state": "translated", "value": "Today’s gift has already been claimed." } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "استلمت هدية اليوم بالفعل."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today’s gift has already been claimed."
+          }
+        }
       }
     },
     "daily_wheel.error_authentication_failed": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "سجّل الدخول مرة أخرى لاستلام هديتك اليومية." } },
-        "en": { "stringUnit": { "state": "translated", "value": "Please sign in again to claim your daily gift." } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سجّل الدخول مرة أخرى لاستلام هديتك اليومية."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please sign in again to claim your daily gift."
+          }
+        }
       }
     },
     "daily_wheel.error_user_not_found": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "تعذر العثور على ملفك الشخصي." } },
-        "en": { "stringUnit": { "state": "translated", "value": "Your profile could not be found." } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذر العثور على ملفك الشخصي."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your profile could not be found."
+          }
+        }
       }
     },
     "daily_wheel.error_invalid_configuration": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "عجلة الهدايا غير متاحة مؤقتًا." } },
-        "en": { "stringUnit": { "state": "translated", "value": "The daily wheel is temporarily unavailable." } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عجلة الهدايا غير متاحة مؤقتًا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The daily wheel is temporarily unavailable."
+          }
+        }
       }
     },
     "daily_wheel.error_unavailable": {
       "extractionState": "manual",
       "localizations": {
-        "ar": { "stringUnit": { "state": "translated", "value": "تعذر تحميل هدية اليوم. حاول مرة أخرى." } },
-        "en": { "stringUnit": { "state": "translated", "value": "We couldn’t load today’s gift. Please try again." } }
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذر تحميل هدية اليوم. حاول مرة أخرى."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We couldn’t load today’s gift. Please try again."
+          }
+        }
+      }
+    },
+    "marketplace.equip": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تفعيل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Equip"
+          }
+        }
+      }
+    },
+    "marketplace.unequip": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إلغاء التفعيل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unequip"
+          }
+        }
+      }
+    },
+    "profile.equipped_items": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العناصر المفعّلة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Equipped Items"
+          }
+        }
+      }
+    },
+    "profile.owned_items": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العناصر المملوكة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Owned Items"
+          }
+        }
+      }
+    },
+    "profile.filter_owned": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المملوكة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Owned"
+          }
+        }
+      }
+    },
+    "profile.empty_inventory_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مفيش عناصر في حقيبتك"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Items in Inventory"
+          }
+        }
+      }
+    },
+    "profile.empty_inventory_subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المشتريات وجوائز عجلة الحظ هتظهر هنا."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purchases and daily wheel rewards will appear here."
+          }
+        }
+      }
+    },
+    "profile.locked_items": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العناصر المقفلة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked Items"
+          }
+        }
+      }
+    },
+    "profile.my_collection": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مجموعتي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My Collection"
+          }
+        }
+      }
+    },
+    "marketplace.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حاول مرة أخرى"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        }
+      }
+    },
+    "marketplace.purchase_success_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم الشراء بنجاح"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purchase Successful"
+          }
+        }
+      }
+    },
+    "marketplace.purchase_failed_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فشلت عملية الشراء"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purchase Failed"
+          }
+        }
       }
     }
   },

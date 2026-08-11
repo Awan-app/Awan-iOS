@@ -1,4 +1,5 @@
 import Common
+import Domain
 import SwiftUI
 
 public struct MarketplaceView: View {
@@ -50,6 +51,11 @@ public struct MarketplaceView: View {
             MarketplaceItemDetailSheet(
                 item: item,
                 userPoints: state.userPoints,
+                isPurchasing: state.purchasingItemID == item.id,
+                isEquipping: state.equippingItemID == item.id,
+                purchaseFeedback: state.purchaseFeedback,
+                onBuy: { viewModel.send(.buyItem(item)) },
+                onEquip: { viewModel.send(.equipItem(item)) },
                 onDismiss: { viewModel.send(.dismissDetail) }
             )
             .presentationDetents([.large])
@@ -68,7 +74,29 @@ public struct MarketplaceView: View {
 
                 searchFilterBar(state)
 
-                if state.filteredItems.isEmpty {
+                MarketplaceCategoryChips(
+                    selectedCategory: Binding(
+                        get: { state.selectedCategory },
+                        set: { viewModel.send(.selectCategory($0)) }
+                    )
+                )
+
+                if state.isLoading {
+                    ProgressView()
+                        .padding(.top, 40)
+                } else if let errorMessage = state.errorMessage {
+                    VStack(spacing: 12) {
+                        NetworkErrorView(message: errorMessage)
+                        Button {
+                            viewModel.send(.retry)
+                        } label: {
+                            Text(L10n.Marketplace.retry)
+                                .font(AppFonts.subheadlineSemibold)
+                                .foregroundStyle(AppColors.accentBlue)
+                        }
+                    }
+                    .padding(.top, 20)
+                } else if state.filteredItems.isEmpty {
                     MarketplaceEmptyView()
                         .padding(.top, 20)
                 } else {
@@ -179,12 +207,12 @@ public struct MarketplaceView: View {
     }
 }
 
-#Preview("Marketplace Light") {
-    MarketplaceView(viewModel: MarketplaceViewModel())
-        .preferredColorScheme(.light)
-}
-
-#Preview("Marketplace Dark") {
-    MarketplaceView(viewModel: MarketplaceViewModel())
-        .preferredColorScheme(.dark)
-}
+//#Preview("Marketplace Light") {
+//    MarketplaceView(viewModel: MarketplaceViewModel(fetchStoreItemsUseCase: MockFetchStoreItemsUseCase()))
+//        .preferredColorScheme(.light)
+//}
+//
+//#Preview("Marketplace Dark") {
+//    MarketplaceView(viewModel: MarketplaceViewModel(fetchStoreItemsUseCase: MockFetchStoreItemsUseCase()))
+//        .preferredColorScheme(.dark)
+//}

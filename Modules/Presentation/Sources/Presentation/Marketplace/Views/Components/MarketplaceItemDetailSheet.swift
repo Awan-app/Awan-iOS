@@ -4,65 +4,81 @@ import SwiftUI
 struct MarketplaceItemDetailSheet: View {
     let item: MarketplaceItem
     let userPoints: Int
+    var isPurchasing: Bool = false
+    var isEquipping: Bool = false
+    var purchaseFeedback: PurchaseFeedback? = nil
+    var onBuy: () -> Void = {}
+    var onEquip: () -> Void = {}
     let onDismiss: () -> Void
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 18) {
-                    Capsule()
-                        .fill(Color.secondary.opacity(0.35))
-                        .frame(width: 38, height: 4)
-                        .frame(maxWidth: .infinity)
-                        .padding(.top, 12)
-                        .padding(.bottom, 8)
+        ZStack(alignment: .bottom) {
+            // Sheet content
+            ZStack(alignment: .topTrailing) {
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 18) {
+                        Capsule()
+                            .fill(Color.secondary.opacity(0.35))
+                            .frame(width: 38, height: 4)
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 12)
+                            .padding(.bottom, 8)
 
-                    heroImage
+                        heroImage
 
-                    Text(categoryTitle)
-                        .font(AppFonts.captionHeavy)
-                        .foregroundStyle(categoryColor)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 5)
-                        .background(Capsule().fill(categoryColor.opacity(0.12)))
-                        .overlay(Capsule().stroke(categoryColor.opacity(0.25), lineWidth: 1.2))
+                        Text(categoryTitle)
+                            .font(AppFonts.captionHeavy)
+                            .foregroundStyle(categoryColor)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 5)
+                            .background(Capsule().fill(categoryColor.opacity(0.12)))
+                            .overlay(Capsule().stroke(categoryColor.opacity(0.25), lineWidth: 1.2))
 
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(item.name)
-                            .font(AppFonts.title2Black)
-                            .foregroundStyle(AppColors.textPrimary)
-                        Text(item.description)
-                            .font(AppFonts.body)
-                            .foregroundStyle(AppColors.textSecondary)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(item.name)
+                                .font(AppFonts.title2Black)
+                                .foregroundStyle(AppColors.textPrimary)
+                            Text(item.description)
+                                .font(AppFonts.body)
+                                .foregroundStyle(AppColors.textSecondary)
+                        }
+
+                        statusCard
                     }
-
-                    statusCard
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 40)
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 40)
-            }
 
-            Button(action: onDismiss) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(AppColors.textSecondary)
-                    .frame(width: 32, height: 32)
-            }
-            .buttonStyle(
-                AppDepthButtonStyle(
-                    shape: .roundedRectangle(cornerRadius: 12),
-                    surfaceColor: AppColors.surface,
-                    borderColor: AppColors.outline.opacity(0.18),
-                    depthColor: AppColors.outline.opacity(0.14),
-                    borderWidth: 1.5,
-                    depthOffset: 3,
-                    pressedOffset: 2
+                Button(action: onDismiss) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(AppColors.textSecondary)
+                        .frame(width: 32, height: 32)
+                }
+                .buttonStyle(
+                    AppDepthButtonStyle(
+                        shape: .roundedRectangle(cornerRadius: 12),
+                        surfaceColor: AppColors.surface,
+                        borderColor: AppColors.outline.opacity(0.18),
+                        depthColor: AppColors.outline.opacity(0.14),
+                        borderWidth: 1.5,
+                        depthOffset: 3,
+                        pressedOffset: 2
+                    )
                 )
-            )
-            .padding(.top, 16)
-            .padding(.trailing, 20)
+                .padding(.top, 16)
+                .padding(.trailing, 20)
+            }
+            .background(AppColors.surface, ignoresSafeAreaEdges: .all)
+
+            // Purchase feedback banner — rendered above sheet content
+            if let feedback = purchaseFeedback {
+                MarketplacePurchaseFeedbackBanner(feedback: feedback)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .animation(.spring(response: 0.42, dampingFraction: 0.75), value: feedback)
+                    .padding(.bottom, 24)
+            }
         }
-        .background(AppColors.surface, ignoresSafeAreaEdges: .all)
     }
 
     @ViewBuilder
@@ -100,12 +116,20 @@ struct MarketplaceItemDetailSheet: View {
         switch item.status {
         case let .price(pts):
             if userPoints >= pts {
-                MarketplaceDetailAffordableCard(pts: pts, userPoints: userPoints)
+                MarketplaceDetailAffordableCard(
+                    pts: pts,
+                    userPoints: userPoints,
+                    isPurchasing: isPurchasing,
+                    onBuy: onBuy
+                )
             } else {
                 MarketplaceDetailNotEnoughCard(pts: pts, userPoints: userPoints)
             }
         case .owned:
-            MarketplaceDetailOwnedCard()
+            MarketplaceDetailOwnedCard(
+                isEquipping: isEquipping,
+                onEquip: onEquip
+            )
         case .equipped:
             MarketplaceDetailEquippedCard()
         case .locked:

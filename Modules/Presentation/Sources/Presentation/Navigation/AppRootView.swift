@@ -162,7 +162,7 @@ struct AppRootView: View {
                         switch route {
                         case .userInfo:   factory.makeUserInfoView()
                         case .dailyZones: factory.makeDailyZonesView().environment(appearanceManager)
-                        case .inventory:  InventoryPlaceholderView()
+                        case .inventory:  factory.makeProfileInventoryView()
                         case .personalization: factory.makePersonalizationView()
                         case .settings: factory.makeSettingsView()
                         case .aboutAwan:  factory.makeAboutAwanView()

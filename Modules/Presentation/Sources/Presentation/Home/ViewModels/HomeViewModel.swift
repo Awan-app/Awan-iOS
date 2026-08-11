@@ -28,6 +28,7 @@ public final class HomeViewModel {
         switch action {
         case .appeared, .refresh:
             load()
+            refreshGamificationProgress()
         case let .selectDay(day):
             state.selectedDay = day
             state.selectedSessionID = nil
@@ -105,6 +106,18 @@ public final class HomeViewModel {
         if let selectedID = state.selectedSessionID,
            !updated.timelineItems.contains(where: { $0.id == selectedID }) {
             state.selectedSessionID = nil
+        }
+    }
+
+    private func refreshGamificationProgress() {
+        let userProfileUseCase = useCases.reads.userProfile
+        Task { [weak self] in
+            do {
+                try await userProfileUseCase.refreshGamificationProgress()
+            } catch {
+                guard let self else { return }
+                // Gracefully ignore failure; keep existing points state.
+            }
         }
     }
 }
