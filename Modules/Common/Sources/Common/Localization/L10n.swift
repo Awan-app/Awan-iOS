@@ -1230,6 +1230,9 @@ public enum L10n {
         public static var emptySubtitle: String { text("marketplace.empty_subtitle") }
         public static var clearFilters: String { text("marketplace.clear_filters") }
         public static var needMorePts: String { text("marketplace.need_more_pts") }
+        public static func needMorePts(_ count: Int) -> String {
+            String(format: text("marketplace.need_more_pts"), count)
+        }
         public static var earnMoreHint: String { text("marketplace.earn_more_hint") }
         public static var itsYours: String { text("marketplace.its_yours") }
         public static var ownedHint: String { text("marketplace.owned_hint") }
