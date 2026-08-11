@@ -28,6 +28,9 @@ enum GamificationErrorMessageMapper {
             return message.isEmpty ? L10n.DailyWheel.errorUnavailable : message
         case let .unavailable(message):
             return message.isEmpty ? L10n.DailyWheel.errorUnavailable : message
+        case .invalidActivityDate,
+             .invalidActivityRange:
+            return L10n.DailyWheel.errorUnavailable
         }
     }
 }

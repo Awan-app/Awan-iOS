@@ -10,23 +10,31 @@ public final class CalendarViewModel {
     private(set) var state: CalendarScreenState
 
     @ObservationIgnored private let fetchGoalsUseCase: any FetchGoalsUseCase
+    @ObservationIgnored private let fetchActivityDaysUseCase: any FetchActivityDaysUseCase
     @ObservationIgnored private var calendar: Calendar
-    @ObservationIgnored private var locale: Locale
-    @ObservationIgnored private let nowProvider: () -> Date
+    @ObservationIgnored private var activityDayMapper: CalendarActivityDayMapper
+    @ObservationIgnored private var goalUIModelMapper: CalendarGoalUIModelMapper
     @ObservationIgnored private var domainGoals: [Goal] = []
     @ObservationIgnored private var loadCancellable: AnyCancellable?
+    @ObservationIgnored private var activityLoadTask: Task<Void, Never>?
 
     public init(
         fetchGoalsUseCase: any FetchGoalsUseCase,
+        fetchActivityDaysUseCase: any FetchActivityDaysUseCase,
         initialDate: Date = .now,
         calendar: Calendar = .current,
         locale: Locale = .current,
         nowProvider: @escaping () -> Date = { .now }
     ) {
         self.fetchGoalsUseCase = fetchGoalsUseCase
+        self.fetchActivityDaysUseCase = fetchActivityDaysUseCase
         self.calendar = calendar
-        self.locale = locale
-        self.nowProvider = nowProvider
+        self.activityDayMapper = CalendarActivityDayMapper(calendar: calendar)
+        self.goalUIModelMapper = CalendarGoalUIModelMapper(
+            calendar: calendar,
+            locale: locale,
+            nowProvider: nowProvider
+        )
         self.state = .initial(date: initialDate, calendar: calendar)
     }
 
@@ -35,18 +43,27 @@ public final class CalendarViewModel {
         case .appeared(let calendar, let locale):
             updatePresentationContext(calendar: calendar, locale: locale)
             load()
+            loadActivityDays(for: state.displayedMonth)
+
         case .refresh:
             load()
+            loadActivityDays(for: state.displayedMonth)
+
         case .selectDate(let date):
             state.selectedDate = calendar.startOfDay(for: date)
+
         case .showPreviousMonth:
             moveMonth(by: -1)
+
         case .showNextMonth:
             moveMonth(by: 1)
+
         case .dismissError:
             state.failureMessage = nil
         }
     }
+
+    // MARK: - Goals loading
 
     private func load() {
         loadCancellable?.cancel()
@@ -66,11 +83,50 @@ public final class CalendarViewModel {
                 receiveValue: { [weak self] goals in
                     guard let self else { return }
                     domainGoals = goals
-                    state.goals = goals.map(makeGoalUIModel)
+                    state.goals = goalUIModelMapper.map(goals)
                     state.isLoading = false
                 }
             )
     }
+
+    // MARK: - Activity days loading
+
+    private func loadActivityDays(for month: Date) {
+        activityLoadTask?.cancel()
+
+        guard let range = activityDayMapper.activityRange(for: month) else {
+            return
+        }
+
+        activityLoadTask = Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                let fetched = try await fetchActivityDaysUseCase.execute(
+                    from: range.start,
+                    through: range.end
+                )
+
+                guard !Task.isCancelled else {
+                    return
+                }
+
+                state.activityDays.formUnion(
+                    fetched.map(activityDayMapper.calendarDayKey)
+                )
+
+            } catch {
+                guard !Task.isCancelled,
+                      !(error is CancellationError) else {
+                    return
+                }
+
+                state.failureMessage = GamificationErrorMessageMapper.message(for: error)
+            }
+        }
+    }
+
+    // MARK: - Month navigation
 
     private func moveMonth(by value: Int) {
         guard let month = calendar.date(
@@ -80,11 +136,14 @@ public final class CalendarViewModel {
         ) else {
             return
         }
+
         state.monthNavigationDirection = value < 0 ? .previous : .next
         state.displayedMonth = CalendarMonthGrid.startOfMonth(
             containing: month,
             calendar: calendar
         )
+
+        loadActivityDays(for: state.displayedMonth)
     }
 
     private func updatePresentationContext(
@@ -92,64 +151,16 @@ public final class CalendarViewModel {
         locale: Locale
     ) {
         self.calendar = calendar
-        self.locale = locale
+        activityDayMapper = activityDayMapper.updating(calendar: calendar)
+        goalUIModelMapper = goalUIModelMapper.updating(
+            calendar: calendar,
+            locale: locale
+        )
         state.selectedDate = calendar.startOfDay(for: state.selectedDate)
         state.displayedMonth = CalendarMonthGrid.startOfMonth(
             containing: state.displayedMonth,
             calendar: calendar
         )
-        state.goals = domainGoals.map(makeGoalUIModel)
-    }
-
-    private func makeGoalUIModel(_ goal: Goal) -> CalendarGoalUIModel {
-        let trimmedDescription = goal.description?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        return CalendarGoalUIModel(
-            id: goal.id,
-            title: goal.name,
-            description: trimmedDescription?.isEmpty == true
-                ? nil
-                : trimmedDescription,
-            deadline: goal.deadline,
-            deadlineText: makeDeadlineText(goal.deadline)
-        )
-    }
-
-    private func makeDeadlineText(_ deadline: Date?) -> String {
-        guard let deadline else {
-            return L10n.CalendarScreen.noDeadline
-        }
-
-        let today = calendar.startOfDay(for: nowProvider())
-        let targetDay = calendar.startOfDay(for: deadline)
-        let daysRemaining = calendar.dateComponents(
-            [.day],
-            from: today,
-            to: targetDay
-        ).day
-
-        if let daysRemaining {
-            switch daysRemaining {
-            case 0:
-                return L10n.CalendarScreen.dueToday
-            case 1:
-                return L10n.CalendarScreen.oneDayLeft
-            case 2..<14:
-                return L10n.CalendarScreen.daysLeft(
-                    daysRemaining.formatted(.number.locale(locale))
-                )
-            default:
-                break
-            }
-        }
-
-        return deadline.formatted(
-            .dateTime
-                .day()
-                .month(.wide)
-                .year()
-                .locale(locale)
-        )
+        state.goals = goalUIModelMapper.map(domainGoals)
     }
 }

@@ -17,6 +17,7 @@ enum GamificationEndpoint: APIEndpoint {
     case unequipStoreItem(type: String)
     case getEquippedItems
     case getStoreInventory
+    case activityDates(startDate: String, endDate: String)
 
     var baseURL: String {
         NetworkConfiguration.apiBaseURL
@@ -50,6 +51,9 @@ enum GamificationEndpoint: APIEndpoint {
 
         case .getStoreInventory:
             return "/store/inventory"
+          
+        case .activityDates: 
+            return "/gamification/activity-dates"
         }
     }
 
@@ -59,6 +63,7 @@ enum GamificationEndpoint: APIEndpoint {
              .getWheelConfig,
              .getStoreItems,
              .getEquippedItems,
+             .activityDates,
              .getStoreInventory:
             return .get
 
@@ -86,6 +91,8 @@ enum GamificationEndpoint: APIEndpoint {
              .getEquippedItems,
              .getStoreInventory:
             return nil
+        case let .activityDates(startDate, endDate):
+            ["startDate": startDate, "endDate": endDate]
         }
     }
 

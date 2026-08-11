@@ -15,6 +15,7 @@ public protocol RemoteGamificationDataSource: Sendable {
     func unequipStoreItem(type: String) async throws
     func getEquippedItems() async throws -> [EquippedItemResponseDTO]
     func getStoreInventory() async throws -> [InventoryItemResponseDTO]
+    func getActivityDates(startDate: String, endDate: String) async throws -> [String]
 }
 
 public final class DefaultRemoteGamificationDataSource:
@@ -74,6 +75,15 @@ public final class DefaultRemoteGamificationDataSource:
     public func getStoreInventory() async throws -> [InventoryItemResponseDTO] {
         try await networkService.request(
             GamificationEndpoint.getStoreInventory
+    public func getActivityDates(
+        startDate: String,
+        endDate: String
+    ) async throws -> [String] {
+        try await networkService.request(
+            GamificationEndpoint.activityDates(
+                startDate: startDate,
+                endDate: endDate
+            )
         )
     }
 }

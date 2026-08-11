@@ -15,4 +15,9 @@ public protocol GamificationRepository: Sendable {
     func fetchUserPoints() async throws -> Int
     func fetchWheelConfig() async throws -> DailyWheelConfiguration
     func spinWheel() async throws -> DailyWheelSpinResult
+
+    func fetchActivityDays(
+        from startDay: ActivityDay,
+        through endDay: ActivityDay
+    ) async throws -> Set<ActivityDay>
 }

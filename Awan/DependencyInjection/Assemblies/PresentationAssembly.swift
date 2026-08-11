@@ -153,9 +153,13 @@ struct PresentationAssembly: Assembly {
         .inObjectScope(.container)
 
         container.register(CalendarViewModel.self) { resolver in
-            let useCase = Self.resolve(FetchGoalsUseCase.self, from: resolver)
+            let goalsUseCase = Self.resolve(FetchGoalsUseCase.self, from: resolver)
+            let activityDaysUseCase = Self.resolve(FetchActivityDaysUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
-                CalendarViewModel(fetchGoalsUseCase: useCase)
+                CalendarViewModel(
+                    fetchGoalsUseCase: goalsUseCase,
+                    fetchActivityDaysUseCase: activityDaysUseCase
+                )
             }
         }
         .inObjectScope(.container)

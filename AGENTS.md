@@ -86,6 +86,7 @@ Use SwiftUI with the Observation framework.
 - View models use `@Observable`, are marked `@MainActor`, and expose UI state as observable stored properties.
 - Views own injected observable reference types with `@State`, derive bindings with `@Bindable`, and share app-wide observable dependencies through `@Environment` when appropriate.
 - Views remain declarative and render view-model state.
+- Except for SwiftUI's required `body` property, do not store local view fragments in variables or computed properties such as `private var header: some View`. Extract each meaningful fragment into a focused `View` type, favoring a new file in the feature's `Views/Components` folder.
 - View models translate user actions into use-case calls and map results into presentation state.
 - View models must not contain business logic, validation rules, domain calculations, persistence decisions, or networking logic.
 - Business decisions belong in Domain use cases, entities, value objects, or domain services.

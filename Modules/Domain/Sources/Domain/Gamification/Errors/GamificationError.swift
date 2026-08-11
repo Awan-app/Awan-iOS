@@ -15,5 +15,7 @@ public enum GamificationError: Error, Equatable, Sendable {
     case userNotFound
     case invalidWheelConfiguration
     case typeMismatch
+    case invalidActivityRange
+    case invalidActivityDate(String)
     case unavailable(String)
 }
