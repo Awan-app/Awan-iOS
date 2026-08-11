@@ -10,20 +10,24 @@ public final class CalendarViewModel {
     private(set) var state: CalendarScreenState
 
     @ObservationIgnored private let fetchGoalsUseCase: any FetchGoalsUseCase
+    @ObservationIgnored private let fetchActivityDaysUseCase: any FetchActivityDaysUseCase
     @ObservationIgnored private var calendar: Calendar
     @ObservationIgnored private var locale: Locale
     @ObservationIgnored private let nowProvider: () -> Date
     @ObservationIgnored private var domainGoals: [Goal] = []
     @ObservationIgnored private var loadCancellable: AnyCancellable?
+    @ObservationIgnored private var activityLoadTask: Task<Void, Never>?
 
     public init(
         fetchGoalsUseCase: any FetchGoalsUseCase,
+        fetchActivityDaysUseCase: any FetchActivityDaysUseCase,
         initialDate: Date = .now,
         calendar: Calendar = .current,
         locale: Locale = .current,
         nowProvider: @escaping () -> Date = { .now }
     ) {
         self.fetchGoalsUseCase = fetchGoalsUseCase
+        self.fetchActivityDaysUseCase = fetchActivityDaysUseCase
         self.calendar = calendar
         self.locale = locale
         self.nowProvider = nowProvider
@@ -35,18 +39,27 @@ public final class CalendarViewModel {
         case .appeared(let calendar, let locale):
             updatePresentationContext(calendar: calendar, locale: locale)
             load()
+            loadActivityDays(for: state.displayedMonth)
+
         case .refresh:
             load()
+            loadActivityDays(for: state.displayedMonth)
+
         case .selectDate(let date):
             state.selectedDate = calendar.startOfDay(for: date)
+
         case .showPreviousMonth:
             moveMonth(by: -1)
+
         case .showNextMonth:
             moveMonth(by: 1)
+
         case .dismissError:
             state.failureMessage = nil
         }
     }
+
+    // MARK: - Goals loading
 
     private func load() {
         loadCancellable?.cancel()
@@ -72,6 +85,45 @@ public final class CalendarViewModel {
             )
     }
 
+    // MARK: - Activity days loading
+
+    private func loadActivityDays(for month: Date) {
+        activityLoadTask?.cancel()
+
+        guard let range = activityRange(for: month) else {
+            return
+        }
+
+        activityLoadTask = Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                let fetched = try await fetchActivityDaysUseCase.execute(
+                    from: range.start,
+                    through: range.end
+                )
+
+                guard !Task.isCancelled else {
+                    return
+                }
+
+                state.activityDays.formUnion(
+                    fetched.map(calendarDayKey)
+                )
+
+            } catch {
+                guard !Task.isCancelled,
+                      !(error is CancellationError) else {
+                    return
+                }
+
+                state.failureMessage = GamificationErrorMessageMapper.message(for: error)
+            }
+        }
+    }
+
+    // MARK: - Month navigation
+
     private func moveMonth(by value: Int) {
         guard let month = calendar.date(
             byAdding: .month,
@@ -80,11 +132,50 @@ public final class CalendarViewModel {
         ) else {
             return
         }
+
         state.monthNavigationDirection = value < 0 ? .previous : .next
         state.displayedMonth = CalendarMonthGrid.startOfMonth(
             containing: month,
             calendar: calendar
         )
+
+        loadActivityDays(for: state.displayedMonth)
+    }
+
+    // MARK: - Helpers
+
+    private func activityRange(
+        for month: Date
+    ) -> (start: ActivityDay, end: ActivityDay)? {
+        let start = CalendarMonthGrid.startOfMonth(
+            containing: month,
+            calendar: calendar
+        )
+
+        guard let dayRange = calendar.range(of: .day, in: .month, for: start),
+              let end = calendar.date(
+                  byAdding: .day,
+                  value: dayRange.count - 1,
+                  to: start
+              )
+        else {
+            return nil
+        }
+
+        return (activityDay(from: start), activityDay(from: end))
+    }
+
+    private func activityDay(from date: Date) -> ActivityDay {
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        return ActivityDay(
+            year: components.year ?? 0,
+            month: components.month ?? 0,
+            day: components.day ?? 0
+        )
+    }
+
+    private func calendarDayKey(from day: ActivityDay) -> CalendarDayKey {
+        CalendarDayKey(year: day.year, month: day.month, day: day.day)
     }
 
     private func updatePresentationContext(

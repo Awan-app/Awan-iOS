@@ -374,6 +374,23 @@
         }
       }
     },
+    "calendar.streak_day": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يوم ضمن السلسلة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Streak day"
+          }
+        }
+      }
+    },
     "categories.create": {
       "extractionState": "manual",
       "localizations": {
