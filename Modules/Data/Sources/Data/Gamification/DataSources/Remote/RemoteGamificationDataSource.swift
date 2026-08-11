@@ -10,6 +10,7 @@ public protocol RemoteGamificationDataSource: Sendable {
     func getProgress() async throws -> UserProgressResponseDTO
     func getWheelConfig() async throws -> DailyWheelConfigResponseDTO
     func spinWheel() async throws -> DailyWheelSpinResponseDTO
+    func getActivityDates(startDate: String, endDate: String) async throws -> [String]
 }
 
 public final class DefaultRemoteGamificationDataSource:
@@ -33,5 +34,17 @@ public final class DefaultRemoteGamificationDataSource:
 
     public func spinWheel() async throws -> DailyWheelSpinResponseDTO {
         try await networkService.request(GamificationEndpoint.spinWheel)
+    }
+
+    public func getActivityDates(
+        startDate: String,
+        endDate: String
+    ) async throws -> [String] {
+        try await networkService.request(
+            GamificationEndpoint.activityDates(
+                startDate: startDate,
+                endDate: endDate
+            )
+        )
     }
 }
