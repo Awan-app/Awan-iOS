@@ -193,11 +193,8 @@ enum HomeRemoteMapper {
         case "DRAFTED", "DRAFT":
             .drafted
 
-        case "ACTIVE", "IN_PROGRESS", "INPROGRESS", "DOING":
+        case "ACTIVE", "IN_PROGRESS", "INPROGRESS", "DOING", "SCHEDULED", "PENDING", "TODO", "UNSCHEDULED", "PLANNED", "CREATED", "NEW", "NOT_STARTED":
             .active
-
-        case "SCHEDULED", "PENDING", "TODO", "UNSCHEDULED", "PLANNED", "CREATED", "NEW", "NOT_STARTED":
-            .pending
 
         case "COMPLETED", "DONE", "FINISHED":
             .completed

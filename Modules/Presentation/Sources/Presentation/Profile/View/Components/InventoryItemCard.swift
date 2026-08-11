@@ -11,6 +11,7 @@ public enum InventoryItemCardState: Equatable, Sendable {
     case equipped
     case owned
     case locked
+    case empty
 }
 
 public struct InventoryItemCard: View {
@@ -36,7 +37,7 @@ public struct InventoryItemCard: View {
         self.imageURL = imageURL
         self.symbolName = symbolName
         self.state = state
-        self.onTap = state == .locked ? nil : onTap
+        self.onTap = (state == .locked || state == .empty) ? nil : onTap
         self.onCheckmarkTap = onCheckmarkTap
     }
 
@@ -156,7 +157,7 @@ public struct InventoryItemCard: View {
         }
         .frame(maxWidth: .infinity)
         .accessibilityLabel(title)
-        .accessibilityAddTraits(state == .locked ? [] : .isButton)
+        .accessibilityAddTraits((state == .locked || state == .empty) ? [] : .isButton)
     }
 
     @ViewBuilder
@@ -188,7 +189,7 @@ public struct InventoryItemCard: View {
             .resizable()
             .scaledToFit()
             .padding(6)
-            .foregroundStyle(state == .locked ? AppColors.textSecondary : AppColors.accentBlue)
+            .foregroundStyle((state == .locked || state == .empty) ? AppColors.textSecondary : AppColors.accentBlue)
     }
 
     private var checkBadge: some View {

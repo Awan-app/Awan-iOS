@@ -29,7 +29,7 @@ struct ProfileEquippedItemsSection: View {
         VStack(alignment: .leading, spacing: 12) {
             SectionHeaderLabel(
                 title: L10n.Profile.equippedItems,
-                accentColor: AppColors.brandDarkBlue
+                accentColor: AppColors.accentGreen
             )
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -104,7 +104,7 @@ struct ProfileEquippedItemsSection: View {
                 category: L10n.Marketplace.emptySubtitle,
                 imageURL: nil,
                 symbolName: slot.defaultSymbol,
-                state: .locked,
+                state: .empty,
                 onTap: nil
             )
         }

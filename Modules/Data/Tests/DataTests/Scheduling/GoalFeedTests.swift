@@ -93,7 +93,7 @@ final class GoalFeedTests: XCTestCase {
         XCTAssertEqual(dto.status, "DRAFTED")
 
         let domainTask = try HomeRemoteMapper.task(dto, defaultDuration: 30)
-        XCTAssertEqual(domainTask.status, .pending)
+        XCTAssertEqual(domainTask.status, .drafted)
         XCTAssertEqual(domainTask.title, "Learn OOP basics: classes and objects")
         XCTAssertEqual(domainTask.category?.name, "Learning")
         XCTAssertEqual(domainTask.dependencyIDs.first?.uuidString.lowercased(), "eb7fa76c-a325-4de0-a3ff-db729eeab5cf")
