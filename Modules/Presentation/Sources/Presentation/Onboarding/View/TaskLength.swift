@@ -13,25 +13,22 @@ struct TaskLength: View {
     @Bindable var viewModel: OnboardingViewModel
     let onContinue: () -> Void
 
-    let labels = ["10m", "", "", "", "", "1h", "", "", "", "2h", "", "3h"]
     @State private var showValidationError: Bool = false
 
-    var focusDurationText: String {
-        if !viewModel.customDurationText.isEmpty, let custom = Int(viewModel.customDurationText), custom >= 10, custom <= 180 {
-            if custom < 60 {
-                return L10n.Onboarding.durationMinutes(custom)
-            } else if custom == 60 {
-                return L10n.Onboarding.durationOneHour
-            } else if custom % 60 == 0 {
-                return L10n.Onboarding.durationHours(custom / 60)
-            } else {
-                return L10n.Onboarding.durationHoursMinutes(custom / 60, custom % 60)
+    var dynamicLabels: [String] {
+        viewModel.dynamicSessionDurations.map { duration in
+            switch duration {
+            case 10: return "10m"
+            case 60: return "1h"
+            case 120: return "2h"
+            case 180: return "3h"
+            default: return ""
             }
         }
+    }
 
-        let index = min(max(viewModel.focusDurationIndex, 0), OnboardingViewModel.sessionDurations.count - 1)
-        let minutes = OnboardingViewModel.sessionDurations[index]
-        
+    var focusDurationText: String {
+        let minutes = viewModel.selectedDuration
         if minutes < 60 {
             return L10n.Onboarding.durationMinutes(minutes)
         } else if minutes == 60 {
@@ -45,12 +42,22 @@ struct TaskLength: View {
 
     var body: some View {
         VStack(spacing: 0) {
-           // ScrollView(showsIndicators: false) {
+            // ScrollView(showsIndicators: false) {
                 VStack(spacing: 30) {
                     TaskLengthTitleArea()
                     TaskLengthValueDisplay(focusDurationText: focusDurationText)
                     TaskLengthSlider(
-                        focusDurationIndex: $viewModel.focusDurationIndex, labels: labels)
+                        focusDurationIndex: Binding(
+                            get: { viewModel.dynamicSessionDurations.firstIndex(of: viewModel.selectedDuration) ?? 0 },
+                            set: { newIndex in
+                                let newValue = viewModel.dynamicSessionDurations[newIndex]
+                                viewModel.selectedDuration = newValue
+                                viewModel.customDurationText = String(newValue)
+                                showValidationError = false
+                            }
+                        ),
+                        labels: dynamicLabels
+                    )
                     
                     VStack(spacing: 8) {
                         AppTextField(
@@ -66,8 +73,13 @@ struct TaskLength: View {
                                 .font(AppFonts.captionHeavy)
                         }
                     }
-                    .onChange(of: viewModel.customDurationText) { _, _ in
-                        showValidationError = false
+                    .onChange(of: viewModel.customDurationText) { _, newValue in
+                        if let custom = Int(newValue) {
+                            if custom >= 10 && custom <= 180 {
+                                viewModel.selectedDuration = custom
+                                showValidationError = false
+                            }
+                        }
                     }
 
                     TaskLengthExplanation()
@@ -104,6 +116,7 @@ struct TaskLength: View {
     private func handleContinue() {
         if !viewModel.customDurationText.isEmpty {
             if let custom = Int(viewModel.customDurationText), custom >= 10, custom <= 180 {
+                viewModel.selectedDuration = custom
                 showValidationError = false
                 onContinue()
             } else {
