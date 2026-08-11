@@ -228,6 +228,7 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				ar,
 				en,
 				Base,
 			);
@@ -445,6 +446,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SupportingFiles/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Awan;
 				INFOPLIST_KEY_NSAppTransportSecurity = "<dict><key>NSAllowsArbitraryLoads</key><true/></dict>";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Awan uses the microphone to turn your spoken task into text.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Awan uses speech recognition to transcribe your spoken task.";
@@ -478,6 +480,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SupportingFiles/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Awan;
 				INFOPLIST_KEY_NSAppTransportSecurity = "<dict><key>NSAllowsArbitraryLoads</key><true/></dict>";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Awan uses the microphone to turn your spoken task into text.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Awan uses speech recognition to transcribe your spoken task.";

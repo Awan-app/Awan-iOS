@@ -5,9 +5,11 @@
 //  Created by Me3bed on 15/07/2026.
 //
 
+import AppIntents
 import SwiftUI
 import SwiftData
 import Data
+import Domain
 import Presentation
 import Common
 import GoogleSignIn
@@ -19,6 +21,7 @@ struct AwanApp: App {
     @State private var appearanceManager = AppearanceManager()
 
     private let presentationFactory: PresentationFactory
+    private let sharedModelContainer: ModelContainer
 
     init() {
         sharedModelContainer = Self.makeSchedulingModelContainer()
@@ -26,6 +29,13 @@ struct AwanApp: App {
             modelContainer: sharedModelContainer
         )
         presentationFactory = dependencies.resolve(PresentationFactory.self)
+        AppDependencyManager.shared.add(
+            dependency: AddTaskIntentDependencies(
+                createTask: dependencies.resolve(CreateTaskUseCase.self),
+                fetchCategories: dependencies.resolve(FetchCategoriesUseCase.self)
+            )
+        )
+        AwanAppShortcuts.updateAppShortcutParameters()
         FirebaseConfigurator.configure()
 
         if let clientID = FirebaseApp.app()?.options.clientID {
@@ -43,5 +53,24 @@ struct AwanApp: App {
             .preferredColorScheme(appearanceManager.currentAppearance.colorScheme)
         }
        
+    }
+
+    private static func makeSchedulingModelContainer() -> ModelContainer {
+        let schema = SchedulingPersistence.schema
+        let configuration = ModelConfiguration(
+            "AwanScheduling",
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            groupContainer: .none,
+            cloudKitDatabase: .none
+        )
+        do {
+            return try ModelContainer(
+                for: schema,
+                configurations: [configuration]
+            )
+        } catch {
+            fatalError("Could not create scheduling ModelContainer: \(error)")
+        }
     }
 }

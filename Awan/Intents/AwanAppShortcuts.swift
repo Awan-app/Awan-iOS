@@ -14,9 +14,7 @@ public struct AwanAppShortcuts: AppShortcutsProvider {
             phrases: [
                 "Add a task in \(.applicationName)",
                 "Create a task in \(.applicationName)",
-                "New task in \(.applicationName)",
-                "أضف مهمة في \(.applicationName)",
-                "مهمة جديدة في \(.applicationName)"
+                "New task in \(.applicationName)"
             ],
             shortTitle: "Add Task",
             systemImageName: "plus"
