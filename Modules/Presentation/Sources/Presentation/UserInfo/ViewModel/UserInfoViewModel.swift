@@ -1,4 +1,5 @@
 import SwiftUI
+import Common
 import Observation
 import Domain
 import Combine
@@ -17,6 +18,7 @@ public final class UserInfoViewModel {
     
     public var showToast: Bool = false
     public var toastMessage: String?
+    public var toastIsSuccess: Bool = false
     public var isSaving: Bool = false
     
     @ObservationIgnored
@@ -91,18 +93,23 @@ public final class UserInfoViewModel {
                     try await updateProfilePictureUseCase.execute(data: imageData, fileName: fileName, mimeType: mimeType)
                 } catch {
                     print("Failed to save profile picture: \(error)")
-                    withAnimation {
-                        self.toastMessage = error.localizedDescription
-                        self.showToast = true
-                    }
+                    showToastMessage(error.localizedDescription, isSuccess: false)
+                    return
                 }
             }
+            
+            showToastMessage(L10n.UserInfo.changesSaved, isSuccess: true)
         } catch {
             print("Failed to save profile changes: \(error)")
-            withAnimation {
-                self.toastMessage = error.localizedDescription
-                self.showToast = true
-            }
+            showToastMessage(error.localizedDescription, isSuccess: false)
+        }
+    }
+    
+    private func showToastMessage(_ message: String, isSuccess: Bool) {
+        withAnimation {
+            self.toastMessage = message
+            self.toastIsSuccess = isSuccess
+            self.showToast = true
         }
     }
 }
