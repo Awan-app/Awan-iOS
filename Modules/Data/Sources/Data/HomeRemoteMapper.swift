@@ -180,23 +180,35 @@ enum HomeRemoteMapper {
     }
 
 
-    private static func taskStatus(_ raw: String) -> TaskStatus {
-        switch raw.uppercased() {
-        case "SCHEDULED", "PENDING", "DRAFTED", "DRAFT", "TODO", "UNSCHEDULED", "PLANNED", "CREATED", "NEW", "NOT_STARTED":
-            return .pending
-        case "IN_PROGRESS", "INPROGRESS", "DOING", "ACTIVE":
-            return .inProgress
-        case "COMPLETED", "DONE", "FINISHED":
+    private static func taskStatus(
+        _ raw: String,
+        completedAt: String?
+    ) throws -> TaskStatus {
+        // If the task has a completion timestamp, it is always completed.
+        if completedAt != nil {
             return .completed
-        case "CANCELLED", "CANCELED", "ABORTED":
-            return .cancelled
-        default:
-            #if DEBUG
-            print("[HomeRemoteMapper] Unknown task status '\(raw)', falling back to .pending")
-            #endif
-            return .pending
         }
- }
+
+        return switch raw.uppercased() {
+        case "DRAFTED", "DRAFT":
+            .drafted
+
+        case "ACTIVE", "IN_PROGRESS", "INPROGRESS", "DOING":
+            .active
+
+        case "SCHEDULED", "PENDING", "TODO", "UNSCHEDULED", "PLANNED", "CREATED", "NEW", "NOT_STARTED":
+            .pending
+
+        case "COMPLETED", "DONE", "FINISHED":
+            .completed
+
+        case "CANCELLED", "CANCELED", "ABORTED":
+            .cancelled
+
+        default:
+            throw RemoteDomainMappingError.invalidValue("task.status.\(raw)")
+        }
+    }
 
     private static func goalStatus(_ raw: String) throws -> GoalStatus {
         switch raw.uppercased() {
