@@ -7812,6 +7812,23 @@
         }
       }
     },
+    "user_info.changes_saved": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم حفظ التغييرات بنجاح"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changes saved successfully"
+          }
+        }
+      }
+    },
     "user_info.personal_info": {
       "extractionState": "manual",
       "localizations": {
