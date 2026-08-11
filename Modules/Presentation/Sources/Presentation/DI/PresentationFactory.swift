@@ -134,7 +134,10 @@ public struct PresentationFactory {
     }
 
     func makeInboxView() -> some View {
-        InboxView(viewModel: inboxViewModel)
+        InboxView(
+            viewModel: inboxViewModel,
+            goalsViewModel: goalsViewModel
+        )
     }
 
     func makeMarketplaceView() -> some View {

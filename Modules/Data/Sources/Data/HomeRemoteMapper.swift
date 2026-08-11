@@ -35,6 +35,7 @@ enum HomeRemoteMapper {
             points: dto.points,
             streak: dto.streak,
             maxStreak: dto.maxStreak,
+            profilePictureUrl: dto.profilePictureUrl,
             preferences: UserPreferences(
                 timezone: dto.preferences.timezone,
                 preferredSessionDuration: dto.preferences.preferredSessionDuration,
@@ -53,7 +54,11 @@ enum HomeRemoteMapper {
             id: dto.id,
             title: dto.title,
             description: dto.description,
-            status: taskStatus(dto.status),
+            status: taskStatus(
+                dto.status,
+                completedAt: dto.completedAt
+            ),
+            completedAt: try dto.completedAt.map(parseISO8601Date),
             goalID: dto.goalID,
             duration: try TaskDuration(minutes: max(dto.estimatedDuration ?? defaultDuration, 1)),
             isSplittable: dto.isSplittable,
@@ -174,6 +179,7 @@ enum HomeRemoteMapper {
         dateTimeFormatter(timeZoneID: timeZoneID).string(from: date)
     }
 
+
     private static func taskStatus(_ raw: String) -> TaskStatus {
         switch raw.uppercased() {
         case "SCHEDULED", "PENDING", "DRAFTED", "DRAFT", "TODO", "UNSCHEDULED", "PLANNED", "CREATED", "NEW", "NOT_STARTED":
@@ -190,7 +196,7 @@ enum HomeRemoteMapper {
             #endif
             return .pending
         }
-    }
+ }
 
     private static func goalStatus(_ raw: String) throws -> GoalStatus {
         switch raw.uppercased() {
@@ -296,9 +302,9 @@ enum HomeRemoteMapper {
         return formatter
     }
     static func completionReward(
-        _ dto: SessionCompletionRewardDTO
-    ) -> SessionCompletionReward {
-        SessionCompletionReward(
+        _ dto: CompletionRewardDTO
+    ) -> CompletionReward {
+        CompletionReward(
             points: .init(
                 awarded: dto.points.awarded,
                 amount: dto.points.amount,

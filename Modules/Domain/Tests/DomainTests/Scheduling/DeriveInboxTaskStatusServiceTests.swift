@@ -11,7 +11,7 @@ final class DeriveInboxTaskStatusServiceTests: XCTestCase {
     // MARK: - Drafted
 
     func testNoSessions_returnsDrafted() {
-        let result = service.derive(from: [])
+        let result = service.derive(from: [], completedAt: nil)
         XCTAssertEqual(result, .drafted)
     }
 
@@ -23,38 +23,38 @@ final class DeriveInboxTaskStatusServiceTests: XCTestCase {
             makeSession(taskID: taskID, status: .cancelled),
             makeSession(taskID: taskID, status: .cancelled)
         ]
-        let result = service.derive(from: sessions)
+        let result = service.derive(from: sessions, completedAt: nil)
         XCTAssertEqual(result, .cancelled)
     }
 
-    // MARK: - Completed
+    // MARK: - Completed sessions do not complete the task
 
-    func testAllNonCancelledCompleted_withAtLeastOneCompleted_returnsCompleted() throws {
+    func testAllNonCancelledCompleted_returnsActiveWithoutTaskCompletion() throws {
         let taskID = UUID()
         let sessions = [
             makeSession(taskID: taskID, status: .completed),
             makeSession(taskID: taskID, status: .completed),
             makeSession(taskID: taskID, status: .cancelled) // Cancelled is excluded from the "all non-cancelled" check
         ]
-        let result = service.derive(from: sessions)
-        XCTAssertEqual(result, .completed)
+        let result = service.derive(from: sessions, completedAt: nil)
+        XCTAssertEqual(result, .active)
     }
 
-    func testSingleCompletedSession_returnsCompleted() throws {
+    func testSingleCompletedSession_returnsActiveWithoutTaskCompletion() throws {
         let taskID = UUID()
         let sessions = [makeSession(taskID: taskID, status: .completed)]
-        let result = service.derive(from: sessions)
-        XCTAssertEqual(result, .completed)
+        let result = service.derive(from: sessions, completedAt: nil)
+        XCTAssertEqual(result, .active)
     }
 
-    func testCompletedAndCancelledMix_returnsCompleted() throws {
+    func testCompletedAndCancelledMix_returnsActiveWithoutTaskCompletion() throws {
         let taskID = UUID()
         let sessions = [
             makeSession(taskID: taskID, status: .completed),
             makeSession(taskID: taskID, status: .cancelled)
         ]
-        let result = service.derive(from: sessions)
-        XCTAssertEqual(result, .completed)
+        let result = service.derive(from: sessions, completedAt: nil)
+        XCTAssertEqual(result, .active)
     }
 
     // MARK: - Active
@@ -65,7 +65,7 @@ final class DeriveInboxTaskStatusServiceTests: XCTestCase {
             makeSession(taskID: taskID, status: .planned),
             makeSession(taskID: taskID, status: .completed)
         ]
-        let result = service.derive(from: sessions)
+        let result = service.derive(from: sessions, completedAt: nil)
         XCTAssertEqual(result, .active)
     }
 
@@ -75,21 +75,21 @@ final class DeriveInboxTaskStatusServiceTests: XCTestCase {
             makeSession(taskID: taskID, status: .planned),
             makeSession(taskID: taskID, status: .planned)
         ]
-        let result = service.derive(from: sessions)
+        let result = service.derive(from: sessions, completedAt: nil)
         XCTAssertEqual(result, .active)
     }
 
     func testSinglePlannedSession_returnsActive() throws {
         let taskID = UUID()
         let sessions = [makeSession(taskID: taskID, status: .planned)]
-        let result = service.derive(from: sessions)
+        let result = service.derive(from: sessions, completedAt: nil)
         XCTAssertEqual(result, .active)
     }
 
     func testMissedSession_returnsActive() throws {
         let taskID = UUID()
         let sessions = [makeSession(taskID: taskID, status: .missed)]
-        let result = service.derive(from: sessions)
+        let result = service.derive(from: sessions, completedAt: nil)
         XCTAssertEqual(result, .active)
     }
 
@@ -99,7 +99,7 @@ final class DeriveInboxTaskStatusServiceTests: XCTestCase {
             makeSession(taskID: taskID, status: .planned),
             makeSession(taskID: taskID, status: .cancelled)
         ]
-        let result = service.derive(from: sessions)
+        let result = service.derive(from: sessions, completedAt: nil)
         XCTAssertEqual(result, .active)
     }
 
@@ -110,7 +110,7 @@ final class DeriveInboxTaskStatusServiceTests: XCTestCase {
             makeSession(taskID: taskID, status: .planned),
             makeSession(taskID: taskID, status: .cancelled)
         ]
-        let result = service.derive(from: sessions)
+        let result = service.derive(from: sessions, completedAt: nil)
         XCTAssertEqual(result, .active)
     }
 

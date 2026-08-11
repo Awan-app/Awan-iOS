@@ -91,16 +91,13 @@ struct HomeView: View {
 
                             if let reward = viewModel.state.completionReward,
                                let transition = reward.streakTransition {
-
-                                coordinator.mainCoordinator.presentStreakCelebration(
-                                    previousStreak: transition.oldValue,
-                                    streak: transition.newValue,
+                                presentStreak(
+                                    transition,
                                     isNewRecord: reward.maxStreakBroken
                                 )
-
-                                viewModel.send(.dismissCompletionReward)
                             }
 
+                            viewModel.send(.dismissCompletionReward)
                             viewModel.send(.dismissCompletionRewardAnimation)
                         }
                     )
@@ -108,6 +105,15 @@ struct HomeView: View {
                 }
             }
             .allowsHitTesting(false)
+        }
+        .onChange(of: viewModel.state.completionReward) { _, reward in
+            guard viewModel.state.completionRewardAnimation == nil,
+                  let reward,
+                  let transition = reward.streakTransition else {
+                return
+            }
+            presentStreak(transition, isNewRecord: reward.maxStreakBroken)
+            viewModel.send(.dismissCompletionReward)
         }
     }
 
@@ -126,7 +132,7 @@ struct HomeView: View {
                     onSelectToday: {
                         viewModel.send(.selectDay(.now))
                     },
-                    pointsPulse: pointsPulse,
+                    pointsPulse: pointsPulse
                 )
 
                 HomeWeekStripView(
@@ -260,6 +266,17 @@ struct HomeView: View {
             guard !Task.isCancelled else { return }
             pointsPulse += 1
         }
+    }
+
+    private func presentStreak(
+        _ transition: HomeStreakTransition,
+        isNewRecord: Bool
+    ) {
+        coordinator.mainCoordinator.presentStreakCelebration(
+            previousStreak: transition.oldValue,
+            streak: transition.newValue,
+            isNewRecord: isNewRecord
+        )
     }
     
 }

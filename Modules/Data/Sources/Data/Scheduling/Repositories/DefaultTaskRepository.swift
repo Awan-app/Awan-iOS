@@ -256,33 +256,16 @@ public struct DefaultTaskRepository: TaskRepository {
                 title: task.title,
                 description: task.description,
                 estimatedDuration: task.duration.minutes,
-                status: remoteStatus(task.status),
                 mandatory: task.mandatory,
                 estimatedPoints: task.estimatedPoints,
                 isSplittable: task.isSplittable,
                 categoryID: task.category?.id
             )
         )
-        var accepted = try HomeRemoteMapper.task(
+        let accepted = try HomeRemoteMapper.task(
             response,
             defaultDuration: task.duration.minutes
         )
-        let finalStatus = task.status
-        if task.status == .completed {
-            accepted = AwanTask(
-                id: accepted.id,
-                title: accepted.title,
-                description: accepted.description,
-                status: finalStatus,
-                goalID: accepted.goalID,
-                duration: accepted.duration,
-                isSplittable: accepted.isSplittable,
-                mandatory: accepted.mandatory,
-                estimatedPoints: accepted.estimatedPoints,
-                dependencyIDs: accepted.dependencyIDs,
-                category: accepted.category
-            )
-        }
         try await localDataSource.updateTask(accepted)
         let timeZoneID = await getTimeZoneID()
         let sessions = try await remoteSessionDataSource.getTaskSessions(taskID: task.id)
@@ -296,6 +279,50 @@ public struct DefaultTaskRepository: TaskRepository {
         for session in sessions {
             try await localSessionDataSource.addSession(session)
         }
+    }
+
+    public func completeTask(id: UUID) async throws -> TaskCompletionResult {
+        let timeZoneID = await getTimeZoneID()
+        let cachedDuration = try await localDataSource.fetchTask(id: id)?.duration.minutes ?? 60
+        let response = try await remoteTaskDataSource.completeTask(taskID: id)
+        let task = try HomeRemoteMapper.task(
+            response.task,
+            defaultDuration: cachedDuration
+        )
+        let completedSessions = try response.completedSessions.map {
+            try HomeRemoteMapper.session($0, timeZoneID: timeZoneID)
+        }
+
+        try await localDataSource.upsertTasks([task])
+        try await localSessionDataSource.upsertSessions(completedSessions)
+
+        return TaskCompletionResult(
+            task: task,
+            completedSessions: completedSessions,
+            reward: HomeRemoteMapper.completionReward(response.reward)
+        )
+    }
+
+    public func uncompleteTask(id: UUID) async throws -> AwanTask {
+        let cachedDuration = try await localDataSource.fetchTask(id: id)?.duration.minutes ?? 60
+        let response = try await remoteTaskDataSource.uncompleteTask(taskID: id)
+        let task = try HomeRemoteMapper.task(
+            response,
+            defaultDuration: cachedDuration
+        )
+        try await localDataSource.upsertTasks([task])
+        return task
+    }
+
+    public func refreshTask(id: UUID) async throws -> AwanTask {
+        let cachedDuration = try await localDataSource.fetchTask(id: id)?.duration.minutes ?? 60
+        let response = try await remoteTaskDataSource.getTask(taskID: id)
+        let task = try HomeRemoteMapper.task(
+            response,
+            defaultDuration: cachedDuration
+        )
+        try await localDataSource.upsertTasks([task])
+        return task
     }
     public func deleteTask(id: UUID) async throws {
         try await remoteTaskDataSource.deleteTask(taskID: id, cascade: true)
@@ -327,15 +354,6 @@ public struct DefaultTaskRepository: TaskRepository {
         try await localDataSource.fetchDependents(taskID: taskID)
     }
 
-    private func remoteStatus(_ status: TaskStatus) -> String {
-        switch status {
-        case .pending: "SCHEDULED"
-        case .inProgress: "IN_PROGRESS"
-        case .completed: "COMPLETED"
-        case .cancelled: "CANCELLED"
-        }
-    }
-
     private func replacingDependencies(
         of task: AwanTask,
         with dependencyIDs: Set<UUID>
@@ -345,6 +363,7 @@ public struct DefaultTaskRepository: TaskRepository {
             title: task.title,
             description: task.description,
             status: task.status,
+            completedAt: task.completedAt,
             goalID: task.goalID,
             duration: task.duration,
             isSplittable: task.isSplittable,

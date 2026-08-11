@@ -16,6 +16,8 @@ enum TaskEndpoint: APIEndpoint {
     case getTasksByDateRange(startDate: String, endDate: String)
     case updateTask(taskID: UUID, UpdateTaskRequestDTO)
     case moveTask(taskID: UUID, MoveTaskRequestDTO)
+    case completeTask(taskID: UUID)
+    case uncompleteTask(taskID: UUID)
     case deleteTask(taskID: UUID, cascade: Bool)
     case addDependency(taskID: UUID, AddDependencyRequestDTO)
     case removeDependency(taskID: UUID, dependsOnTaskID: UUID)
@@ -44,6 +46,10 @@ enum TaskEndpoint: APIEndpoint {
             return "/tasks/\(taskID.uuidString)"
         case .moveTask(let taskID, _):
             return "/tasks/\(taskID.uuidString)/move"
+        case .completeTask(let taskID):
+            return "/tasks/\(taskID.uuidString)/complete"
+        case .uncompleteTask(let taskID):
+            return "/tasks/\(taskID.uuidString)/uncomplete"
         case .deleteTask(let taskID, _):
             return "/tasks/\(taskID.uuidString)"
         case .addDependency(let taskID, _):
@@ -59,7 +65,8 @@ enum TaskEndpoint: APIEndpoint {
 
     var method: HTTPMethod {
         switch self {
-        case .createTask, .createTaskWithSessions, .createTasksWithSessions, .addDependency:
+        case .createTask, .createTaskWithSessions, .createTasksWithSessions,
+             .completeTask, .uncompleteTask, .addDependency:
             return .post
         case .getTask, .getTasksByDate, .getTasksByDateRange, .listDependencies, .listDependents:
             return .get

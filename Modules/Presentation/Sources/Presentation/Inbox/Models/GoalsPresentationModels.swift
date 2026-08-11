@@ -64,7 +64,7 @@ public struct GoalProgressItem: Identifiable, Hashable, Sendable {
 public struct GoalDetailTaskItem: Identifiable, Equatable, Sendable {
     public let displayIndex: Int
     public let isDependent: Bool
-    public let dependencyNames: [String]
+    public let dependencyIndices: [Int]
     public let task: AwanTask
 
     public var id: UUID { task.id }
@@ -72,12 +72,12 @@ public struct GoalDetailTaskItem: Identifiable, Equatable, Sendable {
     public init(
         displayIndex: Int,
         isDependent: Bool,
-        dependencyNames: [String],
+        dependencyIndices: [Int],
         task: AwanTask
     ) {
         self.displayIndex = displayIndex
         self.isDependent = isDependent
-        self.dependencyNames = dependencyNames
+        self.dependencyIndices = dependencyIndices
         self.task = task
     }
 }

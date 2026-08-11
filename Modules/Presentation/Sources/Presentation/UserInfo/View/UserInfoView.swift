@@ -18,9 +18,10 @@ public struct UserInfoView: View {
     }
     
     public var body: some View {
-        VStack(spacing: 24) {
-            
-            Text(L10n.UserInfo.subtitle)
+        ZStack {
+            VStack(spacing: 24) {
+                
+                Text(L10n.UserInfo.subtitle)
                 .font(.system(size: 16, weight: .medium, design: .rounded))
                 .foregroundColor(AppColors.textSecondary)
                 .padding(.top, 40)
@@ -71,6 +72,31 @@ public struct UserInfoView: View {
         .task {
             viewModel.observeUserProfile()
         }
+        
+        if viewModel.showToast, let message = viewModel.toastMessage {
+            VStack {
+                Spacer()
+                Text(message)
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Color.red)
+                    .cornerRadius(8)
+                    .shadow(radius: 4)
+                    .padding(.bottom, 24)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation {
+                                viewModel.showToast = false
+                            }
+                        }
+                    }
+            }
+            .zIndex(1)
+        }
+        }
     }
 }
 
@@ -78,7 +104,8 @@ public struct UserInfoView: View {
     UserInfoView(
         viewModel: UserInfoViewModel(
             getUserProfileUseCase: MockGetUserProfileUseCase(),
-            updateUserProfileUseCase: MockUpdateUserProfileUseCase()
+            updateUserProfileUseCase: MockUpdateUserProfileUseCase(),
+            updateProfilePictureUseCase: MockUpdateProfilePictureUseCase()
         )
     )
         .environment(AppearanceManager())

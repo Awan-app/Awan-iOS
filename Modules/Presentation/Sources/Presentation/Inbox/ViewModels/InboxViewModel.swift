@@ -12,7 +12,6 @@ import Observation
 @MainActor
 public final class InboxViewModel {
     public var state: InboxState
-    public var goalsViewModel: GoalsViewModel?
 
     @ObservationIgnored private let useCases: InboxUseCases
     @ObservationIgnored private let mapper: InboxStateMapper
@@ -20,12 +19,10 @@ public final class InboxViewModel {
 
     public init(
         useCases: InboxUseCases,
-        mapper: InboxStateMapper = InboxStateMapper(),
-        goalsViewModel: GoalsViewModel? = nil
+        mapper: InboxStateMapper = InboxStateMapper()
     ) {
         self.useCases = useCases
         self.mapper = mapper
-        self.goalsViewModel = goalsViewModel
         self.state = InboxState()
     }
 
@@ -54,37 +51,116 @@ public final class InboxViewModel {
             
         case .dismissError:
             state.failureMessage = nil
+        case .dismissStreakTransition:
+            state.streakTransition = nil
         }
     }
 
     private func completeTask(id: UUID) {
-        guard let index = state.allTasks.firstIndex(where: { $0.id == id }) else { return }
+        guard let setTaskCompletion = useCases.setTaskCompletion,
+              !state.mutatingTaskIDs.contains(id),
+              let index = state.allTasks.firstIndex(where: { $0.id == id }) else {
+            return
+        }
         let current = state.allTasks[index]
-        let isCurrentlyCompleted = current.derivedStatus == .completed
+        let isCurrentlyCompleted = current.rawTask.completedAt != nil
         let newCompletedState = !isCurrentlyCompleted
         let newDerivedStatus: InboxTaskStatus = newCompletedState
             ? .completed
-            : (current.sessionItems.isEmpty ? .drafted : .active)
+            : reopenedStatus(for: current)
 
-        let updatedItem = InboxTaskItem(
-            id: current.id,
-            title: current.title,
-            description: current.description,
-            derivedStatus: newDerivedStatus,
-            sessionsSummary: current.sessionsSummary,
-            sessionItems: current.sessionItems,
-            rawTask: current.rawTask
+        state.allTasks[index] = replacing(
+            current,
+            task: current.rawTask.updatingCompletion(
+                newCompletedState ? Date() : nil
+            ),
+            derivedStatus: newDerivedStatus
         )
-        state.allTasks[index] = updatedItem
+        state.mutatingTaskIDs.insert(id)
 
-        Task {
+        Task { [weak self] in
+            defer { self?.state.mutatingTaskIDs.remove(id) }
             do {
-                try await useCases.completeTask?.execute(taskID: id, isCompleted: newCompletedState)
+                let result = try await setTaskCompletion.execute(
+                    taskID: id,
+                    isCompleted: newCompletedState
+                )
+                guard let self else { return }
+                self.applyAcceptedTask(result.task)
+
+                if case .completed(let completion) = result,
+                   completion.reward.streak.updated {
+                    self.state.streakTransition = InboxStreakTransition(
+                        oldValue: completion.reward.streak.oldValue,
+                        newValue: completion.reward.streak.newValue,
+                        isNewRecord: completion.reward.streak.maxStreakBroken
+                    )
+                } else {
+                    self.state.streakTransition = nil
+                }
             } catch {
+                guard let self else { return }
+                if let currentIndex = self.state.allTasks.firstIndex(where: { $0.id == id }) {
+                    self.state.allTasks[currentIndex] = current
+                }
                 self.state.failureMessage = error.localizedDescription
-                load()
             }
         }
+    }
+
+    private func applyAcceptedTask(_ task: AwanTask) {
+        guard let index = state.allTasks.firstIndex(where: { $0.id == task.id }) else {
+            return
+        }
+        let current = state.allTasks[index]
+        state.allTasks[index] = replacing(
+            current,
+            task: task,
+            derivedStatus: presentationStatus(for: task, item: current)
+        )
+    }
+
+    private func replacing(
+        _ item: InboxTaskItem,
+        task: AwanTask,
+        derivedStatus: InboxTaskStatus
+    ) -> InboxTaskItem {
+        InboxTaskItem(
+            id: task.id,
+            title: task.title,
+            description: task.description,
+            derivedStatus: derivedStatus,
+            sessionsSummary: item.sessionsSummary,
+            sessionItems: item.sessionItems,
+            rawTask: task,
+            availableCompletionPoints: item.availableCompletionPoints
+        )
+    }
+
+    private func presentationStatus(
+        for task: AwanTask,
+        item: InboxTaskItem
+    ) -> InboxTaskStatus {
+        if task.completedAt != nil {
+            return .completed
+        }
+
+        return derivedStatus(from: item.sessionItems)
+    }
+
+    private func derivedStatus(
+        from sessions: [InboxSessionItem]
+    ) -> InboxTaskStatus {
+        guard !sessions.isEmpty else { return .drafted }
+        let nonCancelled = sessions.filter {
+            $0.underlyingStatus != .cancelled
+        }
+        guard !nonCancelled.isEmpty else { return .cancelled }
+        return .active
+    }
+
+    private func reopenedStatus(for item: InboxTaskItem) -> InboxTaskStatus {
+        derivedStatus(from: item.sessionItems)
     }
 
     private func deleteTask(id: UUID) {

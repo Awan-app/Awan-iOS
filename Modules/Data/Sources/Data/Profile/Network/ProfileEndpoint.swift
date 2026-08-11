@@ -12,6 +12,7 @@ enum ProfileEndpoint: APIEndpoint {
     case updateName(UpdateNameRequestDTO)
     case updateBirthDate(UpdateBirthDateRequestDTO)
     case updateProfilePartial(UpdateProfilePartialRequestDTO)
+    case updateProfilePicture
 
     case updateTimezone(UpdateTimezoneRequestDTO)
     case updateSessionSettings(UpdateSessionSettingsRequestDTO)
@@ -31,6 +32,8 @@ enum ProfileEndpoint: APIEndpoint {
         switch self {
         case .getProfile, .updateProfilePartial:
             return "/users/me"
+        case .updateProfilePicture:
+            return "/users/me/profile/picture"
         case .updateName:
             return "/users/me/profile/name"
         case .updateBirthDate:
@@ -58,7 +61,7 @@ enum ProfileEndpoint: APIEndpoint {
         switch self {
         case .getProfile:
             return .get
-        case .updateName, .updateBirthDate, .updateProfilePartial,
+        case .updateName, .updateBirthDate, .updateProfilePartial, .updateProfilePicture,
              .updateTimezone, .updateSessionSettings, .updateSleepSchedule, .updateSchedulingType,
              .incrementStreak, .resetStreak, .awardPoints, .deductPoints:
             return .patch
@@ -80,7 +83,7 @@ enum ProfileEndpoint: APIEndpoint {
         case .updateSchedulingType(let request): return request
         case .awardPoints(let request): return request
         case .deductPoints(let request): return request
-        case .getProfile, .incrementStreak, .resetStreak: return nil
+        case .getProfile, .incrementStreak, .resetStreak, .updateProfilePicture: return nil
         }
     }
 

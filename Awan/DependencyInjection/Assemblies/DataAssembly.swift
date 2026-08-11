@@ -78,7 +78,16 @@ struct DataAssembly: Assembly {
             )
         }
         container.register(GoalDecompositionRepository.self) { resolver in
-            DefaultGoalDecompositionRepository(remoteDataSource: Self.resolve(RemoteGoalDecompositionDataSource.self, from: resolver))
+            DefaultGoalDecompositionRepository(
+                remoteDataSource: Self.resolve(
+                    RemoteGoalDecompositionDataSource.self,
+                    from: resolver
+                ),
+                localProfileDataSource: Self.resolve(
+                    LocalUserProfileDataSource.self,
+                    from: resolver
+                )
+            )
         }
         .inObjectScope(.container)
 //        container.register(GoalDecompositionRepository.self) { resolver in

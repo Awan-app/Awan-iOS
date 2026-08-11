@@ -79,7 +79,10 @@ public struct DefaultFetchGoalsWithTasksUseCase: FetchGoalsWithTasksUseCase {
             let goalTasks = tasksByGoalID[goal.id] ?? []
             let inboxTasks = goalTasks.map { task -> InboxTask in
                 let sessions = sessionsByTaskID[task.id] ?? []
-                let status = deriveStatus.derive(from: sessions, taskStatus: task.status)
+                let status = deriveStatus.derive(
+                    from: sessions,
+                    completedAt: task.completedAt
+                )
                 return InboxTask(task: task, sessions: sessions, derivedStatus: status)
             }
             return GoalWithTasks(goal: goal, tasks: inboxTasks)

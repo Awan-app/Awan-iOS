@@ -19,6 +19,7 @@ public final class ProfileViewModel {
     private(set) var points = 0
     private(set) var streak = 0
     private(set) var maxStreak = 0
+    private(set) var profilePictureUrl: String?
     private(set) var dailyZones: [Zone] = []
     private(set) var areDailyZonesReady = false
     private(set) var isLoggingOut = false
@@ -28,17 +29,24 @@ public final class ProfileViewModel {
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let fetchZonesUseCase: FetchZonesUseCase
     private let logoutUseCase: LogoutUseCase
+    private let onLogout: (() -> Void)?
     @ObservationIgnored private var zonesCancellable: AnyCancellable?
     @ObservationIgnored private var profileCancellable: AnyCancellable?
 
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
         fetchZonesUseCase: FetchZonesUseCase,
-        logoutUseCase: LogoutUseCase
+        logoutUseCase: LogoutUseCase,
+        onLogout: (() -> Void)? = nil
+
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.fetchZonesUseCase = fetchZonesUseCase
         self.logoutUseCase = logoutUseCase
+        self.onLogout = onLogout
+        
+
+
     }
 
     public func load() async {
@@ -50,6 +58,15 @@ public final class ProfileViewModel {
 
         do {
             let profile = try await getUserProfileUseCase.execute()
+            userName = [profile.firstName, profile.lastName]
+                .filter { !$0.isEmpty }
+                .joined(separator: " ")
+            userEmail = profile.email
+            points = profile.points
+            streak = profile.streak
+            maxStreak = profile.maxStreak
+            profilePictureUrl = profile.profilePictureUrl
+            loadState = .content
             updateProfileState(with: profile)
             observeUserProfile()
             observeDailyZones()
@@ -62,12 +79,13 @@ public final class ProfileViewModel {
         }
     }
 
-    func logout() async {
+    public func logout() async {
         guard !isLoggingOut else { return }
         isLoggingOut = true
 
         do {
             try await logoutUseCase.execute()
+            onLogout?()
         } catch is CancellationError {
             isLoggingOut = false
             return

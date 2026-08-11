@@ -26,7 +26,7 @@ struct GlobalCreationSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if !goalViewModel.requiresFullScreen {
+            if !goalViewModel.state.requiresFullScreen {
                 CreationModeSwitcher(selectedMode: $selectedMode)
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
@@ -50,7 +50,7 @@ struct GlobalCreationSheet: View {
         }
         .background(AppColors.screenBackground.ignoresSafeArea())
         .interactiveDismissDisabled(
-            taskViewModel.state.isSubmitting || goalViewModel.phase == .confirming
+            taskViewModel.state.isSubmitting || goalViewModel.state.isBusy
         )
     }
 }

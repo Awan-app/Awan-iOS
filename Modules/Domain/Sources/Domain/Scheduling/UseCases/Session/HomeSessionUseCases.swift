@@ -58,13 +58,16 @@ public protocol SetSessionCompletionUseCase: Sendable {
 public struct DefaultSetSessionCompletionUseCase: SetSessionCompletionUseCase {
     
     private let sessionRepository: any SessionRepository
+    private let taskRepository: any TaskRepository
     private let userProfileRepository: any UserProfileRepository
     
     public init(
         sessionRepository: any SessionRepository,
+        taskRepository: any TaskRepository,
         userProfileRepository: any UserProfileRepository
     ) {
         self.sessionRepository = sessionRepository
+        self.taskRepository = taskRepository
         self.userProfileRepository = userProfileRepository
     }
 
@@ -86,6 +89,8 @@ public struct DefaultSetSessionCompletionUseCase: SetSessionCompletionUseCase {
         let session = try await sessionRepository.uncompleteSession(
             id: sessionID
         )
+
+        _ = try? await taskRepository.refreshTask(id: session.taskID)
 
         return .uncompleted(session)
     }

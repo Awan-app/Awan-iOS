@@ -42,6 +42,13 @@ struct GoalProposalView: View {
             }
 
             VStack(spacing: 13) {
+                AppButton(
+                    title: L10n.GoalCreation.confirm,
+                    icon: "sparkles",
+                    color: AppColors.accentBlue,
+                    onTap: onConfirm
+                )
+
                 QuickTaskComposer(
                     text: $prompt,
                     isRecording: isRecording,
@@ -51,13 +58,6 @@ struct GoalProposalView: View {
                     onSend: onSend,
                     onRecordingStarted: onRecordingStarted,
                     onRecordingEnded: onRecordingEnded
-                )
-
-                AppButton(
-                    title: L10n.GoalCreation.confirm,
-                    icon: "checkmark.circle.fill",
-                    color: AppColors.accentGreen,
-                    onTap: onConfirm
                 )
             }
             .padding(.horizontal, 20)

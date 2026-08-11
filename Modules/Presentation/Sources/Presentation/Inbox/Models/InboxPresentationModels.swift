@@ -63,6 +63,7 @@ public struct InboxTaskItem: Identifiable, Hashable, Sendable {
     public let sessionsSummary: String
     public let sessionItems: [InboxSessionItem]
     public let rawTask: AwanTask
+    public let availableCompletionPoints: Int
 
     public init(
         id: UUID,
@@ -71,7 +72,8 @@ public struct InboxTaskItem: Identifiable, Hashable, Sendable {
         derivedStatus: InboxTaskStatus,
         sessionsSummary: String,
         sessionItems: [InboxSessionItem],
-        rawTask: AwanTask
+        rawTask: AwanTask,
+        availableCompletionPoints: Int = 0
     ) {
         self.id = id
         self.title = title
@@ -80,5 +82,6 @@ public struct InboxTaskItem: Identifiable, Hashable, Sendable {
         self.sessionsSummary = sessionsSummary
         self.sessionItems = sessionItems
         self.rawTask = rawTask
+        self.availableCompletionPoints = availableCompletionPoints
     }
 }

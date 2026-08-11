@@ -11,6 +11,7 @@ struct InboxTaskCard: View {
     let taskItem: InboxTaskItem
     let isExpanded: Bool
     let onToggleExpand: () -> Void
+    let isCompletionDisabled: Bool
     var onCompleteTask: (() -> Void)? = nil
     var onDeleteTask: (() -> Void)? = nil
 
@@ -19,12 +20,14 @@ struct InboxTaskCard: View {
     init(
         taskItem: InboxTaskItem,
         isExpanded: Bool,
+        isCompletionDisabled: Bool = false,
         onToggleExpand: @escaping () -> Void,
         onCompleteTask: (() -> Void)? = nil,
         onDeleteTask: (() -> Void)? = nil
     ) {
         self.taskItem = taskItem
         self.isExpanded = isExpanded
+        self.isCompletionDisabled = isCompletionDisabled
         self.onToggleExpand = onToggleExpand
         self.onCompleteTask = onCompleteTask
         self.onDeleteTask = onDeleteTask
@@ -64,6 +67,18 @@ struct InboxTaskCard: View {
                                 .lineLimit(1)
                                 .truncationMode(.tail)
                         }
+
+                        Label(
+                            taskItem.availableCompletionPoints > 0
+                                ? L10n.Home.pointsValue(taskItem.availableCompletionPoints)
+                                : L10n.Inbox.pointsClaimed,
+                            systemImage: taskItem.availableCompletionPoints > 0
+                                ? "star.fill"
+                                : "checkmark.seal.fill"
+                        )
+                        .font(AppFonts.captionHeavy)
+                        .foregroundStyle(AppColors.reward)
+                        .environment(\.layoutDirection, .leftToRight)
                     }
 
                     Spacer()
@@ -156,6 +171,8 @@ struct InboxTaskCard: View {
             .contentShape(Circle())
         }
         .buttonStyle(.plain)
+        .disabled(isCompletionDisabled)
+        .opacity(isCompletionDisabled ? 0.55 : 1)
         .padding(.trailing, 4)
         .padding(.vertical, 4)
         .contentShape(Rectangle())

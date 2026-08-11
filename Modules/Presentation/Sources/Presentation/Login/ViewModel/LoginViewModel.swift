@@ -9,6 +9,7 @@ import Foundation
 import Observation
 import Domain
 import Network
+import Common
 
 public enum LoginState: Equatable, Sendable {
     case idle
@@ -33,6 +34,8 @@ public struct GoogleSignInTokens: Sendable {
 public final class LoginViewModel {
     
     public private(set) var state: LoginState = .idle
+    public private(set) var isGoogleLoading: Bool = false
+    public var googleErrorMessage: String? = nil
     public private(set) var hasAttemptedSubmit: Bool = false
     private var isOffline = false
     private var rateLimitTask: Task<Void, Never>?
@@ -63,11 +66,11 @@ public final class LoginViewModel {
         guard hasAttemptedSubmit else { return nil }
         
         if email.isEmpty {
-            return "Please enter your email."
+            return L10n.Login.emptyEmailError
         }
         
         if !isValidEmail {
-            return "Please enter a valid email address."
+            return L10n.Login.invalidEmailError
         }
         
         return nil
@@ -129,35 +132,37 @@ public final class LoginViewModel {
     
     public func onGoogleSignInTapped() {
         guard !isOffline else {
-            state = .failure(.network)
+            googleErrorMessage = L10n.Login.networkOfflineError
             return
         }
 
-        state = .loading
+        isGoogleLoading = true
+        googleErrorMessage = nil
         
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
                 let tokens = try await googleSignInTokenProvider()
                 
                 if Task.isCancelled { return }
                 
-                let result = try await self.googleSignInUseCase.execute(idToken: tokens.idToken, accessToken: tokens.accessToken)
+                let result = try await googleSignInUseCase.execute(idToken: tokens.idToken, accessToken: tokens.accessToken)
                 
                 if !Task.isCancelled {
-                    self.state = .idle
-                    self.onLoginSuccess?(result)
+                    isGoogleLoading = false
+                    onLoginSuccess?(result)
                 }
             } catch {
                 guard !Task.isCancelled else { return }
                 
+                isGoogleLoading = false
                 let nsError = error as NSError
                 // 8 == GIDSignInError.canceled
                 if nsError.domain == "com.google.GIDSignIn" && nsError.code == 8 {
-                    self.state = .idle
                     return
                 }
                 
-                self.state = .failure(.inline(message: error.localizedDescription))
+                googleErrorMessage = error.localizedDescription
             }
         }
     }

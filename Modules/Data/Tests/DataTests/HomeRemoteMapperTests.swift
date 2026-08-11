@@ -7,8 +7,10 @@ final class HomeRemoteMapperTests: XCTestCase {
     func testTaskStatusesMapSemanticallyAndPreserveCategory() throws {
         let categoryID = UUID()
         let values: [(String, TaskStatus)] = [
-            ("SCHEDULED", .pending),
-            ("IN_PROGRESS", .inProgress),
+            ("DRAFTED", .drafted),
+            ("ACTIVE", .active),
+            ("SCHEDULED", .active),
+            ("IN_PROGRESS", .active),
             ("COMPLETED", .completed),
             ("CANCELLED", .cancelled),
         ]
@@ -164,6 +166,9 @@ final class HomeRemoteMapperTests: XCTestCase {
             title: "Task",
             description: nil,
             status: status,
+            completedAt: status == "COMPLETED"
+                ? "2026-08-10T06:07:40.829849069Z"
+                : nil,
             goalID: nil,
             estimatedDuration: nil,
             mandatory: false,

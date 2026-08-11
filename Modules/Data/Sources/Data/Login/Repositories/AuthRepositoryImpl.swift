@@ -119,6 +119,7 @@ public final class AuthRepositoryImpl: AuthRepository, @unchecked Sendable {
         do {
             try sessionDataSource.clear()
             try await localDataWiper.wipeAllData()
+            try? Auth.auth().signOut()
         } catch where remoteError == nil {
             throw AuthError.unknown(message: "Failed to securely clear local data: \(error)")
         } catch {

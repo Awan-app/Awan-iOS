@@ -14,7 +14,7 @@ extension CreateAiTaskResponseDTO {
                 id: UUID(),
                 title: taskPayload.title,
                 description: taskPayload.description,
-                status: .pending,
+                status: taskDTO.aiProposedSessions.isEmpty ? .drafted : .active,
                 goalID: taskPayload.goalId,
                 duration: try! TaskDuration(minutes: max(1, taskPayload.estimatedDuration ?? 60)),
                 isSplittable: taskPayload.allowTaskSplitting ?? false,

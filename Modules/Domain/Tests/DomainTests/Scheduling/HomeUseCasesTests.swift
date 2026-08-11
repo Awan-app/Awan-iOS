@@ -412,6 +412,18 @@ private actor TaskRepositoryStub: TaskRepository {
     func updateTask(_ task: AwanTask) {
         updatedTask = task
     }
+    func completeTask(id: UUID) throws -> TaskCompletionResult {
+        throw SchedulingError.entityNotFound(id: id)
+    }
+    func uncompleteTask(id: UUID) throws -> AwanTask {
+        throw SchedulingError.entityNotFound(id: id)
+    }
+    func refreshTask(id: UUID) throws -> AwanTask {
+        guard let task = tasks.first(where: { $0.id == id }) else {
+            throw SchedulingError.entityNotFound(id: id)
+        }
+        return task
+    }
     func lastAddition() -> Addition? { addition }
     func lastUpdate() -> AwanTask? { updatedTask }
     func deleteTask(id: UUID) { tasks.removeAll { $0.id == id } }

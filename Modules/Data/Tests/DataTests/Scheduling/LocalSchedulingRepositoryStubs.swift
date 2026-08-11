@@ -21,6 +21,18 @@ struct LocalTaskRepositoryStub: TaskRepository {
         return (task, [])
     }
     func updateTask(_ task: AwanTask) async throws { try await dataSource.updateTask(task) }
+    func completeTask(id: UUID) async throws -> TaskCompletionResult {
+        throw SchedulingError.entityNotFound(id: id)
+    }
+    func uncompleteTask(id: UUID) async throws -> AwanTask {
+        throw SchedulingError.entityNotFound(id: id)
+    }
+    func refreshTask(id: UUID) async throws -> AwanTask {
+        guard let task = try await dataSource.fetchTask(id: id) else {
+            throw SchedulingError.entityNotFound(id: id)
+        }
+        return task
+    }
     func deleteTask(id: UUID) async throws {
         try await sessionDataSource.deleteSessions(taskID: id)
         try await dataSource.deleteTask(id: id)
@@ -122,6 +134,7 @@ struct LegacyLocalUpdateTaskUseCase: UpdateTaskUseCase {
             title: request.title,
             description: previousTask.description,
             status: previousTask.status,
+            completedAt: previousTask.completedAt,
             goalID: previousTask.goalID,
             duration: TaskDuration(minutes: request.durationMinutes),
             isSplittable: request.isSplittable,

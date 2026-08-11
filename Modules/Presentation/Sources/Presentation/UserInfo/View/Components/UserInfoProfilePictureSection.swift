@@ -1,6 +1,7 @@
 import SwiftUI
 import Common
 import PhotosUI
+import Kingfisher
 
 struct UserInfoProfilePictureSection: View {
     @Binding var selectedPhotoItem: PhotosPickerItem?
@@ -12,6 +13,16 @@ struct UserInfoProfilePictureSection: View {
             Group {
                 if let profileImage {
                     profileImage
+                        .resizable()
+                        .scaledToFill()
+                } else if let imageUrl = viewModel.profilePictureUrl, let url = URL(string: imageUrl) {
+                    KFImage(url)
+                        .placeholder {
+                            ProgressView()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(Color.gray.opacity(0.1))
+                        }
+                        .onFailureImage(UIImage(named: "user-avatar"))
                         .resizable()
                         .scaledToFill()
                 } else {
@@ -45,7 +56,11 @@ struct UserInfoProfilePictureSection: View {
             Task {
                 if let data = try? await newItem?.loadTransferable(type: Data.self), let uiImage = UIImage(data: data) {
                     profileImage = Image(uiImage: uiImage)
-                    viewModel.profileImageData = data
+                    if let jpegData = uiImage.jpegData(compressionQuality: 0.8) {
+                        viewModel.profileImageData = jpegData
+                        viewModel.profileImageMimeType = "image/jpeg"
+                        viewModel.profileImageFileName = "profile.jpg"
+                    }
                 }
             }
         }

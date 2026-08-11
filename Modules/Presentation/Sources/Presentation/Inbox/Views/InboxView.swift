@@ -7,11 +7,17 @@ import Common
 import SwiftUI
 
 public struct InboxView: View {
+    @Environment(AppCoordinator.self) private var coordinator
     @State private var viewModel: InboxViewModel
+    @State private var goalsViewModel: GoalsViewModel
     @State private var isFilterExpanded = false
 
-    public init(viewModel: InboxViewModel) {
+    public init(
+        viewModel: InboxViewModel,
+        goalsViewModel: GoalsViewModel
+    ) {
         _viewModel = State(initialValue: viewModel)
+        _goalsViewModel = State(initialValue: goalsViewModel)
     }
 
     public var body: some View {
@@ -47,6 +53,15 @@ public struct InboxView: View {
             }
         } message: {
             Text(state.failureMessage ?? L10n.Inbox.loadFailed)
+        }
+        .onChange(of: viewModel.state.streakTransition) { _, transition in
+            guard let transition else { return }
+            coordinator.mainCoordinator.presentStreakCelebration(
+                previousStreak: transition.oldValue,
+                streak: transition.newValue,
+                isNewRecord: transition.isNewRecord
+            )
+            viewModel.send(.dismissStreakTransition)
         }
     }
 
@@ -99,6 +114,7 @@ public struct InboxView: View {
                                 InboxTaskCard(
                                     taskItem: taskItem,
                                     isExpanded: state.expandedTaskIDs.contains(taskItem.id),
+                                    isCompletionDisabled: state.mutatingTaskIDs.contains(taskItem.id),
                                     onToggleExpand: {
                                         viewModel.send(.toggleTaskExpansion(taskItem.id))
                                     },
@@ -113,23 +129,7 @@ public struct InboxView: View {
                         }
                     }
                 } else {
-                    if let goalsViewModel = viewModel.goalsViewModel {
-                        GoalsContentSection(viewModel: goalsViewModel)
-                    } else {
-                        VStack(spacing: 16) {
-                            AwanMascotView(state: .goal)
-                                .frame(width: 160, height: 120)
-
-                            Text(L10n.Inbox.tabGoals)
-                                .font(AppFonts.title2Black)
-                                .foregroundStyle(AppColors.textPrimary)
-
-                            Text(L10n.Goals.managementPlaceholder)
-                                .font(AppFonts.subheadlineSemibold)
-                                .foregroundStyle(AppColors.textSecondary)
-                        }
-                        .padding(.top, 40)
-                    }
+                    GoalsContentSection(viewModel: goalsViewModel)
                 }
             }
             .padding(.horizontal, 16)

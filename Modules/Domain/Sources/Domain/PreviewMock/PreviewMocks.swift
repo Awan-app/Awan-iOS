@@ -88,6 +88,7 @@ public extension UserProfile {
             points: 100,
             streak: 5,
             maxStreak: 10,
+            profilePictureUrl: nil,
             preferences: UserPreferences(
                 timezone: "UTC",
                 preferredSessionDuration: 60,
@@ -112,6 +113,11 @@ public struct MockGetUserProfileUseCase: GetUserProfileUseCase {
 public struct MockUpdateUserProfileUseCase: UpdateUserProfileUseCase {
     public init() {}
     public func execute(firstName: String?, lastName: String?, birthDate: String?) async throws {}
+}
+
+public struct MockUpdateProfilePictureUseCase: UpdateProfilePictureUseCase {
+    public init() {}
+    public func execute(data: Data, fileName: String, mimeType: String) async throws {}
 }
 
 public struct MockFetchZonesUseCase: FetchZonesUseCase {
@@ -391,7 +397,7 @@ public extension AwanTask {
             id: UUID(),
             title: "Mock Task",
             description: "Mock Task Description",
-            status: .inProgress,
+            status: .active,
             goalID: nil,
             duration: try! TaskDuration(minutes: 60),
             isSplittable: false,
@@ -408,7 +414,7 @@ public extension AITaskSheetItem {
                 id: UUID(),
                 title: "Build login page",
                 description: "Create a login page with email and password fields",
-                status: .pending,
+                status: .active,
                 goalID: UUID(),
                 duration: try! TaskDuration(minutes: 60),
                 isSplittable: false,
