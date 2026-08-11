@@ -29,10 +29,8 @@ struct ProfileLockedItemsSection: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         ForEach(lockedItems) { item in
-                            MarketplaceItemCard(item: item) {
-                                onItemTap(item)
-                            }
-                            .frame(width: 170)
+                            InventoryItemCard(item: item)
+                                .frame(width: 90)
                         }
                     }
                     .padding(.bottom, 6)

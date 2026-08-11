@@ -12,6 +12,8 @@ public struct ProfileInventoryView: View {
 
     private let gridColumns = [
         GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
 
@@ -135,7 +137,7 @@ public struct ProfileInventoryView: View {
             } else {
                 LazyVGrid(columns: gridColumns, spacing: 12) {
                     ForEach(viewModel.displayedOwnedItems) { item in
-                        MarketplaceItemCard(item: item) {
+                        InventoryItemCard(item: item, overrideState: .owned) {
                             viewModel.send(.selectItem(item))
                         }
                     }

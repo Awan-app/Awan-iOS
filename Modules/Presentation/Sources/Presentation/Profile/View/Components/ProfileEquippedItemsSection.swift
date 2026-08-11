@@ -44,7 +44,10 @@ struct ProfileEquippedItemsSection: View {
                     HStack(spacing: 12) {
                         ForEach(equippedItems) { equipped in
                             let marketplaceItem = MarketplaceItem(storeItem: equipped.item)
-                            equippedCard(for: equipped, marketplaceItem: marketplaceItem)
+                            InventoryItemCard(equipped: equipped) {
+                                onUnequip(marketplaceItem)
+                            }
+                            .frame(width: 90)
                         }
                     }
                 }
