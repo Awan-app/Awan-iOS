@@ -4,6 +4,20 @@ import Swinject
 
 struct PresentationAssembly: Assembly {
     func assemble(container: Container) {
+        container.register(NotificationScheduling.self) { resolver in
+            let userProfileRepository = Self.resolve(UserProfileRepository.self, from: resolver)
+            return LocalNotificationService(userProfileRepository: userProfileRepository)
+        }
+        .inObjectScope(.container)
+
+        container.register(NotificationScheduler.self) { resolver in
+            let scheduling = Self.resolve(NotificationScheduling.self, from: resolver)
+            return MainActor.assumeIsolated {
+                NotificationScheduler(notificationService: scheduling)
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(AppCoordinator.self) { _ in
             MainActor.assumeIsolated {
                 AppCoordinator()
@@ -72,8 +86,9 @@ struct PresentationAssembly: Assembly {
         }
         container.register(ScheduleTimelineViewModel.self) { resolver in
             let useCases = Self.resolve(ScheduleTimelineUseCases.self, from: resolver)
+            let scheduler = Self.resolve(NotificationScheduler.self, from: resolver)
             return MainActor.assumeIsolated {
-                ScheduleTimelineViewModel(useCases: useCases)
+                ScheduleTimelineViewModel(useCases: useCases, notificationScheduler: scheduler)
             }
         }
 
@@ -131,8 +146,9 @@ struct PresentationAssembly: Assembly {
 
         container.register(HomeViewModel.self) { resolver in
             let useCases = Self.resolve(HomeUseCases.self, from: resolver)
+            let scheduler = Self.resolve(NotificationScheduler.self, from: resolver)
             return MainActor.assumeIsolated {
-                HomeViewModel(useCases: useCases)
+                HomeViewModel(useCases: useCases, notificationScheduler: scheduler)
             }
         }
         .inObjectScope(.container)
@@ -205,12 +221,14 @@ struct PresentationAssembly: Assembly {
             let createTemplateUseCase = Self.resolve(CreateOnboardingTemplateUseCase.self, from: resolver)
             let manageZoneScheduleUseCase = Self.resolve(ManageZoneScheduleUseCase.self, from: resolver)
             let fetchCategoriesUseCase = Self.resolve(FetchCategoriesUseCase.self, from: resolver)
+            let scheduler = Self.resolve(NotificationScheduler.self, from: resolver)
             return MainActor.assumeIsolated {
                 OnboardingViewModel(
                     completeOnboardingUseCase: useCase,
                     createOnboardingTemplateUseCase: createTemplateUseCase,
                     manageZoneScheduleUseCase: manageZoneScheduleUseCase,
-                    fetchCategoriesUseCase: fetchCategoriesUseCase
+                    fetchCategoriesUseCase: fetchCategoriesUseCase,
+                    notificationScheduler: scheduler
                 )
             }
         }
