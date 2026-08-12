@@ -56,6 +56,6 @@ final class InventoryItemDecodingTests: XCTestCase {
         XCTAssertEqual(domainModel.id, "inv-100")
         XCTAssertEqual(domainModel.item.id, "item-gold-frame")
         XCTAssertEqual(domainModel.item.name, "Gold Frame")
-        XCTAssertEqual(domainModel.item.type, "FRAME")
+        XCTAssertEqual(domainModel.item.type, .frame)
     }
 }

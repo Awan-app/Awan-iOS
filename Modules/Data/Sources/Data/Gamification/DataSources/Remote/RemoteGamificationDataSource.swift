@@ -9,7 +9,7 @@ public protocol RemoteGamificationDataSource: Sendable {
     func getProgress() async throws -> UserProgressResponseDTO
     func getWheelConfig() async throws -> DailyWheelConfigResponseDTO
     func spinWheel() async throws -> DailyWheelSpinResponseDTO
-    func getStoreItems(type: String) async throws -> [StoreItemResponseDTO]
+    func getStoreItems() async throws -> [StoreItemResponseDTO]
     func buyStoreItem(itemID: String) async throws -> StorePurchaseResponseDTO
     func equipStoreItem(itemID: String) async throws -> EquippedItemResponseDTO
     func unequipStoreItem(type: String) async throws
@@ -41,9 +41,9 @@ public final class DefaultRemoteGamificationDataSource:
         try await networkService.request(GamificationEndpoint.spinWheel)
     }
 
-    public func getStoreItems(type: String) async throws -> [StoreItemResponseDTO] {
+    public func getStoreItems() async throws -> [StoreItemResponseDTO] {
         let response: StoreItemsResponseDTO = try await networkService.request(
-            GamificationEndpoint.getStoreItems(type: type)
+            GamificationEndpoint.getStoreItems
         )
         return response.items
     }

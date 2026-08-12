@@ -80,7 +80,7 @@ public struct InventoryItemCard: View {
         let item = MarketplaceItem(storeItem: equipped.item)
         self.init(
             title: item.name,
-            category: equipped.type,
+            category: equipped.type.rawValue,
             imageURL: item.imageURL,
             symbolName: item.symbolName,
             state: .equipped,

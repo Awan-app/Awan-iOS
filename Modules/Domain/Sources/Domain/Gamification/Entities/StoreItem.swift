@@ -5,6 +5,29 @@
 
 import Foundation
 
+public enum StoreItemType: String, CaseIterable, Equatable, Sendable {
+    case frame = "FRAME"
+    case skin = "SKIN"
+    case theme = "THEME"
+    case icon = "ICON"
+    case unknown = "UNKNOWN"
+
+    public init(apiValue: String) {
+        switch apiValue.uppercased() {
+        case Self.frame.rawValue:
+            self = .frame
+        case Self.skin.rawValue:
+            self = .skin
+        case Self.theme.rawValue:
+            self = .theme
+        case Self.icon.rawValue, "APPICON":
+            self = .icon
+        default:
+            self = .unknown
+        }
+    }
+}
+
 public struct StoreItem: Identifiable, Equatable, Sendable {
     public let id: String
     public let name: String
@@ -13,7 +36,7 @@ public struct StoreItem: Identifiable, Equatable, Sendable {
     public let info: String?
     public let price: Int
     public let version: String
-    public let type: String
+    public let type: StoreItemType
 
     public init(
         id: String,
@@ -23,7 +46,7 @@ public struct StoreItem: Identifiable, Equatable, Sendable {
         info: String?,
         price: Int,
         version: String,
-        type: String
+        type: StoreItemType
     ) {
         self.id = id
         self.name = name

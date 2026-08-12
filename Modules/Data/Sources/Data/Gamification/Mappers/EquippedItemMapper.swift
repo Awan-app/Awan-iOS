@@ -11,7 +11,7 @@ public enum EquippedItemMapper {
         let item = StoreItemMapper.map(dto.item)
         let equippedAtDate = parseISO8601Date(dto.equippedAt)
         return EquippedItem(
-            type: dto.type,
+            type: StoreItemType(apiValue: dto.type),
             item: item,
             equippedAt: equippedAtDate
         )

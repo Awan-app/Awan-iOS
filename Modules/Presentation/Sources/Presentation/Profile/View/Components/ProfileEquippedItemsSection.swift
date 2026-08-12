@@ -9,20 +9,20 @@ import SwiftUI
 
 struct ProfileEquippedItemsSection: View {
     let equippedItems: [EquippedItem]
-    var unequippingItemType: String? = nil
+    var unequippingItemType: StoreItemType? = nil
     let onUnequip: (MarketplaceItem) -> Void
 
     private struct SlotDefinition {
-        let rawTypes: [String]
+        let type: StoreItemType
         let displayName: String
         let defaultSymbol: String
     }
 
     private let fixedSlots: [SlotDefinition] = [
-        SlotDefinition(rawTypes: ["FRAME"], displayName: L10n.Marketplace.filterFrames, defaultSymbol: "square.on.circle"),
-        SlotDefinition(rawTypes: ["SKIN"], displayName: L10n.Marketplace.filterSkins, defaultSymbol: "paintpalette.fill"),
-        SlotDefinition(rawTypes: ["THEME"], displayName: L10n.Marketplace.filterThemes, defaultSymbol: "globe"),
-        SlotDefinition(rawTypes: ["ICON", "APPICON"], displayName: L10n.Marketplace.filterAppIcons, defaultSymbol: "square.grid.2x2.fill")
+        SlotDefinition(type: .frame, displayName: L10n.Marketplace.filterFrames, defaultSymbol: "square.on.circle"),
+        SlotDefinition(type: .skin, displayName: L10n.Marketplace.filterSkins, defaultSymbol: "paintpalette.fill"),
+        SlotDefinition(type: .theme, displayName: L10n.Marketplace.filterThemes, defaultSymbol: "globe"),
+        SlotDefinition(type: .icon, displayName: L10n.Marketplace.filterAppIcons, defaultSymbol: "square.grid.2x2.fill")
     ]
 
     var body: some View {
@@ -36,7 +36,7 @@ struct ProfileEquippedItemsSection: View {
                 HStack(spacing: 12) {
                     ForEach(fixedSlots, id: \.displayName) { slot in
                         let matchingEquipped = equippedItems.first { item in
-                            slot.rawTypes.contains(item.type.uppercased())
+                            slot.type == item.type
                         }
 
                         slotCardView(for: slot, equipped: matchingEquipped)
@@ -51,7 +51,7 @@ struct ProfileEquippedItemsSection: View {
     private func slotCardView(for slot: SlotDefinition, equipped: EquippedItem?) -> some View {
         if let equipped {
             let marketplaceItem = MarketplaceItem(storeItem: equipped.item)
-            let isUnequipping = (unequippingItemType?.uppercased() == slot.rawTypes.first)
+            let isUnequipping = unequippingItemType == slot.type
 
             if isUnequipping {
                 VStack(spacing: 8) {

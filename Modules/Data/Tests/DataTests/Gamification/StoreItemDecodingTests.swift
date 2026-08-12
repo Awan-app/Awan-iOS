@@ -92,22 +92,13 @@ final class StoreItemDecodingTests: XCTestCase {
         let domainItem = StoreItemMapper.map(dto)
         XCTAssertEqual(domainItem.id, "abc")
         XCTAssertEqual(domainItem.name, "Theme 1")
-        XCTAssertEqual(domainItem.type, "THEME")
+        XCTAssertEqual(domainItem.type, .theme)
         XCTAssertNil(domainItem.info)
     }
 
     func testGamificationEndpointQueryParameters() {
-        let endpointFrame = GamificationEndpoint.getStoreItems(type: "FRAME")
-        XCTAssertEqual(endpointFrame.path, "/store/items")
-        XCTAssertEqual(endpointFrame.queryParameters, ["type": "FRAME"])
-
-        let endpointSkin = GamificationEndpoint.getStoreItems(type: "SKIN")
-        XCTAssertEqual(endpointSkin.queryParameters, ["type": "SKIN"])
-
-        let endpointTheme = GamificationEndpoint.getStoreItems(type: "THEME")
-        XCTAssertEqual(endpointTheme.queryParameters, ["type": "THEME"])
-
-        let endpointIcon = GamificationEndpoint.getStoreItems(type: "ICON")
-        XCTAssertEqual(endpointIcon.queryParameters, ["type": "ICON"])
+        let endpoint = GamificationEndpoint.getStoreItems
+        XCTAssertEqual(endpoint.path, "/store/items")
+        XCTAssertNil(endpoint.queryParameters)
     }
 }

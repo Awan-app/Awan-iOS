@@ -25,13 +25,13 @@ public enum ProfileInventoryAction: Sendable {
 public final class ProfileInventoryViewModel {
     public private(set) var catalogItems: [StoreItem] = []
     public private(set) var inventoryItems: [InventoryItem] = []
-    public private(set) var equippedItems: [EquippedItem] = []
+    private var equippedLoadout = StoreLoadout()
     public var selectedCategory: MarketplaceItemCategory = .all
 
     public private(set) var isLoading: Bool = false
     public private(set) var errorMessage: String? = nil
     public private(set) var equippingItemID: String? = nil
-    public private(set) var unequippingItemType: String? = nil
+    public private(set) var unequippingItemType: StoreItemType? = nil
 
     public var selectedItem: MarketplaceItem? = nil
     public private(set) var feedbackMessage: String? = nil
@@ -83,12 +83,16 @@ public final class ProfileInventoryViewModel {
 
     // MARK: - Derived State
 
+    public var equippedItems: [EquippedItem] {
+        equippedLoadout.items
+    }
+
     public var displayedEquippedItems: [EquippedItem] {
         if selectedCategory == .all {
             return equippedItems
         }
-        guard let apiType = selectedCategory.apiType else { return equippedItems }
-        return equippedItems.filter { $0.type.uppercased() == apiType.uppercased() }
+        guard let itemType = selectedCategory.storeItemType else { return equippedItems }
+        return equippedItems.filter { $0.type == itemType }
     }
 
     public var displayedOwnedItems: [MarketplaceItem] {
@@ -137,18 +141,18 @@ public final class ProfileInventoryViewModel {
             do {
                 async let inventoryTask = fetchInventory.execute()
                 async let equippedTask = fetchEquipped.execute()
-                async let catalogTask = fetchCatalog.execute(type: "") 
+                async let catalogTask = fetchCatalog.execute()
 
                 let (inventory, equipped, catalog) = try await (inventoryTask, equippedTask, catalogTask)
 
                 guard let self else { return }
                 self.inventoryItems = inventory
-                self.equippedItems = equipped
+                self.equippedLoadout = StoreLoadout(items: equipped)
                 self.catalogItems = catalog
                 self.isLoading = false
             } catch {
                 guard let self else { return }
-                self.errorMessage = error.localizedDescription
+                self.errorMessage = GamificationErrorMessageMapper.message(for: error)
                 self.isLoading = false
             }
         }
@@ -171,10 +175,7 @@ public final class ProfileInventoryViewModel {
                 guard let self else { return }
                 self.equippingItemID = nil
 
-                // Update equippedItems array: replace existing of same type, or append
-                var updatedEquipped = self.equippedItems.filter { $0.type.uppercased() != newlyEquipped.type.uppercased() }
-                updatedEquipped.append(newlyEquipped)
-                self.equippedItems = updatedEquipped
+                self.equippedLoadout.equip(newlyEquipped)
 
                 if var selected = self.selectedItem, selected.id == itemID {
                     selected.status = .equipped
@@ -186,40 +187,28 @@ public final class ProfileInventoryViewModel {
                 guard let self else { return }
                 self.equippingItemID = nil
 
-                let msg: String
-                if let gamificationError = error as? GamificationError {
-                    switch gamificationError {
-                    case .itemNotOwned:
-                        msg = L10n.Marketplace.itemNotOwned
-                    default:
-                        msg = error.localizedDescription
-                    }
-                } else {
-                    msg = error.localizedDescription
-                }
-                self.errorMessage = msg
+                self.errorMessage = GamificationErrorMessageMapper.message(for: error)
             }
         }
     }
 
     private func unequipItem(_ item: MarketplaceItem) {
         guard equippingItemID == nil, unequippingItemType == nil else { return }
-        guard let apiType = item.category.apiType else { return }
+        guard let itemType = item.category.storeItemType else { return }
 
-        unequippingItemType = apiType
+        unequippingItemType = itemType
         feedbackMessage = nil
 
         let useCase = unequipStoreItemUseCase
 
         Task { [weak self] in
             do {
-                try await useCase.execute(type: apiType)
+                try await useCase.execute(type: itemType)
 
                 guard let self else { return }
                 self.unequippingItemType = nil
 
-                // Remove item of that type from equippedItems
-                self.equippedItems.removeAll { $0.type.uppercased() == apiType.uppercased() }
+                self.equippedLoadout.unequip(itemType)
 
                 if var selected = self.selectedItem, selected.id == item.id {
                     selected.status = .owned
@@ -228,7 +217,7 @@ public final class ProfileInventoryViewModel {
             } catch {
                 guard let self else { return }
                 self.unequippingItemType = nil
-                self.errorMessage = error.localizedDescription
+                self.errorMessage = GamificationErrorMessageMapper.message(for: error)
             }
         }
     }

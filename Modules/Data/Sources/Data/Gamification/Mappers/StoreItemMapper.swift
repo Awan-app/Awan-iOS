@@ -15,7 +15,7 @@ public enum StoreItemMapper {
             info: dto.info,
             price: dto.price,
             version: dto.version,
-            type: dto.type
+            type: StoreItemType(apiValue: dto.type)
         )
     }
 

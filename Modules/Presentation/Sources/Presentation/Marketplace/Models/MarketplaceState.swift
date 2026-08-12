@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import Domain
 
 public enum PurchaseFeedback: Sendable, Equatable {
     case success(message: String)
@@ -11,29 +12,34 @@ public enum PurchaseFeedback: Sendable, Equatable {
 }
 
 public struct MarketplaceState: Sendable {
-    public var allItems: [MarketplaceItem] = []
+    public var storefront: Storefront = .empty
     public var userPoints: Int = 0
 
     public var isLoading: Bool = false
-    public var isLoadingPoints: Bool = false
     public var errorMessage: String? = nil
 
     public var purchasingItemID: String? = nil
     public var equippingItemID: String? = nil
-    public var purchaseErrorMessage: String? = nil
-    public var purchaseSuccessMessage: String? = nil
     public var purchaseFeedback: PurchaseFeedback? = nil
 
     public var searchQuery: String = ""
     public var selectedCategory: MarketplaceItemCategory = .all
 
     public var isFilterSheetPresented: Bool = false
-    public var pendingFilter: MarketplaceFilter = .default
     public var appliedFilter: MarketplaceFilter = .default
 
-    public var selectedItem: MarketplaceItem? = nil
+    public var selectedItemID: String? = nil
 
     public init() {}
+
+    public var allItems: [MarketplaceItem] {
+        storefront.items.map(MarketplaceItem.init(storefrontItem:))
+    }
+
+    public var selectedItem: MarketplaceItem? {
+        guard let selectedItemID else { return nil }
+        return allItems.first { $0.id == selectedItemID }
+    }
 
     public var filteredItems: [MarketplaceItem] {
         allItems.filter { item in
@@ -42,7 +48,9 @@ public struct MarketplaceState: Sendable {
                 || item.name.localizedCaseInsensitiveContains(trimmedQuery)
                 || item.description.localizedCaseInsensitiveContains(trimmedQuery)
 
-            let typeMatch = appliedFilter.selectedCategories.contains(item.category)
+            let selectedCategoryMatch = selectedCategory == .all || item.category == selectedCategory
+            let filterCategoryMatch = item.category == .all
+                || appliedFilter.selectedCategories.contains(item.category)
 
             let priceMatch: Bool
             switch item.status {
@@ -57,7 +65,7 @@ public struct MarketplaceState: Sendable {
                 priceMatch = true
             }
 
-            return searchMatch && typeMatch && priceMatch
+            return searchMatch && selectedCategoryMatch && filterCategoryMatch && priceMatch
         }
     }
 

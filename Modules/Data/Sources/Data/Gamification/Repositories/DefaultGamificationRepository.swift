@@ -17,8 +17,8 @@ public final class DefaultGamificationRepository: GamificationRepository {
         self.remoteDataSource = remoteDataSource
         self.localProfileDataSource = localProfileDataSource
     }
-    public func fetchStoreItems(type: String) async throws -> [StoreItem] {
-        let dtos = try await remoteDataSource.getStoreItems(type: type)
+    public func fetchStoreItems() async throws -> [StoreItem] {
+        let dtos = try await remoteDataSource.getStoreItems()
         return StoreItemMapper.map(dtos)
     }
     
@@ -46,9 +46,9 @@ public final class DefaultGamificationRepository: GamificationRepository {
         }
     }
 
-    public func unequipStoreItem(type: String) async throws {
+    public func unequipStoreItem(type: StoreItemType) async throws {
         do {
-            try await remoteDataSource.unequipStoreItem(type: type)
+            try await remoteDataSource.unequipStoreItem(type: type.rawValue)
         } catch {
             throw map(error)
         }
@@ -194,4 +194,3 @@ public final class DefaultGamificationRepository: GamificationRepository {
         }
     }
 }
-

@@ -6,7 +6,7 @@
 import Foundation
 
 public protocol FetchStoreItemsUseCase: Sendable {
-    func execute(type: String) async throws -> [StoreItem]
+    func execute() async throws -> [StoreItem]
 }
 
 public struct DefaultFetchStoreItemsUseCase: FetchStoreItemsUseCase {
@@ -16,7 +16,7 @@ public struct DefaultFetchStoreItemsUseCase: FetchStoreItemsUseCase {
         self.repository = repository
     }
 
-    public func execute(type: String) async throws -> [StoreItem] {
-        try await repository.fetchStoreItems(type: type)
+    public func execute() async throws -> [StoreItem] {
+        try await repository.fetchStoreItems()
     }
 }

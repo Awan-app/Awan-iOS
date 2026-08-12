@@ -36,7 +36,7 @@ public struct MockCreateAITaskUseCase: CreateAITaskUseCase {
 
 public struct MockFetchStoreItemsUseCase: FetchStoreItemsUseCase {
     public init() {}
-    public func execute(type: String) async throws -> [StoreItem] {
+    public func execute() async throws -> [StoreItem] {
         [
             StoreItem(
                 id: "1",
@@ -46,7 +46,7 @@ public struct MockFetchStoreItemsUseCase: FetchStoreItemsUseCase {
                 info: nil,
                 price: 100,
                 version: "1.0",
-                type: type
+                type: .frame
             )
         ]
     }
@@ -65,7 +65,7 @@ public struct MockBuyStoreItemUseCase: BuyStoreItemUseCase {
                 info: nil,
                 price: 100,
                 version: "1.0",
-                type: "FRAME"
+                type: .frame
             ),
             boughtAt: Date()
         )
