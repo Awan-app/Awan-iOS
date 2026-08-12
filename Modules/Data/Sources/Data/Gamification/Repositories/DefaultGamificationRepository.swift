@@ -4,28 +4,48 @@
 //
 
 import AwaNetwork
+import Combine
 import Domain
 
 public final class DefaultGamificationRepository: GamificationRepository {
     private let remoteDataSource: any RemoteGamificationDataSource
+    private let localGamificationDataSource: any LocalGamificationDataSource
     private let localProfileDataSource: any LocalUserProfileDataSource
     
     public init(
         remoteDataSource: any RemoteGamificationDataSource,
+        localGamificationDataSource: any LocalGamificationDataSource,
         localProfileDataSource: any LocalUserProfileDataSource
     ) {
         self.remoteDataSource = remoteDataSource
+        self.localGamificationDataSource = localGamificationDataSource
         self.localProfileDataSource = localProfileDataSource
     }
     public func fetchStoreItems() async throws -> [StoreItem] {
-        let dtos = try await remoteDataSource.getStoreItems()
-        return StoreItemMapper.map(dtos)
+        try await localGamificationDataSource.fetchStoreItems()
+    }
+
+    public func observeStoreItems() -> AnyPublisher<[StoreItem], Error> {
+        let local = localGamificationDataSource.observeStoreItems()
+        let remote = AsyncValuePublisher.make { try await self.refreshStoreItems() }
+            .catch { _ in Empty<[StoreItem], Error>() }
+            .eraseToAnyPublisher()
+        return local
+            .merge(with: remote)
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
     
     public func buyStoreItem(itemID: String) async throws -> StorePurchase {
         do {
             let dto = try await remoteDataSource.buyStoreItem(itemID: itemID)
             let purchase = StorePurchaseMapper.map(dto)
+            let inventoryItem = InventoryItem(
+                id: purchase.id,
+                item: purchase.item,
+                boughtAt: purchase.boughtAt
+            )
+            try await localGamificationDataSource.upsertInventoryItem(inventoryItem)
 
             if let progress = try? await remoteDataSource.getProgress() {
                 try? await localProfileDataSource.updatePoints(progress.points)
@@ -64,9 +84,34 @@ public final class DefaultGamificationRepository: GamificationRepository {
     }
 
     public func fetchStoreInventory() async throws -> [InventoryItem] {
+        try await localGamificationDataSource.fetchInventoryItems()
+    }
+
+    public func observeStoreInventory() -> AnyPublisher<[InventoryItem], Error> {
+        let local = localGamificationDataSource.observeInventoryItems()
+        let remote = AsyncValuePublisher.make { try await self.refreshStoreInventory() }
+            .catch { _ in Empty<[InventoryItem], Error>() }
+            .eraseToAnyPublisher()
+        return local
+            .merge(with: remote)
+            .removeDuplicates()
+            .eraseToAnyPublisher()
+    }
+
+    private func refreshStoreItems() async throws -> [StoreItem] {
+        let items = StoreItemMapper.map(try await remoteDataSource.getStoreItems())
+            .sorted { $0.id < $1.id }
+        try await localGamificationDataSource.replaceStoreItems(items)
+        return items
+    }
+
+    private func refreshStoreInventory() async throws -> [InventoryItem] {
         do {
             let dtos = try await remoteDataSource.getStoreInventory()
-            return dtos.map { InventoryItemMapper.map($0) }
+            let items = dtos.map { InventoryItemMapper.map($0) }
+                .sorted { $0.boughtAt > $1.boughtAt }
+            try await localGamificationDataSource.replaceInventoryItems(items)
+            return items
         } catch {
             throw map(error)
         }

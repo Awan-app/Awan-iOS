@@ -1,3 +1,4 @@
+import Combine
 import Domain
 import Common
 import Foundation
@@ -13,6 +14,7 @@ public final class MarketplaceViewModel {
     @ObservationIgnored private let equipStoreItemUseCase: any EquipStoreItemUseCase
     @ObservationIgnored private let unequipStoreItemUseCase: (any UnequipStoreItemUseCase)?
     @ObservationIgnored private let fetchUserPointsUseCase: any FetchUserPointsUseCase
+    @ObservationIgnored private var storefrontCancellable: AnyCancellable?
 
     public init(
         fetchStorefrontUseCase: any FetchStorefrontUseCase,
@@ -89,21 +91,21 @@ public final class MarketplaceViewModel {
         state.errorMessage = nil
 
         let useCase = fetchStorefrontUseCase
-
-        Task { [weak self] in
-            do {
-                let storefront = try await useCase.execute()
-
-                guard let self else { return }
-                self.state.storefront = storefront
-                self.state.isLoading = false
-            } catch {
-                guard let self else { return }
-                self.state.errorMessage = error.localizedDescription
-                self.state.storefront = .empty
-                self.state.isLoading = false
-            }
-        }
+        storefrontCancellable = useCase.observe()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    guard let self, case let .failure(error) = completion else { return }
+                    self.state.errorMessage = error.localizedDescription
+                    self.state.isLoading = false
+                },
+                receiveValue: { [weak self] storefront in
+                    guard let self else { return }
+                    self.state.storefront = storefront
+                    self.state.errorMessage = nil
+                    self.state.isLoading = false
+                }
+            )
     }
 
     private func buyStoreItem(_ item: MarketplaceItem) {

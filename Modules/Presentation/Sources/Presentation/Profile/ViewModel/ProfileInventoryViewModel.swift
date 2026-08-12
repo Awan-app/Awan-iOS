@@ -3,6 +3,7 @@
 //  Presentation
 //
 
+import Combine
 import Common
 import Domain
 import Foundation
@@ -41,6 +42,7 @@ public final class ProfileInventoryViewModel {
     @ObservationIgnored private let fetchStoreItemsUseCase: any FetchStoreItemsUseCase
     @ObservationIgnored private let equipStoreItemUseCase: any EquipStoreItemUseCase
     @ObservationIgnored private let unequipStoreItemUseCase: any UnequipStoreItemUseCase
+    @ObservationIgnored private var inventoryCancellable: AnyCancellable?
 
     public init(
         fetchStoreInventoryUseCase: any FetchStoreInventoryUseCase,
@@ -125,29 +127,32 @@ public final class ProfileInventoryViewModel {
         isLoading = true
         errorMessage = nil
 
-        let fetchInventory = fetchStoreInventoryUseCase
         let fetchEquipped = fetchEquippedItemsUseCase
-        let fetchCatalog = fetchStoreItemsUseCase
-
-        Task { [weak self] in
-            do {
-                async let inventoryTask = fetchInventory.execute()
-                async let equippedTask = fetchEquipped.execute()
-                async let catalogTask = fetchCatalog.execute()
-
-                let (inventory, equipped, catalog) = try await (inventoryTask, equippedTask, catalogTask)
-
-                guard let self else { return }
-                self.inventoryItems = inventory
-                self.equippedLoadout = StoreLoadout(items: equipped)
-                self.catalogItems = catalog
-                self.isLoading = false
-            } catch {
-                guard let self else { return }
-                self.errorMessage = GamificationErrorMessageMapper.message(for: error)
-                self.isLoading = false
-            }
+        let equipped = AsyncValuePublisher.make {
+            try await fetchEquipped.execute()
         }
+        .prepend([])
+        .catch { _ in Empty<[EquippedItem], Error>() }
+
+        inventoryCancellable = fetchStoreInventoryUseCase.observe()
+            .combineLatest(fetchStoreItemsUseCase.observe())
+            .combineLatest(equipped)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    guard let self, case let .failure(error) = completion else { return }
+                    self.errorMessage = GamificationErrorMessageMapper.message(for: error)
+                    self.isLoading = false
+                },
+                receiveValue: { [weak self] inventoryAndCatalog, equippedItems in
+                    guard let self else { return }
+                    self.inventoryItems = inventoryAndCatalog.0
+                    self.catalogItems = inventoryAndCatalog.1
+                    self.equippedLoadout = StoreLoadout(items: equippedItems)
+                    self.errorMessage = nil
+                    self.isLoading = false
+                }
+            )
     }
 
     private func equipItem(_ item: MarketplaceItem) {
