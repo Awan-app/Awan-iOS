@@ -17,7 +17,6 @@ let package = Package(
         .package(path: "../Common"),
         .package(path: "../Domain"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS.git", from: "7.0.0"),
-        .package(url: "https://github.com/onevcat/Kingfisher.git", exact: "8.10.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -27,9 +26,10 @@ let package = Package(
             dependencies: [
                 "Common",
                 "Domain",
-                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
-                .product(name: "Kingfisher", package: "Kingfisher")
-            ]),
+                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
+            ],
+            resources: [.process("Resources")]
+        ),
         .testTarget(
             name: "PresentationTests",
             dependencies: ["Presentation"]

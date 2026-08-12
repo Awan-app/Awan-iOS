@@ -91,22 +91,21 @@ struct MarketplaceItemDetailSheet: View {
             .frame(height: 200)
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
 
-            if case .locked = item.status {
+            AppRemoteImage(urlString: item.imageURL) {
                 Image(systemName: item.symbolName)
                     .font(.system(size: 90, weight: .bold))
                     .foregroundStyle(heroPrimaryColor)
-                    .blur(radius: 12)
-                    .overlay(
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 44, weight: .black))
-                            .foregroundStyle(.white)
-                            .shadow(color: Color.black.opacity(0.35), radius: 8, y: 4)
-                    )
-            } else {
-                Image(systemName: item.symbolName)
-                    .font(.system(size: 90, weight: .bold))
-                    .foregroundStyle(heroPrimaryColor)
-                    .shadow(color: heroPrimaryColor.opacity(0.30), radius: 20, y: 8)
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity)
+            .frame(height: 200)
+            .blur(radius: item.status == .locked ? 12 : 0)
+            .overlay {
+                if item.status == .locked {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 44, weight: .black))
+                        .foregroundStyle(AppColors.onAccent)
+                }
             }
         }
     }

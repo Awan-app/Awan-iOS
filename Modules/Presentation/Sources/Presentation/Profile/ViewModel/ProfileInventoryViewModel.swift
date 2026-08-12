@@ -87,14 +87,6 @@ public final class ProfileInventoryViewModel {
         equippedLoadout.items
     }
 
-    public var displayedEquippedItems: [EquippedItem] {
-        if selectedCategory == .all {
-            return equippedItems
-        }
-        guard let itemType = selectedCategory.storeItemType else { return equippedItems }
-        return equippedItems.filter { $0.type == itemType }
-    }
-
     public var displayedOwnedItems: [MarketplaceItem] {
         let equippedIDs = Set(equippedItems.map { $0.item.id })
 

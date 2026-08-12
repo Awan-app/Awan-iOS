@@ -19,6 +19,7 @@ public struct InventoryItemCard: View {
     public let category: String
     public let imageURL: String?
     public let symbolName: String
+    public let placeholderImageName: String?
     public let state: InventoryItemCardState
     public let onTap: (() -> Void)?
     public let onCheckmarkTap: (() -> Void)?
@@ -28,6 +29,7 @@ public struct InventoryItemCard: View {
         category: String,
         imageURL: String? = nil,
         symbolName: String = "sparkles",
+        placeholderImageName: String? = nil,
         state: InventoryItemCardState = .owned,
         onTap: (() -> Void)? = nil,
         onCheckmarkTap: (() -> Void)? = nil
@@ -36,6 +38,7 @@ public struct InventoryItemCard: View {
         self.category = category
         self.imageURL = imageURL
         self.symbolName = symbolName
+        self.placeholderImageName = placeholderImageName
         self.state = state
         self.onTap = (state == .locked || state == .empty) ? nil : onTap
         self.onCheckmarkTap = onCheckmarkTap
@@ -162,34 +165,27 @@ public struct InventoryItemCard: View {
 
     @ViewBuilder
     private var previewImage: some View {
-        Group {
-            if let imageURL, let url = URL(string: imageURL) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    case .failure, .empty:
-                        symbolFallback
-                    @unknown default:
-                        symbolFallback
-                    }
-                }
-            } else {
-                symbolFallback
-            }
+        AppRemoteImage(urlString: imageURL) {
+            symbolFallback
         }
         .saturation(state == .locked ? 0 : 1)
         .opacity(state == .locked ? 0.55 : 1.0)
     }
 
     private var symbolFallback: some View {
-        Image(systemName: symbolName)
-            .resizable()
-            .scaledToFit()
-            .padding(6)
-            .foregroundStyle((state == .locked || state == .empty) ? AppColors.textSecondary : AppColors.accentBlue)
+        Group {
+            if let placeholderImageName {
+                Image(placeholderImageName, bundle: .module)
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                Image(systemName: symbolName)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle((state == .locked || state == .empty) ? AppColors.textSecondary : AppColors.accentBlue)
+            }
+        }
+        .padding(6)
     }
 
     private var checkBadge: some View {

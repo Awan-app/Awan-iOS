@@ -24,31 +24,14 @@ struct MarketplaceItemCard: View {
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 90)
 
-                            if let imageURLString = item.imageURL,
-                                let url = URL(string: imageURLString)
-                            {
-                                AsyncImage(url: url) { phase in
-                                    switch phase {
-                                    case .success(let image):
-                                        image
-                                            .resizable()
-                                            .scaledToFit()
-                                            .padding(8)
-                                    case .failure, .empty:
-                                        Image(systemName: item.symbolName)
-                                            .font(.system(size: 42, weight: .bold))
-                                            .foregroundStyle(imageForeground)
-                                    @unknown default:
-                                        Image(systemName: item.symbolName)
-                                            .font(.system(size: 42, weight: .bold))
-                                            .foregroundStyle(imageForeground)
-                                    }
-                                }
-                            } else {
+                            AppRemoteImage(urlString: item.imageURL) {
                                 Image(systemName: item.symbolName)
                                     .font(.system(size: 42, weight: .bold))
                                     .foregroundStyle(imageForeground)
                             }
+                            .padding(8)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 90)
                         }
 
                         if item.isNew {

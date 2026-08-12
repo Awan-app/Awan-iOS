@@ -11,10 +11,10 @@ public struct ProfileInventoryView: View {
     @State private var viewModel: ProfileInventoryViewModel
 
     private let gridColumns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8),
     ]
 
     public init(viewModel: ProfileInventoryViewModel) {
@@ -96,7 +96,7 @@ public struct ProfileInventoryView: View {
                     categoryFilterBar
 
                     ProfileEquippedItemsSection(
-                        equippedItems: viewModel.displayedEquippedItems,
+                        equippedItems: viewModel.equippedItems,
                         unequippingItemType: viewModel.unequippingItemType,
                         onUnequip: { item in
                             viewModel.send(.unequipItem(item))
@@ -154,31 +154,21 @@ public struct ProfileInventoryView: View {
     }
 
     private var emptyView: some View {
-        AppDepthSurface(
-            shape: .roundedRectangle(cornerRadius: 20),
-            surfaceColor: AppColors.surface,
-            borderColor: AppColors.outline.opacity(0.12),
-            depthColor: AppColors.outline.opacity(0.16),
-            borderWidth: 1.5,
-            depthOffset: 4,
-            contentInsets: EdgeInsets(top: 24, leading: 20, bottom: 24, trailing: 20)
-        ) {
-            VStack(spacing: 12) {
-                Image(systemName: "shippingbox")
-                    .font(.system(size: 40, weight: .semibold))
-                    .foregroundStyle(AppColors.accentPurple)
+        VStack(spacing: 12) {
+            AwanMascotView(state: .normal)
+                .frame(width: 88, height: 72)
 
-                Text(L10n.Profile.emptyInventoryTitle)
-                    .font(AppFonts.title3Bold)
-                    .foregroundStyle(AppColors.textPrimary)
+            Text(L10n.Profile.emptyInventoryTitle)
+                .font(AppFonts.title3Bold)
+                .foregroundStyle(AppColors.textPrimary)
 
-                Text(L10n.Profile.emptyInventorySubtitle)
-                    .font(AppFonts.subheadlineSemibold)
-                    .foregroundStyle(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
+            Text(L10n.Profile.emptyInventorySubtitle)
+                .font(AppFonts.subheadlineSemibold)
+                .foregroundStyle(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
         }
-        .padding(.top, 10)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
     }
 }

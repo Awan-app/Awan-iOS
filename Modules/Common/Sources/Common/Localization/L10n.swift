@@ -1001,6 +1001,10 @@ public enum L10n {
         public static var inventorySubtitle: String { text("profile.inventory_subtitle") }
         public static var inventoryPlaceholder: String { text("profile.inventory_placeholder") }
         public static var equippedItems: String { text("profile.equipped_items") }
+        public static var noActiveFrame: String { text("profile.no_active_frame") }
+        public static var noActiveSkin: String { text("profile.no_active_skin") }
+        public static var noActiveTheme: String { text("profile.no_active_theme") }
+        public static var noActiveAppIcon: String { text("profile.no_active_app_icon") }
         public static var ownedItems: String { text("profile.owned_items") }
         public static var filterOwned: String { text("profile.filter_owned") }
         public static var emptyInventoryTitle: String { text("profile.empty_inventory_title") }

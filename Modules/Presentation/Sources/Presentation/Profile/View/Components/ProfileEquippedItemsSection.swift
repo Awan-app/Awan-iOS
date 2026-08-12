@@ -15,14 +15,16 @@ struct ProfileEquippedItemsSection: View {
     private struct SlotDefinition {
         let type: StoreItemType
         let displayName: String
+        let emptyMessage: String
+        let placeholderImageName: String
         let defaultSymbol: String
     }
 
     private let fixedSlots: [SlotDefinition] = [
-        SlotDefinition(type: .frame, displayName: L10n.Marketplace.filterFrames, defaultSymbol: "square.on.circle"),
-        SlotDefinition(type: .skin, displayName: L10n.Marketplace.filterSkins, defaultSymbol: "paintpalette.fill"),
-        SlotDefinition(type: .theme, displayName: L10n.Marketplace.filterThemes, defaultSymbol: "globe"),
-        SlotDefinition(type: .icon, displayName: L10n.Marketplace.filterAppIcons, defaultSymbol: "square.grid.2x2.fill")
+        SlotDefinition(type: .frame, displayName: L10n.Marketplace.filterFrames, emptyMessage: L10n.Profile.noActiveFrame, placeholderImageName: "EmptyStoreFrame", defaultSymbol: "square.on.circle"),
+        SlotDefinition(type: .skin, displayName: L10n.Marketplace.filterSkins, emptyMessage: L10n.Profile.noActiveSkin, placeholderImageName: "EmptyStoreSkin", defaultSymbol: "paintpalette.fill"),
+        SlotDefinition(type: .theme, displayName: L10n.Marketplace.filterThemes, emptyMessage: L10n.Profile.noActiveTheme, placeholderImageName: "EmptyStoreTheme", defaultSymbol: "globe"),
+        SlotDefinition(type: .icon, displayName: L10n.Marketplace.filterAppIcons, emptyMessage: L10n.Profile.noActiveAppIcon, placeholderImageName: "EmptyStoreAppIcon", defaultSymbol: "square.grid.2x2.fill")
     ]
 
     var body: some View {
@@ -32,18 +34,17 @@ struct ProfileEquippedItemsSection: View {
                 accentColor: AppColors.accentGreen
             )
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(fixedSlots, id: \.displayName) { slot in
-                        let matchingEquipped = equippedItems.first { item in
-                            slot.type == item.type
-                        }
-
-                        slotCardView(for: slot, equipped: matchingEquipped)
-                            .frame(width: 90)
+            HStack(alignment: .top, spacing: 8) {
+                ForEach(fixedSlots, id: \.displayName) { slot in
+                    let matchingEquipped = equippedItems.first { item in
+                        slot.type == item.type
                     }
+
+                    slotCardView(for: slot, equipped: matchingEquipped)
+                        .frame(maxWidth: .infinity)
                 }
             }
+            .frame(maxWidth: .infinity)
         }
     }
 
@@ -101,9 +102,10 @@ struct ProfileEquippedItemsSection: View {
         } else {
             InventoryItemCard(
                 title: slot.displayName,
-                category: L10n.Marketplace.emptySubtitle,
+                category: slot.emptyMessage,
                 imageURL: nil,
                 symbolName: slot.defaultSymbol,
+                placeholderImageName: slot.placeholderImageName,
                 state: .empty,
                 onTap: nil
             )

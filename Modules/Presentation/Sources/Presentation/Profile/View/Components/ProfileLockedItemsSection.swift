@@ -11,6 +11,13 @@ struct ProfileLockedItemsSection: View {
     let lockedItems: [MarketplaceItem]
     let onItemTap: (MarketplaceItem) -> Void
 
+    private let gridColumns = [
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8),
+    ]
+
     var body: some View {
         if !lockedItems.isEmpty {
             VStack(alignment: .leading, spacing: 12) {
@@ -26,14 +33,12 @@ struct ProfileLockedItemsSection: View {
                     )
                 }
 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
-                        ForEach(lockedItems) { item in
-                            InventoryItemCard(item: item)
-                                .frame(width: 90)
+                LazyVGrid(columns: gridColumns, spacing: 12) {
+                    ForEach(lockedItems) { item in
+                        InventoryItemCard(item: item) {
+                            onItemTap(item)
                         }
                     }
-                    .padding(.bottom, 6)
                 }
             }
         }
