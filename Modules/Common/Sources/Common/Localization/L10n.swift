@@ -1071,6 +1071,10 @@ public enum L10n {
         public static var more: String { text("profile.more") }
         public static var personalization: String { text("profile.personalization") }
         public static var settings: String { text("profile.settings") }
+        public static var general: String { text("profile.general") }
+        public static var manageNotifications: String { text("profile.manage_notifications") }
+        public static var enabled: String { text("profile.enabled") }
+        public static var disabled: String { text("profile.disabled") }
         public static var aboutAwan: String { text("profile.about_awan") }
         public static var loading: String { text("profile.loading") }
         public static var loadFailure: String { text("profile.load_failure") }
@@ -1451,6 +1455,37 @@ public enum L10n {
         public static var dismiss: String { text("streak_celebration.dismiss") }
         public static var newBest: String { text("streak_celebration.new_best") }
         public static var keepGoing: String { text("streak_celebration.keep_going") }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
+
+    public enum Notifications {
+        public static var sessionStartTitle: String { text("notifications.session_start_title") }
+        public static func sessionStartBody(_ name: String) -> String {
+            String(format: text("notifications.session_start_body"), name)
+        }
+        
+        public static var sessionNowTitle: String { text("notifications.session_now_title") }
+        public static func sessionNowBody(_ name: String) -> String {
+            String(format: text("notifications.session_now_body"), name)
+        }
+
+        public static var goalDeadline7dTitle: String { text("notifications.goal_deadline_7d_title") }
+        public static func goalDeadline7dBody(_ name: String) -> String {
+            String(format: text("notifications.goal_deadline_7d_body"), name)
+        }
+
+        public static var goalDeadline1dTitle: String { text("notifications.goal_deadline_1d_title") }
+        public static func goalDeadline1dBody(_ name: String) -> String {
+            String(format: text("notifications.goal_deadline_1d_body"), name)
+        }
+
+        public static var goalDeadlineTodayTitle: String { text("notifications.goal_deadline_today_title") }
+        public static func goalDeadlineTodayBody(_ name: String) -> String {
+            String(format: text("notifications.goal_deadline_today_body"), name)
+        }
 
         private static func text(_ key: String) -> String {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")

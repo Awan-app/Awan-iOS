@@ -58,5 +58,9 @@ extension ScheduleTimelineViewModel {
             $0.taskEditorsByID = content.taskEditorsByID
             $0.timelineItems = content.timelineItems
         }
+        
+        let taskTitles = Dictionary(uniqueKeysWithValues: workspace.tasks.map { ($0.id, $0.title) })
+        notificationScheduler?.syncSessions(workspace.sessions, taskTitlesByID: taskTitles)
+        notificationScheduler?.syncGoals(workspace.goals)
     }
 }

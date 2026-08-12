@@ -4,13 +4,17 @@ import SwiftUI
 struct OnboardingContainerView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(AppCoordinator.self) private var coordinator
-    @Bindable var viewModel: OnboardingViewModel
+    @State private var viewModel: OnboardingViewModel
 
     // Bug fix 1: internal back-history so the back button navigates within
     // the container instead of the NavigationStack popping to Welcome.
     @State private var stepHistory: [OnboardingRoute] = []
     // Bug fix 1: tracks direction so the transition flips correctly.
     @State private var isGoingBack: Bool = false
+
+    init(viewModel: OnboardingViewModel) {
+        _viewModel = State(initialValue: viewModel)
+    }
 
     var body: some View {
         // Bug fix 2: VStack instead of ZStack — header occupies its own space,

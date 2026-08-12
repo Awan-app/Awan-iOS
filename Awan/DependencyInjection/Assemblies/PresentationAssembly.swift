@@ -4,6 +4,20 @@ import Swinject
 
 struct PresentationAssembly: Assembly {
     func assemble(container: Container) {
+        container.register(NotificationScheduling.self) { resolver in
+            let userProfileRepository = Self.resolve(UserProfileRepository.self, from: resolver)
+            return LocalNotificationService(userProfileRepository: userProfileRepository)
+        }
+        .inObjectScope(.container)
+
+        container.register(NotificationScheduler.self) { resolver in
+            let scheduling = Self.resolve(NotificationScheduling.self, from: resolver)
+            return MainActor.assumeIsolated {
+                NotificationScheduler(notificationService: scheduling)
+            }
+        }
+        .inObjectScope(.container)
+
         container.register(AppCoordinator.self) { _ in
             MainActor.assumeIsolated {
                 AppCoordinator()
@@ -33,6 +47,7 @@ struct PresentationAssembly: Assembly {
                 )
             }
         }
+        .inObjectScope(.transient)
 
         container.register(OtpVerificationViewModel.self) {
             (resolver, context: OtpVerificationContext) in
@@ -46,6 +61,8 @@ struct PresentationAssembly: Assembly {
                 )
             }
         }
+        .inObjectScope(.transient)
+
         container.register(ScheduleTimelineUseCases.self) { resolver in
             ScheduleTimelineUseCases(
                 workspace: Self.resolve(LoadScheduleWorkspaceUseCase.self, from: resolver),
@@ -72,10 +89,12 @@ struct PresentationAssembly: Assembly {
         }
         container.register(ScheduleTimelineViewModel.self) { resolver in
             let useCases = Self.resolve(ScheduleTimelineUseCases.self, from: resolver)
+            let scheduler = Self.resolve(NotificationScheduler.self, from: resolver)
             return MainActor.assumeIsolated {
-                ScheduleTimelineViewModel(useCases: useCases)
+                ScheduleTimelineViewModel(useCases: useCases, notificationScheduler: scheduler)
             }
         }
+        .inObjectScope(.transient)
 
         container.register(HomeUseCases.self) { resolver in
             HomeUseCases(
@@ -131,11 +150,12 @@ struct PresentationAssembly: Assembly {
 
         container.register(HomeViewModel.self) { resolver in
             let useCases = Self.resolve(HomeUseCases.self, from: resolver)
+            let scheduler = Self.resolve(NotificationScheduler.self, from: resolver)
             return MainActor.assumeIsolated {
-                HomeViewModel(useCases: useCases)
+                HomeViewModel(useCases: useCases, notificationScheduler: scheduler)
             }
         }
-        .inObjectScope(.container)
+        .inObjectScope(.transient)
 
         container.register(DailyWheelUseCases.self) { resolver in
             DailyWheelUseCases(
@@ -150,7 +170,7 @@ struct PresentationAssembly: Assembly {
                 DailyWheelViewModel(useCases: useCases)
             }
         }
-        .inObjectScope(.container)
+        .inObjectScope(.transient)
 
         container.register(CalendarViewModel.self) { resolver in
             let goalsUseCase = Self.resolve(FetchGoalsUseCase.self, from: resolver)
@@ -162,11 +182,12 @@ struct PresentationAssembly: Assembly {
                 )
             }
         }
-        .inObjectScope(.container)
+        .inObjectScope(.transient)
 
         container.register(InboxUseCases.self) { resolver in
             InboxUseCases(
                 fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver),
+                userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver),
                 deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver)
             )
@@ -190,7 +211,7 @@ struct PresentationAssembly: Assembly {
                 return vm
             }
         }
-        .inObjectScope(.container)
+        .inObjectScope(.transient)
 
         container.register(InboxViewModel.self) { resolver in
             let useCases = Self.resolve(InboxUseCases.self, from: resolver)
@@ -198,23 +219,25 @@ struct PresentationAssembly: Assembly {
                 InboxViewModel(useCases: useCases)
             }
         }
-        .inObjectScope(.container)
+        .inObjectScope(.transient)
 
         container.register(OnboardingViewModel.self) { resolver in
             let useCase = Self.resolve(CompleteOnboardingUseCase.self, from: resolver)
             let createTemplateUseCase = Self.resolve(CreateOnboardingTemplateUseCase.self, from: resolver)
             let manageZoneScheduleUseCase = Self.resolve(ManageZoneScheduleUseCase.self, from: resolver)
             let fetchCategoriesUseCase = Self.resolve(FetchCategoriesUseCase.self, from: resolver)
+            let scheduler = Self.resolve(NotificationScheduler.self, from: resolver)
             return MainActor.assumeIsolated {
                 OnboardingViewModel(
                     completeOnboardingUseCase: useCase,
                     createOnboardingTemplateUseCase: createTemplateUseCase,
                     manageZoneScheduleUseCase: manageZoneScheduleUseCase,
-                    fetchCategoriesUseCase: fetchCategoriesUseCase
+                    fetchCategoriesUseCase: fetchCategoriesUseCase,
+                    notificationScheduler: scheduler
                 )
             }
         }
-        .inObjectScope(.container)
+        .inObjectScope(.transient)
 
         container.register(ProfileViewModel.self) { resolver in
             let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
@@ -231,7 +254,7 @@ struct PresentationAssembly: Assembly {
                 )
             }
         }
-        .inObjectScope(.container)
+        .inObjectScope(.transient)
 
         container.register(SettingsViewModel.self) { resolver in
             let getUserProfileUseCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
@@ -247,7 +270,7 @@ struct PresentationAssembly: Assembly {
                 )
             }
         }
-        .inObjectScope(.container)
+        .inObjectScope(.transient)
 
         container.register(UserInfoViewModel.self) { resolver in
             let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
@@ -261,6 +284,7 @@ struct PresentationAssembly: Assembly {
                 )
             }
         }
+        .inObjectScope(.transient)
 
         container.register(DailyZonesViewModel.self) { resolver in
             let useCases = DailyZonesUseCases(
@@ -284,6 +308,8 @@ struct PresentationAssembly: Assembly {
                 DailyZonesViewModel(useCases: useCases)
             }
         }
+        .inObjectScope(.transient)
+
         container.register(MarketplaceViewModel.self) { resolver in
             let fetchUseCase = Self.resolve(FetchStorefrontUseCase.self, from: resolver)
             let buyUseCase = Self.resolve(BuyStoreItemUseCase.self, from: resolver)
@@ -300,6 +326,8 @@ struct PresentationAssembly: Assembly {
                 )
             }
         }
+        .inObjectScope(.transient)
+
         container.register(ProfileInventoryViewModel.self) { resolver in
             let fetchInventoryUseCase = Self.resolve(FetchStoreInventoryUseCase.self, from: resolver)
             let fetchEquippedUseCase = Self.resolve(FetchEquippedItemsUseCase.self, from: resolver)
@@ -316,35 +344,32 @@ struct PresentationAssembly: Assembly {
                 )
             }
         }
-        .inObjectScope(.container)
+        .inObjectScope(.transient)
 
         container.register(PresentationFactory.self) { resolver in
             let appCoordinator = Self.resolve(AppCoordinator.self, from: resolver)
             let authenticationState = Self.resolve(AuthenticationState.self, from: resolver)
-            let loginViewModel = Self.resolve(LoginViewModel.self, from: resolver)
-            let homeViewModel = Self.resolve(HomeViewModel.self, from: resolver)
-            let dailyWheelViewModel = Self.resolve(DailyWheelViewModel.self, from: resolver)
-            let calendarViewModel = Self.resolve(CalendarViewModel.self, from: resolver)
-            let scheduleViewModel = Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
             let creationUseCases = Self.resolve(CreationUseCases.self, from: resolver)
-            let onboardingViewModel = Self.resolve(OnboardingViewModel.self, from: resolver)
-            let profileViewModel = Self.resolve(ProfileViewModel.self, from: resolver)
-            let settingsViewModel = Self.resolve(SettingsViewModel.self, from: resolver)
-            let dailyZonesViewModel = Self.resolve(DailyZonesViewModel.self, from: resolver)
-            let inboxViewModel = Self.resolve(InboxViewModel.self, from: resolver)
-            let goalsViewModel = Self.resolve(GoalsViewModel.self, from: resolver)
-            let marketplaceViewModel = Self.resolve(MarketplaceViewModel.self, from: resolver)
-            let profileInventoryViewModel = Self.resolve(ProfileInventoryViewModel.self, from: resolver)
 
             return MainActor.assumeIsolated {
                 PresentationFactory(
                     appCoordinator: appCoordinator,
                     authenticationState: authenticationState,
-                    loginViewModel: loginViewModel,
-                    homeViewModel: homeViewModel,
-                    dailyWheelViewModel: dailyWheelViewModel,
-                    calendarViewModel: calendarViewModel,
-                    scheduleViewModel: scheduleViewModel,
+                    makeLoginViewModel: {
+                        Self.resolve(LoginViewModel.self, from: resolver)
+                    },
+                    makeHomeViewModel: {
+                        Self.resolve(HomeViewModel.self, from: resolver)
+                    },
+                    makeDailyWheelViewModel: {
+                        Self.resolve(DailyWheelViewModel.self, from: resolver)
+                    },
+                    makeCalendarViewModel: {
+                        Self.resolve(CalendarViewModel.self, from: resolver)
+                    },
+                    makeScheduleViewModel: {
+                        Self.resolve(ScheduleTimelineViewModel.self, from: resolver)
+                    },
                     creationUseCases: creationUseCases,
                     makeOtpViewModel: { context in
                         Self.resolve(
@@ -353,17 +378,33 @@ struct PresentationAssembly: Assembly {
                             from: resolver
                         )
                     },
-                    onboardingViewModel: onboardingViewModel,
-                    profileViewModel: profileViewModel,
-                    settingsViewModel: settingsViewModel,
-                    dailyZonesViewModel: dailyZonesViewModel,
+                    makeOnboardingViewModel: {
+                        Self.resolve(OnboardingViewModel.self, from: resolver)
+                    },
+                    makeProfileViewModel: {
+                        Self.resolve(ProfileViewModel.self, from: resolver)
+                    },
+                    makeSettingsViewModel: {
+                        Self.resolve(SettingsViewModel.self, from: resolver)
+                    },
+                    makeDailyZonesViewModel: {
+                        Self.resolve(DailyZonesViewModel.self, from: resolver)
+                    },
                     makeUserInfoViewModel: {
                         Self.resolve(UserInfoViewModel.self, from: resolver)
                     },
-                    inboxViewModel: inboxViewModel,
-                    goalsViewModel: goalsViewModel,
-                    marketplaceViewModel: marketplaceViewModel,
-                    profileInventoryViewModel: profileInventoryViewModel
+                    makeInboxViewModel: {
+                        Self.resolve(InboxViewModel.self, from: resolver)
+                    },
+                    makeGoalsViewModel: {
+                        Self.resolve(GoalsViewModel.self, from: resolver)
+                    },
+                    makeMarketplaceViewModel: {
+                        Self.resolve(MarketplaceViewModel.self, from: resolver)
+                    },
+                    makeProfileInventoryViewModel: {
+                        Self.resolve(ProfileInventoryViewModel.self, from: resolver)
+                    }
                 )
             }
         }

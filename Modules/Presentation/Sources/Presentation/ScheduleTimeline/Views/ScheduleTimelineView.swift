@@ -6,9 +6,14 @@ struct ScheduleTimelineView: View {
     @State private var viewModel: ScheduleTimelineViewModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(LanguageManager.self) private var languageManager
+    private let onBecameActive: (ScheduleTimelineViewModel) -> Void
 
-    init(viewModel: ScheduleTimelineViewModel) {
+    init(
+        viewModel: ScheduleTimelineViewModel,
+        onBecameActive: @escaping (ScheduleTimelineViewModel) -> Void = { _ in }
+    ) {
         _viewModel = State(initialValue: viewModel)
+        self.onBecameActive = onBecameActive
     }
 
     var body: some View {
@@ -101,6 +106,7 @@ struct ScheduleTimelineView: View {
             Text(state.errorMessage ?? L10n.Common.pleaseTryAgain)
         }
         .task { viewModel.send(.appeared) }
+        .onAppear { onBecameActive(viewModel) }
         .onChange(of: state.presentedSheet) { oldValue, newValue in
             if oldValue != nil && newValue == nil {
                 viewModel.send(.appeared)

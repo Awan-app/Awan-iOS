@@ -8,9 +8,14 @@ struct HomeView: View {
     @State private var animatedPoints: Int?
     @State private var pointsPulse = 0
     @State private var pointsAnimationTask: Task<Void, Never>?
+    private let onBecameActive: (HomeViewModel) -> Void
     
-    init(viewModel: HomeViewModel) {
+    init(
+        viewModel: HomeViewModel,
+        onBecameActive: @escaping (HomeViewModel) -> Void = { _ in }
+    ) {
         _viewModel = State(initialValue: viewModel)
+        self.onBecameActive = onBecameActive
     }
     
     var body: some View {
@@ -39,7 +44,10 @@ struct HomeView: View {
         .toolbar(.hidden, for: .navigationBar)
         .toolbarBackground(.hidden, for: .navigationBar)
         .task { viewModel.send(.appeared) }
-        .onAppear { viewModel.send(.appeared) }
+        .onAppear {
+            onBecameActive(viewModel)
+            viewModel.send(.appeared)
+        }
         .sheet(item: selectedSessionBinding) { detail in
             HomeSessionActionSheet(
                 item: detail.item,
@@ -68,14 +76,20 @@ struct HomeView: View {
                 if let sessionID = rewardFlightSessionID,
                    let animation = viewModel.state.completionRewardAnimation,
                    animation.sessionID == sessionID,
-                   let sourceAnchor = anchors[
-                    "session-points-\(sessionID.uuidString)"
-                   ],
                    let destinationAnchor = anchors["points-badge"] {
-                    
+                    let destinationRect = proxy[destinationAnchor]
+                    let sourceRect = anchors[
+                        "session-points-\(sessionID.uuidString)"
+                    ].map { proxy[$0] } ?? CGRect(
+                        x: destinationRect.midX - 1,
+                        y: destinationRect.maxY + 80,
+                        width: 2,
+                        height: 2
+                    )
+
                     RewardFlightOverlay(
-                        sourceRect: proxy[sourceAnchor],
-                        destinationRect: proxy[destinationAnchor],
+                        sourceRect: sourceRect,
+                        destinationRect: destinationRect,
                         points: animation.newPoints - animation.oldPoints,
                         onArrived: {
                             animatePoints(
@@ -114,6 +128,13 @@ struct HomeView: View {
             }
             presentStreak(transition, isNewRecord: reward.maxStreakBroken)
             viewModel.send(.dismissCompletionReward)
+        }
+        .onChange(of: viewModel.state.completionRewardAnimation) { _, animation in
+            guard let animation else { return }
+            pointsAnimationTask?.cancel()
+            pointsAnimationTask = nil
+            animatedPoints = animation.oldPoints
+            rewardFlightSessionID = animation.sessionID
         }
     }
 
@@ -171,16 +192,7 @@ struct HomeView: View {
                             )
                         )
                     },
-                    onTap: { viewModel.send(.presentSession($0))},
-                    onPointsRewardHidden: { sessionID in
-                        guard let animation = viewModel.state.completionRewardAnimation,
-                              animation.sessionID == sessionID else {
-                            return
-                        }
-
-                        animatedPoints = animation.oldPoints
-                        rewardFlightSessionID = sessionID
-                    }
+                    onTap: { viewModel.send(.presentSession($0))}
                 )
             }
             .padding(.horizontal, 16)

@@ -9,19 +9,24 @@ public final class HomeViewModel {
     var state: HomeState
 
     @ObservationIgnored let useCases: HomeUseCases
+    @ObservationIgnored let notificationScheduler: NotificationScheduler?
     @ObservationIgnored private let mapper: HomeStateMapper
     @ObservationIgnored private let timeZone: TimeZone
     @ObservationIgnored private var loadCancellable: AnyCancellable?
+    @ObservationIgnored private var toggleCancellable: AnyCancellable?
 
     public init(
         useCases: HomeUseCases,
+        notificationScheduler: NotificationScheduler? = nil,
         selectedDay: Date = Date(),
         timeZone: TimeZone = .current
     ) {
         self.useCases = useCases
+        self.notificationScheduler = notificationScheduler
         self.timeZone = timeZone
         self.mapper = HomeStateMapper(fallbackTimeZone: timeZone)
         self.state = .initial(selectedDay: selectedDay)
+        setupToggleObserver()
     }
 
     func send(_ action: HomeAction) {
@@ -89,6 +94,7 @@ public final class HomeViewModel {
                         profile: workspace.profile,
                         selectedDay: selectedDay
                     )
+                    self.syncNotifications()
                 }
             )
     }
@@ -119,5 +125,19 @@ public final class HomeViewModel {
                 // Gracefully ignore failure; keep existing points state.
             }
         }
+    }
+
+    private func syncNotifications() {
+        guard let success = state.success else { return }
+        let taskTitles = Dictionary(uniqueKeysWithValues: success.tasks.map { ($0.id, $0.title) })
+        notificationScheduler?.syncSessions(success.sessions, taskTitlesByID: taskTitles)
+    }
+
+    private func setupToggleObserver() {
+        toggleCancellable = NotificationCenter.default.publisher(for: Notification.Name("NotificationsToggled"))
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.syncNotifications()
+            }
     }
 }

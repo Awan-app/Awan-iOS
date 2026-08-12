@@ -39,6 +39,12 @@ public final class OnboardingCoordinator: Coordinating {
         presentedSheet = nil
     }
 
+    public func reset() {
+        path = NavigationPath()
+        containerStep = .yourName
+        presentedSheet = nil
+    }
+
     public func push(_ route: OnboardingRoute) {
         path.append(route)
     }

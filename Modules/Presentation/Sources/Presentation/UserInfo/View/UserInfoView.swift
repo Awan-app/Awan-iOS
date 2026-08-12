@@ -8,13 +8,13 @@ public struct UserInfoView: View {
     @Environment(AppearanceManager.self) private var appearanceManager
     @Environment(LanguageManager.self) private var languageManager
     
-    @Bindable var viewModel: UserInfoViewModel
+    @State private var viewModel: UserInfoViewModel
     
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var profileImage: Image?
     
     public init(viewModel: UserInfoViewModel) {
-        self.viewModel = viewModel
+        _viewModel = State(initialValue: viewModel)
     }
     
     public var body: some View {

@@ -62,18 +62,22 @@ struct RewardFlightOverlay: View {
         .allowsHitTesting(false)
         .task {
             try? await Task.sleep(for: .milliseconds(30))
+            guard !Task.isCancelled else { return }
 
             flying = true
 
             try? await Task.sleep(for: .milliseconds(600))
+            guard !Task.isCancelled else { return }
 
             disappearing = true
 
             try? await Task.sleep(for: .milliseconds(120))
+            guard !Task.isCancelled else { return }
 
             onArrived()
 
             try? await Task.sleep(for: .milliseconds(320))
+            guard !Task.isCancelled else { return }
 
             onFinished()
         }
