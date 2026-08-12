@@ -68,14 +68,25 @@ struct AppRootView: View {
         .task {
             authenticationState.start()
         }
-        .onChange(of: authenticationState.status) { _, status in
-            if status == .unauthenticated {
-                coordinator.authCoordinator.popToRoot()
-            }
+        .onChange(of: authenticationState.status) { previousStatus, status in
+            handleAuthenticationTransition(from: previousStatus, to: status)
         }
         .onOpenURL { url in
             GIDSignIn.sharedInstance.handle(url)
         }
+    }
+
+    private func handleAuthenticationTransition(
+        from previousStatus: AuthenticationStatus,
+        to status: AuthenticationStatus
+    ) {
+        if status == .unauthenticated {
+            coordinator.resetForAuthenticationFlow()
+            return
+        }
+
+        guard !previousStatus.isMainFlow, status.isMainFlow else { return }
+        coordinator.resetForMainFlow()
     }
 
     private var authenticationFlow: some View {
@@ -286,5 +297,12 @@ struct AppRootView: View {
         }
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+}
+
+private extension AuthenticationStatus {
+    var isMainFlow: Bool {
+        guard case .authenticated(let user) = self else { return false }
+        return !user.isNew
     }
 }

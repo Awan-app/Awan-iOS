@@ -4,10 +4,10 @@ import SwiftUI
 public struct DailyZonesView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AppearanceManager.self) private var appearanceManager
-    private let viewModel: DailyZonesViewModel
+    @State private var viewModel: DailyZonesViewModel
 
     public init(viewModel: DailyZonesViewModel) {
-        self.viewModel = viewModel
+        _viewModel = State(initialValue: viewModel)
     }
 
     public var body: some View {

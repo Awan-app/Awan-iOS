@@ -7,7 +7,6 @@ struct HomeTimelineSessionCard: View {
     let onMove: (CGFloat) -> Void
     let onSetCompletion: (Bool) -> Void
     let onTap: () -> Void
-    let onPointsRewardHidden: () -> Void
     
     @State private var dragOffset: CGFloat = 0
     @State private var isDragging = false
@@ -35,14 +34,6 @@ struct HomeTimelineSessionCard: View {
         .contentShape(Rectangle())
         .gesture(dragGesture)
         .accessibilityIdentifier("home-timeline-session-\(item.id.uuidString)")
-        .onChange(of: item.showsCompletionPoints) { oldValue, newValue in
-                guard oldValue, !newValue else { return }
-
-                Task { @MainActor in
-                    try? await Task.sleep(for: .milliseconds(250))
-                    onPointsRewardHidden()
-                }
-            }
     }
 
     private var cardContent: some View {
@@ -215,6 +206,5 @@ struct HomeTimelineSessionCard: View {
         }
     }
 }
-
 
 
