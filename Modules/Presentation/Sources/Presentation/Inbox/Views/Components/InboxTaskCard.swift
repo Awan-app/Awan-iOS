@@ -79,6 +79,12 @@ struct InboxTaskCard: View {
                         .font(AppFonts.captionHeavy)
                         .foregroundStyle(AppColors.reward)
                         .environment(\.layoutDirection, .leftToRight)
+                        .anchorPreference(
+                            key: RewardAnchorKey.self,
+                            value: .bounds
+                        ) {
+                            ["task-points-\(taskItem.id.uuidString)": $0]
+                        }
                     }
 
                     Spacer()

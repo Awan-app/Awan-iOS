@@ -72,6 +72,17 @@ public final class MainCoordinator: Coordinating {
     public func dismissStreakCelebration() {
         streakCelebration = nil
     }
+
+    public func reset() {
+        selectedTab = .home
+        homePath = NavigationPath()
+        tasksPath = NavigationPath()
+        storePath = NavigationPath()
+        youPath = NavigationPath()
+        presentedSheet = nil
+        streakCelebration = nil
+    }
+
     private func mutateSelectedPath(_ mutation: (inout NavigationPath) -> Void) {
         switch selectedTab {
         case .home:

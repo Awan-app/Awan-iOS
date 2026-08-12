@@ -144,8 +144,18 @@ extension HomeViewModel {
                 case .completed(let completion):
                     let reward = completion.reward
 
-                    if reward.points.awarded || reward.streak.updated {
-                        state.completionReward = HomeCompletionRewardState(
+                    state.completionRewardAnimation = reward.points.awarded
+                        && reward.points.amount > 0
+                        ? HomeCompletionRewardAnimation(
+                            sessionID: completion.session.id,
+                            oldPoints: reward.points.oldValue,
+                            newPoints: reward.points.newValue
+                        )
+                        : nil
+
+                    state.completionReward = reward.points.awarded
+                        || reward.streak.updated
+                        ? HomeCompletionRewardState(
                             pointsAwarded: reward.points.awarded ? reward.points.amount: nil,
                             streakTransition: reward.streak.updated
                                 ? HomeStreakTransition(
@@ -155,16 +165,7 @@ extension HomeViewModel {
                                 : nil,
                             maxStreakBroken: reward.streak.maxStreakBroken
                         )
-                    }
-                    
-                    if reward.points.awarded, reward.points.amount > 0 {
-                        state.completionRewardAnimation =
-                            HomeCompletionRewardAnimation(
-                                sessionID: completion.session.id,
-                                oldPoints: reward.points.oldValue,
-                                newPoints: reward.points.newValue
-                            )
-                        }
+                        : nil
 
                 case .uncompleted:
                     state.completionReward = nil

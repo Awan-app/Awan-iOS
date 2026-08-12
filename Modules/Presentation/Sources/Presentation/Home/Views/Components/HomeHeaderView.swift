@@ -39,14 +39,14 @@ struct HomeHeaderView: View {
                             .minimumScaleFactor(0.72)
 
                         HStack(spacing: 10) {
-                            HomeStatChip(
+                            RewardStatChip(
                                 icon: "flame.fill",
                                 value: streakCount.formatted(
                                     .number.locale(languageManager.locale)
                                 ),
                                 color: AppColors.warning
                             )
-                            HomeStatChip(
+                            RewardStatChip(
                                 icon: "star.fill",
                                 value: rewardPoints.formatted(
                                     .number.locale(languageManager.locale)
@@ -196,36 +196,6 @@ struct HomeHeaderView: View {
         .accessibilityLabel(accessibilityLabel)
     }
 }
-
-private struct HomeStatChip: View {
-    let icon: String
-    let value: String
-    let color: Color
-
-    var body: some View {
-        AppDepthSurface(
-            shape: .roundedRectangle(cornerRadius: 14),
-            borderColor: color.opacity(0.55),
-            depthColor: color.opacity(0.72),
-            depthOffset: 4,
-            contentInsets: EdgeInsets(
-                top: 9,
-                leading: 14,
-                bottom: 9,
-                trailing: 14
-            )
-        ) {
-            HStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(AppFonts.statSymbol)
-                Text(value)
-                    .font(AppFonts.headlineBlack)
-            }
-            .foregroundStyle(color)
-        }
-    }
-}
-
 
 #Preview {
     HomeHeaderView(

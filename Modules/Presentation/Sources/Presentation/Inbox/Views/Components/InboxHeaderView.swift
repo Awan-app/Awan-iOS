@@ -8,6 +8,18 @@ import SwiftUI
 
 struct InboxHeaderView: View {
     @Binding var selectedTopTab: InboxTopTab
+    let rewardPoints: Int?
+    let pointsPulse: Int
+
+    init(
+        selectedTopTab: Binding<InboxTopTab>,
+        rewardPoints: Int? = nil,
+        pointsPulse: Int = 0
+    ) {
+        _selectedTopTab = selectedTopTab
+        self.rewardPoints = rewardPoints
+        self.pointsPulse = pointsPulse
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -17,6 +29,19 @@ struct InboxHeaderView: View {
                     .foregroundStyle(AppColors.textPrimary)
 
                 Spacer()
+
+                if let rewardPoints {
+                    RewardStatChip(
+                        icon: "star.fill",
+                        value: rewardPoints.formatted(),
+                        color: AppColors.reward
+                    )
+                    .symbolEffect(.bounce, value: pointsPulse)
+                    .anchorPreference(
+                        key: RewardAnchorKey.self,
+                        value: .bounds
+                    ) { ["inbox-points-badge": $0] }
+                }
 
                 AwanMascotView(state: .normal)
                     .frame(width: 50, height: 40)
