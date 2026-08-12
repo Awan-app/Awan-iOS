@@ -10,10 +10,12 @@ public enum PurchaseFeedback: Sendable, Equatable {
     public enum SuccessKind: Sendable, Equatable {
         case purchase
         case equipment
+        case unequipment
     }
 
     case success(message: String, kind: SuccessKind)
     case failure(message: String)
+    case unequipFailure(message: String)
 }
 
 public struct MarketplaceState: Sendable {

@@ -191,10 +191,16 @@ public final class MarketplaceViewModel {
                 guard let self else { return }
                 self.state.unequippingItemType = nil
                 self.state.storefront.recordUnequip(ofType: itemType)
+
+                self.state.purchaseFeedback = .success(
+                    message: L10n.Marketplace.unequippedHint,
+                    kind: .unequipment
+                )
+                self.scheduleFeedbackDismissal()
             } catch {
                 guard let self else { return }
                 self.state.unequippingItemType = nil
-                self.state.purchaseFeedback = .failure(
+                self.state.purchaseFeedback = .unequipFailure(
                     message: GamificationErrorMessageMapper.message(for: error)
                 )
                 self.scheduleFeedbackDismissal()

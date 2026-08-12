@@ -19,7 +19,7 @@ struct MarketplacePurchaseFeedbackBanner: View {
     private var message: String {
         switch feedback {
         case let .success(message, _): message
-        case let .failure(message): message
+        case let .failure(message), let .unequipFailure(message): message
         }
     }
 
@@ -29,8 +29,12 @@ struct MarketplacePurchaseFeedbackBanner: View {
             L10n.Marketplace.purchaseSuccessTitle
         case .success(_, .equipment):
             L10n.Marketplace.currentlyEquipped
+        case .success(_, .unequipment):
+            L10n.Marketplace.unequippedTitle
         case .failure:
             L10n.Marketplace.purchaseFailedTitle
+        case .unequipFailure:
+            L10n.Marketplace.unequipFailedTitle
         }
     }
 

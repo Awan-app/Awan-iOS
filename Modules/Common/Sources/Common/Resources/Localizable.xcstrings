@@ -9380,6 +9380,57 @@
         }
       }
     },
+    "marketplace.unequipped_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم إلغاء التفعيل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item Unequipped"
+          }
+        }
+      }
+    },
+    "marketplace.unequipped_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العنصر ده مبقاش مفعّل دلوقتي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This item is no longer active"
+          }
+        }
+      }
+    },
+    "marketplace.unequip_failed_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فشل إلغاء التفعيل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unequip Failed"
+          }
+        }
+      }
+    },
     "profile.equipped_items": {
       "extractionState": "manual",
       "localizations": {
