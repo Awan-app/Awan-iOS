@@ -13,6 +13,7 @@ public final class HomeViewModel {
     @ObservationIgnored private let mapper: HomeStateMapper
     @ObservationIgnored private let timeZone: TimeZone
     @ObservationIgnored private var loadCancellable: AnyCancellable?
+    @ObservationIgnored private var toggleCancellable: AnyCancellable?
 
     public init(
         useCases: HomeUseCases,
@@ -25,6 +26,7 @@ public final class HomeViewModel {
         self.timeZone = timeZone
         self.mapper = HomeStateMapper(fallbackTimeZone: timeZone)
         self.state = .initial(selectedDay: selectedDay)
+        setupToggleObserver()
     }
 
     func send(_ action: HomeAction) {
@@ -129,5 +131,13 @@ public final class HomeViewModel {
         guard let success = state.success else { return }
         let taskTitles = Dictionary(uniqueKeysWithValues: success.tasks.map { ($0.id, $0.title) })
         notificationScheduler?.syncSessions(success.sessions, taskTitlesByID: taskTitles)
+    }
+
+    private func setupToggleObserver() {
+        toggleCancellable = NotificationCenter.default.publisher(for: Notification.Name("NotificationsToggled"))
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.syncNotifications()
+            }
     }
 }

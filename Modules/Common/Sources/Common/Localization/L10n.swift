@@ -1071,6 +1071,10 @@ public enum L10n {
         public static var more: String { text("profile.more") }
         public static var personalization: String { text("profile.personalization") }
         public static var settings: String { text("profile.settings") }
+        public static var general: String { text("profile.general") }
+        public static var manageNotifications: String { text("profile.manage_notifications") }
+        public static var enabled: String { text("profile.enabled") }
+        public static var disabled: String { text("profile.disabled") }
         public static var aboutAwan: String { text("profile.about_awan") }
         public static var loading: String { text("profile.loading") }
         public static var loadFailure: String { text("profile.load_failure") }
