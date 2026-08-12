@@ -127,16 +127,9 @@ public final class ProfileInventoryViewModel {
         isLoading = true
         errorMessage = nil
 
-        let fetchEquipped = fetchEquippedItemsUseCase
-        let equipped = AsyncValuePublisher.make {
-            try await fetchEquipped.execute()
-        }
-        .prepend([])
-        .catch { _ in Empty<[EquippedItem], Error>() }
-
         inventoryCancellable = fetchStoreInventoryUseCase.observe()
             .combineLatest(fetchStoreItemsUseCase.observe())
-            .combineLatest(equipped)
+            .combineLatest(fetchEquippedItemsUseCase.observeOrEmpty())
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in

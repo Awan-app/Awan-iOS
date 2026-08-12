@@ -1,10 +1,13 @@
-import Common
 import SwiftUI
 
-struct MarketplaceOfflineView: View {
+public struct OfflineView: View {
+    
+    public init(onRetry: @escaping () -> Void) {
+        self.onRetry = onRetry
+    }
     let onRetry: () -> Void
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 18) {
             Image("MarketplaceOffline", bundle: .module)
                 .resizable()
@@ -41,14 +44,14 @@ struct MarketplaceOfflineView: View {
 }
 
 #Preview("Marketplace Offline Light") {
-    MarketplaceOfflineView(onRetry: {})
+    OfflineView(onRetry: {})
         .padding()
         .background(AppColors.screenBackground)
         .preferredColorScheme(.light)
 }
 
 #Preview("Marketplace Offline Dark") {
-    MarketplaceOfflineView(onRetry: {})
+    OfflineView(onRetry: {})
         .padding()
         .background(AppColors.screenBackground)
         .preferredColorScheme(.dark)

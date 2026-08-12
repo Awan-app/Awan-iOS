@@ -1,5 +1,5 @@
-import Common
 import Domain
+import Common
 import SwiftUI
 
 public struct MarketplaceView: View {
@@ -87,7 +87,7 @@ public struct MarketplaceView: View {
                     ProgressView()
                         .padding(.top, 40)
                 } else if state.errorMessage != nil {
-                    MarketplaceOfflineView {
+                    OfflineView {
                         viewModel.send(.retry)
                     }
                 } else if state.filteredItems.isEmpty {

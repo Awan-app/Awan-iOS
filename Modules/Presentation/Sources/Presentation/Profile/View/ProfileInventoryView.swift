@@ -80,18 +80,10 @@ public struct ProfileInventoryView: View {
             ProgressView()
                 .tint(AppColors.accentBlue)
                 .frame(maxWidth: .infinity, minHeight: 360)
-        } else if let errorMessage = viewModel.errorMessage {
-            VStack(spacing: 16) {
-                NetworkErrorView(message: errorMessage)
-                Button {
-                    viewModel.send(.retry)
-                } label: {
-                    Text(L10n.Marketplace.retry)
-                        .font(AppFonts.subheadlineSemibold)
-                        .foregroundStyle(AppColors.accentBlue)
-                }
+        } else if viewModel.errorMessage != nil {
+            OfflineView {
+                viewModel.send(.retry)
             }
-            .padding(24)
         } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
