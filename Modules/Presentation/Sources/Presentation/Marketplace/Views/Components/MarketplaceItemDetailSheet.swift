@@ -83,29 +83,20 @@ struct MarketplaceItemDetailSheet: View {
 
     @ViewBuilder
     private var heroImage: some View {
-        ZStack {
-            LinearGradient(
-                colors: [heroPrimaryColor.opacity(0.15), AppColors.screenBackground],
-                startPoint: .top, endPoint: .bottom
-            )
-            .frame(height: 200)
-            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-
-            AppRemoteImage(urlString: item.imageURL) {
-                Image(systemName: item.symbolName)
-                    .font(.system(size: 90, weight: .bold))
-                    .foregroundStyle(heroPrimaryColor)
-            }
-            .padding(24)
-            .frame(maxWidth: .infinity)
-            .frame(height: 200)
-            .blur(radius: item.status == .locked ? 12 : 0)
-            .overlay {
-                if item.status == .locked {
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 44, weight: .black))
-                        .foregroundStyle(AppColors.onAccent)
-                }
+        MarketplaceItemArtwork(
+            imageURL: item.imageURL,
+            category: item.category,
+            symbolName: item.symbolName
+        )
+        .padding(24)
+        .frame(maxWidth: .infinity)
+        .frame(height: 200)
+        .blur(radius: item.status == .locked ? 12 : 0)
+        .overlay {
+            if item.status == .locked {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 44, weight: .black))
+                    .foregroundStyle(AppColors.textSecondary)
             }
         }
     }
@@ -156,15 +147,6 @@ struct MarketplaceItemDetailSheet: View {
         }
     }
 
-    private var heroPrimaryColor: Color {
-        switch item.category {
-        case .frames:   return AppColors.accentBlue
-        case .skins:    return AppColors.accentPurple
-        case .themes:   return AppColors.accentGreen
-        case .appIcons: return AppColors.warning
-        case .all:      return AppColors.accentBlue
-        }
-    }
 }
 
 #Preview("Affordable") {

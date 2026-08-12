@@ -65,6 +65,29 @@ struct MarketplaceFilterSheet: View {
                 }
 
                 VStack(alignment: .leading, spacing: 10) {
+                    Text(L10n.Marketplace.filterOwnership)
+                        .font(AppFonts.subheadlineHeavy)
+                        .foregroundStyle(AppColors.textPrimary)
+
+                    Toggle(isOn: $localFilter.showsOnlyNotOwned) {
+                        Text(L10n.Marketplace.filterNotOwnedOnly)
+                            .font(AppFonts.subheadlineSemibold)
+                            .foregroundStyle(AppColors.textPrimary)
+                    }
+                    .tint(AppColors.accentBlue)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(AppColors.screenBackground)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(AppColors.outline.opacity(0.12), lineWidth: 1)
+                    )
+                }
+
+                VStack(alignment: .leading, spacing: 10) {
                     Text(L10n.Marketplace.filterPrice)
                         .font(AppFonts.subheadlineHeavy)
                         .foregroundStyle(AppColors.textPrimary)
@@ -123,11 +146,12 @@ struct MarketplaceFilterSheet: View {
                 ) {
                     VStack(spacing: 6) {
                         Spacer(minLength: 0)
-                        Image(systemName: categorySymbol(category))
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundStyle(
-                                isSelected ? categoryColor(category) : AppColors.accentBlue.opacity(0.65)
-                            )
+                        Image(categoryImage(category), bundle: .module)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 34, height: 34)
+                            .saturation(isSelected ? 1 : 0.55)
+                            .opacity(isSelected ? 1 : 0.72)
                         Text(categoryTitle(category))
                             .font(AppFonts.caption2Bold)
                             .foregroundStyle(AppColors.textPrimary)
@@ -197,23 +221,13 @@ struct MarketplaceFilterSheet: View {
         }
     }
 
-    private func categorySymbol(_ category: MarketplaceItemCategory) -> String {
+    private func categoryImage(_ category: MarketplaceItemCategory) -> String {
         switch category {
-        case .frames:   return "square.on.circle"
-        case .skins:    return "paintpalette.fill"
-        case .themes:   return "globe"
-        case .appIcons: return "square.grid.2x2.fill"
-        case .all:      return "square.grid.2x2"
-        }
-    }
-
-    private func categoryColor(_ category: MarketplaceItemCategory) -> Color {
-        switch category {
-        case .frames:   return AppColors.accentBlue
-        case .skins:    return AppColors.accentPurple
-        case .themes:   return AppColors.accentGreen
-        case .appIcons: return AppColors.warning
-        case .all:      return AppColors.textSecondary
+        case .frames:   return "MarketplaceFilterFrame"
+        case .skins:    return "MarketplaceFilterSkin"
+        case .themes:   return "MarketplaceFilterTheme"
+        case .appIcons: return "MarketplaceFilterAppIcon"
+        case .all:      return "MarketplaceFilterAppIcon"
         }
     }
 }

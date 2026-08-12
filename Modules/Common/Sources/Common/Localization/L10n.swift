@@ -1261,7 +1261,9 @@ public enum L10n {
         public static var noFiltersApplied: String { text("marketplace.no_filters_applied") }
         public static var filtersTitle: String { text("marketplace.filters_title") }
         public static var filterItemType: String { text("marketplace.filter_item_type") }
+        public static var filterOwnership: String { text("marketplace.filter_ownership") }
         public static var filterPrice: String { text("marketplace.filter_price") }
+        public static var filterNotOwnedOnly: String { text("marketplace.filter_not_owned_only") }
         public static var filterReset: String { text("marketplace.filter_reset") }
         public static var applyFilters: String { text("marketplace.apply_filters") }
         public static var statusOwned: String { text("marketplace.status_owned") }
@@ -1289,6 +1291,8 @@ public enum L10n {
         public static var equippedHint: String { text("marketplace.equipped_hint") }
         public static var lockedHint: String { text("marketplace.locked_hint") }
         public static var progressLabel: String { text("marketplace.progress_label") }
+        public static var offlineTitle: String { text("marketplace.offline_title") }
+        public static var offlineMessage: String { text("marketplace.offline_message") }
         public static var retry: String { text("marketplace.retry") }
         public static var purchaseSuccessTitle: String { text("marketplace.purchase_success_title") }
         public static var purchaseFailedTitle: String { text("marketplace.purchase_failed_title") }

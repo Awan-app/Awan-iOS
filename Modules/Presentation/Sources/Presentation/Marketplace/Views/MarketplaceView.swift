@@ -40,7 +40,7 @@ public struct MarketplaceView: View {
                     viewModel.send(.resetFilters)
                 }
             )
-            .presentationDetents([.height(410), .large])
+            .presentationDetents([.height(510), .large])
             .presentationDragIndicator(.hidden)
             .presentationBackground(AppColors.surface)
         }
@@ -84,18 +84,10 @@ public struct MarketplaceView: View {
                 if state.isLoading {
                     ProgressView()
                         .padding(.top, 40)
-                } else if let errorMessage = state.errorMessage {
-                    VStack(spacing: 12) {
-                        NetworkErrorView(message: errorMessage)
-                        Button {
-                            viewModel.send(.retry)
-                        } label: {
-                            Text(L10n.Marketplace.retry)
-                                .font(AppFonts.subheadlineSemibold)
-                                .foregroundStyle(AppColors.accentBlue)
-                        }
+                } else if state.errorMessage != nil {
+                    MarketplaceOfflineView {
+                        viewModel.send(.retry)
                     }
-                    .padding(.top, 20)
                 } else if state.filteredItems.isEmpty {
                     MarketplaceEmptyView()
                         .padding(.top, 20)

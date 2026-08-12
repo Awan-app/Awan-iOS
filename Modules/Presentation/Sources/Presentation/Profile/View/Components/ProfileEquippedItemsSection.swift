@@ -17,14 +17,13 @@ struct ProfileEquippedItemsSection: View {
         let displayName: String
         let emptyMessage: String
         let placeholderImageName: String
-        let defaultSymbol: String
     }
 
     private let fixedSlots: [SlotDefinition] = [
-        SlotDefinition(type: .frame, displayName: L10n.Marketplace.filterFrames, emptyMessage: L10n.Profile.noActiveFrame, placeholderImageName: "EmptyStoreFrame", defaultSymbol: "square.on.circle"),
-        SlotDefinition(type: .skin, displayName: L10n.Marketplace.filterSkins, emptyMessage: L10n.Profile.noActiveSkin, placeholderImageName: "EmptyStoreSkin", defaultSymbol: "paintpalette.fill"),
-        SlotDefinition(type: .theme, displayName: L10n.Marketplace.filterThemes, emptyMessage: L10n.Profile.noActiveTheme, placeholderImageName: "EmptyStoreTheme", defaultSymbol: "globe"),
-        SlotDefinition(type: .icon, displayName: L10n.Marketplace.filterAppIcons, emptyMessage: L10n.Profile.noActiveAppIcon, placeholderImageName: "EmptyStoreAppIcon", defaultSymbol: "square.grid.2x2.fill")
+        SlotDefinition(type: .frame, displayName: L10n.Marketplace.filterFrames, emptyMessage: L10n.Profile.noActiveFrame, placeholderImageName: "EmptyStoreFrame"),
+        SlotDefinition(type: .skin, displayName: L10n.Marketplace.filterSkins, emptyMessage: L10n.Profile.noActiveSkin, placeholderImageName: "EmptyStoreSkin"),
+        SlotDefinition(type: .theme, displayName: L10n.Marketplace.filterThemes, emptyMessage: L10n.Profile.noActiveTheme, placeholderImageName: "EmptyStoreTheme"),
+        SlotDefinition(type: .icon, displayName: L10n.Marketplace.filterAppIcons, emptyMessage: L10n.Profile.noActiveAppIcon, placeholderImageName: "EmptyStoreAppIcon")
     ]
 
     var body: some View {
@@ -90,6 +89,7 @@ struct ProfileEquippedItemsSection: View {
                 InventoryItemCard(
                     title: marketplaceItem.name,
                     category: slot.displayName,
+                    itemCategory: marketplaceItem.category,
                     imageURL: marketplaceItem.imageURL,
                     symbolName: marketplaceItem.symbolName,
                     state: .equipped,
@@ -104,7 +104,6 @@ struct ProfileEquippedItemsSection: View {
                 title: slot.displayName,
                 category: slot.emptyMessage,
                 imageURL: nil,
-                symbolName: slot.defaultSymbol,
                 placeholderImageName: slot.placeholderImageName,
                 state: .empty,
                 onTap: nil

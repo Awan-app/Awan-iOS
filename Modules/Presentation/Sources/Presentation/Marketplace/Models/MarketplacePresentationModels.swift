@@ -128,17 +128,20 @@ public struct MarketplaceFilter: Sendable, Equatable {
     public var selectedCategories: Set<MarketplaceItemCategory>
     public var minPrice: Double
     public var maxPrice: Double
+    public var showsOnlyNotOwned: Bool
 
     public static let maxPtsCap: Double = 1500
 
     public static let `default` = MarketplaceFilter(
         selectedCategories: Set(MarketplaceItemCategory.allCases.filter { $0 != .all }),
         minPrice: 0,
-        maxPrice: maxPtsCap
+        maxPrice: maxPtsCap,
+        showsOnlyNotOwned: false
     )
 
     public var isDefault: Bool {
         minPrice == 0 && maxPrice == Self.maxPtsCap
+            && !showsOnlyNotOwned
             && selectedCategories == Set(MarketplaceItemCategory.allCases.filter { $0 != .all })
     }
 }

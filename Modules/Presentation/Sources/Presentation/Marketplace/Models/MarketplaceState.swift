@@ -51,6 +51,10 @@ public struct MarketplaceState: Sendable {
             let selectedCategoryMatch = selectedCategory == .all || item.category == selectedCategory
             let filterCategoryMatch = item.category == .all
                 || appliedFilter.selectedCategories.contains(item.category)
+            let ownershipMatch = !appliedFilter.showsOnlyNotOwned || {
+                if case .price = item.status { return true }
+                return false
+            }()
 
             let priceMatch: Bool
             switch item.status {
@@ -65,7 +69,11 @@ public struct MarketplaceState: Sendable {
                 priceMatch = true
             }
 
-            return searchMatch && selectedCategoryMatch && filterCategoryMatch && priceMatch
+            return searchMatch
+                && selectedCategoryMatch
+                && filterCategoryMatch
+                && ownershipMatch
+                && priceMatch
         }
     }
 

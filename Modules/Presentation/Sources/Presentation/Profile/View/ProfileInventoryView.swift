@@ -144,7 +144,7 @@ public struct ProfileInventoryView: View {
             } else {
                 LazyVGrid(columns: gridColumns, spacing: 12) {
                     ForEach(viewModel.displayedOwnedItems) { item in
-                        InventoryItemCard(item: item, overrideState: .owned) {
+                        InventoryItemCard(item: item) {
                             viewModel.send(.selectItem(item))
                         }
                     }
