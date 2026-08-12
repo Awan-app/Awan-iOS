@@ -1453,4 +1453,35 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
         }
     }
+
+    public enum Notifications {
+        public static var sessionStartTitle: String { text("notifications.session_start_title") }
+        public static func sessionStartBody(_ name: String) -> String {
+            String(format: text("notifications.session_start_body"), name)
+        }
+        
+        public static var sessionNowTitle: String { text("notifications.session_now_title") }
+        public static func sessionNowBody(_ name: String) -> String {
+            String(format: text("notifications.session_now_body"), name)
+        }
+
+        public static var goalDeadline7dTitle: String { text("notifications.goal_deadline_7d_title") }
+        public static func goalDeadline7dBody(_ name: String) -> String {
+            String(format: text("notifications.goal_deadline_7d_body"), name)
+        }
+
+        public static var goalDeadline1dTitle: String { text("notifications.goal_deadline_1d_title") }
+        public static func goalDeadline1dBody(_ name: String) -> String {
+            String(format: text("notifications.goal_deadline_1d_body"), name)
+        }
+
+        public static var goalDeadlineTodayTitle: String { text("notifications.goal_deadline_today_title") }
+        public static func goalDeadlineTodayBody(_ name: String) -> String {
+            String(format: text("notifications.goal_deadline_today_body"), name)
+        }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
 }

@@ -9702,6 +9702,176 @@
           }
         }
       }
+    },
+    "notifications.session_start_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وقت التركيز 🎯"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time to focus 🎯"
+          }
+        }
+      }
+    },
+    "notifications.session_start_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ سيبدأ خلال 5 دقائق"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ starts in 5 minutes"
+          }
+        }
+      }
+    },
+    "notifications.session_now_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تبدأ الجلسة ⏱"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session starting ⏱"
+          }
+        }
+      }
+    },
+    "notifications.session_now_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ تبدأ الآن"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is starting now"
+          }
+        }
+      }
+    },
+    "notifications.goal_deadline_7d_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نقطة فحص الهدف 🏆"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Goal checkpoint 🏆"
+          }
+        }
+      }
+    },
+    "notifications.goal_deadline_7d_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ يستحق بعد 7 أيام"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is due in 7 days"
+          }
+        }
+      }
+    },
+    "notifications.goal_deadline_1d_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اقتربنا! 🚀"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Almost there! 🚀"
+          }
+        }
+      }
+    },
+    "notifications.goal_deadline_1d_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ يستحق غداً"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is due tomorrow"
+          }
+        }
+      }
+    },
+    "notifications.goal_deadline_today_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يوم الاستحقاق 🔥"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deadline day 🔥"
+          }
+        }
+      }
+    },
+    "notifications.goal_deadline_today_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ يستحق اليوم!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is due today!"
+          }
+        }
+      }
     }
   },
   "version": "1.1"
