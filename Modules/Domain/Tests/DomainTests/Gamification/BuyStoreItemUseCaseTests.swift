@@ -5,7 +5,7 @@ final class BuyStoreItemUseCaseTests: XCTestCase {
     private final class MockRepository: GamificationRepository, @unchecked Sendable {
         var lastBoughtItemID: String?
 
-        func fetchStoreItems(type: String) async throws -> [StoreItem] {
+        func fetchStoreItems() async throws -> [StoreItem] {
             []
         }
 
@@ -21,7 +21,7 @@ final class BuyStoreItemUseCaseTests: XCTestCase {
                     info: nil,
                     price: 150,
                     version: "1.0",
-                    type: "THEME"
+                    type: .theme
                 ),
                 boughtAt: Date()
             )
@@ -31,7 +31,7 @@ final class BuyStoreItemUseCaseTests: XCTestCase {
             fatalError("Unimplemented")
         }
 
-        func unequipStoreItem(type: String) async throws {}
+        func unequipStoreItem(type: StoreItemType) async throws {}
 
         func fetchEquippedItems() async throws -> [EquippedItem] {
             []

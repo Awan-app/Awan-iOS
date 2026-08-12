@@ -17,18 +17,18 @@ public enum MarketplaceItemCategory: String, CaseIterable, Identifiable, Sendabl
 
     public var id: String { rawValue }
 
-    public var apiType: String? {
+    public var storeItemType: StoreItemType? {
         switch self {
         case .all:
             return nil
         case .frames:
-            return "FRAME"
+            return .frame
         case .skins:
-            return "SKIN"
+            return .skin
         case .themes:
-            return "THEME"
+            return .theme
         case .appIcons:
-            return "ICON"
+            return .icon
         }
     }
 }
@@ -82,22 +82,34 @@ public struct MarketplaceItem: Identifiable, Hashable, Sendable {
         self.status = .price(storeItem.price)
         self.isNew = false
 
-        switch storeItem.type.uppercased() {
-        case "FRAME":
+        switch storeItem.type {
+        case .frame:
             self.category = .frames
             self.symbolName = "square.on.circle"
-        case "SKIN":
+        case .skin:
             self.category = .skins
             self.symbolName = "paintpalette.fill"
-        case "THEME":
+        case .theme:
             self.category = .themes
             self.symbolName = "globe"
-        case "ICON":
+        case .icon:
             self.category = .appIcons
             self.symbolName = "square.grid.2x2.fill"
-        default:
-            self.category = .skins
+        case .unknown:
+            self.category = .all
             self.symbolName = "sparkles"
+        }
+    }
+
+    public init(storefrontItem: Storefront.Item) {
+        self.init(storeItem: storefrontItem.storeItem)
+        switch storefrontItem.state {
+        case .available:
+            self.status = .price(storefrontItem.storeItem.price)
+        case .owned:
+            self.status = .owned
+        case .equipped:
+            self.status = .equipped
         }
     }
 
@@ -116,17 +128,20 @@ public struct MarketplaceFilter: Sendable, Equatable {
     public var selectedCategories: Set<MarketplaceItemCategory>
     public var minPrice: Double
     public var maxPrice: Double
+    public var showsOnlyNotOwned: Bool
 
     public static let maxPtsCap: Double = 1500
 
     public static let `default` = MarketplaceFilter(
         selectedCategories: Set(MarketplaceItemCategory.allCases.filter { $0 != .all }),
         minPrice: 0,
-        maxPrice: maxPtsCap
+        maxPrice: maxPtsCap,
+        showsOnlyNotOwned: false
     )
 
     public var isDefault: Bool {
         minPrice == 0 && maxPrice == Self.maxPtsCap
+            && !showsOnlyNotOwned
             && selectedCategories == Set(MarketplaceItemCategory.allCases.filter { $0 != .all })
     }
 }

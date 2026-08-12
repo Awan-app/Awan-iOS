@@ -7,12 +7,12 @@ import XCTest
 import Domain
 
 private final class StoreItemRepositoryStub: GamificationRepository, @unchecked Sendable {
-    var requestedTypes: [String] = []
-    var mockItemsToReturn: [String: [StoreItem]] = [:]
+    var fetchCallCount = 0
+    var mockItemsToReturn: [StoreItem] = []
 
-    func fetchStoreItems(type: String) async throws -> [StoreItem] {
-        requestedTypes.append(type)
-        return mockItemsToReturn[type] ?? []
+    func fetchStoreItems() async throws -> [StoreItem] {
+        fetchCallCount += 1
+        return mockItemsToReturn
     }
 
     func buyStoreItem(itemID: String) async throws -> StorePurchase {
@@ -23,7 +23,7 @@ private final class StoreItemRepositoryStub: GamificationRepository, @unchecked 
         fatalError("Unimplemented")
     }
 
-    func unequipStoreItem(type: String) async throws {}
+    func unequipStoreItem(type: StoreItemType) async throws {}
 
     func fetchEquippedItems() async throws -> [EquippedItem] {
         []
@@ -48,7 +48,7 @@ private final class StoreItemRepositoryStub: GamificationRepository, @unchecked 
 
 final class FetchStoreItemsUseCaseTests: XCTestCase {
 
-    func testExecuteForwardsTypeToRepository() async throws {
+    func testExecuteFetchesAllItemsFromRepository() async throws {
         let stub = StoreItemRepositoryStub()
         let expectedItem = StoreItem(
             id: "1",
@@ -58,14 +58,14 @@ final class FetchStoreItemsUseCaseTests: XCTestCase {
             info: nil,
             price: 100,
             version: "1.0",
-            type: "FRAME"
+            type: .frame
         )
-        stub.mockItemsToReturn["FRAME"] = [expectedItem]
+        stub.mockItemsToReturn = [expectedItem]
 
         let useCase = DefaultFetchStoreItemsUseCase(repository: stub)
-        let items = try await useCase.execute(type: "FRAME")
+        let items = try await useCase.execute()
 
-        XCTAssertEqual(stub.requestedTypes, ["FRAME"])
+        XCTAssertEqual(stub.fetchCallCount, 1)
         XCTAssertEqual(items.count, 1)
         XCTAssertEqual(items.first?.name, "Gold Frame")
     }

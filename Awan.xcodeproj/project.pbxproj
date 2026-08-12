@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		3E469E243026D57A007B6A80 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3E469E233026D57A007B6A80 /* GoogleService-Info.plist */; };
 		4CA335BA3007FBC3001DBF8D /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335B93007FBC3001DBF8D /* Shimmer */; };
-		4CA335BD3007FBDC001DBF8D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335BC3007FBDC001DBF8D /* Kingfisher */; };
 		4CA335C33007FC20001DBF8D /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335C23007FC20001DBF8D /* Alamofire */; };
 		4CA335C63007FC41001DBF8D /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 4CA335C53007FC41001DBF8D /* Swinject */; };
 		6D0C30983007943A004492E4 /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = 6D0C30973007943A004492E4 /* Common */; };
@@ -65,7 +64,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4CA335BD3007FBDC001DBF8D /* Kingfisher in Frameworks */,
 				4CA335C63007FC41001DBF8D /* Swinject in Frameworks */,
 				7D0C309A30079440004492E4 /* Data in Frameworks */,
 				7D0C30983007943A004492E4 /* Domain in Frameworks */,
@@ -147,7 +145,6 @@
 				7D0C30973007943A004492E4 /* Domain */,
 				7D0C309930079440004492E4 /* Data */,
 				4CA335B93007FBC3001DBF8D /* Shimmer */,
-				4CA335BC3007FBDC001DBF8D /* Kingfisher */,
 				4CA335C23007FC20001DBF8D /* Alamofire */,
 				4CA335C53007FC41001DBF8D /* Swinject */,
 			);
@@ -235,7 +232,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				4CA335B83007FBC3001DBF8D /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
-				4CA335BB3007FBDC001DBF8D /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				4CA335C13007FC20001DBF8D /* XCRemoteSwiftPackageReference "Alamofire" */,
 				4CA335C43007FC41001DBF8D /* XCRemoteSwiftPackageReference "Swinject" */,
 			);
@@ -617,14 +613,6 @@
 				version = 1.5.1;
 			};
 		};
-		4CA335BB3007FBDC001DBF8D /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
-			requirement = {
-				kind = exactVersion;
-				version = 8.10.0;
-			};
-		};
 		4CA335C13007FC20001DBF8D /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
@@ -648,11 +636,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4CA335B83007FBC3001DBF8D /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;
 			productName = Shimmer;
-		};
-		4CA335BC3007FBDC001DBF8D /* Kingfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4CA335BB3007FBDC001DBF8D /* XCRemoteSwiftPackageReference "Kingfisher" */;
-			productName = Kingfisher;
 		};
 		4CA335C23007FC20001DBF8D /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;

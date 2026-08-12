@@ -101,12 +101,13 @@ The production local store uses SwiftData and follows these boundaries:
 
 - The app composition root creates one persistent `ModelContainer` and injects it into Data.
 - Data owns all `@Model` persistence classes; they are not exposed to Domain or Presentation.
-- Focused task, goal, session, zone, template, override, and category actors query the shared container; there is no combined scheduling store abstraction.
+- Focused task, goal, session, zone, template, override, category, and gamification actors query the shared container; there is no combined scheduling store abstraction.
 - Task, goal, session, and zone local-source protocols exchange Domain values. Template and override inputs remain Data-only because they are persistence configuration, not Domain entities.
 - The zone repository resolves a requested local Gregorian date by checking its override first and then its Sunday-based weekday template. Only the resolved Domain zones cross into Domain.
 - Remote zone refreshes synchronize complete template and override aggregates before resolving locally. Date-resolved API projections are never persisted as aggregate-owned zones.
 - Template and override list responses are authoritative replacements. Their aggregate writes reconcile owned zones and remove stale children so repeated synchronization is idempotent.
 - Presentation never receives a `ModelContext`, imports SwiftData, uses `@Query`, or reads persistence values directly. Local values must be loaded through Domain use cases before Presentation renders them. Production task creation and update are scheduled by the backend; the returned task and sessions replace the corresponding cached state.
+- Store catalog and inventory observations emit SwiftData-backed values first, refresh their authoritative remote lists, replace the caches, and publish those writes through the same retained Combine streams. Successful purchases also update the inventory cache immediately.
 - Inbox membership is backend-authoritative. The task repository loads the user's backend-created default Inbox goal through the dedicated Inbox endpoint and observes cached tasks using that returned goal UUID; no layer infers Inbox membership from a `nil` task goal ID.
 - Template aggregate writes reconcile their owned zones, and aggregate deletion explicitly removes those zones in the same context because ownership uses UUID fields rather than SwiftData relationships.
 - Repository implementations depend on local data-source protocols rather than persistence-framework-specific implementations.

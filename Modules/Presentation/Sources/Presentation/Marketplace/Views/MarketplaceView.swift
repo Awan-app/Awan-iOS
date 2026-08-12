@@ -1,5 +1,5 @@
-import Common
 import Domain
+import Common
 import SwiftUI
 
 public struct MarketplaceView: View {
@@ -40,7 +40,7 @@ public struct MarketplaceView: View {
                     viewModel.send(.resetFilters)
                 }
             )
-            .presentationDetents([.height(410), .large])
+            .presentationDetents([.height(510), .large])
             .presentationDragIndicator(.hidden)
             .presentationBackground(AppColors.surface)
         }
@@ -53,9 +53,11 @@ public struct MarketplaceView: View {
                 userPoints: state.userPoints,
                 isPurchasing: state.purchasingItemID == item.id,
                 isEquipping: state.equippingItemID == item.id,
+                isUnequipping: state.unequippingItemType == item.category.storeItemType,
                 purchaseFeedback: state.purchaseFeedback,
                 onBuy: { viewModel.send(.buyItem(item)) },
                 onEquip: { viewModel.send(.equipItem(item)) },
+                onUnequip: { viewModel.send(.unequipItem(item)) },
                 onDismiss: { viewModel.send(.dismissDetail) }
             )
             .presentationDetents([.large])
@@ -84,18 +86,10 @@ public struct MarketplaceView: View {
                 if state.isLoading {
                     ProgressView()
                         .padding(.top, 40)
-                } else if let errorMessage = state.errorMessage {
-                    VStack(spacing: 12) {
-                        NetworkErrorView(message: errorMessage)
-                        Button {
-                            viewModel.send(.retry)
-                        } label: {
-                            Text(L10n.Marketplace.retry)
-                                .font(AppFonts.subheadlineSemibold)
-                                .foregroundStyle(AppColors.accentBlue)
-                        }
+                } else if state.errorMessage != nil {
+                    OfflineView {
+                        viewModel.send(.retry)
                     }
-                    .padding(.top, 20)
                 } else if state.filteredItems.isEmpty {
                     MarketplaceEmptyView()
                         .padding(.top, 20)

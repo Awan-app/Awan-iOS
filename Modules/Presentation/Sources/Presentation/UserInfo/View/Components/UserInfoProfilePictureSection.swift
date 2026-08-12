@@ -1,7 +1,6 @@
 import SwiftUI
 import Common
 import PhotosUI
-import Kingfisher
 
 struct UserInfoProfilePictureSection: View {
     @Binding var selectedPhotoItem: PhotosPickerItem?
@@ -15,16 +14,12 @@ struct UserInfoProfilePictureSection: View {
                     profileImage
                         .resizable()
                         .scaledToFill()
-                } else if let imageUrl = viewModel.profilePictureUrl, let url = URL(string: imageUrl) {
-                    KFImage(url)
-                        .placeholder {
-                            ProgressView()
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .background(Color.gray.opacity(0.1))
-                        }
-                        .onFailureImage(UIImage(named: "user-avatar"))
-                        .resizable()
-                        .scaledToFill()
+                } else if let imageUrl = viewModel.profilePictureUrl {
+                    AppRemoteImage(urlString: imageUrl, contentMode: .fill) {
+                        Image("user-avatar")
+                            .resizable()
+                            .scaledToFill()
+                    }
                 } else {
                     Image("user-avatar")
                         .resizable()

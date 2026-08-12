@@ -1001,6 +1001,10 @@ public enum L10n {
         public static var inventorySubtitle: String { text("profile.inventory_subtitle") }
         public static var inventoryPlaceholder: String { text("profile.inventory_placeholder") }
         public static var equippedItems: String { text("profile.equipped_items") }
+        public static var noActiveFrame: String { text("profile.no_active_frame") }
+        public static var noActiveSkin: String { text("profile.no_active_skin") }
+        public static var noActiveTheme: String { text("profile.no_active_theme") }
+        public static var noActiveAppIcon: String { text("profile.no_active_app_icon") }
         public static var ownedItems: String { text("profile.owned_items") }
         public static var filterOwned: String { text("profile.filter_owned") }
         public static var emptyInventoryTitle: String { text("profile.empty_inventory_title") }
@@ -1257,7 +1261,9 @@ public enum L10n {
         public static var noFiltersApplied: String { text("marketplace.no_filters_applied") }
         public static var filtersTitle: String { text("marketplace.filters_title") }
         public static var filterItemType: String { text("marketplace.filter_item_type") }
+        public static var filterOwnership: String { text("marketplace.filter_ownership") }
         public static var filterPrice: String { text("marketplace.filter_price") }
+        public static var filterNotOwnedOnly: String { text("marketplace.filter_not_owned_only") }
         public static var filterReset: String { text("marketplace.filter_reset") }
         public static var applyFilters: String { text("marketplace.apply_filters") }
         public static var statusOwned: String { text("marketplace.status_owned") }
@@ -1285,12 +1291,17 @@ public enum L10n {
         public static var equippedHint: String { text("marketplace.equipped_hint") }
         public static var lockedHint: String { text("marketplace.locked_hint") }
         public static var progressLabel: String { text("marketplace.progress_label") }
+        public static var offlineTitle: String { text("marketplace.offline_title") }
+        public static var offlineMessage: String { text("marketplace.offline_message") }
         public static var retry: String { text("marketplace.retry") }
         public static var purchaseSuccessTitle: String { text("marketplace.purchase_success_title") }
         public static var purchaseFailedTitle: String { text("marketplace.purchase_failed_title") }
         public static var itemNotOwned: String { text("marketplace.item_not_owned") }
         public static var equip: String { text("marketplace.equip") }
         public static var unequip: String { text("marketplace.unequip") }
+        public static var unequippedTitle: String { text("marketplace.unequipped_title") }
+        public static var unequippedHint: String { text("marketplace.unequipped_hint") }
+        public static var unequipFailedTitle: String { text("marketplace.unequip_failed_title") }
 
         private static func text(_ key: String) -> String {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")

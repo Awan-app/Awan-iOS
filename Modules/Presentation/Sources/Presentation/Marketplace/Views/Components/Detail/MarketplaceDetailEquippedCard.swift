@@ -2,6 +2,9 @@ import Common
 import SwiftUI
 
 struct MarketplaceDetailEquippedCard: View {
+    var isUnequipping: Bool = false
+    var onUnequip: (() -> Void)? = nil
+
     var body: some View {
         AppDepthSurface(
             shape: .roundedRectangle(cornerRadius: 22),
@@ -11,40 +14,47 @@ struct MarketplaceDetailEquippedCard: View {
             borderWidth: 1.5, depthOffset: 5,
             contentInsets: EdgeInsets(top: 18, leading: 18, bottom: 20, trailing: 18)
         ) {
-            VStack(alignment: .leading, spacing: 18) {
-                HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(alignment: .center, spacing: 12) {
                     ZStack {
                         Circle()
-                            .fill(AppColors.accentBlue.opacity(0.10))
-                            .frame(width: 44, height: 44)
-                        Circle()
-                            .stroke(AppColors.accentBlue.opacity(0.30), lineWidth: 2)
-                            .frame(width: 44, height: 44)
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundStyle(AppColors.accentBlue)
+                            .fill(AppColors.accentBlue)
+                            .frame(width: 42, height: 42)
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 17, weight: .black))
+                            .foregroundStyle(AppColors.onAccent)
                     }
-                    VStack(alignment: .leading, spacing: 3) {
+
+                    VStack(alignment: .leading, spacing: 4) {
                         Text(L10n.Marketplace.currentlyEquipped)
-                            .font(AppFonts.subheadlineHeavy)
-                            .foregroundStyle(AppColors.accentBlue)
+                            .font(AppFonts.headlineBlack)
+                            .foregroundStyle(AppColors.textPrimary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+
                         Text(L10n.Marketplace.equippedHint)
                             .font(AppFonts.subheadlineSemibold)
                             .foregroundStyle(AppColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .layoutPriority(1)
                 }
-                .padding(14)
-                .background(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(AppColors.infoSurface)
-                )
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                AppButton(
-                    title: L10n.Marketplace.currentlyEquipped,
-                    icon: "checkmark",
-                    color: AppColors.accentBlue,
-                    size: .large, onTap: {}
-                )
+                if let onUnequip {
+                    Divider()
+                        .overlay(AppColors.accentBlue.opacity(0.18))
+
+                    AppButton(
+                        title: L10n.Marketplace.unequip,
+                        icon: "xmark",
+                        color: AppColors.destructive,
+                        size: .large,
+                        isLoading: isUnequipping,
+                        onTap: onUnequip
+                    )
+                }
             }
         }
     }

@@ -55,7 +55,7 @@ final class EquippedItemDecodingTests: XCTestCase {
         )
 
         let domainModel = EquippedItemMapper.map(dto)
-        XCTAssertEqual(domainModel.type, "FRAME")
+        XCTAssertEqual(domainModel.type, .frame)
         XCTAssertEqual(domainModel.item.id, "item-frame-gold")
         XCTAssertEqual(domainModel.item.name, "Gold Frame")
     }

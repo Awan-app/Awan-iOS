@@ -35,7 +35,7 @@ private final class MockFetchStoreItemsUseCaseImpl: FetchStoreItemsUseCase, @unc
     var catalogToReturn: [StoreItem] = []
     var shouldFail: Bool = false
 
-    func execute(type: String) async throws -> [StoreItem] {
+    func execute() async throws -> [StoreItem] {
         if shouldFail {
             throw NSError(domain: "TestError", code: 500, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch store items"])
         }
@@ -55,19 +55,19 @@ private final class MockEquipStoreItemUseCaseImpl: EquipStoreItemUseCase, @unche
             throw errorToThrow
         }
         return EquippedItem(
-            type: "FRAME",
-            item: StoreItem(id: itemID, name: "Gold Frame", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: "FRAME"),
+            type: .frame,
+            item: StoreItem(id: itemID, name: "Gold Frame", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: .frame),
             equippedAt: Date()
         )
     }
 }
 
 private final class MockUnequipStoreItemUseCaseImpl: UnequipStoreItemUseCase, @unchecked Sendable {
-    var lastUnequippedType: String?
+    var lastUnequippedType: StoreItemType?
     var errorToThrow: (any Error)?
     var callCount: Int = 0
 
-    func execute(type: String) async throws {
+    func execute(type: StoreItemType) async throws {
         callCount += 1
         lastUnequippedType = type
         if let errorToThrow {
@@ -86,14 +86,14 @@ final class ProfileInventoryViewModelTests: XCTestCase {
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockUnequip = MockUnequipStoreItemUseCaseImpl()
 
-        let ownedItem = StoreItem(id: "frame-1", name: "Frame 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: "FRAME")
-        let lockedItem = StoreItem(id: "frame-2", name: "Frame 2", description: "Desc", image: "img", info: nil, price: 200, version: "1.0", type: "FRAME")
+        let ownedItem = StoreItem(id: "frame-1", name: "Frame 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: .frame)
+        let lockedItem = StoreItem(id: "frame-2", name: "Frame 2", description: "Desc", image: "img", info: nil, price: 200, version: "1.0", type: .frame)
 
         mockInventory.inventoryToReturn = [
             InventoryItem(id: "inv-1", item: ownedItem, boughtAt: Date())
         ]
         mockEquipped.equippedToReturn = [
-            EquippedItem(type: "FRAME", item: ownedItem, equippedAt: Date())
+            EquippedItem(type: .frame, item: ownedItem, equippedAt: Date())
         ]
         mockCatalog.catalogToReturn = [ownedItem, lockedItem]
 
@@ -126,9 +126,9 @@ final class ProfileInventoryViewModelTests: XCTestCase {
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockUnequip = MockUnequipStoreItemUseCaseImpl()
 
-        let frameItem = StoreItem(id: "f1", name: "Frame 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: "FRAME")
-        let skinItem = StoreItem(id: "s1", name: "Skin 1", description: "Desc", image: "img", info: nil, price: 200, version: "1.0", type: "SKIN")
-        let lockedTheme = StoreItem(id: "t1", name: "Theme 1", description: "Desc", image: "img", info: nil, price: 300, version: "1.0", type: "THEME")
+        let frameItem = StoreItem(id: "f1", name: "Frame 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: .frame)
+        let skinItem = StoreItem(id: "s1", name: "Skin 1", description: "Desc", image: "img", info: nil, price: 200, version: "1.0", type: .skin)
+        let lockedTheme = StoreItem(id: "t1", name: "Theme 1", description: "Desc", image: "img", info: nil, price: 300, version: "1.0", type: .theme)
 
         mockInventory.inventoryToReturn = [
             InventoryItem(id: "inv-1", item: frameItem, boughtAt: Date()),
@@ -168,7 +168,7 @@ final class ProfileInventoryViewModelTests: XCTestCase {
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockUnequip = MockUnequipStoreItemUseCaseImpl()
 
-        let item = StoreItem(id: "frame-1", name: "Frame 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: "FRAME")
+        let item = StoreItem(id: "frame-1", name: "Frame 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: .frame)
         mockInventory.inventoryToReturn = [
             InventoryItem(id: "inv-1", item: item, boughtAt: Date())
         ]
@@ -202,12 +202,12 @@ final class ProfileInventoryViewModelTests: XCTestCase {
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockUnequip = MockUnequipStoreItemUseCaseImpl()
 
-        let item = StoreItem(id: "skin-1", name: "Skin 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: "SKIN")
+        let item = StoreItem(id: "skin-1", name: "Skin 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: .skin)
         mockInventory.inventoryToReturn = [
             InventoryItem(id: "inv-1", item: item, boughtAt: Date())
         ]
         mockEquipped.equippedToReturn = [
-            EquippedItem(type: "SKIN", item: item, equippedAt: Date())
+            EquippedItem(type: .skin, item: item, equippedAt: Date())
         ]
         mockCatalog.catalogToReturn = [item]
 
@@ -229,7 +229,7 @@ final class ProfileInventoryViewModelTests: XCTestCase {
 
         try await Task.sleep(nanoseconds: 100_000_000)
 
-        XCTAssertEqual(mockUnequip.lastUnequippedType, "SKIN")
+        XCTAssertEqual(mockUnequip.lastUnequippedType, .skin)
         XCTAssertTrue(viewModel.equippedItems.isEmpty)
         XCTAssertEqual(viewModel.displayedOwnedItems.first?.status, .owned)
     }
@@ -241,16 +241,16 @@ final class ProfileInventoryViewModelTests: XCTestCase {
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockUnequip = MockUnequipStoreItemUseCaseImpl()
 
-        let frameItem = StoreItem(id: "frame-1", name: "Frame 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: "FRAME")
-        let skinItem = StoreItem(id: "skin-1", name: "Skin 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: "SKIN")
+        let frameItem = StoreItem(id: "frame-1", name: "Frame 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: .frame)
+        let skinItem = StoreItem(id: "skin-1", name: "Skin 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: .skin)
 
         mockInventory.inventoryToReturn = [
             InventoryItem(id: "inv-1", item: frameItem, boughtAt: Date()),
             InventoryItem(id: "inv-2", item: skinItem, boughtAt: Date())
         ]
         mockEquipped.equippedToReturn = [
-            EquippedItem(type: "FRAME", item: frameItem, equippedAt: Date()),
-            EquippedItem(type: "SKIN", item: skinItem, equippedAt: Date())
+            EquippedItem(type: .frame, item: frameItem, equippedAt: Date()),
+            EquippedItem(type: .skin, item: skinItem, equippedAt: Date())
         ]
         mockCatalog.catalogToReturn = [frameItem, skinItem]
 
@@ -271,7 +271,7 @@ final class ProfileInventoryViewModelTests: XCTestCase {
         viewModel.send(.unequipItem(targetMarketplaceItem))
 
         // Check unequippingItemType matches FRAME type specifically
-        XCTAssertEqual(viewModel.unequippingItemType, "FRAME")
+        XCTAssertEqual(viewModel.unequippingItemType, .frame)
 
         try await Task.sleep(nanoseconds: 100_000_000)
 

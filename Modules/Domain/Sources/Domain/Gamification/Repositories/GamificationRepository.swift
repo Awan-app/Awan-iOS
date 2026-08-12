@@ -3,15 +3,18 @@
 //  Domain
 //
 
+import Combine
 import Foundation
 
 public protocol GamificationRepository: Sendable {
-    func fetchStoreItems(type: String) async throws -> [StoreItem]
+    func fetchStoreItems() async throws -> [StoreItem]
+    func observeStoreItems() -> AnyPublisher<[StoreItem], Error>
     func buyStoreItem(itemID: String) async throws -> StorePurchase
     func equipStoreItem(itemID: String) async throws -> EquippedItem
-    func unequipStoreItem(type: String) async throws
+    func unequipStoreItem(type: StoreItemType) async throws
     func fetchEquippedItems() async throws -> [EquippedItem]
     func fetchStoreInventory() async throws -> [InventoryItem]
+    func observeStoreInventory() -> AnyPublisher<[InventoryItem], Error>
     func fetchUserPoints() async throws -> Int
     func fetchWheelConfig() async throws -> DailyWheelConfiguration
     func spinWheel() async throws -> DailyWheelSpinResult
@@ -20,4 +23,14 @@ public protocol GamificationRepository: Sendable {
         from startDay: ActivityDay,
         through endDay: ActivityDay
     ) async throws -> Set<ActivityDay>
+}
+
+public extension GamificationRepository {
+    func observeStoreItems() -> AnyPublisher<[StoreItem], Error> {
+        AsyncValuePublisher.make { try await fetchStoreItems() }
+    }
+
+    func observeStoreInventory() -> AnyPublisher<[InventoryItem], Error> {
+        AsyncValuePublisher.make { try await fetchStoreInventory() }
+    }
 }

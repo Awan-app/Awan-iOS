@@ -11,7 +11,7 @@ enum GamificationEndpoint: APIEndpoint {
     case getProgress
     case getWheelConfig
     case spinWheel
-    case getStoreItems(type: String)
+    case getStoreItems
     case buyStoreItem(itemID: String)
     case equipStoreItem(itemID: String)
     case unequipStoreItem(type: String)
@@ -79,12 +79,10 @@ enum GamificationEndpoint: APIEndpoint {
 
     var queryParameters: [String: String]? {
         switch self {
-        case let .getStoreItems(type):
-            return ["type": type]
-
         case .getProgress,
              .getWheelConfig,
              .spinWheel,
+             .getStoreItems,
              .buyStoreItem,
              .equipStoreItem,
              .unequipStoreItem,

@@ -393,6 +393,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(GamificationRepository.self, from: resolver)
             )
         }
+        container.register(FetchStorefrontUseCase.self) { resolver in
+            DefaultFetchStorefrontUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
         container.register(BuyStoreItemUseCase.self) { resolver in
             DefaultBuyStoreItemUseCase(
                 repository: Self.resolve(GamificationRepository.self, from: resolver)

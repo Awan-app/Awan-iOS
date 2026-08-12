@@ -6,9 +6,11 @@ struct MarketplaceItemDetailSheet: View {
     let userPoints: Int
     var isPurchasing: Bool = false
     var isEquipping: Bool = false
+    var isUnequipping: Bool = false
     var purchaseFeedback: PurchaseFeedback? = nil
     var onBuy: () -> Void = {}
     var onEquip: () -> Void = {}
+    var onUnequip: (() -> Void)? = nil
     let onDismiss: () -> Void
 
     var body: some View {
@@ -83,30 +85,20 @@ struct MarketplaceItemDetailSheet: View {
 
     @ViewBuilder
     private var heroImage: some View {
-        ZStack {
-            LinearGradient(
-                colors: [heroPrimaryColor.opacity(0.15), AppColors.screenBackground],
-                startPoint: .top, endPoint: .bottom
-            )
-            .frame(height: 200)
-            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-
-            if case .locked = item.status {
-                Image(systemName: item.symbolName)
-                    .font(.system(size: 90, weight: .bold))
-                    .foregroundStyle(heroPrimaryColor)
-                    .blur(radius: 12)
-                    .overlay(
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 44, weight: .black))
-                            .foregroundStyle(.white)
-                            .shadow(color: Color.black.opacity(0.35), radius: 8, y: 4)
-                    )
-            } else {
-                Image(systemName: item.symbolName)
-                    .font(.system(size: 90, weight: .bold))
-                    .foregroundStyle(heroPrimaryColor)
-                    .shadow(color: heroPrimaryColor.opacity(0.30), radius: 20, y: 8)
+        MarketplaceItemArtwork(
+            imageURL: item.imageURL,
+            category: item.category,
+            symbolName: item.symbolName
+        )
+        .padding(24)
+        .frame(maxWidth: .infinity)
+        .frame(height: 200)
+        .blur(radius: item.status == .locked ? 12 : 0)
+        .overlay {
+            if item.status == .locked {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 44, weight: .black))
+                    .foregroundStyle(AppColors.textSecondary)
             }
         }
     }
@@ -131,7 +123,10 @@ struct MarketplaceItemDetailSheet: View {
                 onEquip: onEquip
             )
         case .equipped:
-            MarketplaceDetailEquippedCard()
+            MarketplaceDetailEquippedCard(
+                isUnequipping: isUnequipping,
+                onUnequip: onUnequip
+            )
         case .locked:
             MarketplaceDetailLockedCard()
         }
@@ -157,15 +152,6 @@ struct MarketplaceItemDetailSheet: View {
         }
     }
 
-    private var heroPrimaryColor: Color {
-        switch item.category {
-        case .frames:   return AppColors.accentBlue
-        case .skins:    return AppColors.accentPurple
-        case .themes:   return AppColors.accentGreen
-        case .appIcons: return AppColors.warning
-        case .all:      return AppColors.accentBlue
-        }
-    }
 }
 
 #Preview("Affordable") {

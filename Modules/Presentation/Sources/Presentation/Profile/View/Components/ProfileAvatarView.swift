@@ -7,26 +7,14 @@
 
 import SwiftUI
 import Common
-import Kingfisher
 
 struct ProfileAvatarView: View {
     let imageUrl: String?
     var size: CGFloat = 56
 
     var body: some View {
-        Group {
-            if let imageUrl, let url = URL(string: imageUrl) {
-                KFImage(url)
-                    .placeholder {
-                        ProgressView()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(AppColors.accentBlue.opacity(0.10))
-                    }
-                    .resizable()
-                    .scaledToFill()
-            } else {
-                placeholder
-            }
+        AppRemoteImage(urlString: imageUrl, contentMode: .fill) {
+            placeholder
         }
         .frame(width: size, height: size)
         .clipShape(Circle())

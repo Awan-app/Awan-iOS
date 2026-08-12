@@ -3,10 +3,18 @@
 //  Domain
 //
 
+import Combine
 import Foundation
 
 public protocol FetchStoreItemsUseCase: Sendable {
-    func execute(type: String) async throws -> [StoreItem]
+    func execute() async throws -> [StoreItem]
+    func observe() -> AnyPublisher<[StoreItem], Error>
+}
+
+public extension FetchStoreItemsUseCase {
+    func observe() -> AnyPublisher<[StoreItem], Error> {
+        AsyncValuePublisher.make { try await execute() }
+    }
 }
 
 public struct DefaultFetchStoreItemsUseCase: FetchStoreItemsUseCase {
@@ -16,7 +24,11 @@ public struct DefaultFetchStoreItemsUseCase: FetchStoreItemsUseCase {
         self.repository = repository
     }
 
-    public func execute(type: String) async throws -> [StoreItem] {
-        try await repository.fetchStoreItems(type: type)
+    public func observe() -> AnyPublisher<[StoreItem], Error> {
+        repository.observeStoreItems()
+    }
+
+    public func execute() async throws -> [StoreItem] {
+        try await repository.fetchStoreItems()
     }
 }

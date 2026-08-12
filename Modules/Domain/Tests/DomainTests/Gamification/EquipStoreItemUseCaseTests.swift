@@ -6,7 +6,7 @@ final class EquipStoreItemUseCaseTests: XCTestCase {
         var lastEquippedItemID: String?
         var errorToThrow: (any Error)?
 
-        func fetchStoreItems(type: String) async throws -> [StoreItem] { [] }
+        func fetchStoreItems() async throws -> [StoreItem] { [] }
         func buyStoreItem(itemID: String) async throws -> StorePurchase {
             fatalError("Unimplemented")
         }
@@ -17,7 +17,7 @@ final class EquipStoreItemUseCaseTests: XCTestCase {
                 throw errorToThrow
             }
             return EquippedItem(
-                type: "FRAME",
+                type: .frame,
                 item: StoreItem(
                     id: itemID,
                     name: "Gold Frame",
@@ -26,13 +26,13 @@ final class EquipStoreItemUseCaseTests: XCTestCase {
                     info: nil,
                     price: 100,
                     version: "1.0",
-                    type: "FRAME"
+                    type: .frame
                 ),
                 equippedAt: Date()
             )
         }
 
-        func unequipStoreItem(type: String) async throws {}
+        func unequipStoreItem(type: StoreItemType) async throws {}
         func fetchEquippedItems() async throws -> [EquippedItem] { [] }
         func fetchStoreInventory() async throws -> [InventoryItem] { [] }
         func fetchUserPoints() async throws -> Int { 0 }
@@ -52,7 +52,7 @@ final class EquipStoreItemUseCaseTests: XCTestCase {
 
         XCTAssertEqual(repo.lastEquippedItemID, "item-frame-1")
         XCTAssertEqual(equippedItem.item.id, "item-frame-1")
-        XCTAssertEqual(equippedItem.type, "FRAME")
+        XCTAssertEqual(equippedItem.type, .frame)
     }
 
     func testExecutePropagatesRepositoryError() async {

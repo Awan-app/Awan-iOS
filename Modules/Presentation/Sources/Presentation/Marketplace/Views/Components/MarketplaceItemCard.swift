@@ -18,38 +18,14 @@ struct MarketplaceItemCard: View {
             ) {
                 VStack(alignment: .leading, spacing: 10) {
                     ZStack(alignment: .topTrailing) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .fill(imageBackground)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 90)
-
-                            if let imageURLString = item.imageURL,
-                                let url = URL(string: imageURLString)
-                            {
-                                AsyncImage(url: url) { phase in
-                                    switch phase {
-                                    case .success(let image):
-                                        image
-                                            .resizable()
-                                            .scaledToFit()
-                                            .padding(8)
-                                    case .failure, .empty:
-                                        Image(systemName: item.symbolName)
-                                            .font(.system(size: 42, weight: .bold))
-                                            .foregroundStyle(imageForeground)
-                                    @unknown default:
-                                        Image(systemName: item.symbolName)
-                                            .font(.system(size: 42, weight: .bold))
-                                            .foregroundStyle(imageForeground)
-                                    }
-                                }
-                            } else {
-                                Image(systemName: item.symbolName)
-                                    .font(.system(size: 42, weight: .bold))
-                                    .foregroundStyle(imageForeground)
-                            }
-                        }
+                        MarketplaceItemArtwork(
+                            imageURL: item.imageURL,
+                            category: item.category,
+                            symbolName: item.symbolName
+                        )
+                        .padding(8)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 90)
 
                         if item.isNew {
                             Text(L10n.Marketplace.badgeNew)
@@ -194,25 +170,6 @@ struct MarketplaceItemCard: View {
         }
     }
 
-    private var imageBackground: Color {
-        switch item.category {
-        case .frames: return AppColors.accentBlue.opacity(0.10)
-        case .skins: return AppColors.accentPurple.opacity(0.10)
-        case .themes: return AppColors.accentGreen.opacity(0.10)
-        case .appIcons: return AppColors.warning.opacity(0.10)
-        case .all: return AppColors.infoSurface
-        }
-    }
-
-    private var imageForeground: Color {
-        switch item.category {
-        case .frames: return AppColors.accentBlue
-        case .skins: return AppColors.accentPurple
-        case .themes: return AppColors.accentGreen
-        case .appIcons: return AppColors.warning
-        case .all: return AppColors.textSecondary
-        }
-    }
 }
 
 #Preview("Item Card Grid Light") {

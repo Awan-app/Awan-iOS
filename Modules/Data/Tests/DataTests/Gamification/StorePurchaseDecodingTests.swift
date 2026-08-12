@@ -59,6 +59,6 @@ final class StorePurchaseDecodingTests: XCTestCase {
         XCTAssertEqual(domainPurchase.item.id, "item-1")
         XCTAssertEqual(domainPurchase.item.name, "Cloud Skin")
         XCTAssertEqual(domainPurchase.item.price, 250)
-        XCTAssertEqual(domainPurchase.item.type, "SKIN")
+        XCTAssertEqual(domainPurchase.item.type, .skin)
     }
 }

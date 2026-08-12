@@ -17,8 +17,10 @@ public enum InventoryItemCardState: Equatable, Sendable {
 public struct InventoryItemCard: View {
     public let title: String
     public let category: String
+    private let itemCategory: MarketplaceItemCategory?
     public let imageURL: String?
     public let symbolName: String
+    public let placeholderImageName: String?
     public let state: InventoryItemCardState
     public let onTap: (() -> Void)?
     public let onCheckmarkTap: (() -> Void)?
@@ -26,16 +28,20 @@ public struct InventoryItemCard: View {
     public init(
         title: String,
         category: String,
+        itemCategory: MarketplaceItemCategory? = nil,
         imageURL: String? = nil,
         symbolName: String = "sparkles",
+        placeholderImageName: String? = nil,
         state: InventoryItemCardState = .owned,
         onTap: (() -> Void)? = nil,
         onCheckmarkTap: (() -> Void)? = nil
     ) {
         self.title = title
         self.category = category
+        self.itemCategory = itemCategory
         self.imageURL = imageURL
         self.symbolName = symbolName
+        self.placeholderImageName = placeholderImageName
         self.state = state
         self.onTap = (state == .locked || state == .empty) ? nil : onTap
         self.onCheckmarkTap = onCheckmarkTap
@@ -64,6 +70,7 @@ public struct InventoryItemCard: View {
         self.init(
             title: item.name,
             category: item.category.rawValue.capitalized,
+            itemCategory: item.category,
             imageURL: item.imageURL,
             symbolName: item.symbolName,
             state: cardState,
@@ -80,7 +87,8 @@ public struct InventoryItemCard: View {
         let item = MarketplaceItem(storeItem: equipped.item)
         self.init(
             title: item.name,
-            category: equipped.type,
+            category: equipped.type.rawValue,
+            itemCategory: item.category,
             imageURL: item.imageURL,
             symbolName: item.symbolName,
             state: .equipped,
@@ -105,13 +113,11 @@ public struct InventoryItemCard: View {
             AppDepthSurface(
                 shape: .roundedRectangle(cornerRadius: 16),
                 surfaceColor: AppColors.surface,
-                borderColor: state == .equipped ? AppColors.accentGreen.opacity(0.40)
-                :state == .owned ? AppColors.accentBlue.opacity(0.40)
-                :AppColors.outline.opacity(0.12),
-                depthColor: state == .equipped ? AppColors.accentGreenDepth.opacity(0.35) : AppColors.outline.opacity(0.16),
+                borderColor: AppColors.outline.opacity(0.10),
+                depthColor: AppColors.outline.opacity(0.16),
                 borderWidth: 1.5,
                 depthOffset: 4,
-                contentInsets: EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+                contentInsets: EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
             ) {
                 ZStack(alignment: .center) {
                     previewImage
@@ -121,21 +127,20 @@ public struct InventoryItemCard: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 76)
-                .overlay(alignment: .topTrailing) {
-                    if state == .equipped {
-                        if let onCheckmarkTap {
-                            Button {
-                                onCheckmarkTap()
-                            } label: {
-                                checkBadge
-                            }
-                            .buttonStyle(.plain)
-                            .offset(x: 4, y: -4)
-                        } else {
+                .frame(height: 72)
+            }
+            .frame(maxWidth: .infinity)
+            .overlay(alignment: .topTrailing) {
+                if state == .equipped {
+                    if let onCheckmarkTap {
+                        Button {
+                            onCheckmarkTap()
+                        } label: {
                             checkBadge
-                                .offset(x: 4, y: -4)
                         }
+                        .buttonStyle(.plain)
+                    } else {
+                        checkBadge
                     }
                 }
             }
@@ -162,34 +167,14 @@ public struct InventoryItemCard: View {
 
     @ViewBuilder
     private var previewImage: some View {
-        Group {
-            if let imageURL, let url = URL(string: imageURL) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    case .failure, .empty:
-                        symbolFallback
-                    @unknown default:
-                        symbolFallback
-                    }
-                }
-            } else {
-                symbolFallback
-            }
-        }
+        MarketplaceItemArtwork(
+            imageURL: imageURL,
+            category: itemCategory,
+            symbolName: symbolName,
+            placeholderImageName: placeholderImageName
+        )
         .saturation(state == .locked ? 0 : 1)
         .opacity(state == .locked ? 0.55 : 1.0)
-    }
-
-    private var symbolFallback: some View {
-        Image(systemName: symbolName)
-            .resizable()
-            .scaledToFit()
-            .padding(6)
-            .foregroundStyle((state == .locked || state == .empty) ? AppColors.textSecondary : AppColors.accentBlue)
     }
 
     private var checkBadge: some View {

@@ -143,6 +143,10 @@ struct DataAssembly: Assembly {
                     RemoteGamificationDataSource.self,
                     from: resolver
                 ),
+                localGamificationDataSource: Self.resolve(
+                    LocalGamificationDataSource.self,
+                    from: resolver
+                ),
                 localProfileDataSource: Self.resolve(
                     LocalUserProfileDataSource.self,
                     from: resolver
@@ -260,6 +264,10 @@ struct DataAssembly: Assembly {
         .inObjectScope(.container)
         container.register(LocalCategoryDataSource.self) { _ in
             SwiftDataCategoryDataSource(modelContainer: modelContainer)
+        }
+        .inObjectScope(.container)
+        container.register(LocalGamificationDataSource.self) { _ in
+            SwiftDataGamificationDataSource(modelContainer: modelContainer)
         }
         .inObjectScope(.container)
     }

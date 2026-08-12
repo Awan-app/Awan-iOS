@@ -9,20 +9,21 @@ import SwiftUI
 
 struct ProfileEquippedItemsSection: View {
     let equippedItems: [EquippedItem]
-    var unequippingItemType: String? = nil
-    let onUnequip: (MarketplaceItem) -> Void
+    var unequippingItemType: StoreItemType? = nil
+    let onSelect: (MarketplaceItem) -> Void
 
     private struct SlotDefinition {
-        let rawTypes: [String]
+        let type: StoreItemType
         let displayName: String
-        let defaultSymbol: String
+        let emptyMessage: String
+        let placeholderImageName: String
     }
 
     private let fixedSlots: [SlotDefinition] = [
-        SlotDefinition(rawTypes: ["FRAME"], displayName: L10n.Marketplace.filterFrames, defaultSymbol: "square.on.circle"),
-        SlotDefinition(rawTypes: ["SKIN"], displayName: L10n.Marketplace.filterSkins, defaultSymbol: "paintpalette.fill"),
-        SlotDefinition(rawTypes: ["THEME"], displayName: L10n.Marketplace.filterThemes, defaultSymbol: "globe"),
-        SlotDefinition(rawTypes: ["ICON", "APPICON"], displayName: L10n.Marketplace.filterAppIcons, defaultSymbol: "square.grid.2x2.fill")
+        SlotDefinition(type: .frame, displayName: L10n.Marketplace.filterFrames, emptyMessage: L10n.Profile.noActiveFrame, placeholderImageName: "EmptyStoreFrame"),
+        SlotDefinition(type: .skin, displayName: L10n.Marketplace.filterSkins, emptyMessage: L10n.Profile.noActiveSkin, placeholderImageName: "EmptyStoreSkin"),
+        SlotDefinition(type: .theme, displayName: L10n.Marketplace.filterThemes, emptyMessage: L10n.Profile.noActiveTheme, placeholderImageName: "EmptyStoreTheme"),
+        SlotDefinition(type: .icon, displayName: L10n.Marketplace.filterAppIcons, emptyMessage: L10n.Profile.noActiveAppIcon, placeholderImageName: "EmptyStoreAppIcon")
     ]
 
     var body: some View {
@@ -32,26 +33,25 @@ struct ProfileEquippedItemsSection: View {
                 accentColor: AppColors.accentGreen
             )
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(fixedSlots, id: \.displayName) { slot in
-                        let matchingEquipped = equippedItems.first { item in
-                            slot.rawTypes.contains(item.type.uppercased())
-                        }
-
-                        slotCardView(for: slot, equipped: matchingEquipped)
-                            .frame(width: 90)
+            HStack(alignment: .top, spacing: 8) {
+                ForEach(fixedSlots, id: \.displayName) { slot in
+                    let matchingEquipped = equippedItems.first { item in
+                        slot.type == item.type
                     }
+
+                    slotCardView(for: slot, equipped: matchingEquipped)
+                        .frame(maxWidth: .infinity)
                 }
             }
+            .frame(maxWidth: .infinity)
         }
     }
 
     @ViewBuilder
     private func slotCardView(for slot: SlotDefinition, equipped: EquippedItem?) -> some View {
         if let equipped {
-            let marketplaceItem = MarketplaceItem(storeItem: equipped.item)
-            let isUnequipping = (unequippingItemType?.uppercased() == slot.rawTypes.first)
+            let marketplaceItem = equippedMarketplaceItem(equipped)
+            let isUnequipping = unequippingItemType == slot.type
 
             if isUnequipping {
                 VStack(spacing: 8) {
@@ -89,32 +89,38 @@ struct ProfileEquippedItemsSection: View {
                 InventoryItemCard(
                     title: marketplaceItem.name,
                     category: slot.displayName,
+                    itemCategory: marketplaceItem.category,
                     imageURL: marketplaceItem.imageURL,
                     symbolName: marketplaceItem.symbolName,
                     state: .equipped,
-                    onTap: nil,
-                    onCheckmarkTap: {
-                        onUnequip(marketplaceItem)
+                    onTap: {
+                        onSelect(marketplaceItem)
                     }
                 )
             }
         } else {
             InventoryItemCard(
                 title: slot.displayName,
-                category: L10n.Marketplace.emptySubtitle,
+                category: slot.emptyMessage,
                 imageURL: nil,
-                symbolName: slot.defaultSymbol,
+                placeholderImageName: slot.placeholderImageName,
                 state: .empty,
                 onTap: nil
             )
         }
+    }
+
+    private func equippedMarketplaceItem(_ equipped: EquippedItem) -> MarketplaceItem {
+        var item = MarketplaceItem(storeItem: equipped.item)
+        item.status = .equipped
+        return item
     }
 }
 
 #Preview("Profile Equipped Items Section") {
     ProfileEquippedItemsSection(
         equippedItems: [],
-        onUnequip: { _ in }
+        onSelect: { _ in }
     )
     .padding()
     .background(AppColors.screenBackground)

@@ -8326,6 +8326,40 @@
         }
       }
     },
+    "marketplace.filter_ownership": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الملكية"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ownership"
+          }
+        }
+      }
+    },
+    "marketplace.filter_not_owned_only": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العناصر غير المملوكة فقط"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not owned only"
+          }
+        }
+      }
+    },
     "marketplace.filter_reset": {
       "extractionState": "manual",
       "localizations": {
@@ -9346,6 +9380,57 @@
         }
       }
     },
+    "marketplace.unequipped_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم إلغاء التفعيل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item Unequipped"
+          }
+        }
+      }
+    },
+    "marketplace.unequipped_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العنصر ده مبقاش مفعّل دلوقتي"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This item is no longer active"
+          }
+        }
+      }
+    },
+    "marketplace.unequip_failed_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فشل إلغاء التفعيل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unequip Failed"
+          }
+        }
+      }
+    },
     "profile.equipped_items": {
       "extractionState": "manual",
       "localizations": {
@@ -9359,6 +9444,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Equipped Items"
+          }
+        }
+      }
+    },
+    "profile.no_active_frame": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يوجد إطار مفعّل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No active frame"
+          }
+        }
+      }
+    },
+    "profile.no_active_skin": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يوجد مظهر مفعّل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No active skin"
+          }
+        }
+      }
+    },
+    "profile.no_active_theme": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يوجد نسق مفعّل"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No active theme"
+          }
+        }
+      }
+    },
+    "profile.no_active_app_icon": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد أيقونة مفعّلة"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No active app icon"
           }
         }
       }
@@ -9461,6 +9614,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "My Collection"
+          }
+        }
+      }
+    },
+    "marketplace.offline_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يوجد اتصال بالإنترنت"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're offline"
+          }
+        }
+      }
+    },
+    "marketplace.offline_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تحقق من اتصالك، ثم اضغط لإعادة المحاولة."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check your connection, then tap to try again."
           }
         }
       }

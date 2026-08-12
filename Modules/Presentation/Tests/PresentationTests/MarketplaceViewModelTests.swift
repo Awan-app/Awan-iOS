@@ -7,17 +7,17 @@ import Domain
 import Presentation
 import XCTest
 
-private final class MockFetchStoreItemsUseCaseImpl: FetchStoreItemsUseCase, @unchecked Sendable {
-    var requestedTypes: [String] = []
+private final class MockFetchStorefrontUseCaseImpl: FetchStorefrontUseCase, @unchecked Sendable {
     var shouldFail: Bool = false
-    var itemsPerType: [String: [StoreItem]] = [:]
+    var executeCallCount = 0
+    var storefrontToReturn: Storefront = .empty
 
-    func execute(type: String) async throws -> [StoreItem] {
-        requestedTypes.append(type)
+    func execute() async throws -> Storefront {
+        executeCallCount += 1
         if shouldFail {
             throw NSError(domain: "TestError", code: 500, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch store items"])
         }
-        return itemsPerType[type] ?? []
+        return storefrontToReturn
     }
 }
 
@@ -41,7 +41,7 @@ private final class MockBuyStoreItemUseCaseImpl: BuyStoreItemUseCase, @unchecked
                 info: nil,
                 price: 100,
                 version: "1.0",
-                type: "FRAME"
+                type: .frame
             ),
             boughtAt: Date()
         )
@@ -60,7 +60,7 @@ private final class MockEquipStoreItemUseCaseImpl: EquipStoreItemUseCase, @unche
             throw errorToThrow
         }
         return EquippedItem(
-            type: "FRAME",
+            type: .frame,
             item: StoreItem(
                 id: itemID,
                 name: "Gold Frame",
@@ -69,7 +69,7 @@ private final class MockEquipStoreItemUseCaseImpl: EquipStoreItemUseCase, @unche
                 info: nil,
                 price: 100,
                 version: "1.0",
-                type: "FRAME"
+                type: .frame
             ),
             equippedAt: Date()
         )
@@ -93,26 +93,46 @@ private final class MockFetchUserPointsUseCaseImpl: FetchUserPointsUseCase, @unc
 @MainActor
 final class MarketplaceViewModelTests: XCTestCase {
 
-    func testAppearedFetchesAllCategoryAggregated() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+    private func setItems(_ items: [MarketplaceItem], on viewModel: MarketplaceViewModel) {
+        viewModel.state.storefront = Storefront(items: items.map { item in
+            let state: Storefront.ItemState = switch item.status {
+            case .price, .locked: .available
+            case .owned: .owned
+            case .equipped: .equipped
+            }
+            return Storefront.Item(
+                storeItem: StoreItem(
+                    id: item.id,
+                    name: item.name,
+                    description: item.description,
+                    image: item.imageURL ?? "",
+                    info: nil,
+                    price: {
+                        if case let .price(value) = item.status { return value }
+                        return 0
+                    }(),
+                    version: "1.0",
+                    type: item.category.storeItemType ?? .unknown
+                ),
+                state: state
+            )
+        })
+    }
+
+    func testAppearedFetchesStorefrontOnce() async throws {
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
-        mockFetch.itemsPerType["FRAME"] = [
-            StoreItem(id: "f1", name: "Frame 1", description: "Desc", image: "img1", info: nil, price: 100, version: "1.0", type: "FRAME")
-        ]
-        mockFetch.itemsPerType["SKIN"] = [
-            StoreItem(id: "s1", name: "Skin 1", description: "Desc", image: "img2", info: nil, price: 200, version: "1.0", type: "SKIN")
-        ]
-        mockFetch.itemsPerType["THEME"] = [
-            StoreItem(id: "t1", name: "Theme 1", description: "Desc", image: "img3", info: nil, price: 300, version: "1.0", type: "THEME")
-        ]
-        mockFetch.itemsPerType["ICON"] = [
-            StoreItem(id: "i1", name: "Icon 1", description: "Desc", image: "img4", info: nil, price: 400, version: "1.0", type: "ICON")
-        ]
+        mockFetch.storefrontToReturn = Storefront(items: [
+            Storefront.Item(storeItem: StoreItem(id: "f1", name: "Frame 1", description: "Desc", image: "img1", info: nil, price: 100, version: "1.0", type: .frame), state: .available),
+            Storefront.Item(storeItem: StoreItem(id: "s1", name: "Skin 1", description: "Desc", image: "img2", info: nil, price: 200, version: "1.0", type: .skin), state: .available),
+            Storefront.Item(storeItem: StoreItem(id: "t1", name: "Theme 1", description: "Desc", image: "img3", info: nil, price: 300, version: "1.0", type: .theme), state: .available),
+            Storefront.Item(storeItem: StoreItem(id: "i1", name: "Icon 1", description: "Desc", image: "img4", info: nil, price: 400, version: "1.0", type: .icon), state: .available)
+        ])
 
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
@@ -125,55 +145,44 @@ final class MarketplaceViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.state.errorMessage)
         XCTAssertEqual(viewModel.state.allItems.count, 4)
 
-        XCTAssertTrue(mockFetch.requestedTypes.contains("FRAME"))
-        XCTAssertTrue(mockFetch.requestedTypes.contains("SKIN"))
-        XCTAssertTrue(mockFetch.requestedTypes.contains("THEME"))
-        XCTAssertTrue(mockFetch.requestedTypes.contains("ICON"))
-        XCTAssertFalse(mockFetch.requestedTypes.contains("ALL"))
-        XCTAssertFalse(mockFetch.requestedTypes.contains("APP_ICON"))
+        XCTAssertEqual(mockFetch.executeCallCount, 1)
     }
 
-    func testSelectSpecificCategoriesSendsExactApiTypes() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+    func testSelectSpecificCategoriesFiltersLocally() async throws {
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
         )
+        mockFetch.storefrontToReturn = Storefront(items: [
+            Storefront.Item(storeItem: StoreItem(id: "f1", name: "Frame", description: "", image: "", info: nil, price: 100, version: "1.0", type: .frame), state: .available),
+            Storefront.Item(storeItem: StoreItem(id: "s1", name: "Skin", description: "", image: "", info: nil, price: 100, version: "1.0", type: .skin), state: .available)
+        ])
+        viewModel.send(.appeared)
+        try await Task.sleep(nanoseconds: 50_000_000)
 
         viewModel.send(.selectCategory(.skins))
-        try await Task.sleep(nanoseconds: 50_000_000)
-        XCTAssertEqual(mockFetch.requestedTypes.last, "SKIN")
+        XCTAssertEqual(viewModel.state.filteredItems.map(\.id), ["s1"])
 
         viewModel.send(.selectCategory(.frames))
-        try await Task.sleep(nanoseconds: 50_000_000)
-        XCTAssertEqual(mockFetch.requestedTypes.last, "FRAME")
-
-        viewModel.send(.selectCategory(.themes))
-        try await Task.sleep(nanoseconds: 50_000_000)
-        XCTAssertEqual(mockFetch.requestedTypes.last, "THEME")
-
-        viewModel.send(.selectCategory(.appIcons))
-        try await Task.sleep(nanoseconds: 50_000_000)
-        XCTAssertEqual(mockFetch.requestedTypes.last, "ICON")
-
-        XCTAssertFalse(mockFetch.requestedTypes.contains("ALL"))
-        XCTAssertFalse(mockFetch.requestedTypes.contains("APP_ICON"))
+        XCTAssertEqual(viewModel.state.filteredItems.map(\.id), ["f1"])
+        XCTAssertEqual(mockFetch.executeCallCount, 1)
     }
 
     func testErrorHandlingInViewModel() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
         mockFetch.shouldFail = true
 
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
@@ -188,14 +197,14 @@ final class MarketplaceViewModelTests: XCTestCase {
     }
 
     func testAppearedFetchesUserPointsFromBackend() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
         mockPoints.pointsToReturn = 2450
 
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
@@ -209,14 +218,14 @@ final class MarketplaceViewModelTests: XCTestCase {
     }
 
     func testUserPointsUnchangedOnFetchUserPointsFailure() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
         mockPoints.shouldFail = true
 
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
@@ -230,7 +239,7 @@ final class MarketplaceViewModelTests: XCTestCase {
     }
 
     func testSuccessfulPurchaseRefreshesPointsFromBackendUseCase() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
@@ -245,13 +254,13 @@ final class MarketplaceViewModelTests: XCTestCase {
             symbolName: "star"
         )
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
         )
-        viewModel.state.allItems = [item]
-        viewModel.state.selectedItem = item
+        setItems([item], on: viewModel)
+        viewModel.state.selectedItemID = item.id
         viewModel.state.userPoints = 1100
 
         mockPoints.pointsToReturn = 900
@@ -265,14 +274,13 @@ final class MarketplaceViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.state.allItems.first?.status, .owned)
         XCTAssertEqual(viewModel.state.selectedItem?.status, .owned)
         XCTAssertEqual(viewModel.state.userPoints, 900)
-        XCTAssertNotNil(viewModel.state.purchaseSuccessMessage)
         if case .success = viewModel.state.purchaseFeedback { } else {
             XCTFail("Expected purchaseFeedback to be .success")
         }
     }
 
     func testInsufficientPointsErrorLeavesPointsUnchanged() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
@@ -287,12 +295,12 @@ final class MarketplaceViewModelTests: XCTestCase {
             symbolName: "sun.max"
         )
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
         )
-        viewModel.state.allItems = [item]
+        setItems([item], on: viewModel)
         viewModel.state.userPoints = 300
 
         viewModel.send(.buyItem(item))
@@ -301,15 +309,15 @@ final class MarketplaceViewModelTests: XCTestCase {
 
         XCTAssertNil(viewModel.state.purchasingItemID)
         XCTAssertEqual(viewModel.state.userPoints, 300)
-        XCTAssertNotNil(viewModel.state.purchaseErrorMessage)
-        XCTAssertFalse(viewModel.state.purchaseErrorMessage?.contains("INSUFFICIENT_POINTS") ?? true)
-        if case .failure = viewModel.state.purchaseFeedback { } else {
+        if case let .failure(message) = viewModel.state.purchaseFeedback {
+            XCTAssertFalse(message.contains("INSUFFICIENT_POINTS"))
+        } else {
             XCTFail("Expected purchaseFeedback to be .failure")
         }
     }
 
     func testDuplicatePurchaseIgnoredWhenPurchasing() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
@@ -323,12 +331,12 @@ final class MarketplaceViewModelTests: XCTestCase {
             symbolName: "app"
         )
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
         )
-        viewModel.state.allItems = [item]
+        setItems([item], on: viewModel)
         viewModel.state.purchasingItemID = "other-in-progress"
 
         viewModel.send(.buyItem(item))
@@ -340,7 +348,7 @@ final class MarketplaceViewModelTests: XCTestCase {
     // MARK: - Equipping Tests
 
     func testEquipOwnedItemChangesStatusToEquippedAndReplacesPreviousOfSameType() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
@@ -364,13 +372,13 @@ final class MarketplaceViewModelTests: XCTestCase {
         )
 
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
         )
-        viewModel.state.allItems = [prevEquippedFrame, ownedFrameToEquip]
-        viewModel.state.selectedItem = ownedFrameToEquip
+        setItems([prevEquippedFrame, ownedFrameToEquip], on: viewModel)
+        viewModel.state.selectedItemID = ownedFrameToEquip.id
         viewModel.state.userPoints = 1200
 
         viewModel.send(.equipItem(ownedFrameToEquip))
@@ -394,7 +402,7 @@ final class MarketplaceViewModelTests: XCTestCase {
     }
 
     func testEquipNonOwnedItemIsIgnored() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
@@ -409,12 +417,12 @@ final class MarketplaceViewModelTests: XCTestCase {
         )
 
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
         )
-        viewModel.state.allItems = [unownedItem]
+        setItems([unownedItem], on: viewModel)
 
         viewModel.send(.equipItem(unownedItem))
 
@@ -425,7 +433,7 @@ final class MarketplaceViewModelTests: XCTestCase {
     }
 
     func testEquipItemNotOwnedErrorShowsLocalizedError() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
@@ -441,19 +449,18 @@ final class MarketplaceViewModelTests: XCTestCase {
         )
 
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
         )
-        viewModel.state.allItems = [item]
+        setItems([item], on: viewModel)
 
         viewModel.send(.equipItem(item))
 
         try await Task.sleep(nanoseconds: 100_000_000)
 
         XCTAssertNil(viewModel.state.equippingItemID)
-        XCTAssertNotNil(viewModel.state.purchaseErrorMessage)
         if case let .failure(msg) = viewModel.state.purchaseFeedback {
             XCTAssertFalse(msg.contains("ITEM_NOT_OWNED"))
         } else {
@@ -462,7 +469,7 @@ final class MarketplaceViewModelTests: XCTestCase {
     }
 
     func testEquipLoadingStatePreventsDuplicateRequests() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
@@ -477,12 +484,12 @@ final class MarketplaceViewModelTests: XCTestCase {
         )
 
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
         )
-        viewModel.state.allItems = [item]
+        setItems([item], on: viewModel)
         viewModel.state.equippingItemID = "other-in-progress"
 
         viewModel.send(.equipItem(item))
@@ -492,7 +499,7 @@ final class MarketplaceViewModelTests: XCTestCase {
     }
 
     func testReEquippingSameItemIsHandledSafely() async throws {
-        let mockFetch = MockFetchStoreItemsUseCaseImpl()
+        let mockFetch = MockFetchStorefrontUseCaseImpl()
         let mockBuy = MockBuyStoreItemUseCaseImpl()
         let mockEquip = MockEquipStoreItemUseCaseImpl()
         let mockPoints = MockFetchUserPointsUseCaseImpl()
@@ -507,12 +514,12 @@ final class MarketplaceViewModelTests: XCTestCase {
         )
 
         let viewModel = MarketplaceViewModel(
-            fetchStoreItemsUseCase: mockFetch,
+            fetchStorefrontUseCase: mockFetch,
             buyStoreItemUseCase: mockBuy,
             equipStoreItemUseCase: mockEquip,
             fetchUserPointsUseCase: mockPoints
         )
-        viewModel.state.allItems = [item]
+        setItems([item], on: viewModel)
 
         viewModel.send(.equipItem(item))
 

@@ -13,11 +13,11 @@ final class ProfileInventoryUseCasesTests: XCTestCase {
         var lastUnequippedType: String?
         var errorToThrow: (any Error)?
 
-        func fetchStoreItems(type: String) async throws -> [StoreItem] { [] }
+        func fetchStoreItems() async throws -> [StoreItem] { [] }
         func buyStoreItem(itemID: String) async throws -> StorePurchase { fatalError("Unimplemented") }
         func equipStoreItem(itemID: String) async throws -> EquippedItem { fatalError("Unimplemented") }
 
-        func unequipStoreItem(type: String) async throws {
+        func unequipStoreItem(type: StoreItemType) async throws {
             lastUnequippedType = type
             if let errorToThrow {
                 throw errorToThrow
@@ -47,7 +47,7 @@ final class ProfileInventoryUseCasesTests: XCTestCase {
         let repo = MockGamificationRepository()
         let sampleItem = InventoryItem(
             id: "inv-1",
-            item: StoreItem(id: "item-1", name: "Frame 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: "FRAME"),
+            item: StoreItem(id: "item-1", name: "Frame 1", description: "Desc", image: "img", info: nil, price: 100, version: "1.0", type: .frame),
             boughtAt: Date()
         )
         repo.inventoryToReturn = [sampleItem]
@@ -63,7 +63,7 @@ final class ProfileInventoryUseCasesTests: XCTestCase {
         let repo = MockGamificationRepository()
         let useCase = DefaultUnequipStoreItemUseCase(repository: repo)
 
-        try await useCase.execute(type: "FRAME")
+        try await useCase.execute(type: .frame)
 
         XCTAssertEqual(repo.lastUnequippedType, "FRAME")
     }
