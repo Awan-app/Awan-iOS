@@ -9,7 +9,7 @@ struct MarketplaceOfflineView: View {
             Image("MarketplaceOffline", bundle: .module)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 190, height: 190)
+                .frame(width: 150, height: 150)
                 .accessibilityHidden(true)
 
             VStack(spacing: 8) {
