@@ -55,14 +55,16 @@ public struct ProfileInventoryView: View {
                 userPoints: 0,
                 isPurchasing: false,
                 isEquipping: viewModel.equippingItemID == item.id,
+                isUnequipping: viewModel.unequippingItemType == item.category.storeItemType,
                 purchaseFeedback: nil,
                 onBuy: {},
                 onEquip: {
-                    if item.status == .equipped {
-                        viewModel.send(.unequipItem(item))
-                    } else if item.status == .owned {
+                    if item.status == .owned {
                         viewModel.send(.equipItem(item))
                     }
+                },
+                onUnequip: {
+                    viewModel.send(.unequipItem(item))
                 },
                 onDismiss: { viewModel.send(.dismissDetail) }
             )
@@ -98,8 +100,8 @@ public struct ProfileInventoryView: View {
                     ProfileEquippedItemsSection(
                         equippedItems: viewModel.equippedItems,
                         unequippingItemType: viewModel.unequippingItemType,
-                        onUnequip: { item in
-                            viewModel.send(.unequipItem(item))
+                        onSelect: { item in
+                            viewModel.send(.selectItem(item))
                         }
                     )
 

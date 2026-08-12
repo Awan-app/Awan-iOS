@@ -288,12 +288,14 @@ struct PresentationAssembly: Assembly {
             let fetchUseCase = Self.resolve(FetchStorefrontUseCase.self, from: resolver)
             let buyUseCase = Self.resolve(BuyStoreItemUseCase.self, from: resolver)
             let equipUseCase = Self.resolve(EquipStoreItemUseCase.self, from: resolver)
+            let unequipUseCase = Self.resolve(UnequipStoreItemUseCase.self, from: resolver)
             let fetchUserPointsUseCase = Self.resolve(FetchUserPointsUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 MarketplaceViewModel(
                     fetchStorefrontUseCase: fetchUseCase,
                     buyStoreItemUseCase: buyUseCase,
                     equipStoreItemUseCase: equipUseCase,
+                    unequipStoreItemUseCase: unequipUseCase,
                     fetchUserPointsUseCase: fetchUserPointsUseCase
                 )
             }

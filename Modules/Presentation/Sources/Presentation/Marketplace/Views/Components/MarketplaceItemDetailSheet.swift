@@ -6,9 +6,11 @@ struct MarketplaceItemDetailSheet: View {
     let userPoints: Int
     var isPurchasing: Bool = false
     var isEquipping: Bool = false
+    var isUnequipping: Bool = false
     var purchaseFeedback: PurchaseFeedback? = nil
     var onBuy: () -> Void = {}
     var onEquip: () -> Void = {}
+    var onUnequip: (() -> Void)? = nil
     let onDismiss: () -> Void
 
     var body: some View {
@@ -121,7 +123,10 @@ struct MarketplaceItemDetailSheet: View {
                 onEquip: onEquip
             )
         case .equipped:
-            MarketplaceDetailEquippedCard()
+            MarketplaceDetailEquippedCard(
+                isUnequipping: isUnequipping,
+                onUnequip: onUnequip
+            )
         case .locked:
             MarketplaceDetailLockedCard()
         }

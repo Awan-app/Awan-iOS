@@ -11,17 +11,20 @@ public final class MarketplaceViewModel {
     @ObservationIgnored private let fetchStorefrontUseCase: any FetchStorefrontUseCase
     @ObservationIgnored private let buyStoreItemUseCase: any BuyStoreItemUseCase
     @ObservationIgnored private let equipStoreItemUseCase: any EquipStoreItemUseCase
+    @ObservationIgnored private let unequipStoreItemUseCase: (any UnequipStoreItemUseCase)?
     @ObservationIgnored private let fetchUserPointsUseCase: any FetchUserPointsUseCase
 
     public init(
         fetchStorefrontUseCase: any FetchStorefrontUseCase,
         buyStoreItemUseCase: any BuyStoreItemUseCase,
         equipStoreItemUseCase: any EquipStoreItemUseCase,
+        unequipStoreItemUseCase: (any UnequipStoreItemUseCase)? = nil,
         fetchUserPointsUseCase: any FetchUserPointsUseCase
     ) {
         self.fetchStorefrontUseCase = fetchStorefrontUseCase
         self.buyStoreItemUseCase = buyStoreItemUseCase
         self.equipStoreItemUseCase = equipStoreItemUseCase
+        self.unequipStoreItemUseCase = unequipStoreItemUseCase
         self.fetchUserPointsUseCase = fetchUserPointsUseCase
         self.state = MarketplaceState()
     }
@@ -60,6 +63,9 @@ public final class MarketplaceViewModel {
 
         case let .equipItem(item):
             equipStoreItem(item)
+
+        case let .unequipItem(item):
+            unequipStoreItem(item)
 
         }
     }
@@ -119,7 +125,10 @@ public final class MarketplaceViewModel {
                 self.state.storefront.recordPurchase(purchase)
 
                 self.loadUserPoints()
-                self.state.purchaseFeedback = .success(message: L10n.Marketplace.itsYours)
+                self.state.purchaseFeedback = .success(
+                    message: L10n.Marketplace.itsYours,
+                    kind: .purchase
+                )
                 self.scheduleFeedbackDismissal()
             } catch {
                 guard let self else { return }
@@ -150,7 +159,10 @@ public final class MarketplaceViewModel {
 
                 self.state.storefront.recordEquipment(equippedItem)
 
-                self.state.purchaseFeedback = .success(message: L10n.Marketplace.currentlyEquipped)
+                self.state.purchaseFeedback = .success(
+                    message: L10n.Marketplace.equippedHint,
+                    kind: .equipment
+                )
                 self.scheduleFeedbackDismissal()
             } catch {
                 guard let self else { return }
@@ -158,6 +170,33 @@ public final class MarketplaceViewModel {
 
                 let message = GamificationErrorMessageMapper.message(for: error)
                 self.state.purchaseFeedback = .failure(message: message)
+                self.scheduleFeedbackDismissal()
+            }
+        }
+    }
+
+    private func unequipStoreItem(_ item: MarketplaceItem) {
+        guard state.equippingItemID == nil, state.unequippingItemType == nil else { return }
+        guard item.status == .equipped,
+              let itemType = item.category.storeItemType,
+              let useCase = unequipStoreItemUseCase else { return }
+
+        state.unequippingItemType = itemType
+        state.purchaseFeedback = nil
+
+        Task { [weak self] in
+            do {
+                try await useCase.execute(type: itemType)
+
+                guard let self else { return }
+                self.state.unequippingItemType = nil
+                self.state.storefront.recordUnequip(ofType: itemType)
+            } catch {
+                guard let self else { return }
+                self.state.unequippingItemType = nil
+                self.state.purchaseFeedback = .failure(
+                    message: GamificationErrorMessageMapper.message(for: error)
+                )
                 self.scheduleFeedbackDismissal()
             }
         }

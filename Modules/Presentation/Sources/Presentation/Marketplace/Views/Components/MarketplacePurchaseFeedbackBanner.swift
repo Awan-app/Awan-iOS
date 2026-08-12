@@ -18,13 +18,20 @@ struct MarketplacePurchaseFeedbackBanner: View {
 
     private var message: String {
         switch feedback {
-        case let .success(message): message
+        case let .success(message, _): message
         case let .failure(message): message
         }
     }
 
     private var title: String {
-        isSuccess ? L10n.Marketplace.purchaseSuccessTitle : L10n.Marketplace.purchaseFailedTitle
+        switch feedback {
+        case .success(_, .purchase):
+            L10n.Marketplace.purchaseSuccessTitle
+        case .success(_, .equipment):
+            L10n.Marketplace.currentlyEquipped
+        case .failure:
+            L10n.Marketplace.purchaseFailedTitle
+        }
     }
 
     private var accentColor: Color {

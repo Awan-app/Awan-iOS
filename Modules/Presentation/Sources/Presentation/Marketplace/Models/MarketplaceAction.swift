@@ -16,5 +16,6 @@ public enum MarketplaceAction: Sendable {
     case dismissDetail
     case buyItem(MarketplaceItem)
     case equipItem(MarketplaceItem)
+    case unequipItem(MarketplaceItem)
     case retry
 }

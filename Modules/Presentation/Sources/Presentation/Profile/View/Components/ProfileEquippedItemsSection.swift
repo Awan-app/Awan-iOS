@@ -10,7 +10,7 @@ import SwiftUI
 struct ProfileEquippedItemsSection: View {
     let equippedItems: [EquippedItem]
     var unequippingItemType: StoreItemType? = nil
-    let onUnequip: (MarketplaceItem) -> Void
+    let onSelect: (MarketplaceItem) -> Void
 
     private struct SlotDefinition {
         let type: StoreItemType
@@ -50,7 +50,7 @@ struct ProfileEquippedItemsSection: View {
     @ViewBuilder
     private func slotCardView(for slot: SlotDefinition, equipped: EquippedItem?) -> some View {
         if let equipped {
-            let marketplaceItem = MarketplaceItem(storeItem: equipped.item)
+            let marketplaceItem = equippedMarketplaceItem(equipped)
             let isUnequipping = unequippingItemType == slot.type
 
             if isUnequipping {
@@ -93,9 +93,8 @@ struct ProfileEquippedItemsSection: View {
                     imageURL: marketplaceItem.imageURL,
                     symbolName: marketplaceItem.symbolName,
                     state: .equipped,
-                    onTap: nil,
-                    onCheckmarkTap: {
-                        onUnequip(marketplaceItem)
+                    onTap: {
+                        onSelect(marketplaceItem)
                     }
                 )
             }
@@ -110,12 +109,18 @@ struct ProfileEquippedItemsSection: View {
             )
         }
     }
+
+    private func equippedMarketplaceItem(_ equipped: EquippedItem) -> MarketplaceItem {
+        var item = MarketplaceItem(storeItem: equipped.item)
+        item.status = .equipped
+        return item
+    }
 }
 
 #Preview("Profile Equipped Items Section") {
     ProfileEquippedItemsSection(
         equippedItems: [],
-        onUnequip: { _ in }
+        onSelect: { _ in }
     )
     .padding()
     .background(AppColors.screenBackground)

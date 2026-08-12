@@ -7,7 +7,12 @@ import Foundation
 import Domain
 
 public enum PurchaseFeedback: Sendable, Equatable {
-    case success(message: String)
+    public enum SuccessKind: Sendable, Equatable {
+        case purchase
+        case equipment
+    }
+
+    case success(message: String, kind: SuccessKind)
     case failure(message: String)
 }
 
@@ -20,6 +25,7 @@ public struct MarketplaceState: Sendable {
 
     public var purchasingItemID: String? = nil
     public var equippingItemID: String? = nil
+    public var unequippingItemType: StoreItemType? = nil
     public var purchaseFeedback: PurchaseFeedback? = nil
 
     public var searchQuery: String = ""

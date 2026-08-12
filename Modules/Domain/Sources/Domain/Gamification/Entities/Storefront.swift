@@ -64,4 +64,11 @@ public struct Storefront: Equatable, Sendable {
             }
         }
     }
+
+    public mutating func recordUnequip(ofType type: StoreItemType) {
+        for index in items.indices where items[index].storeItem.type == type
+            && items[index].state == .equipped {
+            items[index].state = .owned
+        }
+    }
 }
