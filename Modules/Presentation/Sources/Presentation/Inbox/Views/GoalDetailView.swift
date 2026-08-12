@@ -9,11 +9,11 @@ import SwiftUI
 
 public struct GoalDetailView: View {
     let goalID: UUID
-    @Bindable var viewModel: GoalsViewModel
+    @State private var viewModel: GoalsViewModel
 
     public init(goalID: UUID, viewModel: GoalsViewModel) {
         self.goalID = goalID
-        self.viewModel = viewModel
+        _viewModel = State(initialValue: viewModel)
     }
 
     private var goalItem: GoalProgressItem? {
