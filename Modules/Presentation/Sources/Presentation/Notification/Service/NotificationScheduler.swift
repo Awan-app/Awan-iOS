@@ -14,13 +14,23 @@ public final class NotificationScheduler {
         self.notificationService = notificationService
     }
 
+    public var isNotificationsEnabled: Bool {
+        if UserDefaults.standard.object(forKey: "isNotificationsEnabled") == nil { return true }
+        return UserDefaults.standard.bool(forKey: "isNotificationsEnabled")
+    }
+
     public func syncSessions(_ sessions: [Session], taskTitlesByID: [UUID: String]) {
+        guard isNotificationsEnabled else {
+            Task { await notificationService.cancelAll() }
+            return
+        }
         Task {
             await notificationService.scheduleSessions(sessions, taskTitlesByID: taskTitlesByID)
         }
     }
 
     public func syncGoals(_ goals: [Goal]) {
+        guard isNotificationsEnabled else { return }
         Task {
             await notificationService.scheduleGoals(goals)
         }
