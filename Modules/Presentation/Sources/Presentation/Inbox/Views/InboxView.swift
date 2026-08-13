@@ -66,8 +66,8 @@ public struct InboxView: View {
     }
 
     private func content(_ state: InboxState) -> some View {
-        ScrollView {
-            LazyVStack(spacing: 18) {
+        List {
+            Group {
                 InboxHeaderView(
                     selectedTopTab: Binding(
                         get: { state.selectedTopTab },
@@ -109,36 +109,44 @@ public struct InboxView: View {
                         InboxEmptyView()
                             .padding(.top, 20)
                     } else {
-                        LazyVStack(spacing: 10) {
-                            ForEach(state.filteredTasks) { taskItem in
-                                InboxTaskCard(
-                                    taskItem: taskItem,
-                                    isExpanded: state.expandedTaskIDs.contains(taskItem.id),
-                                    isCompletionDisabled: state.mutatingTaskIDs.contains(taskItem.id),
-                                    onToggleExpand: {
-                                        viewModel.send(.toggleTaskExpansion(taskItem.id))
-                                    },
-                                    onCompleteTask: {
-                                        viewModel.send(.completeTask(taskItem.id))
-                                    },
-                                    onDeleteTask: {
-                                        viewModel.send(.deleteTask(taskItem.id))
-                                    }
-                                )
-                                .customSwipeToDelete {
+                        ForEach(state.filteredTasks) { taskItem in
+                            InboxTaskCard(
+                                taskItem: taskItem,
+                                isExpanded: state.expandedTaskIDs.contains(taskItem.id),
+                                isCompletionDisabled: state.mutatingTaskIDs.contains(taskItem.id),
+                                onToggleExpand: {
+                                    viewModel.send(.toggleTaskExpansion(taskItem.id))
+                                },
+                                onCompleteTask: {
+                                    viewModel.send(.completeTask(taskItem.id))
+                                },
+                                onDeleteTask: {
                                     viewModel.send(.deleteTask(taskItem.id))
                                 }
+                            )
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    viewModel.send(.deleteTask(taskItem.id))
+                                } label: {
+                                    Label(L10n.Inbox.deleteTask, systemImage: "trash.fill")
+                                }
                             }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 10, trailing: 16))
                         }
                     }
                 } else {
                     GoalsContentSection(viewModel: goalsViewModel)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 120)
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 18, trailing: 16))
         }
+        .listStyle(.plain)
+        .padding(.top, 12)
+        .padding(.bottom, 120)
         .scrollDismissesKeyboard(.interactively)
         .refreshable {
             viewModel.send(.refresh)
