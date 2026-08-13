@@ -3155,6 +3155,57 @@
         }
       }
     },
+    "inbox.delete_task": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "inbox.delete_task_confirm_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف المهمة؟"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Task?"
+          }
+        }
+      }
+    },
+    "inbox.delete_task_confirm_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هل أنت متأكد من حذف هذه المهمة بكل ما فيها؟ لا يمكن التراجع عن هذا الإجراء."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to delete this task and all its sessions? This action cannot be undone."
+          }
+        }
+      }
+    },
     "inbox.no_sessions": {
       "extractionState": "manual",
       "localizations": {
