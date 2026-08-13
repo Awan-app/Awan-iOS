@@ -204,16 +204,10 @@ struct AppRootView: View {
                 .environment(\.layoutDirection, currentLayoutDirection)
                 .padding(.top, 12)
                 .padding(.bottom, 6)
-//                .background {
-////                    if coordinator.mainCoordinator.selectedTab == .home {
-////                        AppColors.screenBackground
-////                            .opacity(0)
-////                            .ignoresSafeArea(edges: .bottom)
-////                    } else {
-////                        AppColors.screenBackground
-////                            .ignoresSafeArea(edges: .bottom)
-////                    }
-//                }
+                .background {
+                    AppColors.screenBackground
+                        .ignoresSafeArea(edges: .bottom)
+                }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
