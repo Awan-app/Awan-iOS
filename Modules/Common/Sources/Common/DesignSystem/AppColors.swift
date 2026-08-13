@@ -48,6 +48,9 @@ public enum AppColors {
     // delete its OTP-specific color assets and repoint them to use these skyGradient properties instead.
     public static let skyGradientTop = asset("SkyGradientTop")
     public static let skyGradientBottom = asset("SkyGradientBottom")
+    public static let cloudSurface = asset("CloudSurface")
+    public static let cloudDepth = asset("CloudDepth")
+    public static let cloudHighlight = asset("CloudHighlight")
 
     public static var skyGradient: LinearGradient {
         LinearGradient(

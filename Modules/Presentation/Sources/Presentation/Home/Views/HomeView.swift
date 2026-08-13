@@ -96,7 +96,7 @@ struct HomeView: View {
                         width: 2,
                         height: 2
                     )
-
+                    
                     RewardFlightOverlay(
                         sourceRect: sourceRect,
                         destinationRect: destinationRect,
@@ -112,7 +112,7 @@ struct HomeView: View {
                             pointsAnimationTask = nil
                             animatedPoints = nil
                             rewardFlightSessionID = nil
-
+                            
                             if let reward = viewModel.state.completionReward,
                                let transition = reward.streakTransition {
                                 presentStreak(
@@ -120,7 +120,7 @@ struct HomeView: View {
                                     isNewRecord: reward.maxStreakBroken
                                 )
                             }
-
+                            
                             viewModel.send(.dismissCompletionReward)
                             viewModel.send(.dismissCompletionRewardAnimation)
                         }
@@ -146,6 +146,7 @@ struct HomeView: View {
             animatedPoints = animation.oldPoints
             rewardFlightSessionID = animation.sessionID
         }
+        .ignoresSafeArea(edges: .bottom)
     }
 
     private func content(_ state: HomeState, success: HomeSuccessState) -> some View {
@@ -209,7 +210,8 @@ struct HomeView: View {
                             onDragChanged: handleTimelineDrag,
                             onTap: { viewModel.send(.presentSession($0)) }
                         )
-                        Color.clear.frame(height: 120)
+
+                        AppCloudsHorizon(height: 150)
                     } header: {
                         HomePinnedDateWeekHeaderView(
                             selectedDay: state.selectedDay,
