@@ -38,7 +38,7 @@ struct SessionDetailsState {
     var draftEnd: Date
     var durationMinutes: Int?
     var selectedDurationMinutes: Int?
-    var statusLabel: String
+    var statusUIModel: SessionDetailsStatusUIModel
     var lockLabel: String
     var validationMessage: String?
     var isDirty: Bool
@@ -55,6 +55,7 @@ struct SessionDetailsState {
 }
 
 enum SessionDetailsAction {
+    case refreshStatus
     case setDay(Date)
     case setStartTime(Date)
     case setEndTime(Date)

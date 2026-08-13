@@ -64,19 +64,6 @@ struct SessionDetailsDraftHelper {
         original.start != draftStart || original.end != draftEnd
     }
 
-    func statusLabel(for status: Session.Status) -> String {
-        switch status {
-        case .planned:
-            L10n.Home.sessionScheduled
-        case .completed:
-            L10n.Home.sessionCompleted
-        case .missed:
-            L10n.Home.sessionMissed
-        case .cancelled:
-            L10n.Home.sessionCancelled
-        }
-    }
-
     func lockLabel(isLocked: Bool) -> String {
         isLocked ? L10n.Home.sessionLocked : L10n.Home.sessionUnlocked
     }

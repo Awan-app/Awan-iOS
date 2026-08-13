@@ -5,6 +5,7 @@ import SwiftUI
 struct SessionDetailsTaskSummaryView: View {
     let task: AwanTask
     let color: Color
+    let arePointsClaimed: Bool
     let onClose: () -> Void
     let onDelete: () -> Void
 
@@ -31,18 +32,22 @@ struct SessionDetailsTaskSummaryView: View {
                     SessionDetailsInfoChip(
                         title: category.name.uppercased(),
                         icon: nil,
-                        foregroundColor: AppColors.accentBlue,
-                        surfaceColor: color.opacity(0.14),
-                        depthColor: color.opacity(0.25)
+                        foregroundColor: color,
+                        surfaceColor: AppColors.surface,
+                        depthColor: color,
+                        borderColor: color,
+                        borderWidth: 1.5
                     )
                 }
 
                 SessionDetailsInfoChip(
                     title: L10n.Home.pointsValue(task.estimatedPoints),
-                    icon: "circle.hexagongrid.fill",
+                    icon: arePointsClaimed ? "checkmark" : "star.fill",
                     foregroundColor: AppColors.reward,
-                    surfaceColor: AppColors.warningSurface,
-                    depthColor: AppColors.reward.opacity(0.28)
+                    surfaceColor: AppColors.surface,
+                    depthColor: AppColors.reward,
+                    borderColor: AppColors.reward,
+                    borderWidth: 1.5
                 )
 
                 Spacer(minLength: 4)
@@ -55,9 +60,10 @@ struct SessionDetailsTaskSummaryView: View {
                 }
                 .buttonStyle(
                     AppDepthButtonStyle(
-                        surfaceColor: AppColors.destructive.opacity(0.10),
-                        borderColor: AppColors.destructive.opacity(0.22),
-                        depthColor: AppColors.destructive.opacity(0.24),
+                        surfaceColor: AppColors.surface,
+                        borderColor: AppColors.destructive,
+                        depthColor: AppColors.destructive,
+                        borderWidth: 1.5,
                         depthOffset: 4
                     )
                 )
@@ -85,14 +91,34 @@ struct SessionDetailsInfoChip: View {
     let foregroundColor: Color
     let surfaceColor: Color
     let depthColor: Color
+    let borderColor: Color?
+    let borderWidth: CGFloat
+
+    init(
+        title: String,
+        icon: String?,
+        foregroundColor: Color,
+        surfaceColor: Color,
+        depthColor: Color,
+        borderColor: Color? = nil,
+        borderWidth: CGFloat = 1
+    ) {
+        self.title = title
+        self.icon = icon
+        self.foregroundColor = foregroundColor
+        self.surfaceColor = surfaceColor
+        self.depthColor = depthColor
+        self.borderColor = borderColor
+        self.borderWidth = borderWidth
+    }
 
     var body: some View {
         AppDepthSurface(
             shape: .capsule,
             surfaceColor: surfaceColor,
-            borderColor: foregroundColor.opacity(0.18),
+            borderColor: borderColor ?? foregroundColor.opacity(0.18),
             depthColor: depthColor,
-            borderWidth: 1,
+            borderWidth: borderWidth,
             depthOffset: 3,
             contentInsets: EdgeInsets(
                 top: 7,

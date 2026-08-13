@@ -16,37 +16,35 @@ struct SessionDetailsView: View {
     var body: some View {
         let state = viewModel.state
 
-        ZStack {
-            AppColors.sheetBackground.ignoresSafeArea()
-
-            ScrollView(showsIndicators: false) {
+        AppSheet(
+            sizing: .content(initialHeight: 720, maximumHeight: 900),
+            backgroundColor: AppColors.sheetBackground
+        ) {
+            ZStack {
                 VStack(spacing: 22) {
                     SessionDetailsTaskSummaryView(
                         task: state.task,
                         color: state.color,
+                        arePointsClaimed: state.session.firstCompletedAt != nil,
                         onClose: { viewModel.send(.attemptDismiss) },
                         onDelete: { viewModel.send(.requestDelete) }
                     )
 
                     SessionDetailsStatusView(
-                        status: state.statusLabel,
+                        status: state.statusUIModel,
                         isLocked: state.session.blocking,
                         lockLabel: state.lockLabel
                     )
 
-                    SessionDetailsDateView(
-                        selectedDay: state.selectedDay,
-                        isEnabled: !state.isBusy,
-                        onChange: { viewModel.send(.setDay($0)) }
-                    )
-
                     SessionDetailsScheduleView(
+                        selectedDay: state.selectedDay,
                         start: state.draftStart,
                         end: state.draftEnd,
                         durationMinutes: state.durationMinutes,
                         selectedDurationMinutes: state.selectedDurationMinutes,
                         validationMessage: state.validationMessage,
                         isEnabled: !state.isBusy,
+                        onDayChange: { viewModel.send(.setDay($0)) },
                         onStartChange: { viewModel.send(.setStartTime($0)) },
                         onEndChange: { viewModel.send(.setEndTime($0)) },
                         onAdjustStart: {
@@ -69,22 +67,14 @@ struct SessionDetailsView: View {
                         onToggleLock: { viewModel.send(.toggleLock) }
                     )
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 12)
                 .padding(.top, 18)
                 .padding(.bottom, 42)
-            }
+                .background(AppColors.sheetBackground)
 
-            if let confirmation = state.confirmation {
-                SessionDetailsConfirmationOverlay(
-                    confirmation: confirmation,
-                    isDeleting: state.isDeleting,
-                    onCancel: { viewModel.send(.cancelConfirmation) },
-                    onConfirmDelete: { viewModel.send(.confirmDelete) },
-                    onDiscard: { viewModel.send(.discardAndDismiss) }
-                )
-                .transition(.opacity.combined(with: .scale(scale: 0.96)))
-                .zIndex(2)
             }
+            .frame(maxWidth: .infinity)
+            .background(AppColors.sheetBackground)
         }
         .animation(.snappy(duration: 0.22), value: state.confirmation)
         .background {
@@ -94,12 +84,58 @@ struct SessionDetailsView: View {
             )
         }
         .interactiveDismissDisabled(state.isDirty || state.isBusy)
-        .presentationDetents([.large])
-        .presentationDragIndicator(.visible)
+        .task {
+            while !Task.isCancelled {
+                viewModel.send(.refreshStatus)
+                try? await Task.sleep(for: .seconds(30))
+            }
+        }
         .onChange(of: state.shouldDismiss) { _, shouldDismiss in
             if shouldDismiss {
                 onDismiss()
             }
+        }
+        .alert(
+            L10n.Home.closeSessionDetailsTitle,
+            isPresented: Binding(
+                get: {
+                    viewModel.state.confirmation == .discardChanges
+                },
+                set: { isPresented in
+                    if !isPresented {
+                        viewModel.send(.cancelConfirmation)
+                    }
+                }
+            )
+        ) {
+            Button(L10n.Home.keepEditing, role: .cancel) {
+                viewModel.send(.cancelConfirmation)
+            }
+            Button(L10n.Home.discardAndClose, role: .destructive) {
+                viewModel.send(.discardAndDismiss)
+            }
+        } message: {
+            Text(L10n.Home.closeSessionDetailsMessage)
+        }
+        .alert(
+            L10n.Home.deleteSessionTitle,
+            isPresented: Binding(
+                get: { viewModel.state.confirmation == .delete },
+                set: { isPresented in
+                    if !isPresented {
+                        viewModel.send(.cancelConfirmation)
+                    }
+                }
+            )
+        ) {
+            Button(L10n.Common.cancel, role: .cancel) {
+                viewModel.send(.cancelConfirmation)
+            }
+            Button(L10n.Home.deleteSession, role: .destructive) {
+                viewModel.send(.confirmDelete)
+            }
+        } message: {
+            Text(L10n.Home.deleteSessionMessage)
         }
         .alert(
             L10n.Home.errorTitle,

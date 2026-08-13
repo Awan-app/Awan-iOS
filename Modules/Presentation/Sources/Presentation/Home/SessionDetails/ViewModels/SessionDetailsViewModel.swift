@@ -9,12 +9,14 @@ public final class SessionDetailsViewModel {
 
     @ObservationIgnored private let useCases: SessionDetailsUseCases
     @ObservationIgnored private let helper: SessionDetailsDraftHelper
+    @ObservationIgnored private let statusUIFactory: SessionDetailsStatusUIFactory
 
     public init(
         context: SessionDetailsContext,
         useCases: SessionDetailsUseCases
     ) {
         let helper = SessionDetailsDraftHelper()
+        let statusUIFactory = SessionDetailsStatusUIFactory()
         let request = UpdateSessionScheduleRequest(
             sessionID: context.session.id,
             selectedDay: context.session.timeRange.start,
@@ -26,6 +28,7 @@ public final class SessionDetailsViewModel {
         let durationMinutes = helper.durationMinutes(for: validation)
         self.useCases = useCases
         self.helper = helper
+        self.statusUIFactory = statusUIFactory
         state = SessionDetailsState(
             task: context.task,
             color: context.color,
@@ -39,7 +42,7 @@ public final class SessionDetailsViewModel {
             selectedDurationMinutes: helper.selectedPreset(
                 for: durationMinutes
             ),
-            statusLabel: helper.statusLabel(for: context.session.status),
+            statusUIModel: statusUIFactory.make(session: context.session),
             lockLabel: helper.lockLabel(isLocked: context.session.blocking),
             validationMessage: helper.validationMessage(for: validation),
             isDirty: false
@@ -48,6 +51,8 @@ public final class SessionDetailsViewModel {
 
     func send(_ action: SessionDetailsAction) {
         switch action {
+        case .refreshStatus:
+            state.statusUIModel = statusUIFactory.make(session: state.session)
         case let .setDay(day):
             setDay(day)
         case let .setStartTime(time):
@@ -206,7 +211,9 @@ public final class SessionDetailsViewModel {
                     sessionID: state.session.id,
                     isLocked: shouldLock
                 )
-                state.statusLabel = helper.statusLabel(for: state.session.status)
+                state.statusUIModel = statusUIFactory.make(
+                    session: state.session
+                )
                 state.lockLabel = helper.lockLabel(
                     isLocked: state.session.blocking
                 )

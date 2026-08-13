@@ -2,12 +2,14 @@ import Common
 import SwiftUI
 
 struct SessionDetailsScheduleView: View {
+    let selectedDay: Date
     let start: Date
     let end: Date
     let durationMinutes: Int?
     let selectedDurationMinutes: Int?
     let validationMessage: String?
     let isEnabled: Bool
+    let onDayChange: (Date) -> Void
     let onStartChange: (Date) -> Void
     let onEndChange: (Date) -> Void
     let onAdjustStart: (Int) -> Void
@@ -22,10 +24,36 @@ struct SessionDetailsScheduleView: View {
             surfaceColor: AppColors.surface,
             borderColor: AppColors.accentBlue.opacity(0.18),
             depthColor: AppColors.accentBlueDepth.opacity(0.32),
-            depthOffset: 5
+            depthOffset: 5,
+            contentInsets: EdgeInsets(
+                top: 18,
+                leading: 14,
+                bottom: 18,
+                trailing: 14
+            )
         ) {
             VStack(alignment: .leading, spacing: 18) {
-                HStack(alignment: .top, spacing: 14) {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(L10n.Home.sessionDay)
+                        .font(AppFonts.subheadlineHeavy)
+                        .foregroundStyle(AppColors.textPrimary)
+
+                    AppDatePickerField(
+                        selection: Binding(
+                            get: { selectedDay },
+                            set: { newValue in onDayChange(newValue) }
+                        ),
+                        title: L10n.Home.sessionDay,
+                        in: Date.distantPast...Date.distantFuture
+                    )
+                    .disabled(!isEnabled)
+                }
+
+                Rectangle()
+                    .fill(AppColors.divider)
+                    .frame(height: 1)
+
+                HStack(alignment: .top, spacing: 8) {
                     SessionDetailsTimeControl(
                         title: L10n.Home.startTime,
                         selection: start,
@@ -72,7 +100,7 @@ struct SessionDetailsScheduleView: View {
                         Button {
                             onSelectDuration(minutes)
                         } label: {
-                            Text(L10n.Home.minutesShort(minutes))
+                            Text(String(minutes))
                                 .font(AppFonts.captionHeavy)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.75)
@@ -122,14 +150,14 @@ private struct SessionDetailsTimeControl: View {
                 .font(AppFonts.captionHeavy)
                 .foregroundStyle(AppColors.textSecondary)
 
-            HStack(spacing: 6) {
+            HStack(spacing: 12) {
                 Button {
                     onAdjust(-15)
                 } label: {
                     Image(systemName: "minus")
                         .font(AppFonts.captionIconBlack)
                         .foregroundStyle(AppColors.textPrimary)
-                        .frame(width: 32, height: 32)
+                        .frame(width: 28, height: 28)
                 }
                 .buttonStyle(
                     AppDepthButtonStyle(
@@ -140,33 +168,19 @@ private struct SessionDetailsTimeControl: View {
                     )
                 )
 
-                AppDepthSurface(
-                    shape: .roundedRectangle(cornerRadius: 10),
-                    surfaceColor: AppColors.surface,
-                    borderColor: AppColors.accentBlue.opacity(0.42),
-                    depthColor: AppColors.accentBlueDepth.opacity(0.32),
-                    borderWidth: 1.5,
-                    depthOffset: 3,
-                    contentInsets: EdgeInsets(
-                        top: 2,
-                        leading: 4,
-                        bottom: 2,
-                        trailing: 4
-                    )
-                ) {
-                    DatePicker(
-                        title,
-                        selection: Binding(
-                            get: { selection },
-                            set: { newValue in onChange(newValue) }
-                        ),
-                        displayedComponents: .hourAndMinute
-                    )
-                    .labelsHidden()
-                    .datePickerStyle(.compact)
-                    .tint(AppColors.accentBlue)
-                    .font(AppFonts.captionHeavy)
-                }
+                DatePicker(
+                    title,
+                    selection: Binding(
+                        get: { selection },
+                        set: { newValue in onChange(newValue) }
+                    ),
+                    displayedComponents: .hourAndMinute
+                )
+                .labelsHidden()
+                .datePickerStyle(.compact)
+                .tint(AppColors.accentBlue)
+                .font(AppFonts.captionHeavy)
+                .frame(width: 78)
 
                 Button {
                     onAdjust(15)
@@ -174,7 +188,7 @@ private struct SessionDetailsTimeControl: View {
                     Image(systemName: "plus")
                         .font(AppFonts.captionIconBlack)
                         .foregroundStyle(AppColors.textPrimary)
-                        .frame(width: 32, height: 32)
+                        .frame(width: 28, height: 28)
                 }
                 .buttonStyle(
                     AppDepthButtonStyle(
@@ -186,7 +200,9 @@ private struct SessionDetailsTimeControl: View {
                 )
             }
             .disabled(!isEnabled)
+            .frame(maxWidth: .infinity)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .layoutPriority(1)
     }
 }
