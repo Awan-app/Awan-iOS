@@ -30,9 +30,11 @@ public struct AppCalendarPickerButton<Label: View>: View {
         } label: {
             label
         }
+#if os(iOS)
         .fullScreenCover(isPresented: $isPickerPresented) {
             calendarPopup
         }
+#endif
         .accessibilityLabel(title)
         .accessibilityValue(
             selection.formatted(.dateTime.day().month(.wide).year())

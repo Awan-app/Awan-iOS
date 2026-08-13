@@ -1243,6 +1243,11 @@ public enum L10n {
         public static var deleteTask: String { text("inbox.delete_task") }
         public static var deleteTaskConfirmTitle: String { text("inbox.delete_task_confirm_title") }
         public static var deleteTaskConfirmMessage: String { text("inbox.delete_task_confirm_message") }
+        public static var addToGoal: String { L10n.currentBundle.localizedString(forKey: "inbox.add_to_goal", value: "Add to Goal", table: "Localizable") }
+        public static var addToGoalSheetTitle: String { L10n.currentBundle.localizedString(forKey: "inbox.add_to_goal_sheet_title", value: "Add Task to Goal", table: "Localizable") }
+        public static var addToGoalLoading: String { L10n.currentBundle.localizedString(forKey: "inbox.add_to_goal_loading", value: "Loading goals...", table: "Localizable") }
+        public static var noGoalsAvailable: String { L10n.currentBundle.localizedString(forKey: "inbox.no_goals_available", value: "No Goals Found", table: "Localizable") }
+        public static var noGoalsAvailableHint: String { L10n.currentBundle.localizedString(forKey: "inbox.no_goals_available_hint", value: "Create a goal first from the Goals tab to attach tasks.", table: "Localizable") }
 
         public static func nSessions(_ count: Int) -> String {
             String(format: text("inbox.n_sessions"), count)
@@ -1252,6 +1257,7 @@ public enum L10n {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
         }
     }
+
 
     public enum Marketplace {
         public static var title: String { text("marketplace.title") }
@@ -1319,6 +1325,11 @@ public enum L10n {
         public static var subtitle: String { text("goals.subtitle") }
         public static var emptyTitle: String { text("goals.empty_title") }
         public static var emptySubtitle: String { text("goals.empty_subtitle") }
+        public static var createTitle: String { L10n.currentBundle.localizedString(forKey: "goals.create_title", value: "Create Goal", table: "Localizable") }
+        public static var createSubtitle: String { L10n.currentBundle.localizedString(forKey: "goals.create_subtitle", value: "Set a clear target and track your progress", table: "Localizable") }
+        public static var createButton: String { L10n.currentBundle.localizedString(forKey: "goals.create_button", value: "Create Goal", table: "Localizable") }
+        public static var createTitlePlaceholder: String { L10n.currentBundle.localizedString(forKey: "goals.create_title_placeholder", value: "Goal title", table: "Localizable") }
+        public static var createDescriptionPlaceholder: String { L10n.currentBundle.localizedString(forKey: "goals.create_description_placeholder", value: "Add a brief description", table: "Localizable") }
         public static var searchPlaceholder: String { text("goals.search_placeholder") }
         public static var sortNewest: String { text("goals.sort_newest") }
         public static var sortOldest: String { text("goals.sort_oldest") }
