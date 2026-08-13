@@ -6,26 +6,34 @@ struct HomeHeaderView: View {
     let streakCount: Int
     let rewardPoints: Int
     let pointsPulse: Int
+    let isCollapsed: Bool
     
     @Environment(LanguageManager.self) private var languageManager
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            VStack(alignment: .leading, spacing: 10) {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(greetingPrefix + (hasDisplayName ? "," : ""))
-                        .font(AppFonts.titleBlack)
-                        .foregroundStyle(AppColors.brandDarkBlue)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.72)
-
-                    if let displayName, !displayName.isEmpty {
-                        Text(displayName)
-                            .font(AppFonts.titleBlack)
+        HStack(alignment: .center, spacing: 10) {
+            VStack(alignment: .leading, spacing: 7) {
+                if !isCollapsed {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(greetingPrefix + (hasDisplayName ? "," : ""))
+                            .font(AppFonts.title3Black)
                             .foregroundStyle(AppColors.brandDarkBlue)
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
+
+                        if let displayName, !displayName.isEmpty {
+                            Text(displayName)
+                                .font(AppFonts.title3Black)
+                                .foregroundStyle(AppColors.brandDarkBlue)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.72)
+                        }
                     }
+                    .transition(
+                        .opacity.combined(
+                            with: .scale(scale: 0.96, anchor: .topLeading)
+                        )
+                    )
                 }
 
                 HStack(spacing: 10) {
@@ -34,14 +42,16 @@ struct HomeHeaderView: View {
                         value: streakCount.formatted(
                             .number.locale(languageManager.locale)
                         ),
-                        color: AppColors.warning
+                        color: AppColors.warning,
+                        isCompact: true
                     )
                     RewardStatChip(
                         icon: "star.fill",
                         value: rewardPoints.formatted(
                             .number.locale(languageManager.locale)
                         ),
-                        color: AppColors.reward
+                        color: AppColors.reward,
+                        isCompact: true
                     )
                     .symbolEffect(.bounce, value: pointsPulse)
                     .background(
@@ -59,10 +69,19 @@ struct HomeHeaderView: View {
             Spacer(minLength: 4)
 
             AwanMascotView()
-                .frame(width: 96, height: 96)
+                .frame(width: 96, height: 78)
+                .scaleEffect(isCollapsed ? 2 / 3 : 1)
+                .frame(
+                    width: isCollapsed ? 64 : 96,
+                    height: isCollapsed ? 52 : 78
+                )
                 .accessibilityHidden(true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .animation(
+            .spring(response: 0.26, dampingFraction: 0.9),
+            value: isCollapsed
+        )
     }
 
     private var greetingPrefix: String {
@@ -87,7 +106,8 @@ struct HomeHeaderView: View {
         displayName: "Andrew",
         streakCount: 5,
         rewardPoints: 100,
-        pointsPulse: 0
+        pointsPulse: 0,
+        isCollapsed: false
     )
         .padding()
         .environment(LanguageManager())

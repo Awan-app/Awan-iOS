@@ -23,18 +23,22 @@ struct InboxHeaderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .center) {
+            HStack(alignment: .center, spacing: 10) {
                 Text(L10n.Inbox.title)
                     .font(AppFonts.bigTitle)
                     .foregroundStyle(AppColors.textPrimary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+                    .layoutPriority(1)
 
-                Spacer()
+                Spacer(minLength: 4)
 
                 if let rewardPoints {
                     RewardStatChip(
                         icon: "star.fill",
                         value: rewardPoints.formatted(),
-                        color: AppColors.reward
+                        color: AppColors.reward,
+                        isCompact: true
                     )
                     .symbolEffect(.bounce, value: pointsPulse)
                     .anchorPreference(
@@ -44,7 +48,7 @@ struct InboxHeaderView: View {
                 }
 
                 AwanMascotView(state: .normal)
-                    .frame(width: 50, height: 40)
+                    .frame(width: 64, height: 52)
             }
 
             AppSegmentedPicker(

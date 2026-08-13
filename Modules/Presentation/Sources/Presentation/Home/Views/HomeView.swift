@@ -9,11 +9,11 @@ struct HomeView: View {
     @State private var pointsPulse = 0
     @State private var pointsAnimationTask: Task<Void, Never>?
     @State private var pinnedHeaderHeight: CGFloat = 0
-    @State private var homeHeaderHeight: CGFloat = 0
     @State private var planSummaryHeight: CGFloat = 0
     @State private var homeScrollFrame: CGRect = .zero
     @State private var homeScrollController = HomeScrollController()
-    @State private var homeScrollMetrics = HomeScrollMetrics()
+    @State private var homeScrollStorage = HomeScrollStorage()
+    @State private var isHeaderCollapsed = false
     @State private var draggedSessionID: UUID?
     @State private var dragLocationY: CGFloat?
     @State private var dragScrollCompensation: CGFloat = 0
@@ -148,25 +148,22 @@ struct HomeView: View {
         }
     }
 
-
     private func content(_ state: HomeState, success: HomeSuccessState) -> some View {
-        ScrollView {
-            LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
-                    HomeHeaderView(
-                        displayName: success.displayName,
-                        streakCount: success.streakCount,
-                        rewardPoints: animatedPoints ?? success.rewardPoints,
-                        pointsPulse: pointsPulse
-                    )
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .padding(.bottom, 16)
-                    .onGeometryChange(for: CGFloat.self) { proxy in
-                        proxy.size.height
-                    } action: { height in
-                        homeHeaderHeight = height
-                    }
+        VStack(spacing: 0) {
+            HomeHeaderView(
+                displayName: success.displayName,
+                streakCount: success.streakCount,
+                rewardPoints: animatedPoints ?? success.rewardPoints,
+                pointsPulse: pointsPulse,
+                isCollapsed: isHeaderCollapsed
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 2)
+            .background(AppColors.screenBackground)
 
+            ScrollView {
+                LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
                     Section {
                         HomePlanSummaryView(
                             taskCount: success.taskCount,
@@ -231,36 +228,42 @@ struct HomeView: View {
                         }
                         .zIndex(1)
                     }
+                }
+                .background(HomeScrollControllerReader(controller: homeScrollController))
             }
-            .background(HomeScrollControllerReader(controller: homeScrollController))
-        }
-        .onGeometryChange(for: CGRect.self) { proxy in
-            proxy.frame(in: .global)
-        } action: { frame in
-            homeScrollFrame = frame
-        }
-        .onScrollGeometryChange(for: HomeScrollMetrics.self) { geometry in
-            HomeScrollMetrics(
-                offset: max(0, geometry.contentOffset.y),
-                maximumOffset: max(
-                    0,
-                    geometry.contentSize.height - geometry.containerSize.height
-                ),
-                viewportHeight: geometry.containerSize.height
-            )
-        } action: { _, metrics in
-            homeScrollMetrics = metrics
-        }
-        .task(id: draggedSessionID) {
-            guard draggedSessionID != nil else { return }
+            .onGeometryChange(for: CGRect.self) { proxy in
+                proxy.frame(in: .global)
+            } action: { frame in
+                homeScrollFrame = frame
+            }
+            .onScrollGeometryChange(for: HomeScrollMetrics.self) { geometry in
+                HomeScrollMetrics(
+                    offset: max(0, geometry.contentOffset.y),
+                    maximumOffset: max(
+                        0,
+                        geometry.contentSize.height - geometry.containerSize.height
+                    ),
+                    viewportHeight: geometry.containerSize.height
+                )
+            } action: { _, metrics in
+                homeScrollStorage.metrics = metrics
+            }
+            .onScrollGeometryChange(for: Bool.self) { geometry in
+                max(0, geometry.contentOffset.y) > 80
+            } action: { _, collapsed in
+                isHeaderCollapsed = collapsed
+            }
+            .task(id: draggedSessionID) {
+                guard draggedSessionID != nil else { return }
 
-            while !Task.isCancelled {
-                autoScrollTimelineIfNeeded()
-                try? await Task.sleep(for: .milliseconds(16))
+                while !Task.isCancelled {
+                    autoScrollTimelineIfNeeded()
+                    try? await Task.sleep(for: .milliseconds(16))
+                }
             }
+            .scrollDismissesKeyboard(.interactively)
+            .refreshable { viewModel.send(.refresh) }
         }
-        .scrollDismissesKeyboard(.interactively)
-        .refreshable { viewModel.send(.refresh) }
     }
 
     private func handleTimelineDrag(sessionID: UUID, locationY: CGFloat?) {
@@ -277,8 +280,8 @@ struct HomeView: View {
             draggedSessionID = sessionID
             dragScrollCompensation = 0
             dragMinimumScrollOffset = min(
-                homeScrollMetrics.offset,
-                homeHeaderHeight + planSummaryHeight
+                homeScrollStorage.metrics.offset,
+                planSummaryHeight
             )
         }
         dragLocationY = locationY
@@ -287,7 +290,7 @@ struct HomeView: View {
     private func autoScrollTimelineIfNeeded() {
         guard draggedSessionID != nil,
               let dragLocationY,
-              homeScrollMetrics.viewportHeight > 0 else {
+              homeScrollStorage.metrics.viewportHeight > 0 else {
             return
         }
 
@@ -300,11 +303,12 @@ struct HomeView: View {
         let delta: CGFloat
 
         if distanceFromTop < threshold,
-           homeScrollMetrics.offset > dragMinimumScrollOffset {
+           homeScrollStorage.metrics.offset > dragMinimumScrollOffset {
             let factor = 1 - min(max(distanceFromTop / threshold, 0), 1)
             delta = -maximumStep * factor
         } else if distanceFromBottom < threshold,
-                  homeScrollMetrics.offset < homeScrollMetrics.maximumOffset {
+                  homeScrollStorage.metrics.offset
+                    < homeScrollStorage.metrics.maximumOffset {
             let factor = 1 - min(max(distanceFromBottom / threshold, 0), 1)
             delta = maximumStep * factor
         } else {
@@ -313,12 +317,12 @@ struct HomeView: View {
 
         let boundedDelta = max(
             delta,
-            dragMinimumScrollOffset - homeScrollMetrics.offset
+            dragMinimumScrollOffset - homeScrollStorage.metrics.offset
         )
         let actualDelta = homeScrollController.scroll(by: boundedDelta)
         guard actualDelta != 0 else { return }
 
-        homeScrollMetrics.offset += actualDelta
+        homeScrollStorage.metrics.offset += actualDelta
         dragScrollCompensation += actualDelta
     }
 
@@ -416,4 +420,8 @@ private struct HomeScrollMetrics: Equatable {
     var offset: CGFloat = 0
     var maximumOffset: CGFloat = 0
     var viewportHeight: CGFloat = 0
+}
+
+private final class HomeScrollStorage {
+    var metrics = HomeScrollMetrics()
 }

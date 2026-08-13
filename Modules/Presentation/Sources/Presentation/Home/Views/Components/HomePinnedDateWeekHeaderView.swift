@@ -21,7 +21,7 @@ struct HomePinnedDateWeekHeaderView: View {
             )
         }
         .padding(.horizontal, 16)
-        .padding(.top, 8)
+        .padding(.top, 2)
         .padding(.bottom, 8)
         .background(AppColors.screenBackground)
         .overlay(alignment: .bottom) {

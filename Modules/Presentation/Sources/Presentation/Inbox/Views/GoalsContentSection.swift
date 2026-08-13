@@ -46,7 +46,8 @@ struct GoalsContentSection: View {
             ),
             isFilterExpanded: .constant(false),
             hasActiveFilters: false,
-            showsFilterButton: false
+            showsFilterButton: false,
+            placeholder: L10n.Goals.searchPlaceholder
         )
 
         // Section title
@@ -93,7 +94,7 @@ struct GoalsContentSection: View {
     private func goalsEmptyView() -> some View {
         VStack(spacing: 16) {
             AwanMascotView(state: .goal)
-                .frame(width: 140, height: 110)
+                .frame(width: 200, height: 150)
 
             Text(L10n.Goals.emptyTitle)
                 .font(AppFonts.title3Black)
