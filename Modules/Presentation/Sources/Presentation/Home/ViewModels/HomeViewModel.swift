@@ -53,12 +53,8 @@ public final class HomeViewModel {
             )
         case let .rescheduleSession(sessionID, start):
             rescheduleSession(id: sessionID, proposedStart: start)
-        case let .setSessionLock(sessionID, isLocked):
-            setSessionLock(id: sessionID, isLocked: isLocked)
         case let .setSessionCompletion(sessionID, isCompleted):
             setSessionCompletion(id: sessionID, isCompleted: isCompleted)
-        case let .deleteSession(id):
-            deleteSession(id: id)
         case .dismissError:
             state.failure = nil
         case .dismissCompletionReward:

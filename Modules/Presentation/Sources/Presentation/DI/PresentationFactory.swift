@@ -6,6 +6,9 @@ public struct PresentationFactory {
     private let authenticationState: AuthenticationState
     private let makeLoginViewModel: () -> LoginViewModel
     private let makeHomeViewModel: () -> HomeViewModel
+    private let makeSessionDetailsViewModel: (
+        SessionDetailsContext
+    ) -> SessionDetailsViewModel
     private let makeDailyWheelViewModel: () -> DailyWheelViewModel
     private let makeCalendarViewModel: () -> CalendarViewModel
     private let makeScheduleViewModel: () -> ScheduleTimelineViewModel
@@ -27,6 +30,9 @@ public struct PresentationFactory {
         authenticationState: AuthenticationState,
         makeLoginViewModel: @escaping () -> LoginViewModel,
         makeHomeViewModel: @escaping () -> HomeViewModel,
+        makeSessionDetailsViewModel: @escaping (
+            SessionDetailsContext
+        ) -> SessionDetailsViewModel,
         makeDailyWheelViewModel: @escaping () -> DailyWheelViewModel,
         makeCalendarViewModel: @escaping () -> CalendarViewModel,
         makeScheduleViewModel: @escaping () -> ScheduleTimelineViewModel,
@@ -46,6 +52,7 @@ public struct PresentationFactory {
         self.authenticationState = authenticationState
         self.makeLoginViewModel = makeLoginViewModel
         self.makeHomeViewModel = makeHomeViewModel
+        self.makeSessionDetailsViewModel = makeSessionDetailsViewModel
         self.makeDailyWheelViewModel = makeDailyWheelViewModel
         self.makeCalendarViewModel = makeCalendarViewModel
         self.makeScheduleViewModel = makeScheduleViewModel
@@ -79,6 +86,7 @@ public struct PresentationFactory {
     func makeHomeView() -> some View {
         HomeView(
             viewModel: makeHomeViewModel(),
+            makeSessionDetailsViewModel: makeSessionDetailsViewModel,
             onBecameActive: { activeViewModels.home = $0 }
         )
     }

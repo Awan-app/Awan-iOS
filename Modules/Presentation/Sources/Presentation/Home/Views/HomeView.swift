@@ -18,13 +18,18 @@ struct HomeView: View {
     @State private var dragLocationY: CGFloat?
     @State private var dragScrollCompensation: CGFloat = 0
     @State private var dragMinimumScrollOffset: CGFloat = 0
+    private let makeSessionDetailsViewModel: (SessionDetailsContext) -> SessionDetailsViewModel
     private let onBecameActive: (HomeViewModel) -> Void
     
     init(
         viewModel: HomeViewModel,
+        makeSessionDetailsViewModel: @escaping (
+            SessionDetailsContext
+        ) -> SessionDetailsViewModel,
         onBecameActive: @escaping (HomeViewModel) -> Void = { _ in }
     ) {
         _viewModel = State(initialValue: viewModel)
+        self.makeSessionDetailsViewModel = makeSessionDetailsViewModel
         self.onBecameActive = onBecameActive
     }
     
@@ -59,22 +64,10 @@ struct HomeView: View {
             viewModel.send(.appeared)
         }
         .sheet(item: selectedSessionBinding) { detail in
-            HomeSessionActionSheet(
-                item: detail.item,
-                task: detail.task,
-                window: state.success?.timelineWindow,
-                isMutating: state.isMutating,
-                onReschedule: {
-                    viewModel.send(.rescheduleSession(sessionID: detail.id, start: $0))
-                },
-                onSetLock: {
-                    viewModel.send(.setSessionLock(sessionID: detail.id, isLocked: $0))
-                },
-                onDelete: { viewModel.send(.deleteSession(detail.id)) },
+            SessionDetailsView(
+                viewModel: makeSessionDetailsViewModel(detail.context),
                 onDismiss: { viewModel.send(.dismissSession) }
             )
-            .presentationDetents([.medium])
-            .presentationDragIndicator(.visible)
         }
         .alert(L10n.Home.errorTitle, isPresented: errorBinding) {
             Button(L10n.Common.gotIt) { viewModel.send(.dismissError) }

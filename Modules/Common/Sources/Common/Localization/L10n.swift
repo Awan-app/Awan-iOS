@@ -839,6 +839,48 @@ public enum L10n {
         public static var deleteSessionConfirmation: String {
             L10n.currentBundle.localizedString(forKey: "home.delete_session_confirmation", value: nil, table: "Localizable")
         }
+        public static var deleteSessionTitle: String {
+            L10n.currentBundle.localizedString(forKey: "home.delete_session_title", value: nil, table: "Localizable")
+        }
+        public static var deleteSessionMessage: String {
+            L10n.currentBundle.localizedString(forKey: "home.delete_session_message", value: nil, table: "Localizable")
+        }
+        public static var sessionDetails: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_details", value: nil, table: "Localizable")
+        }
+        public static var sessionScheduled: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_scheduled", value: nil, table: "Localizable")
+        }
+        public static var sessionCompleted: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_completed", value: nil, table: "Localizable")
+        }
+        public static var sessionMissed: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_missed", value: nil, table: "Localizable")
+        }
+        public static var sessionCancelled: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_cancelled", value: nil, table: "Localizable")
+        }
+        public static var sessionLocked: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_locked", value: nil, table: "Localizable")
+        }
+        public static var sessionUnlocked: String {
+            L10n.currentBundle.localizedString(forKey: "home.session_unlocked", value: nil, table: "Localizable")
+        }
+        public static var saveChanges: String {
+            L10n.currentBundle.localizedString(forKey: "home.save_changes", value: nil, table: "Localizable")
+        }
+        public static var closeSessionDetailsTitle: String {
+            L10n.currentBundle.localizedString(forKey: "home.close_session_details_title", value: nil, table: "Localizable")
+        }
+        public static var closeSessionDetailsMessage: String {
+            L10n.currentBundle.localizedString(forKey: "home.close_session_details_message", value: nil, table: "Localizable")
+        }
+        public static var keepEditing: String {
+            L10n.currentBundle.localizedString(forKey: "home.keep_editing", value: nil, table: "Localizable")
+        }
+        public static var discardAndClose: String {
+            L10n.currentBundle.localizedString(forKey: "home.discard_and_close", value: nil, table: "Localizable")
+        }
         public static var taskDetails: String {
             L10n.currentBundle.localizedString(forKey: "home.task_details", value: nil, table: "Localizable")
         }
