@@ -11,6 +11,8 @@ public struct InboxView: View {
     @State private var viewModel: InboxViewModel
     @State private var goalsViewModel: GoalsViewModel
     @State private var isFilterExpanded = false
+    @State private var taskToDelete: InboxTaskItem?
+    @State private var isDeleteAlertPresented = false
 
     public init(
         viewModel: InboxViewModel,
@@ -53,6 +55,21 @@ public struct InboxView: View {
             }
         } message: {
             Text(state.failureMessage ?? L10n.Inbox.loadFailed)
+        }
+        .alert(L10n.Inbox.deleteTaskConfirmTitle, isPresented: $isDeleteAlertPresented, presenting: taskToDelete) { task in
+            Button(role: .destructive) {
+                viewModel.send(.deleteTask(task.id))
+                taskToDelete = nil
+            } label: {
+                Text(L10n.Inbox.deleteTask)
+            }
+            Button(role: .cancel) {
+                taskToDelete = nil
+            } label: {
+                Text(L10n.Common.cancel)
+            }
+        } message: { _ in
+            Text(L10n.Inbox.deleteTaskConfirmMessage)
         }
         .onChange(of: viewModel.state.streakTransition) { _, transition in
             guard let transition else { return }
@@ -124,12 +141,14 @@ public struct InboxView: View {
                                     viewModel.send(.deleteTask(taskItem.id))
                                 }
                             )
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    viewModel.send(.deleteTask(taskItem.id))
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button {
+                                    taskToDelete = taskItem
+                                    isDeleteAlertPresented = true
                                 } label: {
                                     Label(L10n.Inbox.deleteTask, systemImage: "trash.fill")
                                 }
+                                .tint(AppColors.destructive)
                             }
                             .listRowSeparator(.hidden)
                             .listRowBackground(Color.clear)
