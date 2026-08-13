@@ -68,14 +68,21 @@ struct InboxTaskCard: View {
                                 .truncationMode(.tail)
                         }
 
-                        Label(
-                            taskItem.availableCompletionPoints > 0
-                                ? L10n.Home.pointsValue(taskItem.availableCompletionPoints)
-                                : L10n.Inbox.pointsClaimed,
-                            systemImage: taskItem.availableCompletionPoints > 0
-                                ? "star.fill"
-                                : "checkmark.seal.fill"
-                        )
+                        HStack(spacing: 6) {
+                            Image(
+                                systemName: taskItem.availableCompletionPoints > 0
+                                    ? "star.fill"
+                                    : "checkmark.seal.fill"
+                            )
+
+                            Text(
+                                taskItem.availableCompletionPoints > 0
+                                    ? L10n.Home.pointsValue(
+                                        taskItem.availableCompletionPoints
+                                    )
+                                    : L10n.Inbox.pointsClaimed
+                            )
+                        }
                         .font(AppFonts.captionHeavy)
                         .foregroundStyle(AppColors.reward)
                         .environment(\.layoutDirection, .leftToRight)

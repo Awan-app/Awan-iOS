@@ -4,13 +4,19 @@ import SwiftUI
 
 struct HomeTimelineSessionCard: View {
     let item: HomeTimelineItem
+    let window: HomeTimelineWindow
+    let hourHeight: CGFloat
+    let scrollCompensation: CGFloat
     let onMove: (CGFloat) -> Void
     let onSetCompletion: (Bool) -> Void
+    let onDragChanged: (CGFloat?) -> Void
     let onTap: () -> Void
     
-    @State private var dragOffset: CGFloat = 0
+    @State private var dragTranslation: CGFloat = 0
     @State private var isDragging = false
     @State private var completionScale: CGFloat = 1
+    @State private var dragHapticTrigger = 0
+    @State private var moveHapticTrigger = 0
     
     @Environment(LanguageManager.self) private var languageManager
 
@@ -30,9 +36,14 @@ struct HomeTimelineSessionCard: View {
                 .stroke(cardColor.opacity(0.72), lineWidth: 1.5)
         }
         .shadow(color: cardColor.opacity(0.24), radius: isDragging ? 8 : 2, y: 4)
-        .offset(y: dragOffset)
+        .offset(y: isDragging ? effectiveDragPoints : 0)
+        .scaleEffect(isDragging ? 1.015 : 1)
+        .zIndex(isDragging ? 999 : 2)
         .contentShape(Rectangle())
         .gesture(dragGesture)
+        .animation(.easeOut(duration: 0.16), value: isDragging)
+        .sensoryFeedback(.impact(weight: .medium), trigger: dragHapticTrigger)
+        .sensoryFeedback(.success, trigger: moveHapticTrigger)
         .accessibilityIdentifier("home-timeline-session-\(item.id.uuidString)")
     }
 
@@ -77,10 +88,15 @@ struct HomeTimelineSessionCard: View {
                         .accessibilityLabel("Locked session")
                 }
             }
-            Text(timeText)
-                .font(AppFonts.caption2Bold)
-                .foregroundStyle(AppColors.brandDarkBlue.opacity(0.82))
-                .lineLimit(1)
+            HStack(spacing: 4) {
+                if isDragging {
+                    Image(systemName: "clock.fill")
+                }
+                Text(isDragging ? liveStartTimeText : timeText)
+                    .lineLimit(1)
+            }
+            .font(AppFonts.caption2Bold)
+            .foregroundStyle(AppColors.brandDarkBlue.opacity(0.82))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -164,16 +180,76 @@ struct HomeTimelineSessionCard: View {
     }
 
     private var dragGesture: some Gesture {
-        DragGesture(minimumDistance: 6)
+        LongPressGesture(minimumDuration: 0.35, maximumDistance: 12)
+            .sequenced(
+                before: DragGesture(
+                    minimumDistance: 0,
+                    coordinateSpace: .global
+                )
+            )
             .onChanged { value in
-                isDragging = true
-                dragOffset = value.translation.height
+                guard case let .second(true, drag?) = value else { return }
+
+                if !isDragging {
+                    dragHapticTrigger += 1
+                    isDragging = true
+                    dragTranslation = 0
+                }
+                dragTranslation = drag.translation.height
+                onDragChanged(drag.location.y)
             }
-            .onEnded { value in
-                dragOffset = 0
+            .onEnded { _ in
+                guard isDragging else { return }
+                let finalOffset = snappedDragPoints
+                let didMove = snappedDeltaMinutes != 0
+
+                if didMove {
+                    onMove(finalOffset)
+                    moveHapticTrigger += 1
+                }
+
                 isDragging = false
-                onMove(value.translation.height)
+                dragTranslation = 0
+                onDragChanged(nil)
             }
+    }
+
+    private var effectiveDragPoints: CGFloat {
+        dragTranslation + scrollCompensation
+    }
+
+    private var snapIntervalMinutes: Int {
+        hourHeight >= 60 ? 10 : 15
+    }
+
+    private var snappedDeltaMinutes: Int {
+        guard hourHeight > 0 else { return 0 }
+
+        let rawMinutes = effectiveDragPoints / hourHeight * 60
+        let interval = CGFloat(snapIntervalMinutes)
+        let snappedMinutes = Int((rawMinutes / interval).rounded())
+            * snapIntervalMinutes
+        let startOffset = Int(item.start.timeIntervalSince(window.start) / 60)
+        let duration = Int(item.end.timeIntervalSince(item.start) / 60)
+        let minimumDelta = -startOffset
+        let maximumDelta = max(0, window.durationMinutes - duration) - startOffset
+
+        return min(max(snappedMinutes, minimumDelta), maximumDelta)
+    }
+
+    private var snappedDragPoints: CGFloat {
+        CGFloat(snappedDeltaMinutes) / 60 * hourHeight
+    }
+
+    private var liveStartTimeText: String {
+        let style = Date.FormatStyle(
+            date: .omitted,
+            time: .shortened,
+            locale: languageManager.locale
+        )
+        return item.start
+            .addingTimeInterval(Double(snappedDeltaMinutes) * 60)
+            .formatted(style)
     }
 
     private var cardColor: Color {
@@ -206,5 +282,3 @@ struct HomeTimelineSessionCard: View {
         }
     }
 }
-
-

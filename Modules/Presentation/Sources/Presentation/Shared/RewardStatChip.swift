@@ -5,25 +5,34 @@ struct RewardStatChip: View {
     let icon: String
     let value: String
     let color: Color
+    var isCompact = false
 
     var body: some View {
         AppDepthSurface(
-            shape: .roundedRectangle(cornerRadius: 14),
+            shape: .roundedRectangle(cornerRadius: isCompact ? 12 : 14),
             borderColor: color.opacity(0.55),
             depthColor: color.opacity(0.72),
-            depthOffset: 4,
+            depthOffset: isCompact ? 3 : 4,
             contentInsets: EdgeInsets(
-                top: 9,
-                leading: 14,
-                bottom: 9,
-                trailing: 14
+                top: isCompact ? 6 : 9,
+                leading: isCompact ? 10 : 14,
+                bottom: isCompact ? 6 : 9,
+                trailing: isCompact ? 10 : 14
             )
         ) {
-            HStack(spacing: 8) {
+            HStack(spacing: isCompact ? 6 : 8) {
                 Image(systemName: icon)
-                    .font(AppFonts.statSymbol)
+                    .font(
+                        isCompact
+                            ? AppFonts.captionIconBlack
+                            : AppFonts.statSymbol
+                    )
                 Text(value)
-                    .font(AppFonts.headlineBlack)
+                    .font(
+                        isCompact
+                            ? AppFonts.subheadlineBlack
+                            : AppFonts.headlineBlack
+                    )
             }
             .foregroundStyle(color)
         }

@@ -2,7 +2,7 @@ import Common
 import SwiftUI
 
 struct HomeDayTimelineView: View {
-    static let hourHeight: CGFloat = 80
+    static let hourHeight: CGFloat = 64
     private static let minimumZoomScale: CGFloat = 0.75
     private static let maximumZoomScale: CGFloat = 4
 
@@ -11,8 +11,11 @@ struct HomeDayTimelineView: View {
     let bedtime: Date
     let zones: [HomeTimelineZoneItem]
     let items: [HomeTimelineItem]
+    let draggedSessionID: UUID?
+    let scrollCompensation: CGFloat
     let onMove: (UUID, CGFloat) -> Void
     let onSetCompletion: (UUID, Bool) -> Void
+    let onDragChanged: (UUID, CGFloat?) -> Void
     let onTap: (UUID) -> Void
 
     @State private var zoomScale: CGFloat = 1
@@ -77,20 +80,12 @@ struct HomeDayTimelineView: View {
                     labelWidth: labelWidth,
                     hourHeight: displayedHourHeight
                 )
-
             }
             .offset(y: verticalInset)
         }
         .frame(height: totalHeight)
         .contentShape(Rectangle())
         .simultaneousGesture(zoomGesture)
-        .background(AppColors.surface, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(AppColors.outline.opacity(0.08), lineWidth: 1.5)
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .shadow(color: AppColors.shadow.opacity(0.08), radius: 16, y: 7)
     }
 
     private func sessionCard(
@@ -106,8 +101,12 @@ struct HomeDayTimelineView: View {
 
         return HomeTimelineSessionCard(
             item: item,
+            window: window,
+            hourHeight: displayedHourHeight,
+            scrollCompensation: draggedSessionID == item.id ? scrollCompensation : 0,
             onMove: { onMove(item.id, $0 / displayedZoomScale) },
             onSetCompletion: { onSetCompletion(item.id, $0) },
+            onDragChanged: { onDragChanged(item.id, $0) },
             onTap: { onTap(item.id) }
         )
         .frame(
@@ -115,11 +114,16 @@ struct HomeDayTimelineView: View {
             height: max(16, scheduledHeight - 8)
         )
         .offset(x: x)
+        .offset(y: yPosition(for: item.start) + 2)
+        .zIndex(draggedSessionID == item.id ? 999 : 2)
         .animation(
             .spring(response: 0.34, dampingFraction: 0.86),
             value: laneAnimationKey(for: item)
         )
-        .offset(y: yPosition(for: item.start) + 2)
+        .animation(
+            .spring(response: 0.34, dampingFraction: 0.86),
+            value: item.start
+        )
     }
 
     private func yPosition(for date: Date) -> CGFloat {
@@ -157,8 +161,11 @@ import Domain
         bedtime: Date().addingTimeInterval(3600),
         zones: [],
         items: [],
+        draggedSessionID: nil,
+        scrollCompensation: 0,
         onMove: { _, _ in },
         onSetCompletion: { _, _ in },
+        onDragChanged: { _, _ in },
         onTap: { _ in }
     )
         .padding()

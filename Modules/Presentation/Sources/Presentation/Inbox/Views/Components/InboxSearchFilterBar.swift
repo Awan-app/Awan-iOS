@@ -11,6 +11,7 @@ struct InboxSearchFilterBar: View {
     @Binding var isFilterExpanded: Bool
     let hasActiveFilters: Bool
     let showsFilterButton: Bool
+    var placeholder = L10n.Inbox.searchPlaceholder
 
     var body: some View {
         HStack(spacing: 10) {
@@ -19,7 +20,7 @@ struct InboxSearchFilterBar: View {
                     .font(.system(size: 18, weight: .medium))
                     .foregroundStyle(AppColors.textSecondary.opacity(0.7))
 
-                TextField(L10n.Inbox.searchPlaceholder, text: $searchQuery)
+                TextField(placeholder, text: $searchQuery)
                     .font(AppFonts.body)
                     .foregroundStyle(AppColors.textPrimary)
                     .autocorrectionDisabled()

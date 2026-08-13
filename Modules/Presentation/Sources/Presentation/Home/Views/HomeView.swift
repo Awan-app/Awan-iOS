@@ -8,6 +8,16 @@ struct HomeView: View {
     @State private var animatedPoints: Int?
     @State private var pointsPulse = 0
     @State private var pointsAnimationTask: Task<Void, Never>?
+    @State private var pinnedHeaderHeight: CGFloat = 0
+    @State private var planSummaryHeight: CGFloat = 0
+    @State private var homeScrollFrame: CGRect = .zero
+    @State private var homeScrollController = HomeScrollController()
+    @State private var homeScrollStorage = HomeScrollStorage()
+    @State private var isHeaderCollapsed = false
+    @State private var draggedSessionID: UUID?
+    @State private var dragLocationY: CGFloat?
+    @State private var dragScrollCompensation: CGFloat = 0
+    @State private var dragMinimumScrollOffset: CGFloat = 0
     private let onBecameActive: (HomeViewModel) -> Void
     
     init(
@@ -138,69 +148,182 @@ struct HomeView: View {
         }
     }
 
-
     private func content(_ state: HomeState, success: HomeSuccessState) -> some View {
-        ScrollView {
-            VStack(spacing: 18) {
-                HomeHeaderView(
-                    displayName: success.displayName,
-                    selectedDay: state.selectedDay,
-                    streakCount: success.streakCount,
-                    rewardPoints: animatedPoints ?? success.rewardPoints,
-                    onOpenCalendar: {
-                        coordinator.mainCoordinator.push(.calendar)
-                    },
-                    onSelectToday: {
-                        viewModel.send(.selectDay(.now))
-                    },
-                    pointsPulse: pointsPulse
-                )
-
-                HomeWeekStripView(
-                    selectedDay: state.selectedDay,
-                    onSelect: { viewModel.send(.selectDay($0)) }
-                )
-
-                HomePlanSummaryView(
-                    taskCount: success.taskCount,
-                    scheduledMinutes: success.scheduledMinutes,
-                    completedCount: success.completedSessionCount,
-                    totalCount: success.totalSessionCount,
-                    taskAllocations: success.taskAllocations
-                )
-
-                HomeDayTimelineView(
-                    window: success.timelineWindow,
-                    wakeupTime: success.timelineWakeupTime,
-                    bedtime: success.timelineBedtime,
-                    zones: success.timelineZones,
-                    items: success.timelineItems,
-                    onMove: { sessionID, points in
-                        viewModel.send(
-                            .moveSession(
-                                sessionID: sessionID,
-                                verticalPoints: points,
-                                hourHeight: HomeDayTimelineView.hourHeight
-                            )
-                        )
-                    },
-                    onSetCompletion: { sessionID, isCompleted in
-                        viewModel.send(
-                            .setSessionCompletion(
-                                sessionID: sessionID,
-                                isCompleted: isCompleted
-                            )
-                        )
-                    },
-                    onTap: { viewModel.send(.presentSession($0))}
-                )
-            }
+        VStack(spacing: 0) {
+            HomeHeaderView(
+                displayName: success.displayName,
+                streakCount: success.streakCount,
+                rewardPoints: animatedPoints ?? success.rewardPoints,
+                pointsPulse: pointsPulse,
+                isCollapsed: isHeaderCollapsed
+            )
             .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 120)
+            .padding(.top, 8)
+            .padding(.bottom, 2)
+            .background(AppColors.screenBackground)
+
+            ScrollView {
+                LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                    Section {
+                        HomePlanSummaryView(
+                            taskCount: success.taskCount,
+                            scheduledMinutes: success.scheduledMinutes,
+                            completedCount: success.completedSessionCount,
+                            totalCount: success.totalSessionCount,
+                            taskAllocations: success.taskAllocations
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.top, 14)
+                        .padding(.bottom, 12)
+                        .onGeometryChange(for: CGFloat.self) { proxy in
+                            proxy.size.height
+                        } action: { height in
+                            planSummaryHeight = height
+                        }
+
+                        HomeDayTimelineView(
+                            window: success.timelineWindow,
+                            wakeupTime: success.timelineWakeupTime,
+                            bedtime: success.timelineBedtime,
+                            zones: success.timelineZones,
+                            items: success.timelineItems,
+                            draggedSessionID: draggedSessionID,
+                            scrollCompensation: dragScrollCompensation,
+                            onMove: { sessionID, points in
+                                viewModel.send(
+                                    .moveSession(
+                                        sessionID: sessionID,
+                                        verticalPoints: points,
+                                        hourHeight: HomeDayTimelineView.hourHeight
+                                    )
+                                )
+                            },
+                            onSetCompletion: { sessionID, isCompleted in
+                                viewModel.send(
+                                    .setSessionCompletion(
+                                        sessionID: sessionID,
+                                        isCompleted: isCompleted
+                                    )
+                                )
+                            },
+                            onDragChanged: handleTimelineDrag,
+                            onTap: { viewModel.send(.presentSession($0)) }
+                        )
+                        Color.clear.frame(height: 120)
+                    } header: {
+                        HomePinnedDateWeekHeaderView(
+                            selectedDay: state.selectedDay,
+                            onSelect: { viewModel.send(.selectDay($0)) },
+                            onOpenCalendar: {
+                                coordinator.mainCoordinator.push(.calendar)
+                            },
+                            onSelectToday: {
+                                viewModel.send(.selectDay(.now))
+                            }
+                        )
+                        .onGeometryChange(for: CGFloat.self) { proxy in
+                            proxy.size.height
+                        } action: { height in
+                            pinnedHeaderHeight = height
+                        }
+                        .zIndex(1)
+                    }
+                }
+                .background(HomeScrollControllerReader(controller: homeScrollController))
+            }
+            .onGeometryChange(for: CGRect.self) { proxy in
+                proxy.frame(in: .global)
+            } action: { frame in
+                homeScrollFrame = frame
+            }
+            .onScrollGeometryChange(for: HomeScrollMetrics.self) { geometry in
+                HomeScrollMetrics(
+                    offset: max(0, geometry.contentOffset.y),
+                    maximumOffset: max(
+                        0,
+                        geometry.contentSize.height - geometry.containerSize.height
+                    ),
+                    viewportHeight: geometry.containerSize.height
+                )
+            } action: { _, metrics in
+                homeScrollStorage.metrics = metrics
+            }
+            .onScrollGeometryChange(for: Bool.self) { geometry in
+                max(0, geometry.contentOffset.y) > 80
+            } action: { _, collapsed in
+                isHeaderCollapsed = collapsed
+            }
+            .task(id: draggedSessionID) {
+                guard draggedSessionID != nil else { return }
+
+                while !Task.isCancelled {
+                    autoScrollTimelineIfNeeded()
+                    try? await Task.sleep(for: .milliseconds(16))
+                }
+            }
+            .scrollDismissesKeyboard(.interactively)
+            .refreshable { viewModel.send(.refresh) }
         }
-        .scrollDismissesKeyboard(.interactively)
-        .refreshable { viewModel.send(.refresh) }
+    }
+
+    private func handleTimelineDrag(sessionID: UUID, locationY: CGFloat?) {
+        guard let locationY else {
+            if draggedSessionID == sessionID {
+                draggedSessionID = nil
+                dragLocationY = nil
+                dragScrollCompensation = 0
+            }
+            return
+        }
+
+        if draggedSessionID != sessionID {
+            draggedSessionID = sessionID
+            dragScrollCompensation = 0
+            dragMinimumScrollOffset = min(
+                homeScrollStorage.metrics.offset,
+                planSummaryHeight
+            )
+        }
+        dragLocationY = locationY
+    }
+
+    private func autoScrollTimelineIfNeeded() {
+        guard draggedSessionID != nil,
+              let dragLocationY,
+              homeScrollStorage.metrics.viewportHeight > 0 else {
+            return
+        }
+
+        let threshold: CGFloat = 72
+        let maximumStep: CGFloat = 10
+        let topEdge = homeScrollFrame.minY + pinnedHeaderHeight
+        let bottomEdge = homeScrollFrame.maxY
+        let distanceFromTop = dragLocationY - topEdge
+        let distanceFromBottom = bottomEdge - dragLocationY
+        let delta: CGFloat
+
+        if distanceFromTop < threshold,
+           homeScrollStorage.metrics.offset > dragMinimumScrollOffset {
+            let factor = 1 - min(max(distanceFromTop / threshold, 0), 1)
+            delta = -maximumStep * factor
+        } else if distanceFromBottom < threshold,
+                  homeScrollStorage.metrics.offset
+                    < homeScrollStorage.metrics.maximumOffset {
+            let factor = 1 - min(max(distanceFromBottom / threshold, 0), 1)
+            delta = maximumStep * factor
+        } else {
+            return
+        }
+
+        let boundedDelta = max(
+            delta,
+            dragMinimumScrollOffset - homeScrollStorage.metrics.offset
+        )
+        let actualDelta = homeScrollController.scroll(by: boundedDelta)
+        guard actualDelta != 0 else { return }
+
+        homeScrollStorage.metrics.offset += actualDelta
+        dragScrollCompensation += actualDelta
     }
 
     private var failureView: some View {
@@ -291,4 +414,14 @@ struct HomeView: View {
         )
     }
     
+}
+
+private struct HomeScrollMetrics: Equatable {
+    var offset: CGFloat = 0
+    var maximumOffset: CGFloat = 0
+    var viewportHeight: CGFloat = 0
+}
+
+private final class HomeScrollStorage {
+    var metrics = HomeScrollMetrics()
 }

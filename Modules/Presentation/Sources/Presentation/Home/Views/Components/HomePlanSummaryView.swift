@@ -9,31 +9,25 @@ struct HomePlanSummaryView: View {
     let taskAllocations: [HomeTaskAllocationItem]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top) {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(L10n.Home.todaysPlan)
-                        .font(AppFonts.title3Black)
+                        .font(AppFonts.headlineBlack)
                         .foregroundStyle(AppColors.brandDarkBlue)
                     Text(L10n.Home.taskScheduleSummary(taskCount, durationText))
-                        .font(AppFonts.subheadlineSemibold)
+                        .font(AppFonts.captionHeavy)
                         .foregroundStyle(AppColors.textSecondary)
                 }
-                Spacer()
+                Spacer(minLength: 8)
                 Text(L10n.Home.completionSummary(completedCount, totalCount))
-                    .font(AppFonts.subheadlineHeavy)
+                    .font(AppFonts.captionHeavy)
                     .foregroundStyle(AppColors.textSecondary)
+                    .lineLimit(1)
             }
 
             allocationBar
         }
-        .padding(18)
-        .background(AppColors.surface, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(AppColors.outline.opacity(0.08), lineWidth: 1.5)
-        }
-        .shadow(color: AppColors.shadow.opacity(0.09), radius: 15, y: 7)
     }
 
     private var allocationBar: some View {
@@ -58,7 +52,7 @@ struct HomePlanSummaryView: View {
             }
             .clipShape(Capsule())
         }
-        .frame(height: 11)
+        .frame(height: 6)
         .animation(.easeInOut(duration: 0.25), value: taskAllocations)
     }
 
@@ -76,4 +70,3 @@ struct HomePlanSummaryView: View {
     HomePlanSummaryView(taskCount: 5, scheduledMinutes: 120, completedCount: 2, totalCount: 5, taskAllocations: [])
         .padding()
 }
-
