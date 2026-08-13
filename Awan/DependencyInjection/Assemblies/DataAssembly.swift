@@ -74,9 +74,15 @@ struct DataAssembly: Assembly {
                 remoteDataSource: Self.resolve(
                     RemoteGoalDataSource.self,
                     from: resolver
-                )
+                ),
+                remoteTaskDataSource: Self.resolve(
+                    RemoteTaskDataSource.self,
+                    from: resolver
+                ),
+                localTaskDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver)
             )
         }
+
         container.register(GoalDecompositionRepository.self) { resolver in
             DefaultGoalDecompositionRepository(
                 remoteDataSource: Self.resolve(
