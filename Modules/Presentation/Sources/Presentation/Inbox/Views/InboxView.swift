@@ -75,14 +75,6 @@ public struct InboxView: View {
         } message: { _ in
             Text(L10n.Inbox.deleteTaskConfirmMessage)
         }
-        .onChange(of: viewModel.state.streakTransition) { _, transition in
-            guard let transition else { return }
-            coordinator.mainCoordinator.presentStreakCelebration(
-                previousStreak: transition.oldValue,
-                streak: transition.newValue,
-                isNewRecord: transition.isNewRecord
-            )
-            viewModel.send(.dismissStreakTransition)
         .overlayPreferenceValue(RewardAnchorKey.self) { anchors in
             GeometryReader { proxy in
                 if let taskID = rewardFlightTaskID,
