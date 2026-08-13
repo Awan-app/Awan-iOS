@@ -3,6 +3,7 @@
 //  Presentation
 //
 
+import Domain
 import Foundation
 
 public enum InboxAction: Sendable {
@@ -15,7 +16,12 @@ public enum InboxAction: Sendable {
     case completeTask(UUID)
     case deleteTask(UUID)
     case selectTopTab(InboxTopTab)
+    case addTaskToGoalTapped(InboxTaskItem)
+    case goalSelectedForTask(goal: Goal, task: InboxTaskItem)
+    case dismissAddToGoalSheet
+    case dismissAddToGoalError
     case dismissError
     case dismissCompletionReward
     case dismissCompletionRewardAnimation
 }
+

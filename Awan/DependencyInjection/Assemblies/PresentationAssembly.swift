@@ -189,16 +189,24 @@ struct PresentationAssembly: Assembly {
                 fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver),
                 userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver),
-                deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver)
+                deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver),
+                fetchGoals: Self.resolve(FetchGoalsUseCase.self, from: resolver),
+                createEmptyGoal: Self.resolve(CreateEmptyGoalUseCase.self, from: resolver),
+                addTaskToGoal: Self.resolve(AddTaskToGoalUseCase.self, from: resolver)
             )
         }
+
 
         container.register(GoalsUseCases.self) { resolver in
             GoalsUseCases(
                 fetchGoalsWithTasks: Self.resolve(FetchGoalsWithTasksUseCase.self, from: resolver),
-                fetchGoalTasks: Self.resolve(FetchGoalTasksUseCase.self, from: resolver)
+                fetchGoalTasks: Self.resolve(FetchGoalTasksUseCase.self, from: resolver),
+                createEmptyGoal: Self.resolve(CreateEmptyGoalUseCase.self, from: resolver),
+                addTaskToGoal: Self.resolve(AddTaskToGoalUseCase.self, from: resolver),
+                fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver)
             )
         }
+
 
         container.register(GoalsViewModel.self) { resolver in
             let useCases = Self.resolve(GoalsUseCases.self, from: resolver)

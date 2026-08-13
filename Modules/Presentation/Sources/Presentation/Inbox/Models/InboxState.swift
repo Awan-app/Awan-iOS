@@ -19,6 +19,11 @@ public struct InboxState: Equatable, Sendable {
     public var completionReward: InboxCompletionReward?
     public var completionRewardAnimation: InboxCompletionRewardAnimation?
     public var mutatingTaskIDs: Set<UUID>
+    public var taskPendingGoalAssignment: InboxTaskItem?
+    public var availableGoals: [Goal]
+    public var isLoadingGoals: Bool
+    public var addToGoalFailureMessage: String?
+    public var isAddingTaskToGoal: Bool
 
     public init(
         selectedTopTab: InboxTopTab = .inbox,
@@ -32,7 +37,12 @@ public struct InboxState: Equatable, Sendable {
         userPoints: Int? = nil,
         completionReward: InboxCompletionReward? = nil,
         completionRewardAnimation: InboxCompletionRewardAnimation? = nil,
-        mutatingTaskIDs: Set<UUID> = []
+        mutatingTaskIDs: Set<UUID> = [],
+        taskPendingGoalAssignment: InboxTaskItem? = nil,
+        availableGoals: [Goal] = [],
+        isLoadingGoals: Bool = false,
+        addToGoalFailureMessage: String? = nil,
+        isAddingTaskToGoal: Bool = false
     ) {
         self.selectedTopTab = selectedTopTab
         self.isLoading = isLoading
@@ -46,8 +56,13 @@ public struct InboxState: Equatable, Sendable {
         self.completionReward = completionReward
         self.completionRewardAnimation = completionRewardAnimation
         self.mutatingTaskIDs = mutatingTaskIDs
-      
+        self.taskPendingGoalAssignment = taskPendingGoalAssignment
+        self.availableGoals = availableGoals
+        self.isLoadingGoals = isLoadingGoals
+        self.addToGoalFailureMessage = addToGoalFailureMessage
+        self.isAddingTaskToGoal = isAddingTaskToGoal
     }
+
 
     public var filteredTasks: [InboxTaskItem] {
         allTasks.filter { taskItem in
