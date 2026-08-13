@@ -22,19 +22,27 @@ struct SessionDetailsView: View {
         ) {
             ZStack {
                 VStack(spacing: 22) {
-                    SessionDetailsTaskSummaryView(
-                        task: state.task,
-                        color: state.color,
-                        arePointsClaimed: state.session.firstCompletedAt != nil,
-                        onClose: { viewModel.send(.attemptDismiss) },
-                        onDelete: { viewModel.send(.requestDelete) }
-                    )
-
-                    SessionDetailsStatusView(
-                        status: state.statusUIModel,
-                        isLocked: state.session.blocking,
-                        lockLabel: state.lockLabel
-                    )
+                    
+                        VStack(spacing: 22) {
+                            SessionDetailsTaskSummaryView(
+                                task: state.task,
+                                color: state.color,
+                                arePointsClaimed: state.session.firstCompletedAt != nil,
+                                onClose: { viewModel.send(.attemptDismiss) },
+                                onDelete: { viewModel.send(.requestDelete) }
+                            )
+                            SessionDetailsStatusView(
+                                status: state.statusUIModel,
+                                isLocked: state.session.blocking,
+                                lockLabel: state.lockLabel
+                            )
+                        }
+                        .background {
+                            GeometryReader { proxy in
+                                AppCloudsHorizon(height: proxy.size.height)
+                                    .padding(.horizontal, -12)
+                            }
+                        }
 
                     SessionDetailsScheduleView(
                         selectedDay: state.selectedDay,
