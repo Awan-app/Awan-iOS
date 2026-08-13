@@ -3087,6 +3087,23 @@
         }
       }
     },
+    "inbox.delete_task": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
     "inbox.no_sessions": {
       "extractionState": "manual",
       "localizations": {

@@ -1236,6 +1236,7 @@ public enum L10n {
         public static var errorTitle: String { text("inbox.error_title") }
         public static var loadFailed: String { text("inbox.load_failed") }
         public static var pointsClaimed: String { text("inbox.points_claimed") }
+        public static var deleteTask: String { text("inbox.delete_task") }
 
         public static func nSessions(_ count: Int) -> String {
             String(format: text("inbox.n_sessions"), count)

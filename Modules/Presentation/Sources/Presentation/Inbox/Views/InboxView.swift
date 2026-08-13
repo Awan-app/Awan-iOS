@@ -125,6 +125,9 @@ public struct InboxView: View {
                                         viewModel.send(.deleteTask(taskItem.id))
                                     }
                                 )
+                                .customSwipeToDelete {
+                                    viewModel.send(.deleteTask(taskItem.id))
+                                }
                             }
                         }
                     }
