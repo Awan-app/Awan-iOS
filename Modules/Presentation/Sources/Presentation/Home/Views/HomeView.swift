@@ -153,7 +153,7 @@ struct HomeView: View {
             )
             .padding(.horizontal, 16)
             .padding(.top, 8)
-            .padding(.bottom, 2)
+            .padding(.bottom, 5)
             .background(AppColors.screenBackground)
 
             ScrollView {
