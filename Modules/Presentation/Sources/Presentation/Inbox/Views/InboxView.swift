@@ -282,21 +282,6 @@ public struct InboxView: View {
         )
     }
 
-    private var taskBinding: Binding<InboxTaskItem?> {
-        Binding(
-            get: { viewModel.state.taskPendingGoalAssignment },
-            set: { if $0 == nil { viewModel.send(.dismissAddToGoalSheet) } }
-        )
-    }
-
-    private var addToGoalErrorBinding: Binding<Bool> {
-        Binding(
-            get: { viewModel.state.addToGoalFailureMessage != nil },
-            set: { if !$0 { viewModel.send(.dismissAddToGoalError) } }
-        )
-    }
-
-
     private func animatePoints(from oldValue: Int, to newValue: Int) {
         pointsAnimationTask?.cancel()
 

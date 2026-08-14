@@ -208,9 +208,7 @@ struct PresentationAssembly: Assembly {
                 userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver),
                 deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver),
-                fetchGoals: Self.resolve(FetchGoalsUseCase.self, from: resolver),
-                createEmptyGoal: Self.resolve(CreateEmptyGoalUseCase.self, from: resolver),
-                addTaskToGoal: Self.resolve(AddTaskToGoalUseCase.self, from: resolver)
+                createEmptyGoal: Self.resolve(CreateEmptyGoalUseCase.self, from: resolver)
             )
         }
 

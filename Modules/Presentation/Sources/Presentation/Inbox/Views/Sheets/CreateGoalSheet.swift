@@ -22,14 +22,10 @@ struct CreateGoalSheet: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Drag handle
-            Capsule()
-                .fill(Color.secondary.opacity(0.3))
-                .frame(width: 36, height: 4)
-                .padding(.top, 12)
-                .padding(.bottom, 8)
-
+        AppSheet(
+            sizing: .detents([.height(510), .large]),
+            backgroundColor: AppColors.screenBackground
+        ) {
             ScrollView {
                 VStack(spacing: 24) {
                     headerView
@@ -73,11 +69,11 @@ struct CreateGoalSheet: View {
                     .padding(.bottom, 32)
                 }
             }
+            .background(alignment: .top) {
+                AppCloudsHorizon(height: 220)
+                    .frame(maxWidth: .infinity)
+            }
         }
-        .background(AppColors.screenBackground)
-        .presentationDetents([.height(510), .large])
-        .presentationCornerRadius(28)
-        .presentationDragIndicator(.hidden)
         .interactiveDismissDisabled(false)
     }
 

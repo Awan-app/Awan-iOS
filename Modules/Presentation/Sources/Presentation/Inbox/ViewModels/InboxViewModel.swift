@@ -50,15 +50,6 @@ public final class InboxViewModel {
             deleteTask(id: id)
         case let .selectTopTab(tab):
             state.selectedTopTab = tab
-        case let .addTaskToGoalTapped(taskItem):
-            state.taskPendingGoalAssignment = taskItem
-            loadGoalsForSheet()
-        case let .goalSelectedForTask(goal, taskItem):
-            addTaskToGoal(goal: goal, taskItem: taskItem)
-        case .dismissAddToGoalSheet:
-            state.taskPendingGoalAssignment = nil
-        case .dismissAddToGoalError:
-            state.addToGoalFailureMessage = nil
         case .dismissError:
             state.failureMessage = nil
         case .dismissCompletionReward:
@@ -67,52 +58,6 @@ public final class InboxViewModel {
             state.completionRewardAnimation = nil
         }
     }
-
-    private func loadGoalsForSheet() {
-        guard let fetchGoals = useCases.fetchGoals else { return }
-        state.isLoadingGoals = true
-        state.availableGoals = []
-        Task { [weak self] in
-            do {
-                let goals = try await fetchGoals.execute()
-                guard let self else { return }
-                self.state.availableGoals = goals
-                self.state.isLoadingGoals = false
-            } catch {
-                guard let self else { return }
-                self.state.isLoadingGoals = false
-                self.state.addToGoalFailureMessage = error.localizedDescription
-            }
-        }
-    }
-
-    private func addTaskToGoal(goal: Goal, taskItem: InboxTaskItem) {
-        guard let addTaskToGoalUseCase = useCases.addTaskToGoal else { return }
-        state.isAddingTaskToGoal = true
-        state.taskPendingGoalAssignment = nil
-
-        let originalTasks = state.allTasks
-        state.allTasks.removeAll { $0.id == taskItem.id }
-
-        Task { [weak self] in
-            do {
-                try await addTaskToGoalUseCase.execute(goalID: goal.id, task: taskItem.rawTask)
-                guard let self else { return }
-                self.state.isAddingTaskToGoal = false
-            } catch {
-                guard let self else { return }
-                self.state.isAddingTaskToGoal = false
-                self.state.allTasks = originalTasks
-                let errorString = String(describing: error)
-                if errorString.contains("400") || errorString.contains("409") || errorString.lowercased().contains("dependenc") {
-                    self.state.addToGoalFailureMessage = "Remove this task's dependencies before moving it to another goal"
-                } else {
-                    self.state.addToGoalFailureMessage = error.localizedDescription
-                }
-            }
-        }
-    }
-
 
     private func completeTask(id: UUID) {
         guard let setTaskCompletion = useCases.setTaskCompletion,

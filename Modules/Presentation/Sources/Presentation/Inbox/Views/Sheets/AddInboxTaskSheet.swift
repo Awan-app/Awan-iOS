@@ -16,36 +16,43 @@ struct AddInboxTaskSheet: View {
     let onDismiss: () -> Void
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                if isLoading && tasks.isEmpty {
-                    VStack(spacing: 16) {
-                        ProgressView().controlSize(.large)
-                        Text(L10n.Inbox.addToGoalLoading)
-                            .font(AppFonts.subheadlineSemibold)
-                            .foregroundStyle(AppColors.textSecondary)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if tasks.isEmpty {
-                    emptyView
-                } else {
-                    ScrollView {
-                        LazyVStack(spacing: 12) {
-                            ForEach(tasks) { task in
-                                taskRow(task)
-                            }
+        AppSheet(
+            sizing: .detents([.medium, .large]),
+            backgroundColor: AppColors.screenBackground
+        ) {
+            NavigationStack {
+                VStack(spacing: 0) {
+                    if isLoading && tasks.isEmpty {
+                        VStack(spacing: 16) {
+                            ProgressView().controlSize(.large)
+                            Text(L10n.Inbox.addToGoalLoading)
+                                .font(AppFonts.subheadlineSemibold)
+                                .foregroundStyle(AppColors.textSecondary)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 16)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if tasks.isEmpty {
+                        emptyView
+                    } else {
+                        ScrollView {
+                            LazyVStack(spacing: 12) {
+                                ForEach(tasks) { task in
+                                    taskRow(task)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 16)
+                        }
                     }
                 }
+                .background(alignment: .top) {
+                    AppCloudsHorizon(height: 220)
+                        .frame(maxWidth: .infinity)
+                }
+                .background(AppColors.screenBackground.ignoresSafeArea())
+                .navigationTitle(L10n.Inbox.addToGoalSheetTitle)
+                .navigationBarTitleDisplayMode(.inline)
             }
-            .background(AppColors.screenBackground.ignoresSafeArea())
-            .navigationTitle(L10n.Inbox.addToGoalSheetTitle)
-            .navigationBarTitleDisplayMode(.inline)
         }
-        .presentationDetents([.medium, .large])
-        .presentationCornerRadius(28)
     }
 
     private func taskRow(_ task: AwanTask) -> some View {
