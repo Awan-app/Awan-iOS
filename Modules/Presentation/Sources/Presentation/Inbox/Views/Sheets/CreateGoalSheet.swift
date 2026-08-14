@@ -11,7 +11,7 @@ struct CreateGoalSheet: View {
     @State private var title: String = ""
     @State private var description: String = ""
     @State private var hasDeadline: Bool = false
-    @State private var targetDate: Date = Date().addingTimeInterval(86400 * 7)
+    @State private var targetDate: Date = Date()
 
     let isSubmitting: Bool
     let onCreateGoal: (String, String?, Date?) -> Void
@@ -87,7 +87,7 @@ struct CreateGoalSheet: View {
                         .foregroundStyle(AppColors.accentBlue)
                 )
                 .frame(width: 56, height: 56)
-                .padding(.top, 8)
+                .padding(.top, 18)
 
             Text(L10n.Goals.createTitle)
                 .font(AppFonts.title3Black)
@@ -147,9 +147,10 @@ struct CreateGoalSheet: View {
                     )
                 }
                 .buttonStyle(.plain)
-                .padding(.top, 2)
+                .padding(.top, 8)
             } else {
                 Button {
+                    targetDate = Date()
                     withAnimation(.snappy) { hasDeadline = true }
                 } label: {
                     HStack(spacing: 8) {
