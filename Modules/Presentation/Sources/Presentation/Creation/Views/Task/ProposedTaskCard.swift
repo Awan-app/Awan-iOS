@@ -98,11 +98,12 @@ struct ProposedTaskCard: View {
                     }
                 }
 
-                let hasSessions = !task.draft.sessions.isEmpty || !task.aiProposedSessions.isEmpty
+                let aiSessions = task.draft.sessions.isEmpty ? task.aiProposedSessions : []
+                let hasSessions = !task.draft.sessions.isEmpty || !aiSessions.isEmpty
                 if hasSessions {
                     ProposedTaskSessionsRow(
                         fixedSessions: task.draft.sessions,
-                        aiSessions: task.aiProposedSessions,
+                        aiSessions: aiSessions,
                         onEditSession: onEditSession
                     )
                 } else {
@@ -115,7 +116,7 @@ struct ProposedTaskCard: View {
                     )
                 }
 
-                if !task.reason.isEmpty {
+                if !aiSessions.isEmpty, !task.reason.isEmpty {
                     ProposedTaskReasonChip(reason: task.reason)
                 }
             }

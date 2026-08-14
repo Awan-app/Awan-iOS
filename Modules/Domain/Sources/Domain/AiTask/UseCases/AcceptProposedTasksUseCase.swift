@@ -18,8 +18,8 @@ public struct DefaultAcceptProposedTasksUseCase: AcceptProposedTasksUseCase {
     ) async throws -> [AwanTask] {
         let drafts = tasks.map { task in
             var draft = task.draft
-            if destination == .schedule {
-                draft.sessions += task.aiProposedSessions
+            if destination == .schedule, draft.sessions.isEmpty {
+                draft.sessions = task.aiProposedSessions
             }
             return draft
         }
