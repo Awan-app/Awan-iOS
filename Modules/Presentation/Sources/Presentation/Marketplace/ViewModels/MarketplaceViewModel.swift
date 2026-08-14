@@ -1,3 +1,6 @@
+import Combine
+import Domain
+import Common
 import Foundation
 import Observation
 
@@ -6,14 +9,36 @@ import Observation
 public final class MarketplaceViewModel {
     public var state: MarketplaceState
 
-    public init() {
+    @ObservationIgnored private let fetchStorefrontUseCase: any FetchStorefrontUseCase
+    @ObservationIgnored private let buyStoreItemUseCase: any BuyStoreItemUseCase
+    @ObservationIgnored private let equipStoreItemUseCase: any EquipStoreItemUseCase
+    @ObservationIgnored private let unequipStoreItemUseCase: (any UnequipStoreItemUseCase)?
+    @ObservationIgnored private let fetchUserPointsUseCase: any FetchUserPointsUseCase
+    @ObservationIgnored private var storefrontCancellable: AnyCancellable?
+
+    public init(
+        fetchStorefrontUseCase: any FetchStorefrontUseCase,
+        buyStoreItemUseCase: any BuyStoreItemUseCase,
+        equipStoreItemUseCase: any EquipStoreItemUseCase,
+        unequipStoreItemUseCase: (any UnequipStoreItemUseCase)? = nil,
+        fetchUserPointsUseCase: any FetchUserPointsUseCase
+    ) {
+        self.fetchStorefrontUseCase = fetchStorefrontUseCase
+        self.buyStoreItemUseCase = buyStoreItemUseCase
+        self.equipStoreItemUseCase = equipStoreItemUseCase
+        self.unequipStoreItemUseCase = unequipStoreItemUseCase
+        self.fetchUserPointsUseCase = fetchUserPointsUseCase
         self.state = MarketplaceState()
     }
 
     public func send(_ action: MarketplaceAction) {
         switch action {
-        case .appeared:
-            loadMockItems()
+        case .appeared, .retry:
+            loadUserPoints()
+            loadStoreItems()
+
+        case let .selectCategory(category):
+            state.selectedCategory = category
 
         case let .searchQueryChanged(query):
             state.searchQuery = query
@@ -27,108 +52,169 @@ public final class MarketplaceViewModel {
 
         case .resetFilters:
             state.appliedFilter = .default
-            state.pendingFilter = .default
             state.isFilterSheetPresented = false
 
         case let .selectItem(item):
-            state.selectedItem = item
+            state.selectedItemID = item.id
 
         case .dismissDetail:
-            state.selectedItem = nil
+            state.selectedItemID = nil
+
+        case let .buyItem(item):
+            buyStoreItem(item)
+
+        case let .equipItem(item):
+            equipStoreItem(item)
+
+        case let .unequipItem(item):
+            unequipStoreItem(item)
+
         }
     }
 
-    private func loadMockItems() {
-        guard state.allItems.isEmpty else { return }
-        state.allItems = Self.mockItems
+    private func loadUserPoints() {
+        let useCase = fetchUserPointsUseCase
+
+        Task { [weak self] in
+            do {
+                let points = try await useCase.execute()
+                guard let self else { return }
+                self.state.userPoints = points
+            } catch {
+                return
+            }
+        }
     }
 
-    private static let mockItems: [MarketplaceItem] = [
-        MarketplaceItem(
-            name: "Cloud Halo Frame",
-            description: "A fluffy cloud halo that surrounds your avatar with a dreamy aura.",
-            category: .frames,
-            status: .price(250),
-            symbolName: "cloud.circle.fill"
-        ),
-        MarketplaceItem(
-            name: "Neon Ring Frame",
-            description: "A vibrant neon ring that makes your avatar glow in the dark.",
-            category: .frames,
-            status: .equipped,
-            symbolName: "record.circle.fill"
-        ),
-        MarketplaceItem(
-            name: "Golden Frame",
-            description: "A premium golden frame that shows off your achievements.",
-            category: .frames,
-            status: .owned,
-            symbolName: "circle.circle.fill"
-        ),
-        MarketplaceItem(
-            name: "Wizard Cloud",
-            description: "A magical look for your loyal cloud companion.",
-            category: .skins,
-            status: .price(200),
-            symbolName: "cloud.fill",
-            isNew: true
-        ),
-        MarketplaceItem(
-            name: "Sleepy Cloud",
-            description: "A cozy bedtime look for when you've earned your rest.",
-            category: .skins,
-            status: .locked,
-            symbolName: "moon.zzz.fill"
-        ),
-        MarketplaceItem(
-            name: "Cool Cloud",
-            description: "Look cool with sunglasses on your cloud companion.",
-            category: .skins,
-            status: .price(350),
-            symbolName: "sun.max.fill"
-        ),
-        MarketplaceItem(
-            name: "Ocean Theme",
-            description: "A deep-sea themed interface with calming blue tones.",
-            category: .themes,
-            status: .equipped,
-            symbolName: "water.waves"
-        ),
-        MarketplaceItem(
-            name: "Midnight Theme",
-            description: "A dark, starry night theme perfect for late-night sessions.",
-            category: .themes,
-            status: .price(300),
-            symbolName: "moon.stars.fill"
-        ),
-        MarketplaceItem(
-            name: "Sunset Theme",
-            description: "Warm orange and pink hues inspired by a beautiful sunset.",
-            category: .themes,
-            status: .price(500),
-            symbolName: "sunset.fill"
-        ),
-        MarketplaceItem(
-            name: "Blue Spark Icon",
-            description: "A sparkling blue icon that stands out on your home screen.",
-            category: .appIcons,
-            status: .price(150),
-            symbolName: "bolt.circle.fill"
-        ),
-        MarketplaceItem(
-            name: "Moon Icon",
-            description: "A serene moon icon for a calming home screen aesthetic.",
-            category: .appIcons,
-            status: .locked,
-            symbolName: "moon.fill"
-        ),
-        MarketplaceItem(
-            name: "Star Gem Icon",
-            description: "A gem-studded star icon that shows off your premium status.",
-            category: .appIcons,
-            status: .price(250),
-            symbolName: "star.circle.fill",
-            isNew: true
-        ),
-    ]
+    private func loadStoreItems() {
+        state.isLoading = true
+        state.errorMessage = nil
+
+        let useCase = fetchStorefrontUseCase
+        storefrontCancellable = useCase.observe()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    guard let self, case let .failure(error) = completion else { return }
+                    self.state.errorMessage = error.localizedDescription
+                    self.state.isLoading = false
+                },
+                receiveValue: { [weak self] storefront in
+                    guard let self else { return }
+                    self.state.storefront = storefront
+                    self.state.errorMessage = nil
+                    self.state.isLoading = false
+                }
+            )
+    }
+
+    private func buyStoreItem(_ item: MarketplaceItem) {
+        guard state.purchasingItemID == nil else { return }
+
+        state.purchasingItemID = item.id
+        state.purchaseFeedback = nil
+
+        let useCase = buyStoreItemUseCase
+        let itemID = item.id
+
+        Task { [weak self] in
+            do {
+                let purchase = try await useCase.execute(itemID: itemID)
+
+                guard let self else { return }
+                self.state.purchasingItemID = nil
+
+                self.state.storefront.recordPurchase(purchase)
+
+                self.loadUserPoints()
+                self.state.purchaseFeedback = .success(
+                    message: L10n.Marketplace.itsYours,
+                    kind: .purchase
+                )
+                self.scheduleFeedbackDismissal()
+            } catch {
+                guard let self else { return }
+                self.state.purchasingItemID = nil
+
+                let message = GamificationErrorMessageMapper.message(for: error)
+                self.state.purchaseFeedback = .failure(message: message)
+                self.scheduleFeedbackDismissal()
+            }
+        }
+    }
+
+    private func equipStoreItem(_ item: MarketplaceItem) {
+        guard state.equippingItemID == nil else { return }
+        guard item.status == .owned || item.status == .equipped else { return }
+
+        state.equippingItemID = item.id
+        state.purchaseFeedback = nil
+
+        let useCase = equipStoreItemUseCase
+        let itemID = item.id
+        Task { [weak self] in
+            do {
+                let equippedItem = try await useCase.execute(itemID: itemID)
+
+                guard let self else { return }
+                self.state.equippingItemID = nil
+
+                self.state.storefront.recordEquipment(equippedItem)
+
+                self.state.purchaseFeedback = .success(
+                    message: L10n.Marketplace.equippedHint,
+                    kind: .equipment
+                )
+                self.scheduleFeedbackDismissal()
+            } catch {
+                guard let self else { return }
+                self.state.equippingItemID = nil
+
+                let message = GamificationErrorMessageMapper.message(for: error)
+                self.state.purchaseFeedback = .failure(message: message)
+                self.scheduleFeedbackDismissal()
+            }
+        }
+    }
+
+    private func unequipStoreItem(_ item: MarketplaceItem) {
+        guard state.equippingItemID == nil, state.unequippingItemType == nil else { return }
+        guard item.status == .equipped,
+              let itemType = item.category.storeItemType,
+              let useCase = unequipStoreItemUseCase else { return }
+
+        state.unequippingItemType = itemType
+        state.purchaseFeedback = nil
+
+        Task { [weak self] in
+            do {
+                try await useCase.execute(type: itemType)
+
+                guard let self else { return }
+                self.state.unequippingItemType = nil
+                self.state.storefront.recordUnequip(ofType: itemType)
+
+                self.state.purchaseFeedback = .success(
+                    message: L10n.Marketplace.unequippedHint,
+                    kind: .unequipment
+                )
+                self.scheduleFeedbackDismissal()
+            } catch {
+                guard let self else { return }
+                self.state.unequippingItemType = nil
+                self.state.purchaseFeedback = .unequipFailure(
+                    message: GamificationErrorMessageMapper.message(for: error)
+                )
+                self.scheduleFeedbackDismissal()
+            }
+        }
+    }
+
+    private func scheduleFeedbackDismissal() {
+        Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            guard let self else { return }
+            self.state.purchaseFeedback = nil
+        }
+    }
 }

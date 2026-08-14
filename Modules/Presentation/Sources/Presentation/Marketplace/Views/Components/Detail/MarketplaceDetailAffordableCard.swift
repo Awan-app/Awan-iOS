@@ -4,6 +4,8 @@ import SwiftUI
 struct MarketplaceDetailAffordableCard: View {
     let pts: Int
     let userPoints: Int
+    var isPurchasing: Bool = false
+    var onBuy: () -> Void = {}
 
     var body: some View {
         AppDepthSurface(
@@ -40,13 +42,19 @@ struct MarketplaceDetailAffordableCard: View {
                     }
                 }
 
-                AppButton(
-                    title: "\(L10n.Marketplace.buyFor) \(pts) \(L10n.Marketplace.pts)",
-                    icon: "star.fill",
-                    iconColor: AppColors.reward,
-                    color: AppColors.accentBlue,
-                    size: .large, onTap: {}
-                )
+                if isPurchasing {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: 48)
+                } else {
+                    AppButton(
+                        title: "\(L10n.Marketplace.buyFor) \(pts) \(L10n.Marketplace.pts)",
+                        icon: "star.fill",
+                        iconColor: AppColors.reward,
+                        color: AppColors.accentBlue,
+                        size: .large,
+                        onTap: onBuy
+                    )
+                }
 
                 HStack(spacing: 6) {
                     Image(systemName: "shield.checkered")

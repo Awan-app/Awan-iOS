@@ -27,6 +27,7 @@ struct CalendarView: View {
                         month: viewModel.state.displayedMonth,
                         selectedDate: viewModel.state.selectedDate,
                         goals: viewModel.state.goals,
+                        activityDays: viewModel.state.activityDays,
                         navigationDirection: viewModel.state.monthNavigationDirection,
                         onSelectDate: { date in
                             viewModel.send(.selectDate(date))

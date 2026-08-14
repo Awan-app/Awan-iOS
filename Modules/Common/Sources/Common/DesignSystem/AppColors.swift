@@ -18,6 +18,8 @@ public enum AppColors {
     public static let surface = asset("Surface")
     public static let infoSurface = asset("InfoSurface")
     public static let warningSurface = asset("WarningSurface")
+    public static let successSurface = asset("SuccessSurface")
+    public static let destructiveSurface = asset("DestructiveSurface")
     public static let divider = asset("Divider")
     public static let textPrimary = asset("TextPrimary")
     public static let textSecondary = asset("TextSecondary")
@@ -48,6 +50,9 @@ public enum AppColors {
     // delete its OTP-specific color assets and repoint them to use these skyGradient properties instead.
     public static let skyGradientTop = asset("SkyGradientTop")
     public static let skyGradientBottom = asset("SkyGradientBottom")
+    public static let cloudSurface = asset("CloudSurface")
+    public static let cloudDepth = asset("CloudDepth")
+    public static let cloudHighlight = asset("CloudHighlight")
 
     public static var skyGradient: LinearGradient {
         LinearGradient(
@@ -57,6 +62,14 @@ public enum AppColors {
             ],
             startPoint: .top,
             endPoint: .bottom
+        )
+    }
+
+    public static var streakGradient: LinearGradient {
+        LinearGradient(
+            colors: [reward, warning],
+            startPoint: .leading,
+            endPoint: .trailing
         )
     }
 

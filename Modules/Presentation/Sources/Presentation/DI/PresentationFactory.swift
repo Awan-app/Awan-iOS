@@ -4,58 +4,69 @@ import SwiftUI
 public struct PresentationFactory {
     private let appCoordinator: AppCoordinator
     private let authenticationState: AuthenticationState
-    private let loginViewModel: LoginViewModel
-    private let homeViewModel: HomeViewModel
-    private let dailyWheelViewModel: DailyWheelViewModel
-    private let calendarViewModel: CalendarViewModel
-    private let scheduleViewModel: ScheduleTimelineViewModel
+    private let makeLoginViewModel: () -> LoginViewModel
+    private let makeHomeViewModel: () -> HomeViewModel
+    private let makeSessionDetailsViewModel: (
+        SessionDetailsContext
+    ) -> SessionDetailsViewModel
+    private let makeDailyWheelViewModel: () -> DailyWheelViewModel
+    private let makeCalendarViewModel: () -> CalendarViewModel
+    private let makeScheduleViewModel: () -> ScheduleTimelineViewModel
     private let creationUseCases: CreationUseCases
     private let makeOtpViewModel: (OtpVerificationContext) -> OtpVerificationViewModel
-    private let onboardingViewModel: OnboardingViewModel
-    private let profileViewModel: ProfileViewModel
-    private let settingsViewModel: SettingsViewModel
-    private let dailyZonesViewModel: DailyZonesViewModel
+    private let makeOnboardingViewModel: () -> OnboardingViewModel
+    private let makeProfileViewModel: () -> ProfileViewModel
+    private let makeSettingsViewModel: () -> SettingsViewModel
+    private let makeDailyZonesViewModel: () -> DailyZonesViewModel
     private let makeUserInfoViewModel: () -> UserInfoViewModel
-    private let inboxViewModel: InboxViewModel
-    private let goalsViewModel: GoalsViewModel
-    private let marketplaceViewModel: MarketplaceViewModel
+    private let makeInboxViewModel: () -> InboxViewModel
+    private let makeGoalsViewModel: () -> GoalsViewModel
+    private let makeMarketplaceViewModel: () -> MarketplaceViewModel
+    private let makeProfileInventoryViewModel: () -> ProfileInventoryViewModel
+    private let activeViewModels = ActivePresentationViewModels()
 
     public init(
         appCoordinator: AppCoordinator,
         authenticationState: AuthenticationState,
-        loginViewModel: LoginViewModel,
-        homeViewModel: HomeViewModel,
-        dailyWheelViewModel: DailyWheelViewModel,
-        calendarViewModel: CalendarViewModel,
-        scheduleViewModel: ScheduleTimelineViewModel,
+        makeLoginViewModel: @escaping () -> LoginViewModel,
+        makeHomeViewModel: @escaping () -> HomeViewModel,
+        makeSessionDetailsViewModel: @escaping (
+            SessionDetailsContext
+        ) -> SessionDetailsViewModel,
+        makeDailyWheelViewModel: @escaping () -> DailyWheelViewModel,
+        makeCalendarViewModel: @escaping () -> CalendarViewModel,
+        makeScheduleViewModel: @escaping () -> ScheduleTimelineViewModel,
         creationUseCases: CreationUseCases,
         makeOtpViewModel: @escaping (OtpVerificationContext) -> OtpVerificationViewModel,
-        onboardingViewModel: OnboardingViewModel,
-        profileViewModel: ProfileViewModel,
-        settingsViewModel: SettingsViewModel,
-        dailyZonesViewModel: DailyZonesViewModel,
+        makeOnboardingViewModel: @escaping () -> OnboardingViewModel,
+        makeProfileViewModel: @escaping () -> ProfileViewModel,
+        makeSettingsViewModel: @escaping () -> SettingsViewModel,
+        makeDailyZonesViewModel: @escaping () -> DailyZonesViewModel,
         makeUserInfoViewModel: @escaping () -> UserInfoViewModel,
-        inboxViewModel: InboxViewModel,
-        goalsViewModel: GoalsViewModel,
-        marketplaceViewModel: MarketplaceViewModel = MarketplaceViewModel()
+        makeInboxViewModel: @escaping () -> InboxViewModel,
+        makeGoalsViewModel: @escaping () -> GoalsViewModel,
+        makeMarketplaceViewModel: @escaping () -> MarketplaceViewModel,
+        makeProfileInventoryViewModel: @escaping () -> ProfileInventoryViewModel
     ) {
         self.appCoordinator = appCoordinator
         self.authenticationState = authenticationState
-        self.loginViewModel = loginViewModel
-        self.homeViewModel = homeViewModel
-        self.dailyWheelViewModel = dailyWheelViewModel
-        self.calendarViewModel = calendarViewModel
-        self.scheduleViewModel = scheduleViewModel
+        self.makeLoginViewModel = makeLoginViewModel
+        self.makeHomeViewModel = makeHomeViewModel
+        self.makeSessionDetailsViewModel = makeSessionDetailsViewModel
+        self.makeDailyWheelViewModel = makeDailyWheelViewModel
+        self.makeCalendarViewModel = makeCalendarViewModel
+        self.makeScheduleViewModel = makeScheduleViewModel
         self.creationUseCases = creationUseCases
         self.makeOtpViewModel = makeOtpViewModel
-        self.onboardingViewModel = onboardingViewModel
-        self.profileViewModel = profileViewModel
-        self.settingsViewModel = settingsViewModel
-        self.dailyZonesViewModel = dailyZonesViewModel
+        self.makeOnboardingViewModel = makeOnboardingViewModel
+        self.makeProfileViewModel = makeProfileViewModel
+        self.makeSettingsViewModel = makeSettingsViewModel
+        self.makeDailyZonesViewModel = makeDailyZonesViewModel
         self.makeUserInfoViewModel = makeUserInfoViewModel
-        self.inboxViewModel = inboxViewModel
-        self.goalsViewModel = goalsViewModel
-        self.marketplaceViewModel = marketplaceViewModel
+        self.makeInboxViewModel = makeInboxViewModel
+        self.makeGoalsViewModel = makeGoalsViewModel
+        self.makeMarketplaceViewModel = makeMarketplaceViewModel
+        self.makeProfileInventoryViewModel = makeProfileInventoryViewModel
     }
 
     public func makeAppRootView() -> some View {
@@ -65,7 +76,7 @@ public struct PresentationFactory {
     }
 
     func makeLoginView() -> some View {
-        LoginView(viewModel: loginViewModel)
+        LoginView(viewModel: makeLoginViewModel())
     }
 
     func makeOtpVerificationView(context: OtpVerificationContext) -> some View {
@@ -73,24 +84,31 @@ public struct PresentationFactory {
     }
 
     func makeHomeView() -> some View {
-        HomeView(viewModel: homeViewModel)
+        HomeView(
+            viewModel: makeHomeViewModel(),
+            makeSessionDetailsViewModel: makeSessionDetailsViewModel,
+            onBecameActive: { activeViewModels.home = $0 }
+        )
     }
 
     func makeDailyWheelPresentationLayer(
         alwaysShowsFloatingButton: Bool
     ) -> some View {
         DailyWheelPresentationLayer(
-            viewModel: dailyWheelViewModel,
+            viewModel: makeDailyWheelViewModel(),
             alwaysShowsFloatingButton: alwaysShowsFloatingButton
         )
     }
 
     func makeScheduleTimelineView() -> some View {
-        ScheduleTimelineView(viewModel: scheduleViewModel)
+        ScheduleTimelineView(
+            viewModel: makeScheduleViewModel(),
+            onBecameActive: { activeViewModels.schedule = $0 }
+        )
     }
 
     public func refreshScheduleTimeline() {
-        scheduleViewModel.send(.appeared)
+        activeViewModels.schedule?.send(.appeared)
     }
 
     func makeGlobalCreationSheet(
@@ -102,7 +120,7 @@ public struct PresentationFactory {
             taskViewModel: CreateTaskViewModel(
                 useCases: creationUseCases,
                 speechTranscriber: LiveSpeechTranscriber(),
-                selectedDay: scheduleViewModel.state.selectedDay
+                selectedDay: activeViewModels.schedule?.state.selectedDay ?? .now
             ),
             goalViewModel: CreateGoalViewModel(
                 useCases: creationUseCases.goalDecomposition,
@@ -116,9 +134,9 @@ public struct PresentationFactory {
 
     func makeCalendarView() -> some View {
         CalendarView(
-            viewModel: calendarViewModel,
+            viewModel: makeCalendarViewModel(),
             onSelectDate: { date in
-                homeViewModel.send(.selectDay(date))
+                activeViewModels.home?.send(.selectDay(date))
             }
         )
     }
@@ -129,13 +147,13 @@ public struct PresentationFactory {
 
     func makeInboxView() -> some View {
         InboxView(
-            viewModel: inboxViewModel,
-            goalsViewModel: goalsViewModel
+            viewModel: makeInboxViewModel(),
+            goalsViewModel: makeGoalsViewModel()
         )
     }
 
     func makeMarketplaceView() -> some View {
-        MarketplaceView(viewModel: marketplaceViewModel)
+        MarketplaceView(viewModel: makeMarketplaceViewModel())
     }
 
     func makeInboxTaskDetailView(taskID: UUID) -> some View {
@@ -145,7 +163,7 @@ public struct PresentationFactory {
     }
 
     func makeGoalDetailView(goalID: UUID) -> GoalDetailView {
-        GoalDetailView(goalID: goalID, viewModel: goalsViewModel)
+        GoalDetailView(goalID: goalID, viewModel: makeGoalsViewModel())
     }
 
     func makeYouView() -> some View {
@@ -153,21 +171,21 @@ public struct PresentationFactory {
     }
 
     func makeOnboardingWelcomeView() -> some View {
-        OnboardingWelcomeView(viewModel: onboardingViewModel)
+        OnboardingWelcomeView(viewModel: makeOnboardingViewModel())
     }
 
     func makeOnboardingContainerView() -> some View {
         OnboardingContainerView(
-            viewModel: onboardingViewModel
+            viewModel: makeOnboardingViewModel()
         )
     }
 
     public func makeProfileMainView() -> some View {
-        ProfileMainView(viewModel: profileViewModel)
+        ProfileMainView(viewModel: makeProfileViewModel())
     }
 
     func makePersonalizationView() -> some View {
-        PersonalizationView(viewModel: settingsViewModel)
+        PersonalizationView(viewModel: makeSettingsViewModel())
     }
 
     func makeSettingsView() -> some View {
@@ -179,9 +197,19 @@ public struct PresentationFactory {
     }
 
     func makeDailyZonesView() -> some View {
-        DailyZonesView(viewModel: dailyZonesViewModel)
+        DailyZonesView(viewModel: makeDailyZonesViewModel())
     }
     func makeUserInfoView() -> some View {
         UserInfoView(viewModel: makeUserInfoViewModel())
     }
+
+    func makeProfileInventoryView() -> some View {
+        ProfileInventoryView(viewModel: makeProfileInventoryViewModel())
+    }
+}
+
+@MainActor
+private final class ActivePresentationViewModels {
+    weak var home: HomeViewModel?
+    weak var schedule: ScheduleTimelineViewModel?
 }

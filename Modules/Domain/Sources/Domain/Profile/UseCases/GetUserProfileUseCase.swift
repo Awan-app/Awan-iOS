@@ -3,12 +3,15 @@ import Combine
 public protocol GetUserProfileUseCase: Sendable {
     func execute() async throws -> UserProfile
     func observe() -> AnyPublisher<UserProfile, Error>
+    func refreshGamificationProgress() async throws
 }
 
 public extension GetUserProfileUseCase {
     func observe() -> AnyPublisher<UserProfile, Error> {
         AsyncValuePublisher.make { try await execute() }
     }
+
+    func refreshGamificationProgress() async throws {}
 }
 
 public struct DefaultGetUserProfileUseCase: GetUserProfileUseCase {
@@ -24,5 +27,9 @@ public struct DefaultGetUserProfileUseCase: GetUserProfileUseCase {
 
     public func observe() -> AnyPublisher<UserProfile, Error> {
         repository.observeCurrentUser()
+    }
+
+    public func refreshGamificationProgress() async throws {
+        try await repository.refreshGamificationProgress()
     }
 }

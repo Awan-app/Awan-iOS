@@ -27,9 +27,10 @@ let package = Package(
             dependencies: [
                 "Common",
                 "Domain",
-                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
-                .product(name: "Kingfisher", package: "Kingfisher")
-            ]),
+                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
+            ],
+            resources: [.process("Resources")]
+        ),
         .testTarget(
             name: "PresentationTests",
             dependencies: ["Presentation"]

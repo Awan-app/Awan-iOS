@@ -16,5 +16,6 @@ public enum InboxAction: Sendable {
     case deleteTask(UUID)
     case selectTopTab(InboxTopTab)
     case dismissError
-    case dismissStreakTransition
+    case dismissCompletionReward
+    case dismissCompletionRewardAnimation
 }

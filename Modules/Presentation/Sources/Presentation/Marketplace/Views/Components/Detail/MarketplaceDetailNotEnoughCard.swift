@@ -58,7 +58,7 @@ struct MarketplaceDetailNotEnoughCard: View {
                     Image(systemName: "bolt.fill")
                         .font(.system(size: 10, weight: .black))
                         .foregroundStyle(AppColors.warning)
-                    Text("\(deficit) pts to go")
+                    Text(L10n.Marketplace.needMorePts(deficit))
                         .font(AppFonts.caption2Bold)
                         .foregroundStyle(AppColors.warning)
                 }

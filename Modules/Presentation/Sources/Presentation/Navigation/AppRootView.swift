@@ -68,14 +68,25 @@ struct AppRootView: View {
         .task {
             authenticationState.start()
         }
-        .onChange(of: authenticationState.status) { _, status in
-            if status == .unauthenticated {
-                coordinator.authCoordinator.popToRoot()
-            }
+        .onChange(of: authenticationState.status) { previousStatus, status in
+            handleAuthenticationTransition(from: previousStatus, to: status)
         }
         .onOpenURL { url in
             GIDSignIn.sharedInstance.handle(url)
         }
+    }
+
+    private func handleAuthenticationTransition(
+        from previousStatus: AuthenticationStatus,
+        to status: AuthenticationStatus
+    ) {
+        if status == .unauthenticated {
+            coordinator.resetForAuthenticationFlow()
+            return
+        }
+
+        guard !previousStatus.isMainFlow, status.isMainFlow else { return }
+        coordinator.resetForMainFlow()
     }
 
     private var authenticationFlow: some View {
@@ -162,7 +173,7 @@ struct AppRootView: View {
                         switch route {
                         case .userInfo:   factory.makeUserInfoView()
                         case .dailyZones: factory.makeDailyZonesView().environment(appearanceManager)
-                        case .inventory:  InventoryPlaceholderView()
+                        case .inventory:  factory.makeProfileInventoryView()
                         case .personalization: factory.makePersonalizationView()
                         case .settings: factory.makeSettingsView()
                         case .aboutAwan:  factory.makeAboutAwanView()
@@ -193,10 +204,16 @@ struct AppRootView: View {
                 .environment(\.layoutDirection, currentLayoutDirection)
                 .padding(.top, 12)
                 .padding(.bottom, 6)
-                .background {
-                    AppColors.screenBackground
-                        .ignoresSafeArea(edges: .bottom)
-                }
+//                .background {
+////                    if coordinator.mainCoordinator.selectedTab == .home {
+////                        AppColors.screenBackground
+////                            .opacity(0)
+////                            .ignoresSafeArea(edges: .bottom)
+////                    } else {
+////                        AppColors.screenBackground
+////                            .ignoresSafeArea(edges: .bottom)
+////                    }
+//                }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
@@ -286,5 +303,12 @@ struct AppRootView: View {
         }
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+}
+
+private extension AuthenticationStatus {
+    var isMainFlow: Bool {
+        guard case .authenticated(let user) = self else { return false }
+        return !user.isNew
     }
 }

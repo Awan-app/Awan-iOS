@@ -138,6 +138,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(GamificationRepository.self, from: resolver)
             )
         }
+        container.register(FetchActivityDaysUseCase.self) { resolver in
+            DefaultFetchActivityDaysUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
         container.register(UpdateUserProfileUseCase.self) { resolver in
             DefaultUpdateUserProfileUseCase(
                 repository: Self.resolve(UserProfileRepository.self, from: resolver)
@@ -166,6 +171,11 @@ struct DomainAssembly: Assembly {
         }
         container.register(RescheduleSessionUseCase.self) { resolver in
             DefaultRescheduleSessionUseCase(
+                repository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
+        container.register(UpdateSessionScheduleUseCase.self) { resolver in
+            DefaultUpdateSessionScheduleUseCase(
                 repository: Self.resolve(SessionRepository.self, from: resolver)
             )
         }
@@ -382,6 +392,46 @@ struct DomainAssembly: Assembly {
         }
         container.register(ManageDailyZoneScheduleUseCase.self) { _ in
             DefaultManageDailyZoneScheduleUseCase()
+        }
+        container.register(FetchStoreItemsUseCase.self) { resolver in
+            DefaultFetchStoreItemsUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchStorefrontUseCase.self) { resolver in
+            DefaultFetchStorefrontUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(BuyStoreItemUseCase.self) { resolver in
+            DefaultBuyStoreItemUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(EquipStoreItemUseCase.self) { resolver in
+            DefaultEquipStoreItemUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchEquippedItemsUseCase.self) { resolver in
+            DefaultFetchEquippedItemsUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchUserPointsUseCase.self) { resolver in
+            DefaultFetchUserPointsUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchStoreInventoryUseCase.self) { resolver in
+            DefaultFetchStoreInventoryUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
+        }
+        container.register(UnequipStoreItemUseCase.self) { resolver in
+            DefaultUnequipStoreItemUseCase(
+                repository: Self.resolve(GamificationRepository.self, from: resolver)
+            )
         }
     }
 

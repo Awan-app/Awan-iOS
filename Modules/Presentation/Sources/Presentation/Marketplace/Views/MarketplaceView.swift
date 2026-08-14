@@ -1,3 +1,4 @@
+import Domain
 import Common
 import SwiftUI
 
@@ -13,8 +14,12 @@ public struct MarketplaceView: View {
     public var body: some View {
         let state = viewModel.state
 
-        ZStack {
+        ZStack(alignment: .top) {
             AppColors.screenBackground.ignoresSafeArea()
+
+            AppCloudsHorizon(height: 190)
+                .offset(y: 8)
+
             content(state)
         }
         .navigationBarHidden(true)
@@ -39,7 +44,7 @@ public struct MarketplaceView: View {
                     viewModel.send(.resetFilters)
                 }
             )
-            .presentationDetents([.height(410), .large])
+            .presentationDetents([.height(510), .large])
             .presentationDragIndicator(.hidden)
             .presentationBackground(AppColors.surface)
         }
@@ -50,6 +55,13 @@ public struct MarketplaceView: View {
             MarketplaceItemDetailSheet(
                 item: item,
                 userPoints: state.userPoints,
+                isPurchasing: state.purchasingItemID == item.id,
+                isEquipping: state.equippingItemID == item.id,
+                isUnequipping: state.unequippingItemType == item.category.storeItemType,
+                purchaseFeedback: state.purchaseFeedback,
+                onBuy: { viewModel.send(.buyItem(item)) },
+                onEquip: { viewModel.send(.equipItem(item)) },
+                onUnequip: { viewModel.send(.unequipItem(item)) },
                 onDismiss: { viewModel.send(.dismissDetail) }
             )
             .presentationDetents([.large])
@@ -59,33 +71,50 @@ public struct MarketplaceView: View {
     }
 
     private func content(_ state: MarketplaceState) -> some View {
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                headerRow
-                    .padding(.bottom, -6)
+        VStack(spacing: 16) {
+            headerRow
+                .padding(.bottom, -6)
 
-                MarketplacePointsCard(points: state.userPoints)
+            MarketplacePointsCard(points: state.userPoints)
 
-                searchFilterBar(state)
+            searchFilterBar(state)
 
-                if state.filteredItems.isEmpty {
-                    MarketplaceEmptyView()
-                        .padding(.top, 20)
-                } else {
-                    LazyVGrid(columns: gridColumns, spacing: 12) {
-                        ForEach(state.filteredItems) { item in
-                            MarketplaceItemCard(item: item) {
-                                viewModel.send(.selectItem(item))
+            MarketplaceCategoryChips(
+                selectedCategory: Binding(
+                    get: { state.selectedCategory },
+                    set: { viewModel.send(.selectCategory($0)) }
+                )
+            )
+
+            ScrollView {
+                LazyVStack(spacing: 12) {
+                    if state.isLoading {
+                        ProgressView()
+                            .padding(.top, 40)
+                    } else if state.errorMessage != nil {
+                        OfflineView {
+                            viewModel.send(.retry)
+                        }
+                    } else if state.filteredItems.isEmpty {
+                        MarketplaceEmptyView()
+                            .padding(.top, 20)
+                    } else {
+                        LazyVGrid(columns: gridColumns, spacing: 12) {
+                            ForEach(state.filteredItems) { item in
+                                MarketplaceItemCard(item: item) {
+                                    viewModel.send(.selectItem(item))
+                                }
                             }
                         }
                     }
                 }
+                .padding(.bottom, 120)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 120)
+            .scrollDismissesKeyboard(.interactively)
         }
-        .scrollDismissesKeyboard(.interactively)
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
     private var headerRow: some View {
@@ -95,10 +124,8 @@ public struct MarketplaceView: View {
                 .foregroundStyle(AppColors.textPrimary)
 
             Spacer()
-
-            GifImageView("Animated AWAN mascot")
-                .frame(width: 64, height: 64)
         }
+        .frame(minHeight: 64)
     }
 
     private func searchFilterBar(_ state: MarketplaceState) -> some View {
@@ -179,12 +206,12 @@ public struct MarketplaceView: View {
     }
 }
 
-#Preview("Marketplace Light") {
-    MarketplaceView(viewModel: MarketplaceViewModel())
-        .preferredColorScheme(.light)
-}
-
-#Preview("Marketplace Dark") {
-    MarketplaceView(viewModel: MarketplaceViewModel())
-        .preferredColorScheme(.dark)
-}
+//#Preview("Marketplace Light") {
+//    MarketplaceView(viewModel: MarketplaceViewModel(fetchStoreItemsUseCase: MockFetchStoreItemsUseCase()))
+//        .preferredColorScheme(.light)
+//}
+//
+//#Preview("Marketplace Dark") {
+//    MarketplaceView(viewModel: MarketplaceViewModel(fetchStoreItemsUseCase: MockFetchStoreItemsUseCase()))
+//        .preferredColorScheme(.dark)
+//}
