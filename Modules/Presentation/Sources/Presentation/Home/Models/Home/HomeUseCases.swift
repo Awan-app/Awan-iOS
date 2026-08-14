@@ -52,20 +52,14 @@ public struct HomeReadUseCases: Sendable {
 
 public struct HomeSessionUseCases: Sendable {
     public let reschedule: any RescheduleSessionUseCase
-    public let setLock: any SetSessionLockUseCase
     public let setCompletion: any SetSessionCompletionUseCase
-    public let delete: any DeleteSessionUseCase
 
     public init(
         reschedule: any RescheduleSessionUseCase,
-        setLock: any SetSessionLockUseCase,
-        setCompletion: any SetSessionCompletionUseCase,
-        delete: any DeleteSessionUseCase
+        setCompletion: any SetSessionCompletionUseCase
     ) {
         self.reschedule = reschedule
-        self.setLock = setLock
         self.setCompletion = setCompletion
-        self.delete = delete
     }
 }
 

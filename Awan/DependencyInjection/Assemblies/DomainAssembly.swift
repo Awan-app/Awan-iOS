@@ -174,6 +174,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(SessionRepository.self, from: resolver)
             )
         }
+        container.register(UpdateSessionScheduleUseCase.self) { resolver in
+            DefaultUpdateSessionScheduleUseCase(
+                repository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
         container.register(SetSessionLockUseCase.self) { resolver in
             DefaultSetSessionLockUseCase(
                 repository: Self.resolve(SessionRepository.self, from: resolver)

@@ -28,13 +28,7 @@ public enum InboxSessionFilter: String, CaseIterable, Identifiable, Sendable {
     public var id: String { rawValue }
 }
 
-public enum InboxSessionDisplayStatus: Hashable, Sendable {
-    case scheduled
-    case activeNow
-    case missed
-    case completed
-    case cancelled
-}
+public typealias InboxSessionDisplayStatus = SessionDisplayStatus
 
 public struct InboxSessionItem: Identifiable, Hashable, Sendable {
     public let id: UUID
