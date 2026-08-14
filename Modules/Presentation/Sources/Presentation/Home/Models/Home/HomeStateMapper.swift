@@ -82,6 +82,7 @@ struct HomeStateMapper {
             sessions: sessions,
             zones: zones,
             profile: profile,
+            timeZoneIdentifier: calendar.timeZone.identifier,
             displayName: profile.firstName,
             streakCount: profile.streak,
             rewardPoints: profile.points,

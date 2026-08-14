@@ -18,6 +18,8 @@ public enum AppColors {
     public static let surface = asset("Surface")
     public static let infoSurface = asset("InfoSurface")
     public static let warningSurface = asset("WarningSurface")
+    public static let successSurface = asset("SuccessSurface")
+    public static let destructiveSurface = asset("DestructiveSurface")
     public static let divider = asset("Divider")
     public static let textPrimary = asset("TextPrimary")
     public static let textSecondary = asset("TextSecondary")

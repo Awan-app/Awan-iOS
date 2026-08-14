@@ -50,27 +50,26 @@ public struct ProfileInventoryView: View {
                 set: { if $0 == nil { viewModel.send(.dismissDetail) } }
             )
         ) { item in
-            MarketplaceItemDetailSheet(
-                item: item,
-                userPoints: 0,
-                isPurchasing: false,
-                isEquipping: viewModel.equippingItemID == item.id,
-                isUnequipping: viewModel.unequippingItemType == item.category.storeItemType,
-                purchaseFeedback: nil,
-                onBuy: {},
-                onEquip: {
-                    if item.status == .owned {
-                        viewModel.send(.equipItem(item))
-                    }
-                },
-                onUnequip: {
-                    viewModel.send(.unequipItem(item))
-                },
-                onDismiss: { viewModel.send(.dismissDetail) }
-            )
-            .presentationDetents([.large])
-            .presentationDragIndicator(.visible)
-            .presentationBackground(AppColors.surface)
+            AppSheet(backgroundColor: AppColors.surface) {
+                MarketplaceItemDetailSheet(
+                    item: item,
+                    userPoints: 0,
+                    isPurchasing: false,
+                    isEquipping: viewModel.equippingItemID == item.id,
+                    isUnequipping: viewModel.unequippingItemType == item.category.storeItemType,
+                    purchaseFeedback: nil,
+                    onBuy: {},
+                    onEquip: {
+                        if item.status == .owned {
+                            viewModel.send(.equipItem(item))
+                        }
+                    },
+                    onUnequip: {
+                        viewModel.send(.unequipItem(item))
+                    },
+                    onDismiss: { viewModel.send(.dismissDetail) }
+                )
+            }
         }
     }
 

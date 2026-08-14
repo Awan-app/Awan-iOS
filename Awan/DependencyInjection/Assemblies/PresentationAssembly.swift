@@ -106,12 +106,30 @@ struct PresentationAssembly: Assembly {
                 ),
                 sessions: HomeSessionUseCases(
                     reschedule: Self.resolve(RescheduleSessionUseCase.self, from: resolver),
-                    setLock: Self.resolve(SetSessionLockUseCase.self, from: resolver),
-                    setCompletion: Self.resolve(SetSessionCompletionUseCase.self, from: resolver),
-                    delete: Self.resolve(DeleteSessionUseCase.self, from: resolver)
+                    setCompletion: Self.resolve(SetSessionCompletionUseCase.self, from: resolver)
                 )
             )
         }
+
+        container.register(SessionDetailsUseCases.self) { resolver in
+            SessionDetailsUseCases(
+                updateSchedule: Self.resolve(
+                    UpdateSessionScheduleUseCase.self,
+                    from: resolver
+                ),
+                setLock: Self.resolve(SetSessionLockUseCase.self, from: resolver),
+                delete: Self.resolve(DeleteSessionUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(SessionDetailsViewModel.self) {
+            (resolver, context: SessionDetailsContext) in
+            let useCases = Self.resolve(SessionDetailsUseCases.self, from: resolver)
+            return MainActor.assumeIsolated {
+                SessionDetailsViewModel(context: context, useCases: useCases)
+            }
+        }
+        .inObjectScope(.transient)
 
         container.register(CreationUseCases.self) { resolver in
             CreationUseCases(
@@ -368,6 +386,13 @@ struct PresentationAssembly: Assembly {
                     },
                     makeHomeViewModel: {
                         Self.resolve(HomeViewModel.self, from: resolver)
+                    },
+                    makeSessionDetailsViewModel: { context in
+                        Self.resolve(
+                            SessionDetailsViewModel.self,
+                            argument: context,
+                            from: resolver
+                        )
                     },
                     makeDailyWheelViewModel: {
                         Self.resolve(DailyWheelViewModel.self, from: resolver)

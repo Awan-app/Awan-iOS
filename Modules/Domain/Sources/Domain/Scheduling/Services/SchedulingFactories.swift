@@ -25,7 +25,8 @@ extension Session {
             zoneID: zoneID ?? self.zoneID,
             timeRange: timeRange ?? self.timeRange,
             blocking: blocking ?? self.blocking,
-            status: status ?? self.status
+            status: status ?? self.status,
+            firstCompletedAt: firstCompletedAt
         )
     }
 }

@@ -10,6 +10,7 @@ import Foundation
 public struct InboxStateMapper: Sendable {
     private let calendar: Calendar
     private let locale: Locale
+    private let sessionStatusFactory = SessionDisplayStatusFactory()
 
     public init(calendar: Calendar = .current, locale: Locale = .autoupdatingCurrent) {
         self.calendar = calendar
@@ -68,23 +69,7 @@ public struct InboxStateMapper: Sendable {
     }
 
     public func deriveSessionDisplayStatus(session: Session, now: Date) -> InboxSessionDisplayStatus {
-        switch session.status {
-        case .completed:
-            return .completed
-        case .cancelled:
-            return .cancelled
-        case .missed:
-            return .missed
-        case .planned:
-            // Scheduled session. Compute active now / missed / scheduled based on current time.
-            if now >= session.timeRange.start && now <= session.timeRange.end {
-                return .activeNow
-            } else if now > session.timeRange.end {
-                return .missed
-            } else {
-                return .scheduled
-            }
-        }
+        sessionStatusFactory.make(session: session, now: now)
     }
 
     public func formatTimeRange(start: Date, end: Date) -> String {
