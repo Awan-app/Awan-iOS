@@ -4,13 +4,16 @@ import SwiftUI
 struct GoalCreationLoadingView: View {
     let message: String
     let mascotState: AwanMascotState
+    let mascotSize: CGSize
 
     init(
         message: String,
-        mascotState: AwanMascotState = .normal
+        mascotState: AwanMascotState = .normal,
+        mascotSize: CGSize = CGSize(width: 230, height: 190)
     ) {
         self.message = message
         self.mascotState = mascotState
+        self.mascotSize = mascotSize
     }
 
     var body: some View {
@@ -20,7 +23,7 @@ struct GoalCreationLoadingView: View {
 
             VStack(spacing: 16) {
                 AwanMascotView(state: mascotState)
-                    .frame(width: 230, height: 190)
+                    .frame(width: mascotSize.width, height: mascotSize.height)
 
                 AppDepthSurface(
                     shape: .roundedRectangle(cornerRadius: 18),

@@ -34,6 +34,15 @@ struct CreateTaskState {
         }
     }
 
+    var hidesModeSwitcher: Bool {
+        switch phase {
+        case .aiLoading, .aiTasksResult:
+            true
+        case .composer, .imageUploading:
+            false
+        }
+    }
+
     mutating func startAILoading() {
         isSubmitting = true
         errorMessage = nil

@@ -25,7 +25,10 @@ struct CreateTaskView: View {
             case .composer:
                 composerView(bindableViewModel: $bindableViewModel)
             case .aiLoading:
-                GoalCreationLoadingView(message: L10n.Home.aiCreatingTask)
+                GoalCreationLoadingView(
+                    message: L10n.Home.aiCreatingTask,
+                    mascotSize: CGSize(width: 190, height: 150)
+                )
             case .aiTasksResult(let response):
                 ImageToTasksResultSheet(
                     response: response,
@@ -146,6 +149,10 @@ struct CreateTaskView: View {
                 .spring(response: 0.32, dampingFraction: 0.8),
                 value: viewModel.state.isAwanSchedulingEnabled
             )
+        }
+        .background(alignment: .top) {
+            AppCloudsHorizon(height: 220)
+                .frame(maxWidth: .infinity)
         }
         .disabled(viewModel.state.isSubmitting)
         .overlay {

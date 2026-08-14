@@ -26,7 +26,7 @@ struct GlobalCreationSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if !taskViewModel.state.requiresFullScreen
+            if !taskViewModel.state.hidesModeSwitcher
                 && !goalViewModel.state.hidesModeSwitcher {
                 CreationModeSwitcher(selectedMode: $selectedMode)
                     .padding(.horizontal, 20)
