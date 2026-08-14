@@ -243,11 +243,13 @@ struct PresentationAssembly: Assembly {
             let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
             let fetchZonesUseCase = Self.resolve(FetchZonesUseCase.self, from: resolver)
             let logoutUseCase = Self.resolve(LogoutUseCase.self, from: resolver)
+            let fetchMCPConnectionDetailsUseCase = Self.resolve(FetchMCPConnectionDetailsUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 ProfileViewModel(
                     getUserProfileUseCase: useCase,
                     fetchZonesUseCase: fetchZonesUseCase,
                     logoutUseCase: logoutUseCase,
+                    fetchMCPConnectionDetailsUseCase: fetchMCPConnectionDetailsUseCase,
                     onLogout: {
                         GoogleSignInHelper.signOut()
                     }
