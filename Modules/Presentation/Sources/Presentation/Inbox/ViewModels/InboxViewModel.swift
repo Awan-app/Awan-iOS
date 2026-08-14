@@ -50,7 +50,6 @@ public final class InboxViewModel {
             deleteTask(id: id)
         case let .selectTopTab(tab):
             state.selectedTopTab = tab
-            
         case .dismissError:
             state.failureMessage = nil
         case .dismissCompletionReward:

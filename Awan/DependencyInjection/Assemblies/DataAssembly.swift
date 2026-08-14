@@ -74,15 +74,15 @@ struct DataAssembly: Assembly {
                 remoteDataSource: Self.resolve(
                     RemoteGoalDataSource.self,
                     from: resolver
-                )
+                ),
+                remoteTaskDataSource: Self.resolve(
+                    RemoteTaskDataSource.self,
+                    from: resolver
+                ),
+                localTaskDataSource: Self.resolve(LocalTaskDataSource.self, from: resolver)
             )
         }
-//        #if DEBUG
-//        container.register(GoalDecompositionRepository.self) { _ in
-//            MockGoalDecompositionRepository()
-//        }
-//        .inObjectScope(.container)
-//        #else
+
         container.register(GoalDecompositionRepository.self) { resolver in
             DefaultGoalDecompositionRepository(
                 remoteDataSource: Self.resolve(
@@ -96,7 +96,6 @@ struct DataAssembly: Assembly {
             )
         }
         .inObjectScope(.container)
-//        #endif
         container.register(SessionRepository.self) { resolver in
             DefaultSessionRepository(
                 localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver),

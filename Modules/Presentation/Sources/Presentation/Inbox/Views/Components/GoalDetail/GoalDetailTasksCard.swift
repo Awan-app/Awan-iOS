@@ -14,6 +14,7 @@ struct GoalDetailTasksCard: View {
     let isLoading: Bool
     let failureMessage: String?
     let onRetry: () -> Void
+    var onAddTask: (() -> Void)? = nil
 
     private var independentCount: Int { tasks.filter { !$0.isDependent }.count }
     private var dependentCount: Int   { tasks.filter {  $0.isDependent }.count }
@@ -55,6 +56,9 @@ struct GoalDetailTasksCard: View {
                     failureView(failure)
                 } else if tasks.isEmpty {
                     emptyView
+                    if let onAddTask, !isLoading {
+                        addTaskButton(onAddTask)
+                    }
                 } else {
                     taskRoadmap
                 }
@@ -65,12 +69,16 @@ struct GoalDetailTasksCard: View {
     // MARK: - Sub-views
 
     private var taskRoadmap: some View {
-        LazyVStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
             ForEach(Array(tasks.enumerated()), id: \.element.id) { listIndex, item in
                 GoalDetailTaskRow(
                     item: item,
-                    isLast: listIndex == tasks.count - 1
+                    isLast: (listIndex == tasks.count - 1) && (onAddTask == nil)
                 )
+            }
+
+            if let onAddTask, !isLoading {
+                addTaskButton(onAddTask)
             }
         }
         .padding(.top, 2)
@@ -124,5 +132,34 @@ struct GoalDetailTasksCard: View {
             .font(AppFonts.subheadlineSemibold)
             .foregroundStyle(AppColors.textSecondary)
             .padding(.vertical, 8)
+    }
+
+    private func addTaskButton(_ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(alignment: .center, spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(AppColors.accentBlue.opacity(0.14))
+                        .frame(width: 28, height: 28)
+                        .overlay {
+                            Circle()
+                                .stroke(AppColors.accentBlue.opacity(0.45), lineWidth: 1.5)
+                        }
+
+                    Image(systemName: "plus")
+                        .font(.system(size: 11, weight: .black))
+                        .foregroundStyle(AppColors.accentBlue)
+                }
+                .frame(width: 32, height: 28)
+
+                Text(L10n.Home.addTask)
+                    .font(AppFonts.subheadlineBold)
+                    .foregroundStyle(AppColors.accentBlue)
+
+                Spacer()
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }

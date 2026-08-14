@@ -261,6 +261,17 @@ struct DomainAssembly: Assembly {
                 engine: Self.resolve(ScheduleEngine.self, from: resolver)
             )
         }
+        container.register(CreateEmptyGoalUseCase.self) { resolver in
+            DefaultCreateEmptyGoalUseCase(
+                repository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
+        container.register(AddTaskToGoalUseCase.self) { resolver in
+            DefaultAddTaskToGoalUseCase(
+                repository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
+
         container.register(SendGoalDecompositionMessageUseCase.self) { resolver in
             DefaultSendGoalDecompositionMessageUseCase(
                 repository: Self.resolve(

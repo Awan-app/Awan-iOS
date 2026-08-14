@@ -14,6 +14,7 @@ struct InboxTaskCard: View {
     let isCompletionDisabled: Bool
     var onCompleteTask: (() -> Void)? = nil
     var onDeleteTask: (() -> Void)? = nil
+    var onAddToGoal: (() -> Void)? = nil
 
     @State private var localExpanded: Bool
 
@@ -23,7 +24,8 @@ struct InboxTaskCard: View {
         isCompletionDisabled: Bool = false,
         onToggleExpand: @escaping () -> Void,
         onCompleteTask: (() -> Void)? = nil,
-        onDeleteTask: (() -> Void)? = nil
+        onDeleteTask: (() -> Void)? = nil,
+        onAddToGoal: (() -> Void)? = nil
     ) {
         self.taskItem = taskItem
         self.isExpanded = isExpanded
@@ -31,8 +33,10 @@ struct InboxTaskCard: View {
         self.onToggleExpand = onToggleExpand
         self.onCompleteTask = onCompleteTask
         self.onDeleteTask = onDeleteTask
+        self.onAddToGoal = onAddToGoal
         _localExpanded = State(initialValue: isExpanded)
     }
+
 
     private var isCompleted: Bool {
         taskItem.derivedStatus == .completed
@@ -98,6 +102,7 @@ struct InboxTaskCard: View {
 
                     statusBadge
                 }
+
 
                 if !taskItem.sessionItems.isEmpty {
                     Divider()
