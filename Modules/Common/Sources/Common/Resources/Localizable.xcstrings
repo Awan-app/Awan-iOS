@@ -837,6 +837,23 @@
         }
       }
     },
+    "goal_creation.accept_all_suggestions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "قبول كل الاقتراحات"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accept all suggestions"
+          }
+        }
+      }
+    },
     "goal_creation.accept_suggestion" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -905,6 +922,40 @@
         }
       }
     },
+    "goal_creation.assistant_name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أوان"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Awan"
+          }
+        }
+      }
+    },
+    "goal_creation.assistant_status" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لنحوّل هدفك إلى خطوات"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let’s shape your goal"
+          }
+        }
+      }
+    },
     "goal_creation.assigned_zone" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -939,6 +990,23 @@
         }
       }
     },
+    "goal_creation.choose_answer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اختر إجابة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose an answer"
+          }
+        }
+      }
+    },
     "goal_creation.confirm" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -952,6 +1020,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confirm and get AI session suggestions"
+          }
+        }
+      }
+    },
+    "goal_creation.confirm_accepted_sessions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تأكيد الجلسات المقبولة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm accepted sessions"
           }
         }
       }
@@ -1075,6 +1160,74 @@
         }
       }
     },
+    "goal_creation.continue_editing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "متابعة التعديل"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue editing"
+          }
+        }
+      }
+    },
+    "goal_creation.leave_as_draft" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المغادرة كمسودة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave as draft"
+          }
+        }
+      }
+    },
+    "goal_creation.leave_schedule_review_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سيظل هذا الهدف ومهامه محفوظًا كمسودة ولن تتم جدولته."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This goal and its tasks will remain as a draft and won't be scheduled."
+          }
+        }
+      }
+    },
+    "goal_creation.leave_schedule_review_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مغادرة مراجعة الجدول؟"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave schedule review?"
+          }
+        }
+      }
+    },
     "goal_creation.manual_session" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1105,6 +1258,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ask Awan to adjust the plan..."
+          }
+        }
+      }
+    },
+    "goal_creation.no_sessions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا توجد جلسات"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No sessions"
+          }
+        }
+      }
+    },
+    "goal_creation.no_sessions_added" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لم تتم إضافة جلسات بعد"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No sessions added yet"
           }
         }
       }
@@ -1330,6 +1517,57 @@
         }
       }
     },
+    "goal_creation.suggestions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الاقتراحات"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions"
+          }
+        }
+      }
+    },
+    "goal_creation.suggestions_available" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d اقتراحات متاحة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d suggestions available"
+          }
+        }
+      }
+    },
+    "goal_creation.schedule_selected_sessions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جدولة الجلسات المحددة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule selected sessions"
+          }
+        }
+      }
+    },
     "goal_creation.scheduling" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1428,6 +1666,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%d tasks still have no sessions"
+          }
+        }
+      }
+    },
+    "goal_creation.why_unscheduled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لماذا لم تتم الجدولة؟"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Why wasn’t this scheduled?"
           }
         }
       }

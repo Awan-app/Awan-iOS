@@ -77,6 +77,12 @@ struct DataAssembly: Assembly {
                 )
             )
         }
+//        #if DEBUG
+//        container.register(GoalDecompositionRepository.self) { _ in
+//            MockGoalDecompositionRepository()
+//        }
+//        .inObjectScope(.container)
+//        #else
         container.register(GoalDecompositionRepository.self) { resolver in
             DefaultGoalDecompositionRepository(
                 remoteDataSource: Self.resolve(
@@ -90,10 +96,7 @@ struct DataAssembly: Assembly {
             )
         }
         .inObjectScope(.container)
-//        container.register(GoalDecompositionRepository.self) { resolver in
-//            MockGoalDecompositionRepository()
-//        }
-//        .inObjectScope(.container)
+//        #endif
         container.register(SessionRepository.self) { resolver in
             DefaultSessionRepository(
                 localDataSource: Self.resolve(LocalSessionDataSource.self, from: resolver),

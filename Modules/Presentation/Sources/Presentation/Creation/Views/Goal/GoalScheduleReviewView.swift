@@ -11,50 +11,63 @@ struct GoalScheduleReviewView: View {
     let onUpdateSession: (UUID, Date, Date) -> Void
     let onAddManualSession: (UUID, Date, Date) -> Void
     let onRemoveManualSession: (UUID) -> Void
+    let onDismiss: () -> Void
     let onConfirm: () -> Void
 
     @State private var editor: GoalScheduleEditorContext?
+    @State private var showsDismissalConfirmation = false
 
     var body: some View {
         VStack(spacing: 0) {
-            ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 18) {
-                        header
+            ZStack(alignment: .topLeading) {
+                AppCloudsHorizon(height: 250)
+                    .frame(maxWidth: .infinity)
 
-                        ForEach(tasks) { task in
-                            GoalScheduleTaskCard(
-                                task: task,
-                                zoneNames: zoneNames,
-                                isFocused: focusedTaskID == task.id,
-                                onToggleSuggestion: onToggleSuggestion,
-                                onEditSession: { editor = .edit(session: $0) },
-                                onAddSession: {
-                                    editor = .add(
-                                        taskID: task.taskID,
-                                        estimatedDuration: task.estimatedDuration
-                                    )
-                                },
-                                onRemoveSession: onRemoveManualSession
-                            )
-                            .id(task.id)
+                ScrollViewReader { proxy in
+                    ScrollView(showsIndicators: false) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            GoalScheduleReviewHeader()
+
+                            ForEach(tasks) { task in
+                                GoalScheduleTaskCard(
+                                    task: task,
+                                    zoneNames: zoneNames,
+                                    isFocused: focusedTaskID == task.id,
+                                    onToggleSuggestion: onToggleSuggestion,
+                                    onEditSession: { editor = .edit(session: $0) },
+                                    onAddSession: {
+                                        editor = .add(
+                                            taskID: task.taskID,
+                                            estimatedDuration: task.estimatedDuration
+                                        )
+                                    },
+                                    onRemoveSession: onRemoveManualSession
+                                )
+                                .id(task.id)
+                            }
                         }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 88)
+                        .padding(.bottom, 28)
                     }
-                    .padding(.horizontal, 20)
+                    .onChange(of: focusedTaskID) { _, taskID in
+                        guard let taskID else { return }
+                        withAnimation(.snappy) {
+                            proxy.scrollTo(taskID, anchor: .center)
+                        }
+                        onFocusHandled()
+                    }
+                }
+
+                GoalScheduleReviewDismissButton(
+                    onDismiss: { showsDismissalConfirmation = true }
+                )
+                    .padding(.leading, 20)
                     .padding(.top, 16)
-                    .padding(.bottom, 28)
-                }
-                .onChange(of: focusedTaskID) { _, taskID in
-                    guard let taskID else { return }
-                    withAnimation(.snappy) {
-                        proxy.scrollTo(taskID, anchor: .center)
-                    }
-                    onFocusHandled()
-                }
             }
 
             AppButton(
-                title: L10n.GoalCreation.confirmSchedule,
+                title: L10n.GoalCreation.confirmAcceptedSessions,
                 icon: "calendar.badge.checkmark",
                 color: AppColors.accentGreen,
                 onTap: onConfirm
@@ -64,6 +77,13 @@ struct GoalScheduleReviewView: View {
             .background(AppColors.screenBackground)
         }
         .background(AppColors.screenBackground.ignoresSafeArea())
+        .background {
+            SheetDismissAttemptObserver(
+                isDismissalDisabled: true,
+                onAttempt: { showsDismissalConfirmation = true }
+            )
+        }
+        .interactiveDismissDisabled()
         .sheet(item: $editor) { context in
             GoalScheduleSessionEditorSheet(
                 context: context,
@@ -78,18 +98,21 @@ struct GoalScheduleReviewView: View {
                 onDismiss: { editor = nil }
             )
         }
-    }
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(L10n.GoalCreation.scheduleReviewTitle)
-                .font(AppFonts.title2Black)
-                .foregroundStyle(AppColors.brandDarkBlue)
-
-            Text(L10n.GoalCreation.scheduleReviewSubtitle)
-                .font(AppFonts.subheadlineSemibold)
-                .foregroundStyle(AppColors.textSecondary)
+        .alert(
+            L10n.GoalCreation.leaveScheduleReviewTitle,
+            isPresented: $showsDismissalConfirmation
+        ) {
+            Button(
+                L10n.GoalCreation.continueEditing,
+                role: .cancel
+            ) {}
+            Button(
+                L10n.GoalCreation.leaveAsDraft,
+                role: .destructive,
+                action: onDismiss
+            )
+        } message: {
+            Text(L10n.GoalCreation.leaveScheduleReviewMessage)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
