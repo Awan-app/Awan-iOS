@@ -143,6 +143,8 @@ struct SettingsView: View {
     }
 }
 
+@MainActor
+@ViewBuilder
 private func notificationOption(
     title: String,
     isSelected: Bool,
