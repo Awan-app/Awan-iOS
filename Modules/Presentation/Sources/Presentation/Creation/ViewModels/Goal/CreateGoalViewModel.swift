@@ -89,9 +89,12 @@ public final class CreateGoalViewModel {
 
     func updateSession(sessionID: UUID, start: Date, end: Date) {
         mutateSession(id: sessionID) {
+            $0.zoneID = nil
             $0.start = start
             $0.end = end
-            $0.isEdited = true
+            $0.kind = .manual
+            $0.isEdited = false
+            $0.isAccepted = true
         }
     }
 
@@ -112,6 +115,7 @@ public final class CreateGoalViewModel {
                 isEdited: false
             )
         )
+        state.scheduleTasks[taskIndex].unscheduledMessage = nil
     }
 
     func removeManualSession(sessionID: UUID) {

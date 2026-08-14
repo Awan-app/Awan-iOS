@@ -70,7 +70,8 @@ public actor MockGoalDecompositionRepository: GoalDecompositionRepository {
         isConfirmed = true
         return ConfirmedGoal(
             id: confirmedGoalID,
-            title: Self.portfolioProposal.title
+            title: Self.portfolioProposal.title,
+            tasks: Self.confirmedTasks
         )
     }
 
@@ -81,11 +82,71 @@ public actor MockGoalDecompositionRepository: GoalDecompositionRepository {
         guard isConfirmed, goalID == self.goalID else {
             throw MockGoalDecompositionError.goalNotConfirmed
         }
+        return Self.scheduleProposal(goalID: goalID)
+    }
+
+    private static func scheduleProposal(goalID: UUID) -> GoalScheduleProposal {
+        let assignedZoneID = UUID()
+        let proposedSession = GoalScheduleSession(
+            taskID: taskIDs[0],
+            taskTitle: confirmedTasks[0].title,
+            zoneID: assignedZoneID,
+            start: date(dayOffset: 1, hour: 9),
+            end: date(dayOffset: 1, hour: 9, minute: 45)
+        )
+        let manualSession = GoalScheduleSession(
+            taskID: taskIDs[1],
+            taskTitle: confirmedTasks[1].title,
+            zoneID: nil,
+            start: date(dayOffset: 1, hour: 10),
+            end: date(dayOffset: 1, hour: 10, minute: 40)
+        )
+        let noZoneSession = GoalScheduleSession(
+            taskID: taskIDs[2],
+            taskTitle: confirmedTasks[2].title,
+            zoneID: nil,
+            start: date(dayOffset: 1, hour: 11),
+            end: date(dayOffset: 1, hour: 12)
+        )
+        let overlapSession = GoalScheduleSession(
+            taskID: taskIDs[3],
+            taskTitle: confirmedTasks[3].title,
+            zoneID: assignedZoneID,
+            start: date(dayOffset: 1, hour: 13),
+            end: date(dayOffset: 1, hour: 14)
+        )
+
         return GoalScheduleProposal(
             goalID: goalID,
-            proposedSessions: [],
-            suggestions: [],
-            unscheduledTasks: []
+            proposedSessions: [proposedSession],
+            manualSessions: [manualSession],
+            suggestions: [
+                GoalScheduleSuggestion(
+                    session: noZoneSession,
+                    type: .noZone,
+                    reason: "No matching zone is available for this task. The suggested time uses unzoned free time instead.",
+                    overlap: nil
+                ),
+                GoalScheduleSuggestion(
+                    session: overlapSession,
+                    type: .overlap,
+                    reason: "This suggested session overlaps another task. Accept it only if you want both sessions at this time.",
+                    overlap: GoalScheduleOverlapInfo(
+                        taskTitle: "Team stand-up",
+                        start: date(dayOffset: 1, hour: 13, minute: 15),
+                        end: date(dayOffset: 1, hour: 13, minute: 45),
+                        mandatory: true,
+                        points: 5
+                    )
+                )
+            ],
+            unscheduledTasks: [
+                GoalScheduleUnscheduledTask(
+                    taskID: taskIDs[4],
+                    taskTitle: confirmedTasks[4].title,
+                    message: "No suitable time was found. Add a session manually or continue without this task."
+                )
+            ]
         )
     }
 
@@ -155,9 +216,70 @@ public actor MockGoalDecompositionRepository: GoalDecompositionRepository {
                 allowsTaskSplitting: false,
                 dependencyIDs: ["t3"],
                 category: nil
+            ),
+            GoalTaskProposal(
+                id: "t5",
+                title: "Prepare the launch announcement",
+                description: "Write a short announcement and prepare the final launch checklist.",
+                estimatedDuration: 30,
+                estimatedPoints: 6,
+                mandatory: false,
+                allowsTaskSplitting: false,
+                dependencyIDs: ["t4"],
+                category: nil
             )
         ]
     )
+
+    private static let taskIDs = (0..<5).map { _ in UUID() }
+
+    private static let confirmedTasks = [
+        ConfirmedGoalTask(
+            id: taskIDs[0],
+            title: "Define the portfolio story",
+            estimatedDuration: 45
+        ),
+        ConfirmedGoalTask(
+            id: taskIDs[1],
+            title: "Design the core pages",
+            estimatedDuration: 40
+        ),
+        ConfirmedGoalTask(
+            id: taskIDs[2],
+            title: "Build and populate the site",
+            estimatedDuration: 60
+        ),
+        ConfirmedGoalTask(
+            id: taskIDs[3],
+            title: "Review and launch",
+            estimatedDuration: 60
+        ),
+        ConfirmedGoalTask(
+            id: taskIDs[4],
+            title: "Prepare the launch announcement",
+            estimatedDuration: 30
+        )
+    ]
+
+    private static func date(
+        dayOffset: Int,
+        hour: Int,
+        minute: Int = 0
+    ) -> Date {
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: Date())
+        let day = calendar.date(
+            byAdding: .day,
+            value: dayOffset,
+            to: startOfToday
+        ) ?? startOfToday
+        return calendar.date(
+            bySettingHour: hour,
+            minute: minute,
+            second: 0,
+            of: day
+        ) ?? day
+    }
 }
 
 public enum MockGoalDecompositionError: LocalizedError, Sendable {

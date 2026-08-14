@@ -250,8 +250,11 @@ struct AppRootView: View {
                 factory.makeGlobalCreationSheet {
                     coordinator.mainCoordinator.dismissSheet()
                     factory.refreshScheduleTimeline()
-                } onTaskLayoutModeChanged: { isAIEnabled, isScheduleEnabled in
-                    if isAIEnabled {
+                } onTaskLayoutModeChanged: {
+                    isAIEnabled, isScheduleEnabled, requiresFullScreen in
+                    if requiresFullScreen {
+                        creationSheetDetent = .large
+                    } else if isAIEnabled {
                         creationSheetDetent = Self.compactCreationDetent
                     } else if isScheduleEnabled {
                         creationSheetDetent = Self.scheduledCreationDetent

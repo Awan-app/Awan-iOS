@@ -113,7 +113,7 @@ public struct PresentationFactory {
 
     func makeGlobalCreationSheet(
         onDismiss: @escaping () -> Void,
-        onTaskLayoutModeChanged: @escaping (Bool, Bool) -> Void,
+        onTaskLayoutModeChanged: @escaping (Bool, Bool, Bool) -> Void,
         onGoalFullScreenChanged: @escaping (Bool) -> Void
     ) -> some View {
         GlobalCreationSheet(

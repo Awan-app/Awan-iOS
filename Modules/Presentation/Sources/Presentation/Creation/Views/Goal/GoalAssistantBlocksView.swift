@@ -7,160 +7,149 @@ struct GoalAssistantBlocksView: View {
     let onOptionSelected: (String) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            AwanMascotView()
-                .frame(width: 116, height: 86)
+        VStack(alignment: .leading, spacing: 18) {
+            GoalAssistantIdentityView()
+
+            AppDepthSurface(
+                shape: .roundedRectangle(cornerRadius: 22),
+                surfaceColor: AppColors.infoSurface,
+                borderColor: AppColors.accentBlue.opacity(0.22),
+                depthColor: AppColors.accentBlue.opacity(0.18),
+                depthOffset: 5
+            ) {
+                VStack(alignment: .leading, spacing: 16) {
+                    ForEach(Array(blocks.enumerated()), id: \.offset) { index, block in
+                        switch block {
+                        case .text(let text):
+                            GoalAssistantMessageView(
+                                text: text,
+                                showsDivider: index > 0
+                            )
+                        case .question(let question):
+                            GoalAssistantMessageView(
+                                text: question.text,
+                                showsDivider: index > 0
+                            )
+                        case .proposal:
+                            EmptyView()
+                        }
+                    }
+                }
+            }
 
             ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in
-                switch block {
-                case .text(let text):
-                    replyBubble(text)
-                case .question(let question):
-                    questionView(question)
-                case .proposal:
-                    EmptyView()
+                if case .question(let question) = block {
+                    GoalAnswerOptionsView(
+                        options: question.options,
+                        onOptionSelected: onOptionSelected
+                    )
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+}
 
-    private func questionView(
-        _ question: GoalDecompositionQuestion
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            replyBubble(question.text)
+private struct GoalAssistantIdentityView: View {
+    var body: some View {
+        HStack(spacing: 12) {
+            AwanMascotView(state: .goal)
+                .frame(width: 94, height: 70)
 
-            FlowLayout(spacing: 9) {
-                ForEach(question.options, id: \.self) { option in
-                    Button {
-                        onOptionSelected(option)
-                    } label: {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(L10n.GoalCreation.assistantName.uppercased())
+                    .font(AppFonts.captionHeavy)
+                    .foregroundStyle(AppColors.accentBlue)
+
+                Text(L10n.GoalCreation.assistantStatus)
+                    .font(AppFonts.headlineBlack)
+                    .foregroundStyle(AppColors.brandDarkBlue)
+            }
+        }
+    }
+}
+
+private struct GoalAssistantMessageView: View {
+    let text: String
+    let showsDivider: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            if showsDivider {
+                Rectangle()
+                    .fill(AppColors.accentBlue.opacity(0.14))
+                    .frame(height: 1)
+            }
+
+            Text(text)
+                .font(AppFonts.bodySemibold)
+                .foregroundStyle(AppColors.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
+
+private struct GoalAnswerOptionsView: View {
+    let options: [String]
+    let onOptionSelected: (String) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 11) {
+            Label(
+                L10n.GoalCreation.chooseAnswer,
+                systemImage: "sparkles"
+            )
+            .font(AppFonts.captionHeavy)
+            .foregroundStyle(AppColors.accentBlue)
+            .textCase(.uppercase)
+
+            ForEach(options, id: \.self) { option in
+                Button {
+                    onOptionSelected(option)
+                } label: {
+                    HStack(spacing: 12) {
                         Text(option)
                             .font(AppFonts.subheadlineHeavy)
-                            .foregroundStyle(AppColors.accentBlue)
+                            .foregroundStyle(AppColors.textPrimary)
                             .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 11)
-                            .background(
-                                AppColors.surface,
-                                in: Capsule()
-                            )
-                            .overlay {
-                                Capsule()
-                                    .stroke(
-                                        AppColors.accentBlue.opacity(0.45),
-                                        lineWidth: 1.5
-                                    )
-                            }
+
+                        Spacer(minLength: 8)
+
+                        Image(systemName: "arrow.right")
+                            .font(AppFonts.captionIconBlack)
+                            .foregroundStyle(AppColors.accentBlue)
                     }
-                    .buttonStyle(.plain)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 13)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .buttonStyle(
+                    AppDepthButtonStyle(
+                        shape: .roundedRectangle(cornerRadius: 14),
+                        surfaceColor: AppColors.surface,
+                        borderColor: AppColors.accentBlue.opacity(0.32),
+                        depthColor: AppColors.accentBlueDepth.opacity(0.7),
+                        depthOffset: 3
+                    )
+                )
             }
         }
-    }
-
-    private func replyBubble(_ text: String) -> some View {
-        Text(text)
-            .font(AppFonts.bodySemibold)
-            .foregroundStyle(AppColors.textPrimary)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 13)
-            .background(
-                AppColors.infoSurface,
-                in: RoundedRectangle(cornerRadius: 18, style: .continuous)
-            )
-            .overlay(alignment: .topLeading) {
-                Circle()
-                    .fill(AppColors.infoSurface)
-                    .frame(width: 15, height: 15)
-                    .offset(x: 18, y: -5)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
-
-private struct FlowLayout: Layout {
-    let spacing: CGFloat
-
-    func sizeThatFits(
-        proposal: ProposedViewSize,
-        subviews: Subviews,
-        cache: inout ()
-    ) -> CGSize {
-        let result = layout(
-            proposal: proposal,
-            subviews: subviews
-        )
-        return result.size
-    }
-
-    func placeSubviews(
-        in bounds: CGRect,
-        proposal: ProposedViewSize,
-        subviews: Subviews,
-        cache: inout ()
-    ) {
-        let result = layout(
-            proposal: ProposedViewSize(
-                width: bounds.width,
-                height: proposal.height
-            ),
-            subviews: subviews
-        )
-
-        for (index, point) in result.points.enumerated() {
-            subviews[index].place(
-                at: CGPoint(x: bounds.minX + point.x, y: bounds.minY + point.y),
-                proposal: ProposedViewSize(result.sizes[index])
-            )
-        }
-    }
-
-    private func layout(
-        proposal: ProposedViewSize,
-        subviews: Subviews
-    ) -> (size: CGSize, points: [CGPoint], sizes: [CGSize]) {
-        let maxWidth = proposal.width ?? .infinity
-        var points: [CGPoint] = []
-        var sizes: [CGSize] = []
-        var x: CGFloat = 0
-        var y: CGFloat = 0
-        var rowHeight: CGFloat = 0
-
-        for subview in subviews {
-            let idealSize = subview.sizeThatFits(.unspecified)
-            let proposedWidth = maxWidth.isFinite
-                ? min(idealSize.width, maxWidth)
-                : idealSize.width
-            let size = subview.sizeThatFits(
-                ProposedViewSize(width: proposedWidth, height: nil)
-            )
-            if x > 0, x + size.width > maxWidth {
-                x = 0
-                y += rowHeight + spacing
-                rowHeight = 0
-            }
-            points.append(CGPoint(x: x, y: y))
-            sizes.append(size)
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
-        }
-
-        return (
-            CGSize(
-                width: proposal.width ?? max(0, x - spacing),
-                height: y + rowHeight
-            ),
-            points,
-            sizes
-        )
-    }
-}
-
 
 #Preview {
-    GoalAssistantBlocksView(blocks: [], onOptionSelected: { _ in })
-        .padding()
+    GoalAssistantBlocksView(
+        blocks: [
+            .text("I’ll turn that into a plan you can actually finish."),
+            .question(
+                GoalDecompositionQuestion(
+                    text: "How much time would you like to give yourself?",
+                    options: ["2–4 weeks", "1–2 months", "3–6 months"]
+                )
+            )
+        ],
+        onOptionSelected: { _ in }
+    )
+    .padding()
+    .background(AppColors.screenBackground)
 }

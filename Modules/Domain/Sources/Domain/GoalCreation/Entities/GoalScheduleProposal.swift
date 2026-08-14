@@ -3,17 +3,20 @@ import Foundation
 public struct GoalScheduleProposal: Equatable, Sendable {
     public let goalID: UUID
     public let proposedSessions: [GoalScheduleSession]
+    public let manualSessions: [GoalScheduleSession]
     public let suggestions: [GoalScheduleSuggestion]
     public let unscheduledTasks: [GoalScheduleUnscheduledTask]
 
     public init(
         goalID: UUID,
         proposedSessions: [GoalScheduleSession],
+        manualSessions: [GoalScheduleSession] = [],
         suggestions: [GoalScheduleSuggestion],
         unscheduledTasks: [GoalScheduleUnscheduledTask]
     ) {
         self.goalID = goalID
         self.proposedSessions = proposedSessions
+        self.manualSessions = manualSessions
         self.suggestions = suggestions
         self.unscheduledTasks = unscheduledTasks
     }

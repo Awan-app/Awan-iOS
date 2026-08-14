@@ -3,17 +3,25 @@ import Domain
 import SwiftUI
 
 struct CreateGoalView: View {
+    private static let contentAnimation = Animation.easeInOut(duration: 0.28)
+    private static let contentTransition = AnyTransition.opacity.combined(
+        with: .scale(scale: 0.985)
+    )
+
     @State private var viewModel: CreateGoalViewModel
 
+    private let onDismiss: () -> Void
     private let onGoalScheduled: () -> Void
     private let onFullScreenChanged: (Bool) -> Void
 
     init(
         viewModel: CreateGoalViewModel,
+        onDismiss: @escaping () -> Void,
         onGoalScheduled: @escaping () -> Void,
         onFullScreenChanged: @escaping (Bool) -> Void
     ) {
         _viewModel = State(initialValue: viewModel)
+        self.onDismiss = onDismiss
         self.onGoalScheduled = onGoalScheduled
         self.onFullScreenChanged = onFullScreenChanged
     }
@@ -27,7 +35,10 @@ struct CreateGoalView: View {
                 case .starter:
                     starterView(text: $bindableViewModel.state.prompt)
                 case .loading:
-                    GoalCreationLoadingView(message: L10n.GoalCreation.planning)
+                    GoalCreationLoadingView(
+                        message: L10n.GoalCreation.planning,
+                        mascotState: .goal
+                    )
                 case .conversation(let blocks):
                     conversationView(
                         blocks: blocks,
@@ -46,9 +57,15 @@ struct CreateGoalView: View {
                         onConfirm: confirmGoal
                     )
                 case .confirmingGoal:
-                    GoalCreationLoadingView(message: L10n.GoalCreation.scheduling)
+                    GoalCreationLoadingView(
+                        message: L10n.GoalCreation.scheduling,
+                        mascotState: .goal
+                    )
                 case .requestingSchedule:
-                    GoalCreationLoadingView(message: L10n.GoalCreation.requestingSchedule)
+                    GoalCreationLoadingView(
+                        message: L10n.GoalCreation.requestingSchedule,
+                        mascotState: .goal
+                    )
                 case .scheduleReview:
                     GoalScheduleReviewView(
                         tasks: viewModel.state.scheduleTasks,
@@ -59,14 +76,20 @@ struct CreateGoalView: View {
                         onUpdateSession: viewModel.updateSession,
                         onAddManualSession: viewModel.addManualSession,
                         onRemoveManualSession: viewModel.removeManualSession,
+                        onDismiss: onDismiss,
                         onConfirm: confirmSchedule
                     )
                 case .confirmingSchedule:
-                    GoalCreationLoadingView(message: L10n.GoalCreation.confirmingSchedule)
+                    GoalCreationLoadingView(
+                        message: L10n.GoalCreation.confirmingSchedule,
+                        mascotState: .goal
+                    )
                 case .scheduleFailure(let message):
                     scheduleFailureView(message: message)
                 }
             }
+            .id(viewModel.state.phase.transitionID)
+            .transition(Self.contentTransition)
             .disabled(viewModel.state.showsUnscheduledDialog)
 
             if viewModel.state.showsUnscheduledDialog {
@@ -76,7 +99,7 @@ struct CreateGoalView: View {
                     onContinue: continueWithoutUnscheduledTasks,
                     onCancel: viewModel.dismissUnscheduledDialog
                 )
-                .transition(.opacity.combined(with: .scale(scale: 0.96)))
+                .transition(Self.contentTransition)
                 .zIndex(1)
             }
         }
@@ -90,10 +113,8 @@ struct CreateGoalView: View {
         } message: {
             Text(viewModel.state.errorMessage ?? L10n.Common.pleaseTryAgain)
         }
-        .animation(
-            .snappy(duration: 0.22),
-            value: viewModel.state.showsUnscheduledDialog
-        )
+        .animation(Self.contentAnimation, value: viewModel.state.phase.transitionID)
+        .animation(Self.contentAnimation, value: viewModel.state.showsUnscheduledDialog)
     }
 
     private func starterView(text: Binding<String>) -> some View {
@@ -105,6 +126,10 @@ struct CreateGoalView: View {
             .padding(.horizontal, 20)
             .padding(.top, 8)
             .padding(.bottom, 28)
+        }
+        .background(alignment: .top) {
+            AppCloudsHorizon(height: 220)
+                .frame(maxWidth: .infinity)
         }
     }
 
@@ -120,6 +145,10 @@ struct CreateGoalView: View {
                 )
                 .padding(.horizontal, 20)
                 .padding(.vertical, 18)
+            }
+            .background(alignment: .top) {
+                AppCloudsHorizon(height: 220)
+                    .frame(maxWidth: .infinity)
             }
 
             composer(text: text, placeholder: L10n.GoalCreation.replyPlaceholder)

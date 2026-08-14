@@ -11,25 +11,46 @@ enum GoalScheduleReviewSessionKind: Equatable {
 struct GoalScheduleReviewSession: Identifiable, Equatable {
     let id: UUID
     let taskID: UUID
-    let zoneID: UUID?
+    var zoneID: UUID?
     var start: Date
     var end: Date
-    let kind: GoalScheduleReviewSessionKind
+    var kind: GoalScheduleReviewSessionKind
     var isAccepted: Bool
     var isEdited: Bool
 
     var isIncluded: Bool {
-        switch kind {
+        return switch kind {
         case .noZone, .overlap:
-            isAccepted
+            isEdited || isAccepted
         case .proposed, .manual:
             true
         }
     }
 
     var isManual: Bool {
+        if isManuallyEditedSuggestion { return true }
         if case .manual = kind { return true }
         return false
+    }
+
+    var isSuggestion: Bool {
+        guard !isManuallyEditedSuggestion else { return false }
+        return switch kind {
+        case .noZone, .overlap:
+            true
+        case .proposed, .manual:
+            false
+        }
+    }
+
+    var isManuallyEditedSuggestion: Bool {
+        guard isEdited else { return false }
+        return switch kind {
+        case .noZone, .overlap:
+            true
+        case .proposed, .manual:
+            false
+        }
     }
 }
 
@@ -39,10 +60,18 @@ struct GoalScheduleReviewTask: Identifiable, Equatable {
     let title: String
     let estimatedDuration: Int
     var sessions: [GoalScheduleReviewSession]
-    let unscheduledMessage: String?
+    var unscheduledMessage: String?
 
     var isUnresolved: Bool {
-        unscheduledMessage != nil && !sessions.contains(where: \.isManual)
+        !sessions.contains(where: \.isIncluded)
+    }
+
+    var scheduledSessions: [GoalScheduleReviewSession] {
+        sessions.filter { !$0.isSuggestion }
+    }
+
+    var suggestionSessions: [GoalScheduleReviewSession] {
+        sessions.filter(\.isSuggestion)
     }
 }
 
@@ -62,7 +91,12 @@ enum GoalScheduleReviewMapper {
             title: String,
             unscheduledMessage: String? = nil
         ) {
-            guard tasksByID[taskID] == nil else { return }
+            if tasksByID[taskID] != nil {
+                if let unscheduledMessage {
+                    tasksByID[taskID]?.unscheduledMessage = unscheduledMessage
+                }
+                return
+            }
             let confirmed = confirmedTasks[taskID]
             tasksByID[taskID] = GoalScheduleReviewTask(
                 taskID: taskID,
@@ -84,6 +118,22 @@ enum GoalScheduleReviewMapper {
                     start: session.start,
                     end: session.end,
                     kind: .proposed,
+                    isAccepted: true,
+                    isEdited: false
+                )
+            )
+        }
+
+        for session in proposal.manualSessions {
+            register(taskID: session.taskID, title: session.taskTitle)
+            tasksByID[session.taskID]?.sessions.append(
+                GoalScheduleReviewSession(
+                    id: session.id,
+                    taskID: session.taskID,
+                    zoneID: session.zoneID,
+                    start: session.start,
+                    end: session.end,
+                    kind: .manual,
                     isAccepted: true,
                     isEdited: false
                 )
