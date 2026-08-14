@@ -456,10 +456,12 @@ public enum L10n {
         public static var noZone: String { value("goal_creation.no_zone") }
         public static var suggestions: String { value("goal_creation.suggestions") }
         public static var acceptSuggestion: String { value("goal_creation.accept_suggestion") }
+        public static var acceptAllSuggestions: String { value("goal_creation.accept_all_suggestions") }
         public static var originalConflict: String { value("goal_creation.original_conflict") }
         public static var edited: String { value("goal_creation.edited") }
         public static var unscheduledSection: String { value("goal_creation.unscheduled_section") }
         public static var noSessionsAdded: String { value("goal_creation.no_sessions_added") }
+        public static var noSessions: String { value("goal_creation.no_sessions") }
         public static var whyUnscheduled: String { value("goal_creation.why_unscheduled") }
         public static var addSession: String { value("goal_creation.add_session") }
         public static var removeSession: String { value("goal_creation.remove_session") }
@@ -471,6 +473,7 @@ public enum L10n {
         public static var unresolvedMessage: String { value("goal_creation.unresolved_message") }
         public static var addSessions: String { value("goal_creation.add_sessions") }
         public static var continueWithoutThem: String { value("goal_creation.continue_without_them") }
+        public static var scheduleSelectedSessions: String { value("goal_creation.schedule_selected_sessions") }
         public static var sessionDuration: String { value("goal_creation.session_duration") }
         public static var optional: String { value("goal_creation.optional") }
         public static var leaveScheduleReviewTitle: String { value("goal_creation.leave_schedule_review_title") }
@@ -480,6 +483,10 @@ public enum L10n {
 
         public static func unresolvedTitle(_ count: Int) -> String {
             String(format: value("goal_creation.unresolved_title"), count)
+        }
+
+        public static func suggestionsAvailable(_ count: Int) -> String {
+            String(format: value("goal_creation.suggestions_available"), count)
         }
 
         private static func value(_ key: String) -> String {

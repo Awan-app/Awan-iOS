@@ -94,8 +94,9 @@ struct CreateGoalView: View {
 
             if viewModel.state.showsUnscheduledDialog {
                 UnscheduledTasksDialog(
-                    taskTitles: viewModel.state.unresolvedTasks.map(\.title),
+                    tasks: viewModel.state.unresolvedTasks,
                     onAddSessions: viewModel.focusFirstUnscheduledTask,
+                    onAcceptAllSuggestions: acceptAllSuggestions,
                     onContinue: continueWithoutUnscheduledTasks,
                     onCancel: viewModel.dismissUnscheduledDialog
                 )
@@ -262,6 +263,14 @@ struct CreateGoalView: View {
     private func continueWithoutUnscheduledTasks() {
         Task {
             if await viewModel.continueWithoutUnscheduledTasks() {
+                onGoalScheduled()
+            }
+        }
+    }
+
+    private func acceptAllSuggestions() {
+        Task {
+            if await viewModel.acceptAllSuggestionsAndConfirm() {
                 onGoalScheduled()
             }
         }

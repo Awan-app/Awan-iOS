@@ -70,6 +70,17 @@ public final class CreateGoalViewModel {
         return await confirmSchedule()
     }
 
+    func acceptAllSuggestionsAndConfirm() async -> Bool {
+        for taskIndex in state.scheduleTasks.indices {
+            for sessionIndex in state.scheduleTasks[taskIndex].sessions.indices
+            where state.scheduleTasks[taskIndex].sessions[sessionIndex].isSuggestion {
+                state.scheduleTasks[taskIndex].sessions[sessionIndex].isAccepted = true
+            }
+        }
+        state.showsUnscheduledDialog = false
+        return await confirmSchedule()
+    }
+
     func focusFirstUnscheduledTask() {
         state.showsUnscheduledDialog = false
         state.focusedUnscheduledTaskID = state.unresolvedTasks.first?.taskID

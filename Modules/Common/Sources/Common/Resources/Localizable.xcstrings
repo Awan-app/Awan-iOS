@@ -837,6 +837,23 @@
         }
       }
     },
+    "goal_creation.accept_all_suggestions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "قبول كل الاقتراحات"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accept all suggestions"
+          }
+        }
+      }
+    },
     "goal_creation.accept_suggestion" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1245,6 +1262,23 @@
         }
       }
     },
+    "goal_creation.no_sessions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا توجد جلسات"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No sessions"
+          }
+        }
+      }
+    },
     "goal_creation.no_sessions_added" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1496,6 +1530,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suggestions"
+          }
+        }
+      }
+    },
+    "goal_creation.suggestions_available" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d اقتراحات متاحة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d suggestions available"
+          }
+        }
+      }
+    },
+    "goal_creation.schedule_selected_sessions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جدولة الجلسات المحددة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule selected sessions"
           }
         }
       }
