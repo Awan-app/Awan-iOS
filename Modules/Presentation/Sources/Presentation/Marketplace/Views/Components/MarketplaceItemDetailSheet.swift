@@ -19,13 +19,6 @@ struct MarketplaceItemDetailSheet: View {
             ZStack(alignment: .topTrailing) {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 18) {
-                        Capsule()
-                            .fill(Color.secondary.opacity(0.35))
-                            .frame(width: 38, height: 4)
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, 12)
-                            .padding(.bottom, 8)
-
                         heroImage
 
                         Text(categoryTitle)
@@ -48,6 +41,7 @@ struct MarketplaceItemDetailSheet: View {
                         statusCard
                     }
                     .padding(.horizontal, 20)
+                    .padding(.top, 20)
                     .padding(.bottom, 40)
                 }
 
@@ -161,9 +155,9 @@ struct MarketplaceItemDetailSheet: View {
     )
     Color.gray.opacity(0.3).ignoresSafeArea()
         .sheet(isPresented: .constant(true)) {
-            MarketplaceItemDetailSheet(item: item, userPoints: 1_240, onDismiss: {})
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
+            AppSheet(backgroundColor: AppColors.surface) {
+                MarketplaceItemDetailSheet(item: item, userPoints: 1_240, onDismiss: {})
+            }
         }
 }
 
@@ -174,9 +168,9 @@ struct MarketplaceItemDetailSheet: View {
     )
     Color.gray.opacity(0.3).ignoresSafeArea()
         .sheet(isPresented: .constant(true)) {
-            MarketplaceItemDetailSheet(item: item, userPoints: 800, onDismiss: {})
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
+            AppSheet(backgroundColor: AppColors.surface) {
+                MarketplaceItemDetailSheet(item: item, userPoints: 800, onDismiss: {})
+            }
         }
 }
 
@@ -187,9 +181,9 @@ struct MarketplaceItemDetailSheet: View {
     )
     Color.gray.opacity(0.3).ignoresSafeArea()
         .sheet(isPresented: .constant(true)) {
-            MarketplaceItemDetailSheet(item: item, userPoints: 1_240, onDismiss: {})
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
+            AppSheet(backgroundColor: AppColors.surface) {
+                MarketplaceItemDetailSheet(item: item, userPoints: 1_240, onDismiss: {})
+            }
         }
 }
 
@@ -200,9 +194,9 @@ struct MarketplaceItemDetailSheet: View {
     )
     Color.gray.opacity(0.3).ignoresSafeArea()
         .sheet(isPresented: .constant(true)) {
-            MarketplaceItemDetailSheet(item: item, userPoints: 1_240, onDismiss: {})
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
+            AppSheet(backgroundColor: AppColors.surface) {
+                MarketplaceItemDetailSheet(item: item, userPoints: 1_240, onDismiss: {})
+            }
         }
 }
 
@@ -213,8 +207,8 @@ struct MarketplaceItemDetailSheet: View {
     )
     Color.gray.opacity(0.3).ignoresSafeArea()
         .sheet(isPresented: .constant(true)) {
-            MarketplaceItemDetailSheet(item: item, userPoints: 1_240, onDismiss: {})
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
+            AppSheet(backgroundColor: AppColors.surface) {
+                MarketplaceItemDetailSheet(item: item, userPoints: 1_240, onDismiss: {})
+            }
         }
 }
