@@ -22,6 +22,8 @@ public protocol RemoteProfileDataSource: Sendable {
     func resetStreak() async throws -> UserProgressResponseDTO
     func awardPoints(_ request: UpdatePointsRequestDTO) async throws -> UserProgressResponseDTO
     func deductPoints(_ request: UpdatePointsRequestDTO) async throws -> UserProgressResponseDTO
+
+    func getMCPConnectionDetails() async throws -> MCPConnectionDetailsResponseDTO
 }
 
 public final class DefaultRemoteProfileDataSource: RemoteProfileDataSource {
@@ -81,5 +83,9 @@ public final class DefaultRemoteProfileDataSource: RemoteProfileDataSource {
 
     public func deductPoints(_ request: UpdatePointsRequestDTO) async throws -> UserProgressResponseDTO {
         try await networkService.request(ProfileEndpoint.deductPoints(request))
+    }
+
+    public func getMCPConnectionDetails() async throws -> MCPConnectionDetailsResponseDTO {
+        try await networkService.request(ProfileEndpoint.getMCPConnectionDetails)
     }
 }

@@ -102,6 +102,13 @@ struct ProfileMainView: View {
                 }
             )
 
+            if viewModel.isMCPLoading || viewModel.mcpConnectionText != nil {
+                MCPConnectionDetailsSection(
+                    mcpText: viewModel.mcpConnectionText,
+                    isLoading: viewModel.isMCPLoading
+                )
+            }
+
             VStack(alignment: .leading, spacing: 12) {
                 SectionHeaderLabel(
                     title: L10n.Profile.more,
@@ -176,7 +183,8 @@ struct ProfileMainView: View {
         viewModel: ProfileViewModel(
             getUserProfileUseCase: MockGetUserProfileUseCase(),
             fetchZonesUseCase: MockFetchZonesUseCase(),
-            logoutUseCase: LogoutUseCase(repository: MockAuthRepository())
+            logoutUseCase: LogoutUseCase(repository: MockAuthRepository()),
+            fetchMCPConnectionDetailsUseCase: MockFetchMCPConnectionDetailsUseCase()
         )
     )
     .environment(AppCoordinator())

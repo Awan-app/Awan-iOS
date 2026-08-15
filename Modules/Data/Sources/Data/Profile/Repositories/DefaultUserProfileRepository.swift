@@ -125,4 +125,9 @@ public struct DefaultUserProfileRepository: UserProfileRepository {
             maxStreak: progress.maxStreak
         )
     }
+
+    public func fetchMCPConnectionDetails() async throws -> MCPConnectionDetails {
+        let response = try await remoteDataSource.getMCPConnectionDetails()
+        return MCPConnectionDetails(mcpUrl: response.mcpUrl, clientId: response.clientId)
+    }
 }

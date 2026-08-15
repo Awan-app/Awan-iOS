@@ -9,6 +9,7 @@ import AwaNetwork
 enum ProfileEndpoint: APIEndpoint {
 
     case getProfile
+    case getMCPConnectionDetails
     case updateName(UpdateNameRequestDTO)
     case updateBirthDate(UpdateBirthDateRequestDTO)
     case updateProfilePartial(UpdateProfilePartialRequestDTO)
@@ -32,6 +33,8 @@ enum ProfileEndpoint: APIEndpoint {
         switch self {
         case .getProfile, .updateProfilePartial:
             return "/users/me"
+        case .getMCPConnectionDetails:
+            return "/mcp/settings/connection-details"
         case .updateProfilePicture:
             return "/users/me/profile/picture"
         case .updateName:
@@ -59,7 +62,7 @@ enum ProfileEndpoint: APIEndpoint {
 
     var method: HTTPMethod {
         switch self {
-        case .getProfile:
+        case .getProfile, .getMCPConnectionDetails:
             return .get
         case .updateName, .updateBirthDate, .updateProfilePartial, .updateProfilePicture,
              .updateTimezone, .updateSessionSettings, .updateSleepSchedule, .updateSchedulingType,
@@ -83,7 +86,7 @@ enum ProfileEndpoint: APIEndpoint {
         case .updateSchedulingType(let request): return request
         case .awardPoints(let request): return request
         case .deductPoints(let request): return request
-        case .getProfile, .incrementStreak, .resetStreak, .updateProfilePicture: return nil
+        case .getProfile, .getMCPConnectionDetails, .incrementStreak, .resetStreak, .updateProfilePicture: return nil
         }
     }
 

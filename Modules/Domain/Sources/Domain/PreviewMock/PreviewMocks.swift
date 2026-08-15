@@ -151,6 +151,13 @@ public struct MockCreateCategoryUseCase: CreateCategoryUseCase {
     }
 }
 
+public struct MockFetchMCPConnectionDetailsUseCase: FetchMCPConnectionDetailsUseCase {
+    public init() {}
+    public func execute() async throws -> MCPConnectionDetails {
+        MCPConnectionDetails(mcpUrl: "https://awanproduction.up.railway.app/mcp", clientId: "awan-mcp")
+    }
+}
+
 public struct MockFetchTemplatesUseCase: FetchTemplatesUseCase {
     public init() {}
     public func execute() async throws -> [Template] {

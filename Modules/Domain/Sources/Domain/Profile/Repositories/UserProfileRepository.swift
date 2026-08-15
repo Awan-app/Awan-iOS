@@ -12,6 +12,7 @@ public protocol UserProfileRepository: Sendable {
     func updateWakeUpSchedule(_ wakeUpTime: String) async throws -> UserProfile
     func updateSleepSchedule(wakeUpTime: String, sleepTime: String) async throws -> UserProfile
     func refreshGamificationProgress() async throws
+    func fetchMCPConnectionDetails() async throws -> MCPConnectionDetails
 }
 
 public extension UserProfileRepository {

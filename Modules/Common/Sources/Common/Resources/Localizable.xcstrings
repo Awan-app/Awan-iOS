@@ -7688,6 +7688,23 @@
         }
       }
     },
+    "profile.copy_mcp_connection_details" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نسخ تفاصيل اتصال MCP"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy MCP Connection Details"
+          }
+        }
+      }
+    },
     "profile.daily_zones" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7854,6 +7871,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Equipped Items"
+          }
+        }
+      }
+    },
+    "profile.failed_load_mcp_connection" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فشل تحميل تفاصيل الاتصال."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to load connection details."
           }
         }
       }
@@ -8160,6 +8194,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Max streak"
+          }
+        }
+      }
+    },
+    "profile.mcp_connection_details" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تفاصيل اتصال MCP"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP Connection Details"
           }
         }
       }
