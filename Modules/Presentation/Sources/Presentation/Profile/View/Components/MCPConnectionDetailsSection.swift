@@ -15,7 +15,7 @@ struct MCPConnectionDetailsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             SectionHeaderLabel(
-                title: "MCP Connection Details",
+                title: L10n.Profile.mcpConnectionDetails,
                 accentColor: AppColors.accentBlue
             )
             
@@ -47,9 +47,9 @@ struct MCPConnectionDetailsSection: View {
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Copy MCP Connection Details")
+                        .accessibilityLabel(L10n.Profile.copyMcpConnectionDetails)
                     } else {
-                        Text("Failed to load connection details.")
+                        Text(L10n.Profile.failedLoadMcpConnection)
                             .font(Font.caption)
                             .foregroundStyle(AppColors.textSecondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
