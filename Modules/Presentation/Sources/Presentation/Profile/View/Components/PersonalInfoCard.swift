@@ -13,6 +13,7 @@ import Domain
 
 struct PersonalInfoCard: View {
     let imageUrl: String?
+    let frameImageUrl: String?
     let name: String
     let email: String
     let onEdit: () -> Void
@@ -23,7 +24,10 @@ struct PersonalInfoCard: View {
 
             DepthCardContainer {
                 HStack(spacing: 14) {
-                    ProfileAvatarView(imageUrl: imageUrl)
+                    ProfileAvatarView(
+                        imageUrl: imageUrl,
+                        frameImageUrl: frameImageUrl
+                    )
                     ProfileNameEmailView(name: name, email: email)
                     Spacer(minLength: 8)
                     ProfileEditButton(onTap: onEdit)
@@ -38,6 +42,7 @@ struct PersonalInfoCard: View {
 #Preview("PersonalInfoCard – Light") {
     PersonalInfoCard(
         imageUrl: nil,
+        frameImageUrl: nil,
         name: UserProfile.mock.firstName,
         email: UserProfile.mock.email,
         onEdit: {}
@@ -50,6 +55,7 @@ struct PersonalInfoCard: View {
 #Preview("PersonalInfoCard – Dark") {
     PersonalInfoCard(
         imageUrl: nil,
+        frameImageUrl: nil,
         name: UserProfile.mock.firstName,
         email: UserProfile.mock.email,
         onEdit: {}

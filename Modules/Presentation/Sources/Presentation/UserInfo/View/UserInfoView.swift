@@ -72,6 +72,7 @@ public struct UserInfoView: View {
         }
         .task {
             viewModel.observeUserProfile()
+            await viewModel.refreshEquippedFrame()
         }
         
         // MARK: - Full-screen loading overlay

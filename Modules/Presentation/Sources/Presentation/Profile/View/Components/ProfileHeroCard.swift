@@ -3,6 +3,7 @@ import SwiftUI
 
 struct ProfileHeroCard: View {
     let avatarUrl: String?
+    let frameImageUrl: String?
     let name: String
     let email: String
     let points: Int
@@ -39,7 +40,11 @@ struct ProfileHeroCard: View {
         if dynamicTypeSize.isAccessibilitySize {
             VStack(alignment: .leading, spacing: 14) {
                 HStack {
-                    ProfileAvatarView(imageUrl: avatarUrl, size: 56)
+                    ProfileAvatarView(
+                        imageUrl: avatarUrl,
+                        frameImageUrl: frameImageUrl,
+                        size: 56
+                    )
                     Spacer()
                     ProfileEditButton(onTap: onEdit)
                 }
@@ -48,7 +53,11 @@ struct ProfileHeroCard: View {
             }
         } else {
             HStack(spacing: 16) {
-                ProfileAvatarView(imageUrl: avatarUrl, size: 56)
+                ProfileAvatarView(
+                    imageUrl: avatarUrl,
+                    frameImageUrl: frameImageUrl,
+                    size: 56
+                )
                 ProfileNameEmailView(name: name, email: email)
                 Spacer(minLength: 4)
                 ProfileEditButton(onTap: onEdit)
@@ -60,6 +69,7 @@ struct ProfileHeroCard: View {
 #Preview("Profile Hero Light") {
     ProfileHeroCard(
         avatarUrl: nil,
+        frameImageUrl: nil,
         name: "Awan User",
         email: "hello@awan.app",
         points: 1_240,
@@ -75,6 +85,7 @@ struct ProfileHeroCard: View {
 #Preview("Profile Hero Dark") {
     ProfileHeroCard(
         avatarUrl: nil,
+        frameImageUrl: nil,
         name: "Awan User",
         email: "hello@awan.app",
         points: 1_240,

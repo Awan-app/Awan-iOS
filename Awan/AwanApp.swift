@@ -56,6 +56,12 @@ struct AwanApp: App {
             presentationFactory.makeAppRootView()
             .environment(languageManager)
             .environment(appearanceManager)
+            .environment(
+                \.appRemoteImageRequestModifier,
+                AppRemoteImageRequestModifier { request in
+                    BackendImageRequestAuthorizer.authorize(request)
+                }
+            )
             .environment(\.locale, Locale(identifier: languageManager.currentLanguage.rawValue))
             .environment(\.layoutDirection, languageManager.currentLanguage == .arabic ? .rightToLeft : .leftToRight)
             .preferredColorScheme(appearanceManager.currentAppearance.colorScheme)

@@ -36,7 +36,7 @@ enum HomeRemoteMapper {
                 id: eqDto.item.id,
                 name: eqDto.item.name,
                 description: eqDto.item.description ?? "",
-                image: eqDto.item.image,
+                image: GamificationImageURLMapper.string(from: eqDto.item.image),
                 info: eqDto.item.info,
                 price: eqDto.item.price,
                 version: eqDto.item.version,

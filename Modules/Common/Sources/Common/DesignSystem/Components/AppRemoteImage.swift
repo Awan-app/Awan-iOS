@@ -1,7 +1,35 @@
-import SwiftUI
+import Foundation
 import Kingfisher
+import SwiftUI
+
+public struct AppRemoteImageRequestModifier: Sendable {
+    fileprivate static let identity = AppRemoteImageRequestModifier { $0 }
+
+    private let modifyRequest: @Sendable (URLRequest) -> URLRequest
+
+    public init(_ modifyRequest: @escaping @Sendable (URLRequest) -> URLRequest) {
+        self.modifyRequest = modifyRequest
+    }
+
+    fileprivate func modify(_ request: URLRequest) -> URLRequest {
+        modifyRequest(request)
+    }
+}
+
+private struct AppRemoteImageRequestModifierKey: EnvironmentKey {
+    static let defaultValue = AppRemoteImageRequestModifier.identity
+}
+
+public extension EnvironmentValues {
+    var appRemoteImageRequestModifier: AppRemoteImageRequestModifier {
+        get { self[AppRemoteImageRequestModifierKey.self] }
+        set { self[AppRemoteImageRequestModifierKey.self] = newValue }
+    }
+}
 
 public struct AppRemoteImage<Placeholder: View>: View {
+    @Environment(\.appRemoteImageRequestModifier) private var requestModifier
+
     private let url: URL?
     private let contentMode: SwiftUI.ContentMode
     private let placeholder: () -> Placeholder
@@ -31,8 +59,13 @@ public struct AppRemoteImage<Placeholder: View>: View {
     }
 
     public var body: some View {
+        let imageRequestModifier = requestModifier
+
         if let url, !isFailed {
             KFImage(url)
+                .requestModifier { request in
+                    request = imageRequestModifier.modify(request)
+                }
                 .onFailure { _ in
                     Task { @MainActor in
                         isFailed = true

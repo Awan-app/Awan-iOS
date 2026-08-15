@@ -11,7 +11,7 @@ public enum StoreItemMapper {
             id: dto.id,
             name: dto.name,
             description: dto.description,
-            image: dto.image,
+            image: GamificationImageURLMapper.string(from: dto.image),
             info: dto.info,
             price: dto.price,
             version: dto.version,

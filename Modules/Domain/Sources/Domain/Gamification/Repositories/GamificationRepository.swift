@@ -13,6 +13,7 @@ public protocol GamificationRepository: Sendable {
     func equipStoreItem(itemID: String) async throws -> EquippedItem
     func unequipStoreItem(type: StoreItemType) async throws
     func fetchEquippedItems() async throws -> [EquippedItem]
+    func observeEquippedItems() -> AnyPublisher<[EquippedItem], Error>
     func fetchStoreInventory() async throws -> [InventoryItem]
     func observeStoreInventory() -> AnyPublisher<[InventoryItem], Error>
     func fetchUserPoints() async throws -> Int
@@ -32,5 +33,9 @@ public extension GamificationRepository {
 
     func observeStoreInventory() -> AnyPublisher<[InventoryItem], Error> {
         AsyncValuePublisher.make { try await fetchStoreInventory() }
+    }
+
+    func observeEquippedItems() -> AnyPublisher<[EquippedItem], Error> {
+        AsyncValuePublisher.make { try await fetchEquippedItems() }
     }
 }

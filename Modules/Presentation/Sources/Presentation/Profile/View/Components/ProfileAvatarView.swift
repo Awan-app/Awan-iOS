@@ -10,18 +10,28 @@ import Common
 
 struct ProfileAvatarView: View {
     let imageUrl: String?
+    let frameImageUrl: String?
     var size: CGFloat = 56
 
+    init(
+        imageUrl: String?,
+        frameImageUrl: String? = nil,
+        size: CGFloat = 56
+    ) {
+        self.imageUrl = imageUrl
+        self.frameImageUrl = frameImageUrl
+        self.size = size
+    }
+
     var body: some View {
-        AppRemoteImage(urlString: imageUrl, contentMode: .fill) {
-            placeholder
+        FramedProfileAvatar(
+            frameImageURL: frameImageUrl,
+            size: size
+        ) {
+            AppRemoteImage(urlString: imageUrl, contentMode: .fill) {
+                placeholder
+            }
         }
-        .frame(width: size, height: size)
-        .clipShape(Circle())
-        .overlay(
-            Circle()
-                .stroke(AppColors.accentBlue.opacity(0.25), lineWidth: 2.5)
-        )
     }
     private var placeholder: some View {
         Image(systemName: "person.fill")

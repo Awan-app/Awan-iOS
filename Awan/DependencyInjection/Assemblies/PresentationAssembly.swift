@@ -266,11 +266,13 @@ struct PresentationAssembly: Assembly {
         container.register(ProfileViewModel.self) { resolver in
             let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
             let fetchZonesUseCase = Self.resolve(FetchZonesUseCase.self, from: resolver)
+            let fetchEquippedItemsUseCase = Self.resolve(FetchEquippedItemsUseCase.self, from: resolver)
             let logoutUseCase = Self.resolve(LogoutUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 ProfileViewModel(
                     getUserProfileUseCase: useCase,
                     fetchZonesUseCase: fetchZonesUseCase,
+                    fetchEquippedItemsUseCase: fetchEquippedItemsUseCase,
                     logoutUseCase: logoutUseCase,
                     onLogout: {
                         GoogleSignInHelper.signOut()
@@ -308,11 +310,13 @@ struct PresentationAssembly: Assembly {
             let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
             let updateUseCase = Self.resolve(UpdateUserProfileUseCase.self, from: resolver)
             let updatePictureUseCase = Self.resolve(UpdateProfilePictureUseCase.self, from: resolver)
+            let fetchEquippedItemsUseCase = Self.resolve(FetchEquippedItemsUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 UserInfoViewModel(
                     getUserProfileUseCase: useCase,
                     updateUserProfileUseCase: updateUseCase,
-                    updateProfilePictureUseCase: updatePictureUseCase
+                    updateProfilePictureUseCase: updatePictureUseCase,
+                    fetchEquippedItemsUseCase: fetchEquippedItemsUseCase
                 )
             }
         }

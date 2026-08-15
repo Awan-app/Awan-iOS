@@ -20,6 +20,7 @@ public final class ProfileViewModel {
     private(set) var streak = 0
     private(set) var maxStreak = 0
     private(set) var profilePictureUrl: String?
+    private(set) var frameImageUrl: String?
     private(set) var dailyZones: [Zone] = []
     private(set) var areDailyZonesReady = false
     private(set) var isLoggingOut = false
@@ -27,20 +28,24 @@ public final class ProfileViewModel {
     var showLogoutError = false
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let fetchZonesUseCase: FetchZonesUseCase
+    private let fetchEquippedItemsUseCase: (any FetchEquippedItemsUseCase)?
     private let logoutUseCase: LogoutUseCase
     private let onLogout: (() -> Void)?
     @ObservationIgnored private var zonesCancellable: AnyCancellable?
     @ObservationIgnored private var profileCancellable: AnyCancellable?
+    @ObservationIgnored private var equippedItemsCancellable: AnyCancellable?
 
     public init(
         getUserProfileUseCase: GetUserProfileUseCase,
         fetchZonesUseCase: FetchZonesUseCase,
+        fetchEquippedItemsUseCase: (any FetchEquippedItemsUseCase)? = nil,
         logoutUseCase: LogoutUseCase,
         onLogout: (() -> Void)? = nil
 
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.fetchZonesUseCase = fetchZonesUseCase
+        self.fetchEquippedItemsUseCase = fetchEquippedItemsUseCase
         self.logoutUseCase = logoutUseCase
         self.onLogout = onLogout
         
@@ -57,17 +62,9 @@ public final class ProfileViewModel {
 
         do {
             let profile = try await getUserProfileUseCase.execute()
-            userName = [profile.firstName, profile.lastName]
-                .filter { !$0.isEmpty }
-                .joined(separator: " ")
-            userEmail = profile.email
-            points = profile.points
-            streak = profile.streak
-            maxStreak = profile.maxStreak
-            profilePictureUrl = profile.profilePictureUrl
-            loadState = .content
             updateProfileState(with: profile)
             observeUserProfile()
+            observeEquippedItems()
             observeDailyZones()
         } catch is CancellationError {
             return
@@ -93,6 +90,18 @@ public final class ProfileViewModel {
         }
 
         isLoggingOut = false
+    }
+
+    public func refreshEquippedFrame() async {
+        guard let fetchEquippedItemsUseCase else { return }
+
+        do {
+            _ = try await fetchEquippedItemsUseCase.execute()
+        } catch is CancellationError {
+            return
+        } catch {
+            // The profile remains usable when the optional frame request fails.
+        }
     }
 
     private func observeUserProfile() {
@@ -121,7 +130,24 @@ public final class ProfileViewModel {
         points = profile.points
         streak = profile.streak
         maxStreak = profile.maxStreak
+        profilePictureUrl = profile.profilePictureUrl
         loadState = .content
+    }
+
+    private func observeEquippedItems() {
+        guard let fetchEquippedItemsUseCase else { return }
+
+        equippedItemsCancellable?.cancel()
+        equippedItemsCancellable = fetchEquippedItemsUseCase.observeOrEmpty()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { [weak self] equippedItems in
+                    self?.frameImageUrl = equippedItems
+                        .first { $0.type == .frame }?
+                        .item.image
+                }
+            )
     }
 
     private func observeDailyZones() {

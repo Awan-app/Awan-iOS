@@ -13,6 +13,7 @@ public enum SchedulingPersistence {
             CategoryModel.self,
             StoreItemModel.self,
             InventoryItemModel.self,
+            EquippedItemModel.self,
         ])
     }
 }

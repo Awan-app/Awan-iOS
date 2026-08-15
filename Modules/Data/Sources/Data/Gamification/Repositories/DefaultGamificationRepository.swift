@@ -60,7 +60,9 @@ public final class DefaultGamificationRepository: GamificationRepository {
     public func equipStoreItem(itemID: String) async throws -> EquippedItem {
         do {
             let dto = try await remoteDataSource.equipStoreItem(itemID: itemID)
-            return EquippedItemMapper.map(dto)
+            let item = EquippedItemMapper.map(dto)
+            try? await localGamificationDataSource.upsertEquippedItem(item)
+            return item
         } catch {
             throw map(error)
         }
@@ -69,6 +71,7 @@ public final class DefaultGamificationRepository: GamificationRepository {
     public func unequipStoreItem(type: StoreItemType) async throws {
         do {
             try await remoteDataSource.unequipStoreItem(type: type.rawValue)
+            try? await localGamificationDataSource.deleteEquippedItem(type: type)
         } catch {
             throw map(error)
         }
@@ -77,10 +80,23 @@ public final class DefaultGamificationRepository: GamificationRepository {
     public func fetchEquippedItems() async throws -> [EquippedItem] {
         do {
             let dtos = try await remoteDataSource.getEquippedItems()
-            return dtos.map { EquippedItemMapper.map($0) }
+            let items = dtos.map { EquippedItemMapper.map($0) }
+            try await localGamificationDataSource.replaceEquippedItems(items)
+            return items
         } catch {
             throw map(error)
         }
+    }
+
+    public func observeEquippedItems() -> AnyPublisher<[EquippedItem], Error> {
+        let local = localGamificationDataSource.observeEquippedItems()
+        let remote = AsyncValuePublisher.make { try await self.fetchEquippedItems() }
+            .catch { _ in Empty<[EquippedItem], Error>() }
+            .eraseToAnyPublisher()
+        return local
+            .merge(with: remote)
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
 
     public func fetchStoreInventory() async throws -> [InventoryItem] {

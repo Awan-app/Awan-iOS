@@ -31,4 +31,11 @@ public struct DefaultFetchEquippedItemsUseCase: FetchEquippedItemsUseCase {
     public func execute() async throws -> [EquippedItem] {
         try await repository.fetchEquippedItems()
     }
+
+    public func observeOrEmpty() -> AnyPublisher<[EquippedItem], Error> {
+        repository.observeEquippedItems()
+            .replaceError(with: [])
+            .setFailureType(to: Error.self)
+            .eraseToAnyPublisher()
+    }
 }

@@ -55,7 +55,7 @@ enum DailyWheelMapper {
                     id: $0.id,
                     name: $0.name,
                     description: $0.description,
-                    imageURL: $0.image.flatMap(URL.init(string:)),
+                    imageURL: GamificationImageURLMapper.url(from: $0.image),
                     info: $0.info,
                     price: $0.price,
                     version: $0.version,

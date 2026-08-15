@@ -95,8 +95,10 @@ public struct ProfileInventoryView: View {
                             viewModel.send(.selectItem(item))
                         }
                     )
+                    .padding(.bottom, 16)
 
                     ownedItemsSection
+                        .padding(.bottom, 16)
 
                     ProfileLockedItemsSection(
                         lockedItems: viewModel.displayedLockedItems,

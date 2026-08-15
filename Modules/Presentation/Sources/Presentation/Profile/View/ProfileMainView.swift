@@ -24,6 +24,7 @@ struct ProfileMainView: View {
                 }
                 .refreshable {
                     await viewModel.load()
+                    await viewModel.refreshEquippedFrame()
                 }
             }
         }
@@ -50,6 +51,9 @@ struct ProfileMainView: View {
         .task {
             await viewModel.load()
         }
+        .onAppear {
+            Task { await viewModel.refreshEquippedFrame() }
+        }
     }
 
     @ViewBuilder
@@ -74,6 +78,7 @@ struct ProfileMainView: View {
         VStack(spacing: 14) {
             ProfileHeroCard(
                 avatarUrl: viewModel.profilePictureUrl,
+                frameImageUrl: viewModel.frameImageUrl,
                 name: viewModel.userName,
                 email: viewModel.userEmail,
                 points: viewModel.points,
