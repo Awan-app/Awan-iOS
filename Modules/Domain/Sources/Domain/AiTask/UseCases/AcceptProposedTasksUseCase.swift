@@ -1,3 +1,4 @@
+import Foundation
 public protocol AcceptProposedTasksUseCase: Sendable {
     func execute(
         _ tasks: [ProposedTask],
@@ -18,8 +19,25 @@ public struct DefaultAcceptProposedTasksUseCase: AcceptProposedTasksUseCase {
     ) async throws -> [AwanTask] {
         let drafts = tasks.map { task in
             var draft = task.draft
-            if destination == .schedule, draft.sessions.isEmpty {
-                draft.sessions = task.aiProposedSessions
+            if destination == .schedule {
+                if !draft.sessions.isEmpty {
+
+                } else if !task.aiProposedSessions.isEmpty {
+                    draft.sessions = task.aiProposedSessions
+                } else {
+                    let duration = draft.task.estimatedDuration > 0 ? draft.task.estimatedDuration : 60
+                    let now = Date()
+                    let sessionEnd = now.addingTimeInterval(Double(duration * 60))
+                    draft.sessions = [
+                        ProposedSession(
+                            id: UUID(),
+                            zoneId: nil,
+                            start: now,
+                            end: sessionEnd,
+                            status: "SCHEDULED"
+                        )
+                    ]
+                }
             }
             return draft
         }
