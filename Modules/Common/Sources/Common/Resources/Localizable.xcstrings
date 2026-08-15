@@ -4713,6 +4713,57 @@
         }
       }
     },
+    "inbox.no_matches_found" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا توجد مهام مطابقة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No matching tasks"
+          }
+        }
+      }
+    },
+    "inbox.try_adjusting_query" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جرب تعديل كلمة البحث."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try adjusting your search query."
+          }
+        }
+      }
+    },
+    "inbox.add_to_goal_empty_inbox" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا توجد مهام في صندوق الوارد لإضافتها حالياً."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Inbox has no tasks to add right now."
+          }
+        }
+      }
+    },
     "inbox.search_placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7174,6 +7225,227 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Long tasks can be draining. "
+          }
+        }
+      }
+    },
+    "onboarding.notification_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "هل تريد تنبيهاً لطيفاً\nعندما يحين الوقت؟"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Want a gentle nudge\nwhen it's time?"
+          }
+        }
+      }
+    },
+    "onboarding.notification_preview_app_name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أوان"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Awan"
+          }
+        }
+      }
+    },
+    "onboarding.notification_preview_timestamp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الآن"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "now"
+          }
+        }
+      }
+    },
+    "onboarding.notification_preview_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يبدأ العمل خلال 5 دقائق — مراجعة التصميم أولاً."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Work starts in 5 min — Design review is up first."
+          }
+        }
+      }
+    },
+    "onboarding.notification_reason1_bold" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فقط عند بدء الفترة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only when a block starts"
+          }
+        }
+      }
+    },
+    "onboarding.notification_reason1_muted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "— لا إزعاج طوال اليوم."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "— no buzzing all day."
+          }
+        }
+      }
+    },
+    "onboarding.notification_reason2_bold" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ابق في حالة تركيز"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stay in flow"
+          }
+        }
+      }
+    },
+    "onboarding.notification_reason2_muted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "— تذكيرات لطيفة لإبقائك على المسار."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "— gentle reminders to keep you on track."
+          }
+        }
+      }
+    },
+    "onboarding.notification_reason3_bold" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "قابلة للتخصيص"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customizable"
+          }
+        }
+      }
+    },
+    "onboarding.notification_reason3_muted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "— يمكنك دائماً إيقافها لاحقاً."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "— you can always turn these off later."
+          }
+        }
+      }
+    },
+    "onboarding.notification_system_disclaimer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سيطلب النظام الإذن تالياً — هذا فقط لتوضيح السبب."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The system will ask next — this is just so you know why."
+          }
+        }
+      }
+    },
+    "onboarding.turn_on_nudges" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تفعيل التنبيهات"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TURN ON NUDGES"
+          }
+        }
+      }
+    },
+    "onboarding.task_creation_error" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خطأ في إنشاء المهمة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Task Creation Error"
           }
         }
       }
