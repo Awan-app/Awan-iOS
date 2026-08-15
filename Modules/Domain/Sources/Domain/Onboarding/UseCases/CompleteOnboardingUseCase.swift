@@ -1,5 +1,6 @@
 public protocol CompleteOnboardingUseCase: Sendable {
     func execute(_ request: CompleteOnboardingRequest) async throws -> UserProfile
+    func markCompleted() throws
 }
 
 public struct CompleteOnboardingUseCaseImpl: CompleteOnboardingUseCase {
@@ -11,5 +12,9 @@ public struct CompleteOnboardingUseCaseImpl: CompleteOnboardingUseCase {
 
     public func execute(_ request: CompleteOnboardingRequest) async throws -> UserProfile {
         try await repository.completeOnboarding(request)
+    }
+
+    public func markCompleted() throws {
+        try repository.markOnboardingCompleted()
     }
 }

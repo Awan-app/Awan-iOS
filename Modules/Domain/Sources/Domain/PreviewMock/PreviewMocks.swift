@@ -23,8 +23,9 @@ public extension DailyWheelSegment {
 public struct MockCompleteOnboardingUseCase: CompleteOnboardingUseCase {
     public init() {}
     public func execute(_ request: CompleteOnboardingRequest) async throws -> UserProfile {
-        fatalError("Not implemented in preview mock")
+        UserProfile.mock
     }
+    public func markCompleted() throws {}
 }
 
 public struct MockCreateAITaskUseCase: CreateAITaskUseCase {

@@ -19,12 +19,13 @@ public final class OnboardingRepository: OnboardingRepositoryProtocol {
             let response = try await remoteDataSource.completeOnboarding(
                 OnboardingMapper.toDTO(request)
             )
-            let profile = try OnboardingMapper.toDomain(response)
-            try authSessionDataSource.markOnboardingCompleted()
-
-            return profile
+            return try OnboardingMapper.toDomain(response)
         } catch {
             throw OnboardingErrorMapper.map(error)
         }
+    }
+
+    public func markOnboardingCompleted() throws {
+        try authSessionDataSource.markOnboardingCompleted()
     }
 }
