@@ -55,9 +55,10 @@ public struct UserInfoView: View {
                 } label: {
                     Image(systemName: "chevron.backward")
                         .font(.body.weight(.semibold))
-                        .foregroundColor(AppColors.accentBlue)
+                        .foregroundColor(viewModel.isSaving ? AppColors.textSecondary : AppColors.accentBlue)
                         .environment(\.layoutDirection, languageManager.currentLanguage == .arabic ? .rightToLeft : .leftToRight)
                 }
+                .disabled(viewModel.isSaving)
             }
             ToolbarItem(placement: .principal) {
                 Text(L10n.UserInfo.title)
@@ -73,28 +74,55 @@ public struct UserInfoView: View {
             viewModel.observeUserProfile()
         }
         
+        // MARK: - Full-screen loading overlay
+        if viewModel.isSaving {
+            Color.black.opacity(0.3)
+                .ignoresSafeArea()
+                .allowsHitTesting(true)
+                .overlay {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .tint(.white)
+                        .scaleEffect(1.5)
+                        .padding(24)
+                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                }
+                .transition(.opacity)
+                .zIndex(2)
+        }
+        
+        // MARK: - Toast overlay
         if viewModel.showToast, let message = viewModel.toastMessage {
             VStack {
                 Spacer()
-                Text(message)
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                HStack(spacing: 8) {
+                    Image(systemName: viewModel.toastIsSuccess ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                    Text(message)
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                }
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .background(Color.red)
+                    .background(viewModel.toastIsSuccess ? AppColors.accentGreen : Color.red)
                     .cornerRadius(8)
                     .shadow(radius: 4)
                     .padding(.bottom, 24)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             withAnimation {
                                 viewModel.showToast = false
+                            }
+                            if viewModel.toastIsSuccess {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    dismiss()
+                                }
                             }
                         }
                     }
             }
-            .zIndex(1)
+            .zIndex(3)
         }
         }
     }

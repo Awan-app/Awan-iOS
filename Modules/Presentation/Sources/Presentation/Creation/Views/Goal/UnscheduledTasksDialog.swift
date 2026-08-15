@@ -2,12 +2,15 @@ import Common
 import SwiftUI
 
 struct UnscheduledTasksDialog: View {
-    let taskTitles: [String]
+    let tasks: [GoalScheduleReviewTask]
     let onAddSessions: () -> Void
+    let onAcceptAllSuggestions: () -> Void
     let onContinue: () -> Void
     let onCancel: () -> Void
 
     var body: some View {
+        let hasSuggestions = tasks.contains { !$0.suggestionSessions.isEmpty }
+
         ZStack {
             AppColors.shadow
                 .opacity(0.56)
@@ -37,7 +40,7 @@ struct UnscheduledTasksDialog: View {
                         )
 
                     VStack(spacing: 8) {
-                        Text(L10n.GoalCreation.unresolvedTitle(taskTitles.count))
+                        Text(L10n.GoalCreation.unresolvedTitle(tasks.count))
                             .font(AppFonts.title3Black)
                             .foregroundStyle(AppColors.textPrimary)
                             .multilineTextAlignment(.center)
@@ -49,9 +52,18 @@ struct UnscheduledTasksDialog: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
-                    taskList
+                    UnscheduledTaskList(tasks: tasks)
 
                     VStack(spacing: 14) {
+                        if hasSuggestions {
+                            AppButton(
+                                title: L10n.GoalCreation.acceptAllSuggestions,
+                                icon: "checkmark.circle.fill",
+                                color: AppColors.accentPurple,
+                                onTap: onAcceptAllSuggestions
+                            )
+                        }
+
                         AppButton(
                             title: L10n.GoalCreation.addSessions,
                             icon: "calendar.badge.plus",
@@ -60,7 +72,11 @@ struct UnscheduledTasksDialog: View {
                         )
 
                         Button(action: onContinue) {
-                            Text(L10n.GoalCreation.continueWithoutThem)
+                            Text(
+                                hasSuggestions
+                                    ? L10n.GoalCreation.scheduleSelectedSessions
+                                    : L10n.GoalCreation.continueWithoutThem
+                            )
                                 .font(AppFonts.subheadlineHeavy)
                                 .foregroundStyle(AppColors.accentBlue)
                                 .frame(maxWidth: .infinity)
@@ -87,22 +103,16 @@ struct UnscheduledTasksDialog: View {
             .padding(.vertical, 20)
         }
     }
+}
 
-    private var taskList: some View {
-        ScrollView(showsIndicators: taskTitles.count > 3) {
+private struct UnscheduledTaskList: View {
+    let tasks: [GoalScheduleReviewTask]
+
+    var body: some View {
+        ScrollView(showsIndicators: tasks.count > 3) {
             LazyVStack(alignment: .leading, spacing: 10) {
-                ForEach(Array(taskTitles.enumerated()), id: \.offset) { _, title in
-                    HStack(alignment: .firstTextBaseline, spacing: 10) {
-                        Image(systemName: "circle.fill")
-                            .font(.system(size: 6, weight: .bold))
-                            .foregroundStyle(AppColors.warning)
-
-                        Text(title)
-                            .font(AppFonts.subheadlineSemibold)
-                            .foregroundStyle(AppColors.textPrimary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                ForEach(tasks) { task in
+                    UnscheduledTaskRow(task: task)
                 }
             }
             .padding(14)
@@ -116,5 +126,42 @@ struct UnscheduledTasksDialog: View {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(AppColors.warning.opacity(0.18), lineWidth: 1)
         }
+    }
+}
+
+private struct UnscheduledTaskRow: View {
+    let task: GoalScheduleReviewTask
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "circle.fill")
+                .font(.system(size: 6, weight: .bold))
+                .foregroundStyle(AppColors.warning)
+                .padding(.top, 7)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(task.title)
+                    .font(AppFonts.subheadlineSemibold)
+                    .foregroundStyle(AppColors.textPrimary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if task.suggestionSessions.isEmpty {
+                    Label(
+                        L10n.GoalCreation.noSessions,
+                        systemImage: "calendar.badge.exclamationmark"
+                    )
+                } else {
+                    Label(
+                        L10n.GoalCreation.suggestionsAvailable(
+                            task.suggestionSessions.count
+                        ),
+                        systemImage: "sparkles"
+                    )
+                }
+            }
+            .font(AppFonts.caption2Bold)
+            .foregroundStyle(AppColors.textSecondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

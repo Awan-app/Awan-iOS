@@ -46,8 +46,8 @@ public struct InboxState: Equatable, Sendable {
         self.completionReward = completionReward
         self.completionRewardAnimation = completionRewardAnimation
         self.mutatingTaskIDs = mutatingTaskIDs
-      
     }
+
 
     public var filteredTasks: [InboxTaskItem] {
         allTasks.filter { taskItem in

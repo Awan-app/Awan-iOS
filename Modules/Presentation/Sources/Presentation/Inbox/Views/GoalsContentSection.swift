@@ -17,7 +17,7 @@ struct GoalsContentSection: View {
     var body: some View {
         let state = viewModel.state
 
-        Group {
+        VStack(spacing: 0) {
             if state.isLoading && state.allGoals.isEmpty {
                 ProgressView()
                     .controlSize(.large)
@@ -32,6 +32,24 @@ struct GoalsContentSection: View {
         .task {
             viewModel.send(.appeared)
         }
+        .sheet(isPresented: createGoalSheetBinding) {
+            CreateGoalSheet(
+                isSubmitting: viewModel.state.isCreatingGoal,
+                onCreateGoal: { title, desc, targetDate in
+                    viewModel.send(.createGoal(title: title, description: desc, targetDate: targetDate))
+                },
+                onDismiss: {
+                    viewModel.send(.dismissCreateGoalSheet)
+                }
+            )
+        }
+    }
+
+    private var createGoalSheetBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.state.isCreateGoalSheetPresented },
+            set: { if !$0 { viewModel.send(.dismissCreateGoalSheet) } }
+        )
     }
 
     // MARK: - Content
@@ -61,6 +79,7 @@ struct GoalsContentSection: View {
                 GoalCard(goal: goal) {
                     viewModel.send(.selectGoal(goal.id))
                 }
+                .padding(.bottom, 14)
             }
 
         }
@@ -85,8 +104,28 @@ struct GoalsContentSection: View {
                 )
 
             Spacer()
+
+            Button {
+                viewModel.send(.showCreateGoalSheet)
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 13, weight: .semibold))
+                    Text(L10n.Goals.createButton)
+                        .font(AppFonts.captionHeavy)
+                }
+                .foregroundStyle(AppColors.accentBlue)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(
+                    Capsule()
+                        .fill(AppColors.accentBlue.opacity(0.12))
+                )
+            }
+            .buttonStyle(.plain)
         }
-        .padding(.top, 4)
+        .padding(.top, 8)
+        .padding(.bottom, 12)
     }
 
     // MARK: - Empty & Failure
@@ -105,10 +144,20 @@ struct GoalsContentSection: View {
                 .foregroundStyle(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
+
+            AppButton(
+                title: L10n.Goals.createButton,
+                icon: "plus.circle.fill",
+                color: AppColors.accentBlue,
+                onTap: { viewModel.send(.showCreateGoalSheet) }
+            )
+            .frame(maxWidth: 200)
+            .padding(.top, 8)
         }
         .padding(32)
         .frame(maxWidth: .infinity)
     }
+
 
     private func goalsFailureView(message: String) -> some View {
         VStack(spacing: 16) {

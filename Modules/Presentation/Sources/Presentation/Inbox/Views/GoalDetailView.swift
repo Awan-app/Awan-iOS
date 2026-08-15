@@ -20,6 +20,20 @@ public struct GoalDetailView: View {
         viewModel.state.allGoals.first { $0.id == goalID }
     }
 
+    private var addTaskSheetBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.state.addTaskSheetGoalID == goalID },
+            set: { if !$0 { viewModel.send(.dismissAddTaskSheet) } }
+        )
+    }
+
+    private var addTaskErrorBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.state.addTaskFailureMessage != nil },
+            set: { if !$0 { viewModel.send(.dismissAddTaskError) } }
+        )
+    }
+
     public var body: some View {
         ZStack {
             AppColors.sheetBackground.ignoresSafeArea()
@@ -42,9 +56,11 @@ public struct GoalDetailView: View {
                             failureMessage: viewModel.state.goalTasksFailureMessage,
                             onRetry: {
                                 viewModel.send(.loadGoalTasks(goalID))
+                            },
+                            onAddTask: {
+                                viewModel.send(.showAddTaskSheet(goalID: goalID))
                             }
                         )
-
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
@@ -70,6 +86,24 @@ public struct GoalDetailView: View {
                 viewModel.send(.appeared)
             }
             viewModel.send(.loadGoalTasks(goalID))
+        }
+        .sheet(isPresented: addTaskSheetBinding) {
+            AddInboxTaskSheet(
+                goalID: goalID,
+                tasks: viewModel.state.inboxTasksForSheet,
+                isLoading: viewModel.state.isLoadingInboxTasks,
+                onSelectTask: { task in
+                    viewModel.send(.addInboxTaskToGoal(task: task, goalID: goalID))
+                },
+                onDismiss: {
+                    viewModel.send(.dismissAddTaskSheet)
+                }
+            )
+        }
+        .alert(L10n.Inbox.errorTitle, isPresented: addTaskErrorBinding) {
+            Button("OK") { viewModel.send(.dismissAddTaskError) }
+        } message: {
+            Text(viewModel.state.addTaskFailureMessage ?? "")
         }
     }
 }

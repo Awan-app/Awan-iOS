@@ -40,6 +40,10 @@ struct GoalProposalView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 24)
             }
+            .background(alignment: .top) {
+                AppCloudsHorizon(height: 220)
+                    .frame(maxWidth: .infinity)
+            }
 
             VStack(spacing: 13) {
                 AppButton(

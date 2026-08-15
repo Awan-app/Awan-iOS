@@ -179,6 +179,11 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(SessionRepository.self, from: resolver)
             )
         }
+        container.register(UpdateSessionScheduleUseCase.self) { resolver in
+            DefaultUpdateSessionScheduleUseCase(
+                repository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
         container.register(SetSessionLockUseCase.self) { resolver in
             DefaultSetSessionLockUseCase(
                 repository: Self.resolve(SessionRepository.self, from: resolver)
@@ -261,6 +266,17 @@ struct DomainAssembly: Assembly {
                 engine: Self.resolve(ScheduleEngine.self, from: resolver)
             )
         }
+        container.register(CreateEmptyGoalUseCase.self) { resolver in
+            DefaultCreateEmptyGoalUseCase(
+                repository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
+        container.register(AddTaskToGoalUseCase.self) { resolver in
+            DefaultAddTaskToGoalUseCase(
+                repository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
+
         container.register(SendGoalDecompositionMessageUseCase.self) { resolver in
             DefaultSendGoalDecompositionMessageUseCase(
                 repository: Self.resolve(

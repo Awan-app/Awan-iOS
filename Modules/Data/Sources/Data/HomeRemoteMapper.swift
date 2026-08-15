@@ -26,6 +26,25 @@ enum HomeRemoteMapper {
         guard let birthDate = dto.birthDate else {
             throw RemoteDomainMappingError.missingField("birthDate")
         }
+        
+        let mappedEquippedItems: [EquippedItem] = try dto.equippedItems?.map { eqDto in
+            guard let equippedDate = try? parseISO8601Date(eqDto.equippedAt) else {
+                throw RemoteDomainMappingError.invalidValue("equippedAt.\(eqDto.equippedAt)")
+            }
+            let storeItemType = StoreItemType(apiValue: eqDto.item.type)
+            let storeItem = StoreItem(
+                id: eqDto.item.id,
+                name: eqDto.item.name,
+                description: eqDto.item.description ?? "",
+                image: eqDto.item.image,
+                info: eqDto.item.info,
+                price: eqDto.item.price,
+                version: eqDto.item.version,
+                type: storeItemType
+            )
+            return EquippedItem(type: StoreItemType(apiValue: eqDto.type), item: storeItem, equippedAt: equippedDate)
+        } ?? []
+
         return UserProfile(
             id: dto.id,
             email: dto.email,
@@ -36,13 +55,15 @@ enum HomeRemoteMapper {
             streak: dto.streak,
             maxStreak: dto.maxStreak,
             profilePictureUrl: dto.profilePictureUrl,
+            isNew: dto.isNew ?? false,
             preferences: UserPreferences(
                 timezone: dto.preferences.timezone,
                 preferredSessionDuration: dto.preferences.preferredSessionDuration,
                 bufferBetweenSessions: dto.preferences.bufferBetweenSessions,
                 wakeupTime: try parseTime(dto.preferences.wakeupTime),
                 sleepTime: try parseTime(dto.preferences.sleepTime)
-            )
+            ),
+            equippedItems: mappedEquippedItems
         )
     }
 

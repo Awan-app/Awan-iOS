@@ -146,13 +146,16 @@ final class CompleteOnboardingUseCaseTests: XCTestCase {
             points: 0,
             streak: 0,
             maxStreak: 0,
+            profilePictureUrl: nil,
+            isNew: false,
             preferences: UserPreferences(
                 timezone: "Africa/Cairo",
                 preferredSessionDuration: 30,
                 bufferBetweenSessions: 10,
                 wakeupTime: try LocalTime(hour: 7, minute: 30),
                 sleepTime: try LocalTime(hour: 23, minute: 0)
-            )
+            ),
+            equippedItems: []
         )
     }
 }

@@ -106,12 +106,30 @@ struct PresentationAssembly: Assembly {
                 ),
                 sessions: HomeSessionUseCases(
                     reschedule: Self.resolve(RescheduleSessionUseCase.self, from: resolver),
-                    setLock: Self.resolve(SetSessionLockUseCase.self, from: resolver),
-                    setCompletion: Self.resolve(SetSessionCompletionUseCase.self, from: resolver),
-                    delete: Self.resolve(DeleteSessionUseCase.self, from: resolver)
+                    setCompletion: Self.resolve(SetSessionCompletionUseCase.self, from: resolver)
                 )
             )
         }
+
+        container.register(SessionDetailsUseCases.self) { resolver in
+            SessionDetailsUseCases(
+                updateSchedule: Self.resolve(
+                    UpdateSessionScheduleUseCase.self,
+                    from: resolver
+                ),
+                setLock: Self.resolve(SetSessionLockUseCase.self, from: resolver),
+                delete: Self.resolve(DeleteSessionUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(SessionDetailsViewModel.self) {
+            (resolver, context: SessionDetailsContext) in
+            let useCases = Self.resolve(SessionDetailsUseCases.self, from: resolver)
+            return MainActor.assumeIsolated {
+                SessionDetailsViewModel(context: context, useCases: useCases)
+            }
+        }
+        .inObjectScope(.transient)
 
         container.register(CreationUseCases.self) { resolver in
             CreationUseCases(
@@ -189,16 +207,22 @@ struct PresentationAssembly: Assembly {
                 fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver),
                 userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
                 setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver),
-                deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver)
+                deleteInboxTask: Self.resolve(DeleteInboxTaskUseCase.self, from: resolver),
+                createEmptyGoal: Self.resolve(CreateEmptyGoalUseCase.self, from: resolver)
             )
         }
+
 
         container.register(GoalsUseCases.self) { resolver in
             GoalsUseCases(
                 fetchGoalsWithTasks: Self.resolve(FetchGoalsWithTasksUseCase.self, from: resolver),
-                fetchGoalTasks: Self.resolve(FetchGoalTasksUseCase.self, from: resolver)
+                fetchGoalTasks: Self.resolve(FetchGoalTasksUseCase.self, from: resolver),
+                createEmptyGoal: Self.resolve(CreateEmptyGoalUseCase.self, from: resolver),
+                addTaskToGoal: Self.resolve(AddTaskToGoalUseCase.self, from: resolver),
+                fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver)
             )
         }
+
 
         container.register(GoalsViewModel.self) { resolver in
             let useCases = Self.resolve(GoalsUseCases.self, from: resolver)
@@ -362,6 +386,13 @@ struct PresentationAssembly: Assembly {
                     },
                     makeHomeViewModel: {
                         Self.resolve(HomeViewModel.self, from: resolver)
+                    },
+                    makeSessionDetailsViewModel: { context in
+                        Self.resolve(
+                            SessionDetailsViewModel.self,
+                            argument: context,
+                            from: resolver
+                        )
                     },
                     makeDailyWheelViewModel: {
                         Self.resolve(DailyWheelViewModel.self, from: resolver)

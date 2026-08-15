@@ -204,16 +204,10 @@ struct AppRootView: View {
                 .environment(\.layoutDirection, currentLayoutDirection)
                 .padding(.top, 12)
                 .padding(.bottom, 6)
-//                .background {
-////                    if coordinator.mainCoordinator.selectedTab == .home {
-////                        AppColors.screenBackground
-////                            .opacity(0)
-////                            .ignoresSafeArea(edges: .bottom)
-////                    } else {
-////                        AppColors.screenBackground
-////                            .ignoresSafeArea(edges: .bottom)
-////                    }
-//                }
+                .background {
+                    AppColors.screenBackground
+                        .ignoresSafeArea(edges: .bottom)
+                }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
@@ -250,8 +244,11 @@ struct AppRootView: View {
                 factory.makeGlobalCreationSheet {
                     coordinator.mainCoordinator.dismissSheet()
                     factory.refreshScheduleTimeline()
-                } onTaskLayoutModeChanged: { isAIEnabled, isScheduleEnabled in
-                    if isAIEnabled {
+                } onTaskLayoutModeChanged: {
+                    isAIEnabled, isScheduleEnabled, requiresFullScreen in
+                    if requiresFullScreen {
+                        creationSheetDetent = .large
+                    } else if isAIEnabled {
                         creationSheetDetent = Self.compactCreationDetent
                     } else if isScheduleEnabled {
                         creationSheetDetent = Self.scheduledCreationDetent

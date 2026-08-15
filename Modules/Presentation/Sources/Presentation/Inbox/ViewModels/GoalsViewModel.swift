@@ -39,11 +39,86 @@ public final class GoalsViewModel {
             onSelectGoal?(id)
         case let .loadGoalTasks(goalID):
             loadGoalTasks(goalID: goalID)
+        case let .createGoal(title, description, targetDate):
+            createGoal(title: title, description: description, targetDate: targetDate)
+        case .showCreateGoalSheet:
+            state.isCreateGoalSheetPresented = true
+        case .dismissCreateGoalSheet:
+            state.isCreateGoalSheetPresented = false
         case .dismissError:
             state.failureMessage = nil
             state.goalTasksFailureMessage = nil
+        case let .showAddTaskSheet(goalID):
+            state.addTaskSheetGoalID = goalID
+            loadInboxTasksForSheet()
+        case .dismissAddTaskSheet:
+            state.addTaskSheetGoalID = nil
+            state.inboxTasksForSheet = []
+        case let .addInboxTaskToGoal(task, goalID):
+            addInboxTaskToGoal(task: task, goalID: goalID)
+        case .dismissAddTaskError:
+            state.addTaskFailureMessage = nil
         }
     }
+
+    private func createGoal(title: String, description: String?, targetDate: Date?) {
+        guard let createEmptyGoal = useCases.createEmptyGoal else { return }
+        state.isCreatingGoal = true
+        state.isCreateGoalSheetPresented = false
+
+        Task { [weak self] in
+            do {
+                _ = try await createEmptyGoal.execute(title: title, description: description, targetDate: targetDate)
+                guard let self else { return }
+                self.state.isCreatingGoal = false
+                self.load()
+            } catch {
+                guard let self else { return }
+                self.state.isCreatingGoal = false
+                self.state.failureMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func loadInboxTasksForSheet() {
+        guard let fetchInboxTasks = useCases.fetchInboxTasks else { return }
+        state.isLoadingInboxTasks = true
+        state.inboxTasksForSheet = []
+        Task { [weak self] in
+            do {
+                let inboxTasks = try await fetchInboxTasks.execute()
+                guard let self else { return }
+                self.state.inboxTasksForSheet = inboxTasks.map { $0.task }
+                self.state.isLoadingInboxTasks = false
+            } catch {
+                guard let self else { return }
+                self.state.isLoadingInboxTasks = false
+                self.state.addTaskFailureMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func addInboxTaskToGoal(task: AwanTask, goalID: UUID) {
+        guard let addTaskToGoal = useCases.addTaskToGoal else { return }
+        state.addTaskSheetGoalID = nil
+        state.inboxTasksForSheet = []
+        Task { [weak self] in
+            do {
+                try await addTaskToGoal.execute(goalID: goalID, task: task)
+                guard let self else { return }
+                self.loadGoalTasks(goalID: goalID)
+            } catch {
+                guard let self else { return }
+                let errorString = String(describing: error)
+                if errorString.contains("400") || errorString.contains("409") || errorString.lowercased().contains("dependenc") {
+                    self.state.addTaskFailureMessage = "Remove this task's dependencies before moving it to another goal"
+                } else {
+                    self.state.addTaskFailureMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+
 
     public func loadGoalTasks(goalID: UUID) {
         state.isLoadingGoalTasks = true

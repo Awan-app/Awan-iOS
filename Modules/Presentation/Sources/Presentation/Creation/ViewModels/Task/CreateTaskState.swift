@@ -26,6 +26,23 @@ struct CreateTaskState {
     var selectedCategoryID: UUID?
     var isRecording = false
 
+    var requiresFullScreen: Bool {
+        if case .aiTasksResult = phase {
+            true
+        } else {
+            false
+        }
+    }
+
+    var hidesModeSwitcher: Bool {
+        switch phase {
+        case .aiLoading, .aiTasksResult:
+            true
+        case .composer, .imageUploading:
+            false
+        }
+    }
+
     mutating func startAILoading() {
         isSubmitting = true
         errorMessage = nil

@@ -3,6 +3,7 @@
 //  Presentation
 //
 
+import Domain
 import Foundation
 
 public enum InboxAction: Sendable {
@@ -19,3 +20,4 @@ public enum InboxAction: Sendable {
     case dismissCompletionReward
     case dismissCompletionRewardAnimation
 }
+

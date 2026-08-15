@@ -1,13 +1,16 @@
 import SwiftUI
+import Kingfisher
 
 public struct AppRemoteImage<Placeholder: View>: View {
     private let url: URL?
-    private let contentMode: ContentMode
+    private let contentMode: SwiftUI.ContentMode
     private let placeholder: () -> Placeholder
+
+    @State private var isFailed = false
 
     public init(
         url: URL?,
-        contentMode: ContentMode = .fit,
+        contentMode: SwiftUI.ContentMode = .fit,
         @ViewBuilder placeholder: @escaping () -> Placeholder
     ) {
         self.url = url
@@ -17,7 +20,7 @@ public struct AppRemoteImage<Placeholder: View>: View {
 
     public init(
         urlString: String?,
-        contentMode: ContentMode = .fit,
+        contentMode: SwiftUI.ContentMode = .fit,
         @ViewBuilder placeholder: @escaping () -> Placeholder
     ) {
         self.init(
@@ -28,22 +31,19 @@ public struct AppRemoteImage<Placeholder: View>: View {
     }
 
     public var body: some View {
-        if let url {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case let .success(image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: contentMode)
-                case .empty:
+        if let url, !isFailed {
+            KFImage(url)
+                .onFailure { _ in
+                    Task { @MainActor in
+                        isFailed = true
+                    }
+                }
+                .placeholder {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                case .failure:
-                    placeholder()
-                @unknown default:
-                    placeholder()
                 }
-            }
+                .resizable()
+                .aspectRatio(contentMode: contentMode)
         } else {
             placeholder()
         }
@@ -51,7 +51,7 @@ public struct AppRemoteImage<Placeholder: View>: View {
 }
 
 #Preview("App Remote Image Light") {
-    AppRemoteImage(urlString: nil) {
+    AppRemoteImage(urlString: nil as String?) {
         Image(systemName: "photo")
             .font(.system(size: 40, weight: .semibold))
             .foregroundStyle(AppColors.textSecondary)
@@ -62,7 +62,7 @@ public struct AppRemoteImage<Placeholder: View>: View {
 }
 
 #Preview("App Remote Image Dark") {
-    AppRemoteImage(urlString: nil) {
+    AppRemoteImage(urlString: nil as String?) {
         Image(systemName: "photo")
             .font(.system(size: 40, weight: .semibold))
             .foregroundStyle(AppColors.textSecondary)

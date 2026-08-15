@@ -5,12 +5,12 @@ import SwiftUI
 struct CreateTaskView: View {
     @State private var viewModel: CreateTaskViewModel
     private let onCreated: () -> Void
-    private let onLayoutModeChanged: (Bool, Bool) -> Void
+    private let onLayoutModeChanged: (Bool, Bool, Bool) -> Void
 
     init(
         viewModel: CreateTaskViewModel,
         onCreated: @escaping () -> Void,
-        onLayoutModeChanged: @escaping (Bool, Bool) -> Void
+        onLayoutModeChanged: @escaping (Bool, Bool, Bool) -> Void
     ) {
         _viewModel = State(initialValue: viewModel)
         self.onCreated = onCreated
@@ -25,7 +25,10 @@ struct CreateTaskView: View {
             case .composer:
                 composerView(bindableViewModel: $bindableViewModel)
             case .aiLoading:
-                GoalCreationLoadingView(message: L10n.Home.aiCreatingTask)
+                GoalCreationLoadingView(
+                    message: L10n.Home.aiCreatingTask,
+                    mascotSize: CGSize(width: 190, height: 150)
+                )
             case .aiTasksResult(let response):
                 ImageToTasksResultSheet(
                     response: response,
@@ -67,11 +70,14 @@ struct CreateTaskView: View {
                 onCreated()
             }
         }
-        .onChange(of: viewModel.state.isAwanSchedulingEnabled) { _, isEnabled in
-            onLayoutModeChanged(isEnabled, viewModel.state.isManualSchedulingEnabled)
+        .onChange(of: viewModel.state.isAwanSchedulingEnabled) { _, _ in
+            notifyLayoutModeChanged()
         }
-        .onChange(of: viewModel.state.isManualSchedulingEnabled) { _, isEnabled in
-            onLayoutModeChanged(viewModel.state.isAwanSchedulingEnabled, isEnabled)
+        .onChange(of: viewModel.state.isManualSchedulingEnabled) { _, _ in
+            notifyLayoutModeChanged()
+        }
+        .onChange(of: viewModel.state.requiresFullScreen) { _, _ in
+            notifyLayoutModeChanged()
         }
         .alert(L10n.Home.errorTitle, isPresented: errorBinding) {
             Button(L10n.Common.gotIt) {
@@ -144,6 +150,10 @@ struct CreateTaskView: View {
                 value: viewModel.state.isAwanSchedulingEnabled
             )
         }
+        .background(alignment: .top) {
+            AppCloudsHorizon(height: 220)
+                .frame(maxWidth: .infinity)
+        }
         .disabled(viewModel.state.isSubmitting)
         .overlay {
             if viewModel.state.isLoadingZones {
@@ -168,7 +178,8 @@ struct CreateTaskView: View {
     private func notifyLayoutModeChanged() {
         onLayoutModeChanged(
             viewModel.state.isAwanSchedulingEnabled,
-            viewModel.state.isManualSchedulingEnabled
+            viewModel.state.isManualSchedulingEnabled,
+            viewModel.state.requiresFullScreen
         )
     }
 }

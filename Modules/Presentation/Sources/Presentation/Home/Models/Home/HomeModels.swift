@@ -33,8 +33,19 @@ struct HomeTimelineItem: Identifiable, Hashable {
 struct HomeSessionDetail: Identifiable, Hashable {
     let item: HomeTimelineItem
     let task: AwanTask
+    let session: Session
+    let timeZoneIdentifier: String
 
     var id: UUID { item.id }
+
+    var context: SessionDetailsContext {
+        SessionDetailsContext(
+            session: session,
+            task: task,
+            color: item.color,
+            timeZoneIdentifier: timeZoneIdentifier
+        )
+    }
 }
 
 struct HomeTimelineZoneItem: Identifiable, Hashable {
@@ -70,10 +81,16 @@ struct HomeState {
     var selectedSession: HomeSessionDetail? {
         guard let success,
               let item = success.timelineItems.first(where: { $0.id == selectedSessionID }),
-              let task = success.tasks.first(where: { $0.id == item.taskID }) else {
+              let task = success.tasks.first(where: { $0.id == item.taskID }),
+              let session = success.sessions.first(where: { $0.id == item.id }) else {
             return nil
         }
-        return HomeSessionDetail(item: item, task: task)
+        return HomeSessionDetail(
+            item: item,
+            task: task,
+            session: session,
+            timeZoneIdentifier: success.timeZoneIdentifier
+        )
     }
 
     static func initial(selectedDay: Date) -> HomeState {
@@ -98,6 +115,7 @@ struct HomeSuccessState {
     var sessions: [Session]
     let zones: [Zone]
     let profile: UserProfile
+    let timeZoneIdentifier: String
     let displayName: String?
     let streakCount: Int
     let rewardPoints: Int
