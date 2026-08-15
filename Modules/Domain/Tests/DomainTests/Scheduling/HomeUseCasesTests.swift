@@ -291,13 +291,16 @@ final class HomeUseCasesTests: XCTestCase {
             points: 10,
             streak: 2,
             maxStreak: 3,
+            profilePictureUrl: nil,
+            isNew: false,
             preferences: UserPreferences(
                 timezone: "UTC",
                 preferredSessionDuration: 60,
                 bufferBetweenSessions: 10,
                 wakeupTime: try LocalTime(hour: 8, minute: 0),
                 sleepTime: try LocalTime(hour: 0, minute: 0)
-            )
+            ),
+            equippedItems: []
         )
     }
 

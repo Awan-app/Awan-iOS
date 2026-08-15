@@ -189,6 +189,8 @@ final class HomeRemoteMapperTests: XCTestCase {
             points: 0,
             streak: 0,
             maxStreak: 0,
+            profilePictureUrl: nil,
+            isNew: false,
             preferences: UserPreferencesDTO(
                 timezone: "UTC",
                 preferredSessionDuration: 45,
@@ -196,7 +198,8 @@ final class HomeRemoteMapperTests: XCTestCase {
                 wakeupTime: "08:00:00",
                 sleepTime: "00:00:00",
                 schedulingType: "FLEXIBLE"
-            )
+            ),
+            equippedItems: []
         )
     }
 }

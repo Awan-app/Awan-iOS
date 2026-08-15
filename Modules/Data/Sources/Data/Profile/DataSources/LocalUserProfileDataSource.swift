@@ -45,13 +45,15 @@ public actor SwiftDataUserProfileDataSource: LocalUserProfileDataSource {
             streak: model.streak,
             maxStreak: model.maxStreak,
             profilePictureUrl: model.profilePictureUrl,
+            isNew: false,
             preferences: UserPreferences(
                 timezone: model.timezone,
                 preferredSessionDuration: model.preferredSessionDuration,
                 bufferBetweenSessions: model.bufferBetweenSessions,
                 wakeupTime: try LocalTime(hour: model.wakeupHour, minute: model.wakeupMinute),
                 sleepTime: try LocalTime(hour: model.sleepHour, minute: model.sleepMinute)
-            )
+            ),
+            equippedItems: []
         )
     }
 

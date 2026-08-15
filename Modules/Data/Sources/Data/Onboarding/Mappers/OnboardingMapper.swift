@@ -26,13 +26,15 @@ enum OnboardingMapper {
             streak: response.streak,
             maxStreak: response.maxStreak,
             profilePictureUrl: nil,
+            isNew: false,
             preferences: UserPreferences(
                 timezone: response.preferences.timezone,
                 preferredSessionDuration: response.preferences.preferredSessionDuration,
                 bufferBetweenSessions: response.preferences.bufferBetweenSessions,
                 wakeupTime: try parseTime(response.preferences.wakeupTime),
                 sleepTime: try parseTime(response.preferences.sleepTime)
-            )
+            ),
+            equippedItems: []
         )
     }
 
