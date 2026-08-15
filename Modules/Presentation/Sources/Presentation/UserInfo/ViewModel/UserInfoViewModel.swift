@@ -1,4 +1,4 @@
-import SwiftUI
+import Foundation
 import Common
 import Observation
 import Domain
@@ -106,10 +106,8 @@ public final class UserInfoViewModel {
     }
     
     private func showToastMessage(_ message: String, isSuccess: Bool) {
-        withAnimation {
-            self.toastMessage = message
-            self.toastIsSuccess = isSuccess
-            self.showToast = true
-        }
+        self.toastMessage = message
+        self.toastIsSuccess = isSuccess
+        self.showToast = true
     }
 }
