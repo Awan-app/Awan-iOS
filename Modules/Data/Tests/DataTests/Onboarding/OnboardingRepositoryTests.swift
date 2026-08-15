@@ -26,6 +26,9 @@ final class OnboardingRepositoryTests: XCTestCase {
         XCTAssertEqual(request.birthDate, "2000-01-02")
         XCTAssertEqual(request.wakeupTime, "07:30:00")
         XCTAssertEqual(request.sleepTime, "23:00:00")
+        XCTAssertEqual(authSessionDataSource.markOnboardingCompletedCallCount, 0)
+
+        try repository.markOnboardingCompleted()
         XCTAssertEqual(authSessionDataSource.markOnboardingCompletedCallCount, 1)
     }
 

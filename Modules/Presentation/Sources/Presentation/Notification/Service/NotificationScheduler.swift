@@ -15,7 +15,7 @@ public final class NotificationScheduler {
     }
 
     public var isNotificationsEnabled: Bool {
-        if UserDefaults.standard.object(forKey: "isNotificationsEnabled") == nil { return true }
+        if UserDefaults.standard.object(forKey: "isNotificationsEnabled") == nil { return false }
         return UserDefaults.standard.bool(forKey: "isNotificationsEnabled")
     }
 

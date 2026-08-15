@@ -7,13 +7,23 @@ import Common
 import Domain
 import SwiftUI
 
-/// Sheet presented from inside a Goal detail, letting the user pick an Inbox task to move into that goal.
 struct AddInboxTaskSheet: View {
     let goalID: UUID
     let tasks: [AwanTask]
     let isLoading: Bool
     let onSelectTask: (AwanTask) -> Void
     let onDismiss: () -> Void
+
+    @State private var searchQuery: String = ""
+
+    private var filteredTasks: [AwanTask] {
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return tasks }
+        return tasks.filter { task in
+            task.title.localizedCaseInsensitiveContains(query) ||
+            (task.description?.localizedCaseInsensitiveContains(query) ?? false)
+        }
+    }
 
     var body: some View {
         AppSheet(
@@ -33,14 +43,30 @@ struct AddInboxTaskSheet: View {
                     } else if tasks.isEmpty {
                         emptyView
                     } else {
-                        ScrollView {
-                            LazyVStack(spacing: 12) {
-                                ForEach(tasks) { task in
-                                    taskRow(task)
+                        VStack(spacing: 12) {
+                            InboxSearchFilterBar(
+                                searchQuery: $searchQuery,
+                                isFilterExpanded: .constant(false),
+                                hasActiveFilters: false,
+                                showsFilterButton: false,
+                                placeholder: L10n.Goals.searchPlaceholder
+                            )
+                            .padding(.horizontal, 16)
+                            .padding(.top, 12)
+
+                            if filteredTasks.isEmpty {
+                                noSearchResultsView
+                            } else {
+                                ScrollView {
+                                    LazyVStack(spacing: 12) {
+                                        ForEach(filteredTasks) { task in
+                                            taskRow(task)
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.bottom, 16)
                                 }
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 16)
                         }
                     }
                 }
@@ -123,7 +149,28 @@ struct AddInboxTaskSheet: View {
                 .font(AppFonts.title3Black)
                 .foregroundStyle(AppColors.textPrimary)
 
-            Text("Your Inbox has no tasks to add right now.")
+            Text(L10n.Inbox.addToGoalEmptyInbox)
+                .font(AppFonts.subheadlineSemibold)
+                .foregroundStyle(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var noSearchResultsView: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 36, weight: .semibold))
+                .foregroundStyle(AppColors.textSecondary.opacity(0.6))
+                .padding(.top, 40)
+
+            Text(L10n.Inbox.noMatchesFound)
+                .font(AppFonts.headlineBlack)
+                .foregroundStyle(AppColors.textPrimary)
+
+            Text(L10n.Inbox.tryAdjustingQuery)
                 .font(AppFonts.subheadlineSemibold)
                 .foregroundStyle(AppColors.textSecondary)
                 .multilineTextAlignment(.center)

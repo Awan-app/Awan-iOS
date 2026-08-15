@@ -7,7 +7,7 @@ struct SettingsView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(LanguageManager.self) private var languageManager
     @State private var isLanguageSheetPresented = false
-    @AppStorage("isNotificationsEnabled") private var isNotificationsEnabled = true
+    @AppStorage("isNotificationsEnabled") private var isNotificationsEnabled = false
     @State private var isNotificationsPickerPresented = false
 
     var body: some View {
@@ -170,6 +170,14 @@ struct SettingsView: View {
         .toolbar(.visible, for: .navigationBar)
         .sheet(isPresented: $isLanguageSheetPresented) {
             LanguageSelectionView()
+        }
+        .task {
+            let settings = await UNUserNotificationCenter.current().notificationSettings()
+            if settings.authorizationStatus == .denied || settings.authorizationStatus == .notDetermined {
+                if isNotificationsEnabled {
+                    isNotificationsEnabled = false
+                }
+            }
         }
     }
 }

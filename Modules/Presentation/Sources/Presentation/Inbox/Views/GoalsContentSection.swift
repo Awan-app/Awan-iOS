@@ -144,15 +144,6 @@ struct GoalsContentSection: View {
                 .foregroundStyle(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
-
-            AppButton(
-                title: L10n.Goals.createButton,
-                icon: "plus.circle.fill",
-                color: AppColors.accentBlue,
-                onTap: { viewModel.send(.showCreateGoalSheet) }
-            )
-            .frame(maxWidth: 200)
-            .padding(.top, 8)
         }
         .padding(32)
         .frame(maxWidth: .infinity)

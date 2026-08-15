@@ -203,6 +203,19 @@ public enum L10n {
         public static var previewStudy: String { L10n.currentBundle.localizedString(forKey: "onboarding.preview_study", value: nil, table: "Localizable") }
         public static var previewStudyDuration: String { L10n.currentBundle.localizedString(forKey: "onboarding.preview_study_duration", value: nil, table: "Localizable") }
         public static var previewStudyTime: String { L10n.currentBundle.localizedString(forKey: "onboarding.preview_study_time", value: nil, table: "Localizable") }
+        public static var notificationTitle: String { L10n.currentBundle.localizedString(forKey: "onboarding.notification_title", value: "Want a gentle nudge\nwhen it's time?", table: "Localizable") }
+        public static var notificationPreviewAppName: String { L10n.currentBundle.localizedString(forKey: "onboarding.notification_preview_app_name", value: "Awan", table: "Localizable") }
+        public static var notificationPreviewTimestamp: String { L10n.currentBundle.localizedString(forKey: "onboarding.notification_preview_timestamp", value: "now", table: "Localizable") }
+        public static var notificationPreviewMessage: String { L10n.currentBundle.localizedString(forKey: "onboarding.notification_preview_message", value: "Work starts in 5 min — Design review is up first.", table: "Localizable") }
+        public static var notificationReason1Bold: String { L10n.currentBundle.localizedString(forKey: "onboarding.notification_reason1_bold", value: "Only when a block starts", table: "Localizable") }
+        public static var notificationReason1Muted: String { L10n.currentBundle.localizedString(forKey: "onboarding.notification_reason1_muted", value: "— no buzzing all day.", table: "Localizable") }
+        public static var notificationReason2Bold: String { L10n.currentBundle.localizedString(forKey: "onboarding.notification_reason2_bold", value: "Stay in flow", table: "Localizable") }
+        public static var notificationReason2Muted: String { L10n.currentBundle.localizedString(forKey: "onboarding.notification_reason2_muted", value: "— gentle reminders to keep you on track.", table: "Localizable") }
+        public static var notificationReason3Bold: String { L10n.currentBundle.localizedString(forKey: "onboarding.notification_reason3_bold", value: "Customizable", table: "Localizable") }
+        public static var notificationReason3Muted: String { L10n.currentBundle.localizedString(forKey: "onboarding.notification_reason3_muted", value: "— you can always turn these off later.", table: "Localizable") }
+        public static var notificationSystemDisclaimer: String { L10n.currentBundle.localizedString(forKey: "onboarding.notification_system_disclaimer", value: "The system will ask next — this is just so you know why.", table: "Localizable") }
+        public static var turnOnNudges: String { L10n.currentBundle.localizedString(forKey: "onboarding.turn_on_nudges", value: "TURN ON NUDGES", table: "Localizable") }
+        public static var taskCreationError: String { L10n.currentBundle.localizedString(forKey: "onboarding.task_creation_error", value: "Task Creation Error", table: "Localizable") }
         public static var zoneColorLabel: String { L10n.currentBundle.localizedString(forKey: "onboarding.zone_color_label", value: nil, table: "Localizable") }
     }
 
@@ -1316,8 +1329,11 @@ public enum L10n {
         public static var addToGoal: String { L10n.currentBundle.localizedString(forKey: "inbox.add_to_goal", value: "Add to Goal", table: "Localizable") }
         public static var addToGoalSheetTitle: String { L10n.currentBundle.localizedString(forKey: "inbox.add_to_goal_sheet_title", value: "Add Task to Goal", table: "Localizable") }
         public static var addToGoalLoading: String { L10n.currentBundle.localizedString(forKey: "inbox.add_to_goal_loading", value: "Loading goals...", table: "Localizable") }
+        public static var addToGoalEmptyInbox: String { L10n.currentBundle.localizedString(forKey: "inbox.add_to_goal_empty_inbox", value: "Your Inbox has no tasks to add right now.", table: "Localizable") }
         public static var noGoalsAvailable: String { L10n.currentBundle.localizedString(forKey: "inbox.no_goals_available", value: "No Goals Found", table: "Localizable") }
         public static var noGoalsAvailableHint: String { L10n.currentBundle.localizedString(forKey: "inbox.no_goals_available_hint", value: "Create a goal first from the Goals tab to attach tasks.", table: "Localizable") }
+        public static var noMatchesFound: String { L10n.currentBundle.localizedString(forKey: "inbox.no_matches_found", value: "No matching tasks", table: "Localizable") }
+        public static var tryAdjustingQuery: String { L10n.currentBundle.localizedString(forKey: "inbox.try_adjusting_query", value: "Try adjusting your search query.", table: "Localizable") }
 
         public static func nSessions(_ count: Int) -> String {
             String(format: text("inbox.n_sessions"), count)
