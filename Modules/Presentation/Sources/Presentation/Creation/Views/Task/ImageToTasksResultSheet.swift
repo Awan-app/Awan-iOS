@@ -60,125 +60,115 @@ struct ImageToTasksResultSheet: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Top Navigation Bar
-            HStack {
-                Text(L10n.Home.aiTaskResultTitle)
-                    .font(AppFonts.title3Black)
-                    .foregroundStyle(AppColors.textPrimary)
+        ZStack(alignment: .top) {
+            AppCloudsHorizon(height: 220)
+                .frame(maxWidth: .infinity)
 
-                Spacer()
+            VStack(spacing: 0) {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 16) {
+                        // Tasks list or empty state
+                        if tasks.isEmpty {
+                            VStack(spacing: 12) {
+                                Image(systemName: "tray")
+                                    .font(.system(size: 44))
+                                    .foregroundStyle(AppColors.textSecondary.opacity(0.5))
 
-                Button(action: onDismiss) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 26))
-                        .foregroundStyle(AppColors.textSecondary)
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
-            .padding(.bottom, 12)
-
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 16) {
-                    // Tasks list or empty state
-                    if tasks.isEmpty {
-                        VStack(spacing: 12) {
-                            Image(systemName: "tray")
-                                .font(.system(size: 44))
-                                .foregroundStyle(AppColors.textSecondary.opacity(0.5))
-
-                            Text(L10n.Home.imageNoTasks)
-                                .font(AppFonts.headlineBlack)
-                                .foregroundStyle(AppColors.textSecondary)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 40)
-                    } else {
-                        ForEach(tasks.indices, id: \.self) { index in
-                            let task = tasks[index]
-                            ProposedTaskCard(
-                                task: task,
-                                categories: categories,
-                                zones: zones,
-                                categoryErrorMessage: categoryErrorMessage,
-                                categoryPopoverArrowEdge: index == tasks.startIndex ? .top : .bottom,
-                                onRetryCategories: onRetryCategories,
-                                isSelected: selectedTaskIDs.contains(task.id),
-                                onToggleSelect: {
-                                    if selectedTaskIDs.contains(task.id) {
-                                        selectedTaskIDs.remove(task.id)
-                                    } else {
-                                        selectedTaskIDs.insert(task.id)
+                                Text(L10n.Home.imageNoTasks)
+                                    .font(AppFonts.headlineBlack)
+                                    .foregroundStyle(AppColors.textSecondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 40)
+                        } else {
+                            ForEach(tasks.indices, id: \.self) { index in
+                                let task = tasks[index]
+                                ProposedTaskCard(
+                                    task: task,
+                                    categories: categories,
+                                    zones: zones,
+                                    categoryErrorMessage: categoryErrorMessage,
+                                    categoryPopoverArrowEdge: index == tasks.startIndex ? .top : .bottom,
+                                    onRetryCategories: onRetryCategories,
+                                    isSelected: selectedTaskIDs.contains(task.id),
+                                    onToggleSelect: {
+                                        if selectedTaskIDs.contains(task.id) {
+                                            selectedTaskIDs.remove(task.id)
+                                        } else {
+                                            selectedTaskIDs.insert(task.id)
+                                        }
+                                    },
+                                    onDurationChanged: { newDuration in
+                                        tasks[index].draft.task.estimatedDuration = newDuration
+                                        Self.updateSessionEnds(in: &tasks[index])
+                                    },
+                                    onCategoryChanged: { categoryID in
+                                        tasks[index].draft.task.categoryId = categoryID
+                                    },
+                                    onEditSession: { source, session in
+                                        sessionEditor = ProposedSessionEditorContext(
+                                            taskID: task.id,
+                                            source: source,
+                                            session: session,
+                                            durationMinutes: task.draft.task.estimatedDuration
+                                        )
+                                    },
+                                    onAddSession: {
+                                        sessionEditor = ProposedSessionEditorContext(
+                                            taskID: task.id,
+                                            source: .fixed,
+                                            start: defaultSessionStart,
+                                            durationMinutes: task.draft.task.estimatedDuration
+                                        )
                                     }
-                                },
-                                onDurationChanged: { newDuration in
-                                    tasks[index].draft.task.estimatedDuration = newDuration
-                                    Self.updateSessionEnds(in: &tasks[index])
-                                },
-                                onCategoryChanged: { categoryID in
-                                    tasks[index].draft.task.categoryId = categoryID
-                                },
-                                onEditSession: { source, session in
-                                    sessionEditor = ProposedSessionEditorContext(
-                                        taskID: task.id,
-                                        source: source,
-                                        session: session,
-                                        durationMinutes: task.draft.task.estimatedDuration
-                                    )
-                                },
-                                onAddSession: {
-                                    sessionEditor = ProposedSessionEditorContext(
-                                        taskID: task.id,
-                                        source: .fixed,
-                                        start: defaultSessionStart,
-                                        durationMinutes: task.draft.task.estimatedDuration
-                                    )
-                                }
-                            )
+                                )
+                            }
                         }
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 92)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 24)
+
+                // Bottom Confirm Button
+                if !tasks.isEmpty {
+                    HStack(spacing: 12) {
+                        AppButton(
+                            title: L10n.Home.addToInbox,
+                            icon: "tray.fill",
+                            color: AppColors.accentPurple,
+                            foregroundColor: AppColors.otpWhite,
+                            borderColor: AppColors.divider,
+                            size: .large,
+                            useGradient: false,
+                            onTap: {
+                                guard !selectedTasks.isEmpty else { return }
+                                onAddToInbox(selectedTasks)
+                            }
+                        )
+                        .disabled(selectedTasks.isEmpty || categories.isEmpty)
+
+                        AppButton(
+                            title: L10n.Home.scheduleSelectedCount(selectedTasks.count),
+                            icon: "calendar.badge.plus",
+                            color: canScheduleSelectedTasks
+                                ? AppColors.accentBlue
+                                : AppColors.buttonDisabled,
+                            size: .large,
+                            onTap: {
+                                guard canScheduleSelectedTasks else { return }
+                                onConfirm(selectedTasks)
+                            }
+                        )
+                        .disabled(!canScheduleSelectedTasks || categories.isEmpty)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(AppColors.screenBackground)
+                }
             }
 
-            // Bottom Confirm Button
-            if !tasks.isEmpty {
-                HStack(spacing: 12) {
-                    AppButton(
-                        title: L10n.Home.addToInbox,
-                        icon: "tray.fill",
-                        color: AppColors.accentPurple,
-                        foregroundColor: AppColors.otpWhite,
-                        borderColor: AppColors.divider,
-                        size: .large,
-                        useGradient: false,
-                        onTap: {
-                            guard !selectedTasks.isEmpty else { return }
-                            onAddToInbox(selectedTasks)
-                        }
-                    )
-                    .disabled(selectedTasks.isEmpty || categories.isEmpty)
-
-                    AppButton(
-                        title: L10n.Home.scheduleSelectedCount(selectedTasks.count),
-                        icon: "calendar.badge.plus",
-                        color: canScheduleSelectedTasks
-                            ? AppColors.accentBlue
-                            : AppColors.buttonDisabled,
-                        size: .large,
-                        onTap: {
-                            guard canScheduleSelectedTasks else { return }
-                            onConfirm(selectedTasks)
-                        }
-                    )
-                    .disabled(!canScheduleSelectedTasks || categories.isEmpty)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(AppColors.screenBackground)
-            }
+            AITaskResultHeader(onDismiss: onDismiss)
         }
         .background(AppColors.screenBackground.ignoresSafeArea())
         .sheet(item: $sessionEditor) { context in

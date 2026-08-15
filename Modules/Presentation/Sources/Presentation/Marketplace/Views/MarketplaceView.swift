@@ -52,21 +52,20 @@ public struct MarketplaceView: View {
             get: { state.selectedItem },
             set: { if $0 == nil { viewModel.send(.dismissDetail) } }
         )) { item in
-            MarketplaceItemDetailSheet(
-                item: item,
-                userPoints: state.userPoints,
-                isPurchasing: state.purchasingItemID == item.id,
-                isEquipping: state.equippingItemID == item.id,
-                isUnequipping: state.unequippingItemType == item.category.storeItemType,
-                purchaseFeedback: state.purchaseFeedback,
-                onBuy: { viewModel.send(.buyItem(item)) },
-                onEquip: { viewModel.send(.equipItem(item)) },
-                onUnequip: { viewModel.send(.unequipItem(item)) },
-                onDismiss: { viewModel.send(.dismissDetail) }
-            )
-            .presentationDetents([.large])
-            .presentationDragIndicator(.visible)
-            .presentationBackground(AppColors.surface)
+            AppSheet(backgroundColor: AppColors.surface) {
+                MarketplaceItemDetailSheet(
+                    item: item,
+                    userPoints: state.userPoints,
+                    isPurchasing: state.purchasingItemID == item.id,
+                    isEquipping: state.equippingItemID == item.id,
+                    isUnequipping: state.unequippingItemType == item.category.storeItemType,
+                    purchaseFeedback: state.purchaseFeedback,
+                    onBuy: { viewModel.send(.buyItem(item)) },
+                    onEquip: { viewModel.send(.equipItem(item)) },
+                    onUnequip: { viewModel.send(.unequipItem(item)) },
+                    onDismiss: { viewModel.send(.dismissDetail) }
+                )
+            }
         }
     }
 

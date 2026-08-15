@@ -70,6 +70,17 @@ public final class CreateGoalViewModel {
         return await confirmSchedule()
     }
 
+    func acceptAllSuggestionsAndConfirm() async -> Bool {
+        for taskIndex in state.scheduleTasks.indices {
+            for sessionIndex in state.scheduleTasks[taskIndex].sessions.indices
+            where state.scheduleTasks[taskIndex].sessions[sessionIndex].isSuggestion {
+                state.scheduleTasks[taskIndex].sessions[sessionIndex].isAccepted = true
+            }
+        }
+        state.showsUnscheduledDialog = false
+        return await confirmSchedule()
+    }
+
     func focusFirstUnscheduledTask() {
         state.showsUnscheduledDialog = false
         state.focusedUnscheduledTaskID = state.unresolvedTasks.first?.taskID
@@ -89,9 +100,12 @@ public final class CreateGoalViewModel {
 
     func updateSession(sessionID: UUID, start: Date, end: Date) {
         mutateSession(id: sessionID) {
+            $0.zoneID = nil
             $0.start = start
             $0.end = end
-            $0.isEdited = true
+            $0.kind = .manual
+            $0.isEdited = false
+            $0.isAccepted = true
         }
     }
 
@@ -112,6 +126,7 @@ public final class CreateGoalViewModel {
                 isEdited: false
             )
         )
+        state.scheduleTasks[taskIndex].unscheduledMessage = nil
     }
 
     func removeManualSession(sessionID: UUID) {

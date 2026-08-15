@@ -15,6 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.6.0"),
+        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "8.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -23,6 +24,7 @@ let package = Package(
             name: "Common",
             dependencies: [
                 .product(name: "Lottie", package: "lottie-spm"),
+                .product(name: "Kingfisher", package: "Kingfisher")
             ],
             resources: [.process("Resources")]
         ),

@@ -22,6 +22,7 @@ public struct UserPreferences: Equatable, Sendable {
     }
 }
 
+
 public struct UserProfile: Equatable, Sendable {
     public let id: UUID
     public let email: String
@@ -32,7 +33,9 @@ public struct UserProfile: Equatable, Sendable {
     public let streak: Int
     public let maxStreak: Int
     public let profilePictureUrl: String?
+    public let isNew: Bool
     public let preferences: UserPreferences
+    public let equippedItems: [EquippedItem]
 
     public init(
         id: UUID,
@@ -44,7 +47,9 @@ public struct UserProfile: Equatable, Sendable {
         streak: Int,
         maxStreak: Int,
         profilePictureUrl: String?,
-        preferences: UserPreferences
+        isNew: Bool,
+        preferences: UserPreferences,
+        equippedItems: [EquippedItem]
     ) {
         self.id = id
         self.email = email
@@ -55,6 +60,8 @@ public struct UserProfile: Equatable, Sendable {
         self.streak = streak
         self.maxStreak = maxStreak
         self.profilePictureUrl = profilePictureUrl
+        self.isNew = isNew
         self.preferences = preferences
+        self.equippedItems = equippedItems
     }
 }

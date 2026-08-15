@@ -216,10 +216,17 @@ public struct InboxView: View {
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 18, trailing: 16))
+
+            // Bottom clearance for CustomTabBar inside scroll content
+            Color.clear
+                .frame(height: 100)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
         }
         .listStyle(.plain)
+        .scrollContentBackground(.hidden)
         .padding(.top, 12)
-        .padding(.bottom, 120)
         .scrollDismissesKeyboard(.interactively)
         .refreshable {
             viewModel.send(.refresh)

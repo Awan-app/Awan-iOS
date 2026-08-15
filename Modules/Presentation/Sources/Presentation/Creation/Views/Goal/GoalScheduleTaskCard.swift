@@ -25,14 +25,14 @@ struct GoalScheduleTaskCard: View {
                     .font(AppFonts.headlineBlack)
                     .foregroundStyle(AppColors.textPrimary)
 
-                if let message = task.unscheduledMessage {
-                    Label(message, systemImage: "calendar.badge.exclamationmark")
-                        .font(AppFonts.subheadlineSemibold)
-                        .foregroundStyle(AppColors.warning)
-                        .fixedSize(horizontal: false, vertical: true)
+                if task.sessions.isEmpty {
+                    GoalScheduleEmptySessionRow(
+                        unscheduledReason: task.unscheduledMessage,
+                        onAddSession: onAddSession
+                    )
                 }
 
-                ForEach(task.sessions) { session in
+                ForEach(task.scheduledSessions) { session in
                     GoalScheduleSessionRow(
                         session: session,
                         zoneName: session.zoneID.flatMap { zoneNames[$0] },
@@ -46,16 +46,29 @@ struct GoalScheduleTaskCard: View {
                     )
                 }
 
-                if task.unscheduledMessage != nil {
-                    AppButton(
-                        title: L10n.GoalCreation.addSession,
-                        icon: "calendar.badge.plus",
-                        color: AppColors.accentBlue,
-                        size: .compact,
-                        onTap: onAddSession
-                    )
+                if !task.suggestionSessions.isEmpty {
+                    Text(L10n.GoalCreation.suggestions)
+                        .font(AppFonts.captionHeavy)
+                        .foregroundStyle(AppColors.textSecondary)
+                        .textCase(.uppercase)
+                        .padding(.top, 2)
+
+                    ForEach(task.suggestionSessions) { session in
+                        GoalScheduleSessionRow(
+                            session: session,
+                            zoneName: session.zoneID.flatMap { zoneNames[$0] },
+                            onToggleSuggestion: {
+                                onToggleSuggestion(session.id)
+                            },
+                            onEdit: { onEditSession(session) },
+                            onRemove: nil
+                        )
+                    }
                 }
+
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity)
     }
 }

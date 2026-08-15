@@ -5,13 +5,19 @@ import Foundation
 public struct DefaultGoalRepository: GoalRepository {
     private let localDataSource: any LocalGoalDataSource
     private let remoteDataSource: any RemoteGoalDataSource
+    private let remoteTaskDataSource: any RemoteTaskDataSource
+    private let localTaskDataSource: (any LocalTaskDataSource)?
 
     public init(
         localDataSource: any LocalGoalDataSource,
-        remoteDataSource: any RemoteGoalDataSource
+        remoteDataSource: any RemoteGoalDataSource,
+        remoteTaskDataSource: any RemoteTaskDataSource,
+        localTaskDataSource: (any LocalTaskDataSource)? = nil
     ) {
         self.localDataSource = localDataSource
         self.remoteDataSource = remoteDataSource
+        self.remoteTaskDataSource = remoteTaskDataSource
+        self.localTaskDataSource = localTaskDataSource
     }
 
     public func fetchGoals() async throws -> [Goal] {
@@ -71,6 +77,47 @@ public struct DefaultGoalRepository: GoalRepository {
     public func addGoal(_ goal: Goal) async throws {
         try await localDataSource.addGoal(goal)
     }
+
+    public func createGoal(
+        title: String,
+        description: String?,
+        targetDate: Date?
+    ) async throws -> Goal {
+        let dateString = targetDate.map { LocalDateKey.value(for: $0) }
+        let requestDTO = CreateGoalRequestDTO(
+            title: title,
+            description: description,
+            targetDate: dateString,
+            tasks: []
+        )
+        let responseDTO = try await remoteDataSource.createGoal(requestDTO)
+        let goal = try HomeRemoteMapper.goal(responseDTO)
+        try await localDataSource.addGoal(goal)
+        return goal
+    }
+
+    public func addTaskToGoal(goalID: UUID, task: AwanTask) async throws {
+        let requestDTO = MoveTaskRequestDTO(goalID: goalID)
+        _ = try await remoteTaskDataSource.moveTask(taskID: task.id, request: requestDTO)
+
+        let updatedTask = AwanTask(
+            id: task.id,
+            title: task.title,
+            description: task.description,
+            status: task.status,
+            completedAt: task.completedAt,
+            goalID: goalID,
+            duration: task.duration,
+            isSplittable: task.isSplittable,
+            mandatory: task.mandatory,
+            estimatedPoints: task.estimatedPoints,
+            dependencyIDs: task.dependencyIDs,
+            category: task.category
+        )
+        try await localTaskDataSource?.updateTask(updatedTask)
+    }
+
+
     public func updateGoal(_ goal: Goal) async throws {
         try await localDataSource.updateGoal(goal)
     }
@@ -81,3 +128,4 @@ public struct DefaultGoalRepository: GoalRepository {
         try await localDataSource.deleteAllGoals()
     }
 }
+
