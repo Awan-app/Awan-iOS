@@ -38,8 +38,6 @@ struct PersonalizationView: View {
                     isSessionTimeSheetPresented = false
                 }
             )
-            .presentationDetents([.height(360)])
-            .presentationDragIndicator(.visible)
             .overlay { mutationOverlay(for: .sessionDuration) }
             .alert(
                 L10n.Profile.updateFailureTitle,
