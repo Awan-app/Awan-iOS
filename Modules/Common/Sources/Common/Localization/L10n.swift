@@ -1496,6 +1496,17 @@ public enum L10n {
 
         public static var created: String { text("goals.created") }
         public static var managementPlaceholder: String { text("goals.management_placeholder") }
+        public static var detailTitle: String { text("goals.detail_title") }
+        public static var editButton: String { text("goals.edit_button") }
+        public static var editTitle: String { text("goals.edit_title") }
+        public static var editSubtitle: String { text("goals.edit_subtitle") }
+        public static var deleteButton: String { text("goals.delete_button") }
+        public static var deleteConfirmTitle: String { text("goals.delete_confirm_title") }
+        public static var deleteConfirmMessage: String { text("goals.delete_confirm_message") }
+        public static var updateButton: String { text("goals.update_button") }
+        public static var scheduleWithAI: String { text("goals.schedule_with_ai") }
+        public static var scheduleWithAISubtitle: String { text("goals.schedule_with_ai_subtitle") }
+        public static var scheduleWithAIButton: String { text("goals.schedule_with_ai_button") }
 
         private static func text(_ key: String) -> String {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
