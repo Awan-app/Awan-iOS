@@ -140,82 +140,92 @@ public struct InboxView: View {
     }
 
     private func content(_ state: InboxState) -> some View {
+        VStack(spacing: 0) {
+            InboxHeaderView(
+                selectedTopTab: Binding(
+                    get: { state.selectedTopTab },
+                    set: { viewModel.send(.selectTopTab($0)) }
+                ),
+                rewardPoints: animatedPoints ?? state.userPoints,
+                pointsPulse: pointsPulse
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 8)
+
+            if state.selectedTopTab == .inbox {
+                inboxTasksList(state)
+            } else {
+                GoalsContentSection(viewModel: goalsViewModel)
+            }
+        }
+    }
+
+    private func inboxTasksList(_ state: InboxState) -> some View {
         List {
             Group {
-                InboxHeaderView(
-                    selectedTopTab: Binding(
-                        get: { state.selectedTopTab },
-                        set: { viewModel.send(.selectTopTab($0)) }
+                InboxSearchFilterBar(
+                    searchQuery: Binding(
+                        get: { state.searchQuery },
+                        set: { viewModel.send(.searchQueryChanged($0)) }
                     ),
-                    rewardPoints: animatedPoints ?? state.userPoints,
-                    pointsPulse: pointsPulse
+                    isFilterExpanded: $isFilterExpanded,
+                    hasActiveFilters: state.selectedTaskFilter != .all
+                        || state.selectedSessionFilter != .any,
+                    showsFilterButton: true
                 )
+                .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
 
-                if state.selectedTopTab == .inbox {
-
-                    InboxSearchFilterBar(
-                        searchQuery: Binding(
-                            get: { state.searchQuery },
-                            set: { viewModel.send(.searchQueryChanged($0)) }
+                if isFilterExpanded {
+                    InboxFilterChipsRow(
+                        selectedTaskFilter: Binding(
+                            get: { state.selectedTaskFilter },
+                            set: { viewModel.send(.taskFilterChanged($0)) }
                         ),
-                        isFilterExpanded: $isFilterExpanded,
-                        hasActiveFilters: state.selectedTaskFilter != .all
-                            || state.selectedSessionFilter != .any,
-                        showsFilterButton: true
-                    )
-
-                    if isFilterExpanded {
-                        InboxFilterChipsRow(
-                            selectedTaskFilter: Binding(
-                                get: { state.selectedTaskFilter },
-                                set: { viewModel.send(.taskFilterChanged($0)) }
-                            ),
-                            selectedSessionFilter: Binding(
-                                get: { state.selectedSessionFilter },
-                                set: { viewModel.send(.sessionFilterChanged($0)) }
-                            )
+                        selectedSessionFilter: Binding(
+                            get: { state.selectedSessionFilter },
+                            set: { viewModel.send(.sessionFilterChanged($0)) }
                         )
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                    }
+                    )
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
+                }
 
-                    sectionTitleRow(count: state.filteredTasks.count)
+                sectionTitleRow(count: state.filteredTasks.count)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16))
 
-
-                    if state.filteredTasks.isEmpty {
-                        InboxEmptyView()
-                            .padding(.top, 20)
-                    } else {
-                        ForEach(state.filteredTasks) { taskItem in
-                            InboxTaskCard(
-                                taskItem: taskItem,
-                                isExpanded: state.expandedTaskIDs.contains(taskItem.id),
-                                isCompletionDisabled: state.mutatingTaskIDs.contains(taskItem.id),
-                                onToggleExpand: {
-                                    viewModel.send(.toggleTaskExpansion(taskItem.id))
-                                },
-                                onCompleteTask: {
-                                    viewModel.send(.completeTask(taskItem.id))
-                                },
-                                onDeleteTask: {
-                                    viewModel.send(.deleteTask(taskItem.id))
-                                }
-                            )
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button {
-                                    taskToDelete = taskItem
-                                    isDeleteAlertPresented = true
-                                } label: {
-                                    Label(L10n.Inbox.deleteTask, systemImage: "trash.fill")
-                                }
-                                .tint(AppColors.destructive)
-                            }
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(Color.clear)
-                            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 10, trailing: 16))
-                        }
-                    }
+                if state.filteredTasks.isEmpty {
+                    InboxEmptyView()
+                        .padding(.top, 20)
                 } else {
-                    GoalsContentSection(viewModel: goalsViewModel)
+                    ForEach(state.filteredTasks) { taskItem in
+                        InboxTaskCard(
+                            taskItem: taskItem,
+                            isExpanded: state.expandedTaskIDs.contains(taskItem.id),
+                            isCompletionDisabled: state.mutatingTaskIDs.contains(taskItem.id),
+                            onToggleExpand: {
+                                viewModel.send(.toggleTaskExpansion(taskItem.id))
+                            },
+                            onCompleteTask: {
+                                viewModel.send(.completeTask(taskItem.id))
+                            },
+                            onDeleteTask: {
+                                viewModel.send(.deleteTask(taskItem.id))
+                            }
+                        )
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button {
+                                taskToDelete = taskItem
+                                isDeleteAlertPresented = true
+                            } label: {
+                                Label(L10n.Inbox.deleteTask, systemImage: "trash.fill")
+                            }
+                            .tint(AppColors.destructive)
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 10, trailing: 16))
+                    }
                 }
             }
             .listRowSeparator(.hidden)
@@ -232,7 +242,6 @@ public struct InboxView: View {
         .listStyle(.plain)
         .scrollPosition($scrollPosition)
         .scrollContentBackground(.hidden)
-        .padding(.top, 12)
         .scrollDismissesKeyboard(.interactively)
         .refreshable {
             viewModel.send(.refresh)

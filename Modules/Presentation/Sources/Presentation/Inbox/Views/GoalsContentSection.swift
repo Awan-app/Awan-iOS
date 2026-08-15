@@ -8,26 +8,34 @@ import SwiftUI
 
 /// The Goals content rendered inside InboxView's LazyVStack when the Goals tab is selected.
 struct GoalsContentSection: View {
-    @State private var viewModel: GoalsViewModel
+    var viewModel: GoalsViewModel
 
     init(viewModel: GoalsViewModel) {
-        _viewModel = State(initialValue: viewModel)
+        self.viewModel = viewModel
     }
 
     var body: some View {
         let state = viewModel.state
 
-        VStack(spacing: 0) {
-            if state.isLoading && state.allGoals.isEmpty {
-                ProgressView()
-                    .controlSize(.large)
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 60)
-            } else if let failure = state.failureMessage, state.allGoals.isEmpty {
-                goalsFailureView(message: failure)
-            } else {
-                goalsContent(state)
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                if state.isLoading && state.allGoals.isEmpty {
+                    ProgressView()
+                        .controlSize(.large)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 60)
+                } else if let failure = state.failureMessage, state.allGoals.isEmpty {
+                    goalsFailureView(message: failure)
+                } else {
+                    goalsContent(state)
+                }
             }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 120)
+        }
+        .scrollDismissesKeyboard(.interactively)
+        .refreshable {
+            viewModel.send(.refresh)
         }
         .task {
             viewModel.send(.appeared)
@@ -67,6 +75,8 @@ struct GoalsContentSection: View {
             showsFilterButton: false,
             placeholder: L10n.Goals.searchPlaceholder
         )
+        .padding(.top, 4)
+        .padding(.bottom, 4)
 
         // Section title
         goalsSectionTitle(count: state.filteredGoals.count)
@@ -81,7 +91,6 @@ struct GoalsContentSection: View {
                 }
                 .padding(.bottom, 14)
             }
-
         }
     }
 
