@@ -17,6 +17,7 @@ public final class GoalsViewModel {
     @ObservationIgnored private let useCases: GoalsUseCases
     @ObservationIgnored private let mapper: GoalsStateMapper
     @ObservationIgnored private var cancellable: AnyCancellable?
+    @ObservationIgnored private var isObserving = false
 
     public init(
         useCases: GoalsUseCases,
@@ -31,7 +32,10 @@ public final class GoalsViewModel {
 
     public func send(_ action: GoalsAction) {
         switch action {
-        case .appeared, .refresh:
+        case .appeared:
+            guard !isObserving else { return }
+            load()
+        case .refresh:
             load()
         case let .searchQueryChanged(query):
             state.searchQuery = query
@@ -58,6 +62,49 @@ public final class GoalsViewModel {
             addInboxTaskToGoal(task: task, goalID: goalID)
         case .dismissAddTaskError:
             state.addTaskFailureMessage = nil
+        case let .showEditGoalSheet(goalID):
+            state.editGoalSheetGoalID = goalID
+        case .dismissEditGoalSheet:
+            state.editGoalSheetGoalID = nil
+        case let .updateGoal(goalID, title, description, targetDate):
+            updateGoal(goalID: goalID, title: title, description: description, targetDate: targetDate)
+        case let .deleteGoal(goalID):
+            deleteGoal(goalID: goalID)
+        case .dismissGoalActionError:
+            state.goalActionErrorMessage = nil
+        case let .requestAISchedule(goalID):
+            requestAISchedule(goalID: goalID)
+        case let .confirmAISchedule(goalID):
+            confirmAISchedule(goalID: goalID)
+        case .dismissAIScheduleReview:
+            state.scheduleReviewGoalID = nil
+            state.scheduleReviewTasks = []
+            state.showsUnscheduledDialog = false
+            state.scheduleFocusedTaskID = nil
+        case let .toggleScheduleSuggestion(sessionID):
+            toggleScheduleSuggestion(sessionID: sessionID)
+        case let .updateScheduleSession(sessionID, start, end):
+            updateScheduleSession(sessionID: sessionID, start: start, end: end)
+        case let .addManualScheduleSession(taskID, start, end):
+            addManualScheduleSession(taskID: taskID, start: start, end: end)
+        case let .removeManualScheduleSession(sessionID):
+            removeManualScheduleSession(sessionID: sessionID)
+        case let .prepareScheduleConfirmation(goalID):
+            prepareScheduleConfirmation(goalID: goalID)
+        case let .continueWithoutUnscheduledTasks(goalID):
+            state.showsUnscheduledDialog = false
+            confirmAISchedule(goalID: goalID)
+        case let .acceptAllSuggestionsAndConfirm(goalID):
+            acceptAllSuggestionsAndConfirm(goalID: goalID)
+        case .focusFirstUnscheduledTask:
+            state.showsUnscheduledDialog = false
+            state.scheduleFocusedTaskID = state.unresolvedScheduleTasks.first?.taskID
+        case .dismissUnscheduledDialog:
+            state.showsUnscheduledDialog = false
+        case .clearFocusedUnscheduledTask:
+            state.scheduleFocusedTaskID = nil
+        case .dismissScheduleErrorMessage:
+            state.scheduleErrorMessage = nil
         }
     }
 
@@ -76,6 +123,48 @@ public final class GoalsViewModel {
                 guard let self else { return }
                 self.state.isCreatingGoal = false
                 self.state.failureMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func updateGoal(goalID: UUID, title: String, description: String?, targetDate: Date?) {
+        guard let updateGoalUseCase = useCases.updateGoal else { return }
+        state.isUpdatingGoal = true
+        state.editGoalSheetGoalID = nil
+
+        Task { [weak self] in
+            do {
+                _ = try await updateGoalUseCase.execute(
+                    id: goalID,
+                    title: title,
+                    description: description,
+                    targetDate: targetDate
+                )
+                guard let self else { return }
+                self.state.isUpdatingGoal = false
+            } catch {
+                guard let self else { return }
+                self.state.isUpdatingGoal = false
+                self.state.goalActionErrorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func deleteGoal(goalID: UUID) {
+        guard let deleteGoalUseCase = useCases.deleteGoal else { return }
+        state.isDeletingGoal = true
+
+        Task { [weak self] in
+            do {
+                try await deleteGoalUseCase.execute(id: goalID)
+                guard let self else { return }
+                self.state.isDeletingGoal = false
+                self.state.allGoals.removeAll { $0.id == goalID }
+                self.state.deletedGoalID = goalID
+            } catch {
+                guard let self else { return }
+                self.state.isDeletingGoal = false
+                self.state.goalActionErrorMessage = error.localizedDescription
             }
         }
     }
@@ -219,9 +308,173 @@ public final class GoalsViewModel {
         return result
     }
 
+    // MARK: - AI Scheduling
+
+    private func requestAISchedule(goalID: UUID) {
+        guard let requestScheduleUseCase = useCases.requestSchedule else { return }
+        state.isRequestingAISchedule = true
+        state.scheduleErrorMessage = nil
+
+        Task { [weak self] in
+            do {
+                let proposal = try await requestScheduleUseCase.execute(goalID: goalID)
+                guard let self else { return }
+                let tasks = self.state.selectedGoalTasks
+                self.state.scheduleReviewTasks = GoalScheduleReviewMapper.tasks(
+                    proposal: proposal,
+                    tasks: tasks
+                )
+                self.state.scheduleReviewGoalID = goalID
+                self.state.isRequestingAISchedule = false
+                await self.loadScheduleZoneNames()
+            } catch {
+                guard let self else { return }
+                self.state.isRequestingAISchedule = false
+                self.state.scheduleErrorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func prepareScheduleConfirmation(goalID: UUID) {
+        if !state.unresolvedScheduleTasks.isEmpty {
+            state.scheduleFocusedTaskID = nil
+            state.showsUnscheduledDialog = true
+            return
+        }
+        confirmAISchedule(goalID: goalID)
+    }
+
+    private func acceptAllSuggestionsAndConfirm(goalID: UUID) {
+        for taskIndex in state.scheduleReviewTasks.indices {
+            for sessionIndex in state.scheduleReviewTasks[taskIndex].sessions.indices
+            where state.scheduleReviewTasks[taskIndex].sessions[sessionIndex].isSuggestion {
+                state.scheduleReviewTasks[taskIndex].sessions[sessionIndex].isAccepted = true
+            }
+        }
+        state.showsUnscheduledDialog = false
+        confirmAISchedule(goalID: goalID)
+    }
+
+    private func confirmAISchedule(goalID: UUID) {
+        guard let confirmScheduleUseCase = useCases.confirmSchedule else { return }
+        let items = state.scheduleReviewTasks
+            .flatMap(\.sessions)
+            .filter(\.isIncluded)
+            .map {
+                GoalScheduleConfirmationItem(
+                    taskID: $0.taskID,
+                    zoneID: $0.zoneID,
+                    start: $0.start,
+                    end: $0.end
+                )
+            }
+        guard !items.isEmpty else {
+            state.scheduleReviewGoalID = nil
+            state.scheduleReviewTasks = []
+            return
+        }
+
+        state.isConfirmingAISchedule = true
+        state.scheduleErrorMessage = nil
+
+        Task { [weak self] in
+            do {
+                _ = try await confirmScheduleUseCase.execute(
+                    goalID: goalID,
+                    sessions: items
+                )
+                guard let self else { return }
+                self.state.isConfirmingAISchedule = false
+                self.state.scheduleReviewGoalID = nil
+                self.state.scheduleReviewTasks = []
+                self.state.showsUnscheduledDialog = false
+                self.load()
+            } catch {
+                guard let self else { return }
+                self.state.isConfirmingAISchedule = false
+                self.state.scheduleErrorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func toggleScheduleSuggestion(sessionID: UUID) {
+        mutateScheduleSession(id: sessionID) { $0.isAccepted.toggle() }
+    }
+
+    private func updateScheduleSession(sessionID: UUID, start: Date, end: Date) {
+        mutateScheduleSession(id: sessionID) {
+            $0.zoneID = nil
+            $0.start = start
+            $0.end = end
+            $0.kind = .manual
+            $0.isEdited = false
+            $0.isAccepted = true
+        }
+    }
+
+    private func addManualScheduleSession(taskID: UUID, start: Date, end: Date) {
+        guard let taskIndex = state.scheduleReviewTasks.firstIndex(where: {
+            $0.taskID == taskID
+        }) else { return }
+
+        state.scheduleReviewTasks[taskIndex].sessions.append(
+            GoalScheduleReviewSession(
+                id: UUID(),
+                taskID: taskID,
+                zoneID: nil,
+                start: start,
+                end: end,
+                kind: .manual,
+                isAccepted: true,
+                isEdited: false
+            )
+        )
+        state.scheduleReviewTasks[taskIndex].unscheduledMessage = nil
+    }
+
+    private func removeManualScheduleSession(sessionID: UUID) {
+        for taskIndex in state.scheduleReviewTasks.indices {
+            state.scheduleReviewTasks[taskIndex].sessions.removeAll {
+                $0.id == sessionID && $0.isManual
+            }
+        }
+    }
+
+    private func mutateScheduleSession(
+        id: UUID,
+        mutation: (inout GoalScheduleReviewSession) -> Void
+    ) {
+        for taskIndex in state.scheduleReviewTasks.indices {
+            guard let sessionIndex = state.scheduleReviewTasks[taskIndex].sessions
+                .firstIndex(where: { $0.id == id }) else {
+                continue
+            }
+            mutation(&state.scheduleReviewTasks[taskIndex].sessions[sessionIndex])
+            return
+        }
+    }
+
+    private func loadScheduleZoneNames() async {
+        guard let fetchZones = useCases.fetchZones else { return }
+        let days = Set(
+            state.scheduleReviewTasks
+                .flatMap(\.sessions)
+                .map { Calendar.current.startOfDay(for: $0.start) }
+        )
+        for day in days {
+            guard let zones = try? await fetchZones.execute(for: day) else {
+                continue
+            }
+            for zone in zones {
+                state.scheduleZoneNames[zone.id] = zone.name
+            }
+        }
+    }
+
     // MARK: - Private
 
     private func load() {
+        isObserving = true
         cancellable?.cancel()
         state.isLoading = true
         state.failureMessage = nil

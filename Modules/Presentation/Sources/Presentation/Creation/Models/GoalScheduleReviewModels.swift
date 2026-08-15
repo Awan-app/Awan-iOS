@@ -1,24 +1,44 @@
 import Domain
 import Foundation
 
-enum GoalScheduleReviewSessionKind: Equatable {
+public enum GoalScheduleReviewSessionKind: Equatable, Sendable {
     case proposed
     case noZone(reason: String)
     case overlap(reason: String, info: GoalScheduleOverlapInfo?)
     case manual
 }
 
-struct GoalScheduleReviewSession: Identifiable, Equatable {
-    let id: UUID
-    let taskID: UUID
-    var zoneID: UUID?
-    var start: Date
-    var end: Date
-    var kind: GoalScheduleReviewSessionKind
-    var isAccepted: Bool
-    var isEdited: Bool
+public struct GoalScheduleReviewSession: Identifiable, Equatable, Sendable {
+    public let id: UUID
+    public let taskID: UUID
+    public var zoneID: UUID?
+    public var start: Date
+    public var end: Date
+    public var kind: GoalScheduleReviewSessionKind
+    public var isAccepted: Bool
+    public var isEdited: Bool
 
-    var isIncluded: Bool {
+    public init(
+        id: UUID,
+        taskID: UUID,
+        zoneID: UUID?,
+        start: Date,
+        end: Date,
+        kind: GoalScheduleReviewSessionKind,
+        isAccepted: Bool,
+        isEdited: Bool
+    ) {
+        self.id = id
+        self.taskID = taskID
+        self.zoneID = zoneID
+        self.start = start
+        self.end = end
+        self.kind = kind
+        self.isAccepted = isAccepted
+        self.isEdited = isEdited
+    }
+
+    public var isIncluded: Bool {
         return switch kind {
         case .noZone, .overlap:
             isEdited || isAccepted
@@ -27,13 +47,13 @@ struct GoalScheduleReviewSession: Identifiable, Equatable {
         }
     }
 
-    var isManual: Bool {
+    public var isManual: Bool {
         if isManuallyEditedSuggestion { return true }
         if case .manual = kind { return true }
         return false
     }
 
-    var isSuggestion: Bool {
+    public var isSuggestion: Bool {
         guard !isManuallyEditedSuggestion else { return false }
         return switch kind {
         case .noZone, .overlap:
@@ -43,7 +63,7 @@ struct GoalScheduleReviewSession: Identifiable, Equatable {
         }
     }
 
-    var isManuallyEditedSuggestion: Bool {
+    public var isManuallyEditedSuggestion: Bool {
         guard isEdited else { return false }
         return switch kind {
         case .noZone, .overlap:
@@ -54,35 +74,66 @@ struct GoalScheduleReviewSession: Identifiable, Equatable {
     }
 }
 
-struct GoalScheduleReviewTask: Identifiable, Equatable {
-    var id: UUID { taskID }
-    let taskID: UUID
-    let title: String
-    let estimatedDuration: Int
-    var sessions: [GoalScheduleReviewSession]
-    var unscheduledMessage: String?
+public struct GoalScheduleReviewTask: Identifiable, Equatable, Sendable {
+    public var id: UUID { taskID }
+    public let taskID: UUID
+    public let title: String
+    public let estimatedDuration: Int
+    public var sessions: [GoalScheduleReviewSession]
+    public var unscheduledMessage: String?
 
-    var isUnresolved: Bool {
+    public init(
+        taskID: UUID,
+        title: String,
+        estimatedDuration: Int,
+        sessions: [GoalScheduleReviewSession],
+        unscheduledMessage: String? = nil
+    ) {
+        self.taskID = taskID
+        self.title = title
+        self.estimatedDuration = estimatedDuration
+        self.sessions = sessions
+        self.unscheduledMessage = unscheduledMessage
+    }
+
+    public var isUnresolved: Bool {
         !sessions.contains(where: \.isIncluded)
     }
 
-    var scheduledSessions: [GoalScheduleReviewSession] {
+    public var scheduledSessions: [GoalScheduleReviewSession] {
         sessions.filter { !$0.isSuggestion }
     }
 
-    var suggestionSessions: [GoalScheduleReviewSession] {
+    public var suggestionSessions: [GoalScheduleReviewSession] {
         sessions.filter(\.isSuggestion)
     }
 }
 
-enum GoalScheduleReviewMapper {
-    static func tasks(
+public enum GoalScheduleReviewMapper {
+    public static func tasks(
         proposal: GoalScheduleProposal,
         confirmedGoal: ConfirmedGoal
     ) -> [GoalScheduleReviewTask] {
         let confirmedTasks = Dictionary(
-            uniqueKeysWithValues: confirmedGoal.tasks.map { ($0.id, $0) }
+            uniqueKeysWithValues: confirmedGoal.tasks.map { ($0.id, $0.estimatedDuration) }
         )
+        return mapTasks(proposal: proposal, durationsByTaskID: confirmedTasks)
+    }
+
+    public static func tasks(
+        proposal: GoalScheduleProposal,
+        tasks: [AwanTask]
+    ) -> [GoalScheduleReviewTask] {
+        let taskDurations = Dictionary(
+            uniqueKeysWithValues: tasks.map { ($0.id, $0.duration.minutes) }
+        )
+        return mapTasks(proposal: proposal, durationsByTaskID: taskDurations)
+    }
+
+    public static func mapTasks(
+        proposal: GoalScheduleProposal,
+        durationsByTaskID: [UUID: Int] = [:]
+    ) -> [GoalScheduleReviewTask] {
         var tasksByID: [UUID: GoalScheduleReviewTask] = [:]
         var order: [UUID] = []
 
@@ -97,11 +148,10 @@ enum GoalScheduleReviewMapper {
                 }
                 return
             }
-            let confirmed = confirmedTasks[taskID]
             tasksByID[taskID] = GoalScheduleReviewTask(
                 taskID: taskID,
                 title: title,
-                estimatedDuration: confirmed?.estimatedDuration ?? 60,
+                estimatedDuration: durationsByTaskID[taskID] ?? 60,
                 sessions: [],
                 unscheduledMessage: unscheduledMessage
             )

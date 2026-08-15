@@ -21,6 +21,19 @@ public struct GoalsState: Equatable, Sendable {
     public var inboxTasksForSheet: [AwanTask]
     public var isLoadingInboxTasks: Bool
     public var addTaskFailureMessage: String?
+    public var editGoalSheetGoalID: UUID?
+    public var isUpdatingGoal: Bool
+    public var isDeletingGoal: Bool
+    public var goalActionErrorMessage: String?
+    public var deletedGoalID: UUID?
+    public var isRequestingAISchedule: Bool
+    public var isConfirmingAISchedule: Bool
+    public var scheduleReviewGoalID: UUID?
+    public var scheduleReviewTasks: [GoalScheduleReviewTask]
+    public var scheduleZoneNames: [UUID: String]
+    public var scheduleFocusedTaskID: UUID?
+    public var showsUnscheduledDialog: Bool
+    public var scheduleErrorMessage: String?
 
     public init(
         isLoading: Bool = false,
@@ -36,7 +49,20 @@ public struct GoalsState: Equatable, Sendable {
         addTaskSheetGoalID: UUID? = nil,
         inboxTasksForSheet: [AwanTask] = [],
         isLoadingInboxTasks: Bool = false,
-        addTaskFailureMessage: String? = nil
+        addTaskFailureMessage: String? = nil,
+        editGoalSheetGoalID: UUID? = nil,
+        isUpdatingGoal: Bool = false,
+        isDeletingGoal: Bool = false,
+        goalActionErrorMessage: String? = nil,
+        deletedGoalID: UUID? = nil,
+        isRequestingAISchedule: Bool = false,
+        isConfirmingAISchedule: Bool = false,
+        scheduleReviewGoalID: UUID? = nil,
+        scheduleReviewTasks: [GoalScheduleReviewTask] = [],
+        scheduleZoneNames: [UUID: String] = [:],
+        scheduleFocusedTaskID: UUID? = nil,
+        showsUnscheduledDialog: Bool = false,
+        scheduleErrorMessage: String? = nil
     ) {
         self.isLoading = isLoading
         self.searchQuery = searchQuery
@@ -52,6 +78,23 @@ public struct GoalsState: Equatable, Sendable {
         self.inboxTasksForSheet = inboxTasksForSheet
         self.isLoadingInboxTasks = isLoadingInboxTasks
         self.addTaskFailureMessage = addTaskFailureMessage
+        self.editGoalSheetGoalID = editGoalSheetGoalID
+        self.isUpdatingGoal = isUpdatingGoal
+        self.isDeletingGoal = isDeletingGoal
+        self.goalActionErrorMessage = goalActionErrorMessage
+        self.deletedGoalID = deletedGoalID
+        self.isRequestingAISchedule = isRequestingAISchedule
+        self.isConfirmingAISchedule = isConfirmingAISchedule
+        self.scheduleReviewGoalID = scheduleReviewGoalID
+        self.scheduleReviewTasks = scheduleReviewTasks
+        self.scheduleZoneNames = scheduleZoneNames
+        self.scheduleFocusedTaskID = scheduleFocusedTaskID
+        self.showsUnscheduledDialog = showsUnscheduledDialog
+        self.scheduleErrorMessage = scheduleErrorMessage
+    }
+
+    public var unresolvedScheduleTasks: [GoalScheduleReviewTask] {
+        scheduleReviewTasks.filter(\.isUnresolved)
     }
 
 
