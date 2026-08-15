@@ -104,6 +104,9 @@ public struct GoalDetailView: View {
                             },
                             onAddTask: {
                                 viewModel.send(.showAddTaskSheet(goalID: goalID))
+                            },
+                            onCompleteTask: { taskID in
+                                viewModel.send(.completeTask(taskID))
                             }
                         )
                     }

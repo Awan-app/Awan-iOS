@@ -66,6 +66,8 @@ public struct GoalDetailTaskItem: Identifiable, Equatable, Sendable {
     public let isDependent: Bool
     public let dependencyIndices: [Int]
     public let task: AwanTask
+    public let sessionsSummary: String
+    public let sessionItems: [InboxSessionItem]
 
     public var id: UUID { task.id }
 
@@ -73,11 +75,53 @@ public struct GoalDetailTaskItem: Identifiable, Equatable, Sendable {
         displayIndex: Int,
         isDependent: Bool,
         dependencyIndices: [Int],
-        task: AwanTask
+        task: AwanTask,
+        sessionsSummary: String = "",
+        sessionItems: [InboxSessionItem] = []
     ) {
         self.displayIndex = displayIndex
         self.isDependent = isDependent
         self.dependencyIndices = dependencyIndices
         self.task = task
+        self.sessionsSummary = sessionsSummary
+        self.sessionItems = sessionItems
+    }
+
+    public var availableCompletionPoints: Int {
+        if task.completedAt != nil || task.status == .completed {
+            return 0
+        }
+        if !sessionItems.isEmpty {
+            let unrewardedCount = sessionItems.filter { session in
+                session.underlyingStatus != .cancelled
+            }.count
+            return task.estimatedPoints * unrewardedCount
+        }
+        return task.estimatedPoints
+    }
+
+    public var asInboxTaskItem: InboxTaskItem {
+        let derivedStatus: InboxTaskStatus = {
+            if task.completedAt != nil || task.status == .completed {
+                return .completed
+            } else if task.status == .active {
+                return .active
+            } else if task.status == .cancelled {
+                return .cancelled
+            } else {
+                return .drafted
+            }
+        }()
+
+        return InboxTaskItem(
+            id: task.id,
+            title: task.title,
+            description: task.description,
+            derivedStatus: derivedStatus,
+            sessionsSummary: sessionsSummary,
+            sessionItems: sessionItems,
+            rawTask: task,
+            availableCompletionPoints: availableCompletionPoints
+        )
     }
 }

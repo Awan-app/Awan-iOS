@@ -105,6 +105,8 @@ public final class GoalsViewModel {
             state.scheduleFocusedTaskID = nil
         case .dismissScheduleErrorMessage:
             state.scheduleErrorMessage = nil
+        case let .completeTask(id):
+            completeTask(id: id)
         }
     }
 
@@ -215,15 +217,35 @@ public final class GoalsViewModel {
         state.selectedGoalTasks = []
         state.orderedGoalTasks = []
 
+        let fetchGoalsWithTasks = useCases.fetchGoalsWithTasks
         let fetchGoalTasks = useCases.fetchGoalTasks
 
         Task { [weak self] in
             do {
-                let tasks = try await fetchGoalTasks.execute(goalID: goalID)
+                let goalsWithTasks = try await fetchGoalsWithTasks.execute()
                 guard let self else { return }
-                self.state.isLoadingGoalTasks = false
-                self.state.selectedGoalTasks = tasks
-                self.state.orderedGoalTasks = Self.buildOrderedItems(from: tasks)
+
+                if let targetGoal = goalsWithTasks.first(where: { $0.goal.id == goalID }) {
+                    let mapper = InboxStateMapper()
+                    let mappedInboxItems = mapper.map(inboxTasks: targetGoal.tasks)
+                    let inboxItemsByTaskID = Dictionary(
+                        mappedInboxItems.map { ($0.id, $0) },
+                        uniquingKeysWith: { first, _ in first }
+                    )
+
+                    let rawTasks = targetGoal.tasks.map(\.task)
+                    self.state.isLoadingGoalTasks = false
+                    self.state.selectedGoalTasks = rawTasks
+                    self.state.orderedGoalTasks = Self.buildOrderedItems(
+                        from: rawTasks,
+                        inboxItemsByTaskID: inboxItemsByTaskID
+                    )
+                } else {
+                    let tasks = try await fetchGoalTasks.execute(goalID: goalID)
+                    self.state.isLoadingGoalTasks = false
+                    self.state.selectedGoalTasks = tasks
+                    self.state.orderedGoalTasks = Self.buildOrderedItems(from: tasks)
+                }
             } catch {
                 guard let self else { return }
                 self.state.isLoadingGoalTasks = false
@@ -232,22 +254,68 @@ public final class GoalsViewModel {
         }
     }
 
-    
+    private func completeTask(id: UUID) {
+        guard let index = state.orderedGoalTasks.firstIndex(where: { $0.id == id }) else { return }
+        let current = state.orderedGoalTasks[index]
+        let isCurrentlyCompleted = current.task.completedAt != nil || current.task.status == .completed
+        let newCompletedState = !isCurrentlyCompleted
+        let newCompletedAt: Date? = newCompletedState ? Date() : nil
 
-    private static func buildOrderedItems(from tasks: [AwanTask]) -> [GoalDetailTaskItem] {
+        let updatedTask = current.task.updatingCompletion(newCompletedAt)
+
+        state.orderedGoalTasks[index] = GoalDetailTaskItem(
+            displayIndex: current.displayIndex,
+            isDependent: current.isDependent,
+            dependencyIndices: current.dependencyIndices,
+            task: updatedTask,
+            sessionsSummary: current.sessionsSummary,
+            sessionItems: current.sessionItems
+        )
+
+        guard let setTaskCompletion = useCases.setTaskCompletion else { return }
+
+        Task { [weak self] in
+            do {
+                let result = try await setTaskCompletion.execute(
+                    taskID: id,
+                    isCompleted: newCompletedState
+                )
+                guard let self else { return }
+                if let idx = self.state.orderedGoalTasks.firstIndex(where: { $0.id == id }) {
+                    let item = self.state.orderedGoalTasks[idx]
+                    self.state.orderedGoalTasks[idx] = GoalDetailTaskItem(
+                        displayIndex: item.displayIndex,
+                        isDependent: item.isDependent,
+                        dependencyIndices: item.dependencyIndices,
+                        task: result.task,
+                        sessionsSummary: item.sessionsSummary,
+                        sessionItems: item.sessionItems
+                    )
+                }
+            } catch {
+                guard let self else { return }
+                if let idx = self.state.orderedGoalTasks.firstIndex(where: { $0.id == id }) {
+                    self.state.orderedGoalTasks[idx] = current
+                }
+            }
+        }
+    }
+
+    private static func buildOrderedItems(
+        from tasks: [AwanTask],
+        inboxItemsByTaskID: [UUID: InboxTaskItem] = [:]
+    ) -> [GoalDetailTaskItem] {
         let knownIDs = Set(tasks.map(\.id))
         let taskByID = Dictionary(uniqueKeysWithValues: tasks.map { ($0.id, $0) })
       
         let originalIndex = Dictionary(uniqueKeysWithValues: tasks.enumerated().map { ($0.element.id, $0.offset) })
 
-        
         let localDepIDs: [UUID: Set<UUID>] = Dictionary(
             uniqueKeysWithValues: tasks.map { task in
                 (task.id, task.dependencyIDs.filter { knownIDs.contains($0) })
             }
         )
 
-       
         var dependents: [UUID: [UUID]] = [:]
         for task in tasks {
             for depID in localDepIDs[task.id, default: []] {
@@ -255,7 +323,6 @@ public final class GoalsViewModel {
             }
         }
 
-      
         var inDegree: [UUID: Int] = Dictionary(
             uniqueKeysWithValues: tasks.map { ($0.id, localDepIDs[$0.id, default: []].count) }
         )
@@ -270,7 +337,6 @@ public final class GoalsViewModel {
             let task = queue.removeFirst()
             ordered.append(task)
 
-           
             let newlyEligible = (dependents[task.id] ?? [])
                 .compactMap { taskByID[$0] }
                 .filter {
@@ -281,7 +347,6 @@ public final class GoalsViewModel {
             queue.append(contentsOf: newlyEligible)
         }
 
-       
         if ordered.count != tasks.count {
             ordered = tasks
         }
@@ -297,11 +362,14 @@ public final class GoalsViewModel {
             let dependencyIndices = localDeps
                 .compactMap { displayIndexByTaskID[$0] }
                 .sorted()
+            let inboxItem = inboxItemsByTaskID[sortedTask.id]
             return GoalDetailTaskItem(
                 displayIndex: index + 1,
                 isDependent: !localDeps.isEmpty,
                 dependencyIndices: dependencyIndices,
-                task: taskByID[sortedTask.id] ?? sortedTask
+                task: taskByID[sortedTask.id] ?? sortedTask,
+                sessionsSummary: inboxItem?.sessionsSummary ?? "",
+                sessionItems: inboxItem?.sessionItems ?? []
             )
         }
 

@@ -224,7 +224,8 @@ struct PresentationAssembly: Assembly {
                 deleteGoal: Self.resolve(DeleteGoalUseCase.self, from: resolver),
                 requestSchedule: Self.resolve(RequestGoalScheduleProposalUseCase.self, from: resolver),
                 confirmSchedule: Self.resolve(ConfirmGoalScheduleUseCase.self, from: resolver),
-                fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver)
+                fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
+                setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver)
             )
         }
 

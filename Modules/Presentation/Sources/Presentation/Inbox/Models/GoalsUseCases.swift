@@ -17,6 +17,7 @@ public struct GoalsUseCases: Sendable {
     public let requestSchedule: (any RequestGoalScheduleProposalUseCase)?
     public let confirmSchedule: (any ConfirmGoalScheduleUseCase)?
     public let fetchZones: (any FetchZonesUseCase)?
+    public let setTaskCompletion: (any SetTaskCompletionUseCase)?
 
     public init(
         fetchGoalsWithTasks: any FetchGoalsWithTasksUseCase,
@@ -28,7 +29,8 @@ public struct GoalsUseCases: Sendable {
         deleteGoal: (any DeleteGoalUseCase)? = nil,
         requestSchedule: (any RequestGoalScheduleProposalUseCase)? = nil,
         confirmSchedule: (any ConfirmGoalScheduleUseCase)? = nil,
-        fetchZones: (any FetchZonesUseCase)? = nil
+        fetchZones: (any FetchZonesUseCase)? = nil,
+        setTaskCompletion: (any SetTaskCompletionUseCase)? = nil
     ) {
         self.fetchGoalsWithTasks = fetchGoalsWithTasks
         self.fetchGoalTasks = fetchGoalTasks
@@ -40,6 +42,7 @@ public struct GoalsUseCases: Sendable {
         self.requestSchedule = requestSchedule
         self.confirmSchedule = confirmSchedule
         self.fetchZones = fetchZones
+        self.setTaskCompletion = setTaskCompletion
     }
 }
 
