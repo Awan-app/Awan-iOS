@@ -1,5 +1,5 @@
 //
-//  CreateGoalSheet.swift
+//  EditGoalSheet.swift
 //  Presentation
 //
 
@@ -7,15 +7,30 @@ import Common
 import Domain
 import SwiftUI
 
-struct CreateGoalSheet: View {
-    @State private var title: String = ""
-    @State private var description: String = ""
-    @State private var hasDeadline: Bool = false
-    @State private var targetDate: Date = Date()
+struct EditGoalSheet: View {
+    @State private var title: String
+    @State private var description: String
+    @State private var hasDeadline: Bool
+    @State private var targetDate: Date
 
     let isSubmitting: Bool
-    let onCreateGoal: (String, String?, Date?) -> Void
+    let onUpdate: (String, String?, Date?) -> Void
     let onDismiss: () -> Void
+
+    init(
+        goal: Goal,
+        isSubmitting: Bool,
+        onUpdate: @escaping (String, String?, Date?) -> Void,
+        onDismiss: @escaping () -> Void
+    ) {
+        _title = State(initialValue: goal.name)
+        _description = State(initialValue: goal.description ?? "")
+        _hasDeadline = State(initialValue: goal.deadline != nil)
+        _targetDate = State(initialValue: goal.deadline ?? Date())
+        self.isSubmitting = isSubmitting
+        self.onUpdate = onUpdate
+        self.onDismiss = onDismiss
+    }
 
     private var isSubmitDisabled: Bool {
         title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSubmitting
@@ -30,7 +45,6 @@ struct CreateGoalSheet: View {
                 headerView
 
                 VStack(spacing: 12) {
-                    // Title field
                     fieldSection(label: "Title") {
                         AppTextField(
                             text: $title,
@@ -38,7 +52,6 @@ struct CreateGoalSheet: View {
                         )
                     }
 
-                    // Description field
                     fieldSection(label: "Description") {
                         AppTextField(
                             text: $description,
@@ -48,15 +61,13 @@ struct CreateGoalSheet: View {
                         )
                     }
 
-                    // Deadline date picker field
                     deadlinePicker
                 }
                 .padding(.horizontal, 16)
 
-                // Submit button
                 AppButton(
-                    title: L10n.Goals.createButton,
-                    icon: "target",
+                    title: L10n.Goals.updateButton,
+                    icon: "checkmark",
                     color: isSubmitDisabled ? AppColors.skyGradientTop.opacity(0.4) : AppColors.accentBlue,
                     foregroundColor: isSubmitDisabled ? AppColors.brandDarkBlue.opacity(0.5) : AppColors.onAccent,
                     shadowColor: isSubmitDisabled ? .clear : nil,
@@ -75,23 +86,25 @@ struct CreateGoalSheet: View {
         .interactiveDismissDisabled(false)
     }
 
+    // MARK: - Sub-views
+
     private var headerView: some View {
         VStack(spacing: 6) {
             Circle()
                 .fill(AppColors.accentBlue.opacity(0.12))
                 .overlay(
-                    Image(systemName: "target")
-                        .font(.system(size: 24, weight: .bold))
+                    Image(systemName: "pencil")
+                        .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(AppColors.accentBlue)
                 )
                 .frame(width: 56, height: 56)
                 .padding(.top, 18)
 
-            Text(L10n.Goals.createTitle)
+            Text(L10n.Goals.editTitle)
                 .font(AppFonts.title3Black)
                 .foregroundStyle(AppColors.textPrimary)
 
-            Text(L10n.Goals.createSubtitle)
+            Text(L10n.Goals.editSubtitle)
                 .font(AppFonts.subheadlineSemibold)
                 .foregroundStyle(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -175,14 +188,14 @@ struct CreateGoalSheet: View {
         }
     }
 
+    // MARK: - Submit
+
     private func submit() {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else { return }
-
         let trimmedDesc = description.trimmingCharacters(in: .whitespacesAndNewlines)
         let descParam = trimmedDesc.isEmpty ? nil : trimmedDesc
         let dateParam = hasDeadline ? targetDate : nil
-
-        onCreateGoal(trimmedTitle, descParam, dateParam)
+        onUpdate(trimmedTitle, descParam, dateParam)
     }
 }
