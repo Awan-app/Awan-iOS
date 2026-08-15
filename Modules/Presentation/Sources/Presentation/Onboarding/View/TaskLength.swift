@@ -141,7 +141,7 @@ struct TaskLength: View {
     }
 }
 
-private struct TaskLengthExplanation: View {
+struct TaskLengthExplanation: View {
     var body: some View {
         (Text(L10n.Onboarding.taskLengthExplanationPrefix)
         .font(AppFonts.captionHeavy)

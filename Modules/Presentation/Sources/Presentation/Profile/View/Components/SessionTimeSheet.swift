@@ -7,10 +7,11 @@ struct SessionTimeSheet: View {
     let onSave: (Int) -> Void
     let onDismiss: () -> Void
 
-    @State private var selectedIndex: Int
+    @State private var selectedDuration: Int
+    @State private var customDurationText: String
+    @State private var showValidationError: Bool = false
 
-    private let durationValues = [15, 30, 45, 60, 90, 120, 150, 180]
-    private let durationLabels = ["15m", "30m", "45m", "1h", "1.5h", "2h", "2.5h", "3h"]
+    private let defaultSessionDurations = [10, 20, 30, 40, 50, 60, 75, 90, 105, 120, 150, 180]
 
     init(
         initialDuration: Int,
@@ -21,129 +22,124 @@ struct SessionTimeSheet: View {
         self.onSave = onSave
         self.onDismiss = onDismiss
 
-        let defaultIndex = [15, 30, 45, 60, 90, 120, 150, 180].firstIndex(of: initialDuration) ?? 3
-        _selectedIndex = State(initialValue: defaultIndex)
+        _selectedDuration = State(initialValue: initialDuration)
+        _customDurationText = State(initialValue: String(initialDuration))
     }
 
-    private var currentDuration: Int {
-        durationValues[selectedIndex]
+    private var dynamicLabels: [String] {
+        defaultSessionDurations.map { duration in
+            switch duration {
+            case 10: return "10m"
+            case 60: return "1h"
+            case 120: return "2h"
+            case 180: return "3h"
+            default: return ""
+            }
+        }
     }
 
-    private var formattedDurationText: String {
-        let mins = currentDuration
-        if mins < 60 {
-            return L10n.Home.minutesShort(mins)
-        } else if mins % 60 == 0 {
-            return "\(mins / 60) h"
+    private var focusDurationText: String {
+        let minutes = selectedDuration
+        if minutes < 60 {
+            return L10n.Onboarding.durationMinutes(minutes)
+        } else if minutes == 60 {
+            return L10n.Onboarding.durationOneHour
+        } else if minutes % 60 == 0 {
+            return L10n.Onboarding.durationHours(minutes / 60)
         } else {
-            return String(format: "%.1f h", Double(mins) / 60.0)
+            return L10n.Onboarding.durationHoursMinutes(minutes / 60, minutes % 60)
         }
     }
 
     var body: some View {
-        VStack(spacing: 20) {
-            // Header bar
-            HStack {
-                Text(L10n.Profile.sessionTime)
-                    .font(AppFonts.title3Black)
-                    .foregroundStyle(AppColors.brandDarkBlue)
+        AppSheet(
+            sizing: .content(initialHeight: 370, maximumHeight: 600),
+            backgroundColor: AppColors.screenBackground
+        ) {
+            VStack(spacing: 16) {
+                // Header bar with existing Profile title
+                HStack {
+                    Text(L10n.Profile.sessionTime)
+                        .font(AppFonts.title3Black)
+                        .foregroundStyle(AppColors.brandDarkBlue)
 
-                Spacer()
+                    Spacer()
 
-                Button(action: onDismiss) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 26))
-                        .foregroundStyle(AppColors.textSecondary)
-                }
-            }
-
-            // Value Display Card using AppCard
-            AppCard {
-                VStack(spacing: 20) {
-                    Text(formattedDurationText)
-                        .font(AppFonts.title2Black)
-                        .foregroundStyle(AppColors.textPrimary)
-
-                    // Step Slider Control
-                    GeometryReader { geometry in
-                        let stepWidth = (geometry.size.width - 28) / CGFloat(durationLabels.count - 1)
-
-                        ZStack(alignment: .leading) {
-                            // Track
-                            Capsule()
-                                .fill(AppColors.outline.opacity(0.3))
-                                .frame(height: 8)
-
-                            // Fill
-                            Capsule()
-                                .fill(AppColors.accentBlue)
-                                .frame(
-                                    width: max(
-                                        8,
-                                        stepWidth * CGFloat(selectedIndex) + 14
-                                    ),
-                                    height: 8
-                                )
-
-                            // Thumb
-                            Circle()
-                                .fill(AppColors.surface)
-                                .frame(width: 28, height: 28)
-                                .shadow(color: AppColors.shadow.opacity(0.15), radius: 4, y: 2)
-                                .overlay(
-                                    Circle().stroke(AppColors.accentBlue, lineWidth: 2.5)
-                                )
-                                .offset(x: stepWidth * CGFloat(selectedIndex))
-                                .gesture(
-                                    DragGesture(minimumDistance: 0)
-                                        .onChanged { gesture in
-                                            let newIndex = Int(round(gesture.location.x / stepWidth))
-                                            let clamped = min(max(0, newIndex), durationLabels.count - 1)
-                                            if clamped != selectedIndex {
-                                                withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
-                                                    selectedIndex = clamped
-                                                }
-                                            }
-                                        }
-                                )
-                        }
+                    Button(action: onDismiss) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 26))
+                            .foregroundStyle(AppColors.textSecondary)
                     }
-                    .frame(height: 30)
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 20)
 
-                    // Labels below slider
-                    HStack {
-                        ForEach(0..<durationLabels.count, id: \.self) { index in
-                            Text(durationLabels[index])
-                                .font(AppFonts.caption2Bold)
-                                .foregroundStyle(
-                                    selectedIndex == index ? AppColors.accentBlue : AppColors.textSecondary
-                                )
-                                .frame(maxWidth: .infinity)
-                                .onTapGesture {
-                                    withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
-                                        selectedIndex = index
-                                    }
-                                }
+                TaskLengthValueDisplay(focusDurationText: focusDurationText)
+
+                TaskLengthSlider(
+                    focusDurationIndex: Binding(
+                        get: { defaultSessionDurations.firstIndex(of: selectedDuration) ?? 0 },
+                        set: { newIndex in
+                            let newValue = defaultSessionDurations[newIndex]
+                            selectedDuration = newValue
+                            customDurationText = String(newValue)
+                            showValidationError = false
+                        }
+                    ),
+                    labels: dynamicLabels
+                )
+
+                VStack(spacing: 6) {
+                    AppTextField(
+                        text: $customDurationText,
+                        placeholder: L10n.Onboarding.customTimePlaceholder
+                    )
+                    .keyboardType(.numberPad)
+                    .padding(.horizontal, 24)
+
+                    if showValidationError {
+                        Text(L10n.Onboarding.timeValidationError)
+                            .foregroundColor(AppColors.destructive)
+                            .font(AppFonts.captionHeavy)
+                    }
+                }
+                .onChange(of: customDurationText) { _, newValue in
+                    if let custom = Int(newValue) {
+                        if custom >= 10 && custom <= 180 {
+                            selectedDuration = custom
+                            showValidationError = false
                         }
                     }
                 }
+
+                AppButton(
+                    title: L10n.Common.save,
+                    icon: nil,
+                    color: AppColors.accentBlue,
+                    foregroundColor: AppColors.onAccent,
+                    size: .large,
+                    onTap: { handleSave() }
+                )
+                .padding(.horizontal, 24)
+                .padding(.top, 8)
+                .padding(.bottom, 24)
             }
-
-            Spacer()
-
-            // 3D Save Button using AppButton
-            AppButton(
-                title: L10n.Common.save,
-                icon: "checkmark.circle.fill",
-                color: AppColors.accentBlue,
-                size: .large,
-                onTap: {
-                    onSave(currentDuration)
-                }
-            )
         }
-        .padding(20)
-        .background(AppColors.screenBackground.ignoresSafeArea())
+    }
+
+    private func handleSave() {
+        if !customDurationText.isEmpty {
+            if let custom = Int(customDurationText), custom >= 10, custom <= 180 {
+                selectedDuration = custom
+                showValidationError = false
+                onSave(custom)
+            } else {
+                showValidationError = true
+            }
+        } else {
+            showValidationError = false
+            onSave(selectedDuration)
+        }
     }
 }
 
