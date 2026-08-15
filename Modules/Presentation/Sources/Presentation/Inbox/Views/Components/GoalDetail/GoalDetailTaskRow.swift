@@ -11,8 +11,8 @@ struct GoalDetailTaskRow: View {
     var onCompleteTask: (() -> Void)? = nil
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            timelineColumn
+        VStack(spacing: 0) {
+            topNodeHeader
 
             VStack(alignment: .leading, spacing: 6) {
                 InboxTaskCard(
@@ -27,14 +27,32 @@ struct GoalDetailTaskRow: View {
                         .padding(.leading, 4)
                 }
             }
+            .frame(maxWidth: .infinity)
+
+            if !isLast {
+                bottomConnector
+            }
         }
     }
 
-    private var timelineColumn: some View {
+    private var topNodeHeader: some View {
         VStack(spacing: 0) {
             stepCircle
-            if !isLast { connector }
+
+            Rectangle()
+                .fill(AppColors.outline.opacity(0.18))
+                .frame(width: 1.5, height: 10)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.leading, 12)
+    }
+
+    private var bottomConnector: some View {
+        Rectangle()
+            .fill(AppColors.outline.opacity(0.18))
+            .frame(width: 1.5, height: 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, 27.25)
     }
 
     private var stepCircle: some View {
@@ -82,15 +100,6 @@ struct GoalDetailTaskRow: View {
             }
         }
         .frame(width: 32)
-        .padding(.top, 16)
-    }
-
-    private var connector: some View {
-        Rectangle()
-            .fill(AppColors.outline.opacity(0.18))
-            .frame(width: 1.5)
-            .frame(maxHeight: .infinity)
-            .padding(.horizontal, (32 - 1.5) / 2)
     }
 
     @ViewBuilder
