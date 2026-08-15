@@ -3,11 +3,24 @@ import SwiftUI
 import UIKit
 
 public struct TaskItem: Identifiable, Equatable, Sendable {
-    public let id = UUID()
+    public let id: UUID
     public let title: String
+    public let categoryName: String?
+    public let durationText: String?
+    public let timeRangeText: String?
 
-    public init(title: String) {
+    public init(
+        id: UUID = UUID(),
+        title: String,
+        categoryName: String? = nil,
+        durationText: String? = nil,
+        timeRangeText: String? = nil
+    ) {
+        self.id = id
         self.title = title
+        self.categoryName = categoryName
+        self.durationText = durationText
+        self.timeRangeText = timeRangeText
     }
 }
 
@@ -16,6 +29,14 @@ struct TaskPreviewCard: View {
     var onDelete: ((TaskItem) -> Void)?
 
     private let depth: CGFloat = 4
+
+    private var headerCategoryText: String {
+        tasks.last?.categoryName ?? tasks.first?.categoryName ?? L10n.Onboarding.previewStudy
+    }
+
+    private var headerTimeRangeText: String {
+        tasks.last?.timeRangeText ?? tasks.first?.timeRangeText ?? L10n.Onboarding.previewStudyTime
+    }
 
     var body: some View {
         ZStack {
@@ -34,13 +55,15 @@ struct TaskPreviewCard: View {
                     .foregroundColor(AppColors.textSecondary)
 
                 HStack(spacing: 8) {
-                    Text(L10n.Onboarding.previewStudy)
+                    Text(headerCategoryText)
                         .font(AppFonts.captionHeavy)
                         .foregroundColor(AppColors.accentPurple)
 
-                    Text(L10n.Onboarding.previewStudyTime)
-                        .font(AppFonts.caption2Bold)
-                        .foregroundColor(AppColors.textSecondary)
+                    if !headerTimeRangeText.isEmpty {
+                        Text(headerTimeRangeText)
+                            .font(AppFonts.caption2Bold)
+                            .foregroundColor(AppColors.textSecondary)
+                    }
                 }
 
                 if !tasks.isEmpty {
@@ -56,7 +79,7 @@ struct TaskPreviewCard: View {
                                     .foregroundColor(AppColors.brandDarkBlue)
                                     .lineLimit(1)
 
-                                Text(L10n.Onboarding.previewStudyDuration)
+                                Text(task.durationText ?? L10n.Onboarding.previewStudyDuration)
                                     .font(AppFonts.captionHeavy)
                                     .foregroundColor(AppColors.textSecondary)
                             }

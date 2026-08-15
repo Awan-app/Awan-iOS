@@ -95,12 +95,14 @@ struct TaskLength: View {
                     color: AppColors.accentBlue,
                     foregroundColor: AppColors.onAccent,
                     size: .large,
+                    isLoading: viewModel.isCompleting,
                     onTap: { handleContinue() }
                 )
+                .disabled(viewModel.isCompleting)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
                 
-                Button(action: { onContinue() }) {
+                Button(action: { submitAndAdvance() }) {
                     HStack(spacing: 4) {
                         Text(L10n.Onboarding.skipForNow)
                         Image(systemName: "arrow.right")
@@ -108,6 +110,7 @@ struct TaskLength: View {
                     .font(AppFonts.subheadlineHeavy)
                     .foregroundColor(AppColors.accentBlue)
                 }
+                .disabled(viewModel.isCompleting)
                 .padding(.vertical, 8)
             }
         }
@@ -118,13 +121,22 @@ struct TaskLength: View {
             if let custom = Int(viewModel.customDurationText), custom >= 10, custom <= 180 {
                 viewModel.selectedDuration = custom
                 showValidationError = false
-                onContinue()
+                submitAndAdvance()
             } else {
                 showValidationError = true
             }
         } else {
             showValidationError = false
-            onContinue()
+            submitAndAdvance()
+        }
+    }
+
+    private func submitAndAdvance() {
+        Task {
+            let success = await viewModel.completeOnboardingBackend()
+            if success {
+                onContinue()
+            }
         }
     }
 }

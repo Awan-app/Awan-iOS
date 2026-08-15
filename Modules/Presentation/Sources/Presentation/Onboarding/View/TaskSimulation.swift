@@ -87,24 +87,18 @@ struct TaskSimulation: View {
                             color: AppColors.accentBlue,
                             foregroundColor: AppColors.onAccent,
                             size: .large,
+                            isLoading: viewModel.isCreatingAITask,
                             onTap: {
-                                let trimmed = viewModel.taskText.trimmingCharacters(
-                                    in: .whitespacesAndNewlines)
-                                if !trimmed.isEmpty {
-                                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                                        viewModel.addedTasks.append(TaskItem(title: trimmed))
-                                        viewModel.taskText = ""
-                                    }
+                                Task {
+                                    await viewModel.createRealTaskWithAI(prompt: viewModel.taskText)
                                 }
                             }
                         )
                         .disabled(
-                            viewModel.taskText.trimmingCharacters(in: .whitespacesAndNewlines)
-                                .isEmpty
+                            viewModel.taskText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isCreatingAITask
                         )
                         .opacity(
-                            viewModel.taskText.trimmingCharacters(in: .whitespacesAndNewlines)
-                                .isEmpty
+                            viewModel.taskText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                                 ? 0.5 : 1.0)
 
                         Button(action: { onContinue() }) {
@@ -115,6 +109,7 @@ struct TaskSimulation: View {
                             .font(AppFonts.subheadlineHeavy)
                             .foregroundColor(AppColors.accentBlue)
                         }
+                        .disabled(viewModel.isCreatingAITask)
                         .padding(.vertical, 8)
                     } else {
                         AppButton(
@@ -134,6 +129,23 @@ struct TaskSimulation: View {
             }
             .onAppear {
                 isFocused = true
+            }
+            .alert(
+                L10n.Onboarding.taskCreationError,
+                isPresented: Binding(
+                    get: { viewModel.taskErrorMessage != nil },
+                    set: { isPresented in
+                        if !isPresented {
+                            viewModel.dismissTaskError()
+                        }
+                    }
+                )
+            ) {
+                Button(L10n.Common.gotIt, role: .cancel) {
+                    viewModel.dismissTaskError()
+                }
+            } message: {
+                Text(viewModel.taskErrorMessage ?? L10n.Common.pleaseTryAgain)
             }
         }
     }

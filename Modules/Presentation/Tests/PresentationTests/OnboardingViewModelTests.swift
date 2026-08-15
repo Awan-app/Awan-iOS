@@ -80,4 +80,6 @@ private struct CompleteOnboardingUseCaseStub: CompleteOnboardingUseCase {
             )
         )
     }
+
+    func markCompleted() throws {}
 }

@@ -250,6 +250,9 @@ struct PresentationAssembly: Assembly {
             let createTemplateUseCase = Self.resolve(CreateOnboardingTemplateUseCase.self, from: resolver)
             let manageZoneScheduleUseCase = Self.resolve(ManageZoneScheduleUseCase.self, from: resolver)
             let fetchCategoriesUseCase = Self.resolve(FetchCategoriesUseCase.self, from: resolver)
+            let createAITaskUseCase = Self.resolve(CreateAITaskUseCase.self, from: resolver)
+            let acceptProposedTasksUseCase = Self.resolve(AcceptProposedTasksUseCase.self, from: resolver)
+            let createTaskUseCase = Self.resolve(CreateTaskUseCase.self, from: resolver)
             let scheduler = Self.resolve(NotificationScheduler.self, from: resolver)
             return MainActor.assumeIsolated {
                 OnboardingViewModel(
@@ -257,6 +260,9 @@ struct PresentationAssembly: Assembly {
                     createOnboardingTemplateUseCase: createTemplateUseCase,
                     manageZoneScheduleUseCase: manageZoneScheduleUseCase,
                     fetchCategoriesUseCase: fetchCategoriesUseCase,
+                    createAITaskUseCase: createAITaskUseCase,
+                    acceptProposedTasksUseCase: acceptProposedTasksUseCase,
+                    createTaskUseCase: createTaskUseCase,
                     notificationScheduler: scheduler
                 )
             }

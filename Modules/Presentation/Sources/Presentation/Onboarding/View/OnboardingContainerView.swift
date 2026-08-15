@@ -65,11 +65,11 @@ struct OnboardingContainerView: View {
                         viewModel: viewModel,
                         onContinue: {
                             viewModel.notificationsEnabled = true
-                            Task { await viewModel.completeOnboarding() }
+                            Task { await viewModel.finishOnboarding() }
                         },
                         onSkipNotifications: {
                             viewModel.notificationsEnabled = false
-                            Task { await viewModel.completeOnboarding() }
+                            Task { await viewModel.finishOnboarding() }
                         }
                     )
                 }

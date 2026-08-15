@@ -92,10 +92,12 @@ public final class OnboardingViewModel: ZoneManaging {
         return durations
     }
 
-    // MARK: - Task Simulation
+    // MARK: - Task Simulation / AI Task Creation
 
     public var addedTasks: [TaskItem] = []
     public var taskText: String = ""
+    public private(set) var isCreatingAITask: Bool = false
+    public private(set) var taskErrorMessage: String?
 
     // MARK: - Notification
 
@@ -117,6 +119,9 @@ public final class OnboardingViewModel: ZoneManaging {
     private let createOnboardingTemplateUseCase: any CreateOnboardingTemplateUseCase
     private let manageZoneScheduleUseCase: any ManageZoneScheduleUseCase
     private let fetchCategoriesUseCase: any FetchCategoriesUseCase
+    private let createAITaskUseCase: (any CreateAITaskUseCase)?
+    private let acceptProposedTasksUseCase: (any AcceptProposedTasksUseCase)?
+    private let createTaskUseCase: (any CreateTaskUseCase)?
     @ObservationIgnored let notificationScheduler: NotificationScheduler?
     @ObservationIgnored private var categoryCancellable: AnyCancellable?
 
@@ -125,12 +130,18 @@ public final class OnboardingViewModel: ZoneManaging {
         createOnboardingTemplateUseCase: any CreateOnboardingTemplateUseCase,
         manageZoneScheduleUseCase: any ManageZoneScheduleUseCase,
         fetchCategoriesUseCase: any FetchCategoriesUseCase,
+        createAITaskUseCase: (any CreateAITaskUseCase)? = nil,
+        acceptProposedTasksUseCase: (any AcceptProposedTasksUseCase)? = nil,
+        createTaskUseCase: (any CreateTaskUseCase)? = nil,
         notificationScheduler: NotificationScheduler? = nil
     ) {
         self.completeOnboardingUseCase = completeOnboardingUseCase
         self.createOnboardingTemplateUseCase = createOnboardingTemplateUseCase
         self.manageZoneScheduleUseCase = manageZoneScheduleUseCase
         self.fetchCategoriesUseCase = fetchCategoriesUseCase
+        self.createAITaskUseCase = createAITaskUseCase
+        self.acceptProposedTasksUseCase = acceptProposedTasksUseCase
+        self.createTaskUseCase = createTaskUseCase
         self.notificationScheduler = notificationScheduler
 
         let calendar = Calendar.current
@@ -301,22 +312,20 @@ public final class OnboardingViewModel: ZoneManaging {
         return formatter.date(from: timeString)
     }
 
-    // MARK: - Complete / Skip
+    // MARK: - Backend Completion / Task Creation / Finalization
 
-    public func completeOnboarding() async {
-        guard !isCompleting else { return }
+    /// Called right after the TaskLength (estimated duration) step to complete onboarding on the backend.
+    @discardableResult
+    public func completeOnboardingBackend() async -> Bool {
+        guard !isCompleting else { return false }
         guard shouldCreateEmptyTemplate || areZonesCategorized else {
             completionErrorMessage = L10n.Schedule.chooseCategory
-            return
+            return false
         }
 
         isCompleting = true
         completionErrorMessage = nil
         defer { isCompleting = false }
-
-        if notificationsEnabled {
-            let _ = try? await notificationScheduler?.requestAuthorization()
-        }
 
         do {
             let request = try makeDraft().makeRequest()
@@ -327,20 +336,228 @@ public final class OnboardingViewModel: ZoneManaging {
                 : suggestedZones.map(\.asDraft)
             try await createOnboardingTemplateUseCase.execute(zoneDrafts: zoneDrafts)
 
-            onComplete?()
+            return true
+        } catch is CancellationError {
+            return false
+        } catch {
+            completionErrorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    /// Creates a real task using the AI task endpoint and schedules it for today (with fallback session if needed).
+    public func createRealTaskWithAI(prompt: String) async {
+        let trimmed = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        guard !isCreatingAITask else { return }
+
+        isCreatingAITask = true
+        taskErrorMessage = nil
+        defer { isCreatingAITask = false }
+
+        let today = Date()
+
+        do {
+            if let createAITaskUseCase {
+                let proposal = try await createAITaskUseCase.execute(
+                    CreateAITaskRequest(text: trimmed)
+                )
+                if !proposal.tasks.isEmpty, let acceptProposedTasksUseCase {
+                    let acceptedTasksResult = try await acceptProposedTasksUseCase.execute(
+                        proposal.tasks,
+                        destination: .schedule
+                    )
+
+                    for (index, proposedTask) in proposal.tasks.enumerated() {
+                        let acceptedTask = acceptedTasksResult.indices.contains(index) ? acceptedTasksResult[index] : nil
+                        let title = acceptedTask?.title ?? proposedTask.draft.task.title
+
+                        let categoryName = acceptedTask?.category?.name
+                            ?? categories.first(where: { $0.id == proposedTask.draft.task.categoryId })?.name
+                            ?? suggestedZones.first(where: { $0.category?.id == proposedTask.draft.task.categoryId })?.name
+                            ?? suggestedZones.first?.name
+                            ?? L10n.Onboarding.previewStudy
+
+                        let durationMinutes = acceptedTask?.duration.minutes ?? (proposedTask.draft.task.estimatedDuration > 0 ? proposedTask.draft.task.estimatedDuration : selectedDuration)
+                        let durationText = formatDuration(minutes: durationMinutes)
+
+                        let session = proposedTask.draft.sessions.first ?? proposedTask.aiProposedSessions.first
+                        let timeRangeText: String
+                        if let session {
+                            timeRangeText = formatTimeRange(start: session.start, end: session.end)
+                        } else {
+                            timeRangeText = formatTimeRange(start: today, end: today.addingTimeInterval(Double(durationMinutes * 60)))
+                        }
+
+                        addedTasks.append(
+                            TaskItem(
+                                id: acceptedTask?.id ?? proposedTask.id,
+                                title: title,
+                                categoryName: categoryName,
+                                durationText: durationText,
+                                timeRangeText: timeRangeText
+                            )
+                        )
+                    }
+                    taskText = ""
+                    return
+                }
+            }
+
+
+            if let createTaskUseCase {
+                let fallbackCat = suggestedZones.first?.category ?? categories.first
+                let targetCategory = fallbackCat?.id
+                _ = try await createTaskUseCase.execute(
+                    CreateTaskRequest(
+                        title: trimmed,
+                        description: nil,
+                        durationMinutes: selectedDuration,
+                        categoryID: targetCategory,
+                        isSplittable: false,
+                        mandatory: true,
+                        estimatedPoints: 10,
+                        startsAt: today,
+                        selectedDay: today,
+                        timeZone: .current
+                    )
+                )
+                let catName = fallbackCat?.name ?? suggestedZones.first?.name ?? L10n.Onboarding.previewStudy
+                let durationText = formatDuration(minutes: selectedDuration)
+                let timeRangeText = formatTimeRange(start: today, end: today.addingTimeInterval(Double(selectedDuration * 60)))
+                addedTasks.append(
+                    TaskItem(
+                        id: UUID(),
+                        title: trimmed,
+                        categoryName: catName,
+                        durationText: durationText,
+                        timeRangeText: timeRangeText
+                    )
+                )
+                taskText = ""
+                return
+            }
+
+            let fallbackCat = suggestedZones.first?.category ?? categories.first
+            let catName = fallbackCat?.name ?? suggestedZones.first?.name ?? L10n.Onboarding.previewStudy
+            let durationText = formatDuration(minutes: selectedDuration)
+            let timeRangeText = formatTimeRange(start: today, end: today.addingTimeInterval(Double(selectedDuration * 60)))
+            addedTasks.append(
+                TaskItem(
+                    id: UUID(),
+                    title: trimmed,
+                    categoryName: catName,
+                    durationText: durationText,
+                    timeRangeText: timeRangeText
+                )
+            )
+            taskText = ""
         } catch is CancellationError {
             return
+        } catch {
+            if let createTaskUseCase {
+                do {
+                    let fallbackCat = suggestedZones.first?.category ?? categories.first
+                    let targetCategory = fallbackCat?.id
+                    _ = try await createTaskUseCase.execute(
+                        CreateTaskRequest(
+                            title: trimmed,
+                            description: nil,
+                            durationMinutes: selectedDuration,
+                            categoryID: targetCategory,
+                            isSplittable: false,
+                            mandatory: true,
+                            estimatedPoints: 10,
+                            startsAt: today,
+                            selectedDay: today,
+                            timeZone: .current
+                        )
+                    )
+                    let catName = fallbackCat?.name ?? suggestedZones.first?.name ?? L10n.Onboarding.previewStudy
+                    let durationText = formatDuration(minutes: selectedDuration)
+                    let timeRangeText = formatTimeRange(start: today, end: today.addingTimeInterval(Double(selectedDuration * 60)))
+                    addedTasks.append(
+                        TaskItem(
+                            id: UUID(),
+                            title: trimmed,
+                            categoryName: catName,
+                            durationText: durationText,
+                            timeRangeText: timeRangeText
+                        )
+                    )
+                    taskText = ""
+                    return
+                } catch {
+                    taskErrorMessage = error.localizedDescription
+                }
+            } else {
+                taskErrorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func formatTimeRange(start: Date, end: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return "\(formatter.string(from: start)) - \(formatter.string(from: end))"
+    }
+
+    private func formatDuration(minutes: Int) -> String {
+        if minutes < 60 {
+            return "\(minutes) min"
+        } else if minutes == 60 {
+            return "1 hr"
+        } else if minutes % 60 == 0 {
+            return "\(minutes / 60) hrs"
+        } else {
+            return "\(minutes / 60) hr \(minutes % 60) min"
+        }
+    }
+
+
+    public func finishOnboarding() async {
+        guard !isCompleting else { return }
+        isCompleting = true
+        completionErrorMessage = nil
+        defer { isCompleting = false }
+
+        if notificationsEnabled {
+            let granted = (try? await notificationScheduler?.requestAuthorization()) ?? false
+            UserDefaults.standard.set(granted, forKey: "isNotificationsEnabled")
+        } else {
+            UserDefaults.standard.set(false, forKey: "isNotificationsEnabled")
+        }
+
+        do {
+            try completeOnboardingUseCase.markCompleted()
+            onComplete?()
         } catch {
             completionErrorMessage = error.localizedDescription
         }
     }
 
+    public func completeOnboarding() async {
+        let success = await completeOnboardingBackend()
+        if success {
+            await finishOnboarding()
+        }
+    }
+
     public func skipOnboarding() {
-        onSkip?()
+        Task {
+            UserDefaults.standard.set(false, forKey: "isNotificationsEnabled")
+            _ = await completeOnboardingBackend()
+            try? completeOnboardingUseCase.markCompleted()
+            onSkip?()
+        }
     }
 
     public func dismissCompletionError() {
         completionErrorMessage = nil
+    }
+
+    public func dismissTaskError() {
+        taskErrorMessage = nil
     }
 
     private func makeDraft(calendar: Calendar = .current) -> OnboardingDraft {
