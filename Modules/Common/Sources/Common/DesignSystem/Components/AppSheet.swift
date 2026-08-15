@@ -73,7 +73,7 @@ public struct AppSheet<Content: View>: View {
     }
 }
 
-private struct AppSheetHeightModifier: ViewModifier, @MainActor Animatable {
+private struct AppSheetHeightModifier: ViewModifier, @preconcurrency Animatable {
     var height: CGFloat
 
     var animatableData: CGFloat {

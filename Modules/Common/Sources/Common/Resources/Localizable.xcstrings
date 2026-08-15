@@ -9600,6 +9600,23 @@
         }
       }
     },
+    "user_info.changes_saved": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم حفظ التغييرات بنجاح"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changes saved successfully"
+          }
+        }
+      }
+    },
     "templates.day" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -9607,6 +9624,7 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "اليوم"
+
           }
         },
         "en" : {

@@ -16,7 +16,7 @@ let package = Package(
         // Local Common package — provides the Coordinating protocol.
         .package(path: "../Common"),
         .package(path: "../Domain"),
-        .package(url: "https://github.com/google/GoogleSignIn-iOS.git", from: "7.0.0"),
+        .package(url: "https://github.com/google/GoogleSignIn-iOS.git", from: "7.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

@@ -16,7 +16,6 @@ struct UserInfoActionButtonsSection: View {
                 onTap: {
                     Task {
                         await viewModel.saveChanges()
-                        dismiss()
                     }
                 }
             )

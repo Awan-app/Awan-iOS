@@ -1162,6 +1162,7 @@ public enum L10n {
         public static var email: String { L10n.currentBundle.localizedString(forKey: "user_info.email", value: nil, table: "Localizable") }
         public static var dateOfBirth: String { L10n.currentBundle.localizedString(forKey: "user_info.date_of_birth", value: nil, table: "Localizable") }
         public static func mascotMessage(_ name: String) -> String { String(format: L10n.currentBundle.localizedString(forKey: "user_info.mascot_message", value: nil, table: "Localizable"), name) }
+        public static var changesSaved: String { L10n.currentBundle.localizedString(forKey: "user_info.changes_saved", value: nil, table: "Localizable") }
     }
 
     public enum Templates {
