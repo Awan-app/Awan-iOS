@@ -14,6 +14,7 @@ struct InboxTaskCard: View {
     let isCompletionDisabled: Bool
     var onCompleteTask: (() -> Void)? = nil
     var onDeleteTask: (() -> Void)? = nil
+    var onAddToGoal: (() -> Void)? = nil
 
     @State private var localExpanded: Bool
 
@@ -23,7 +24,8 @@ struct InboxTaskCard: View {
         isCompletionDisabled: Bool = false,
         onToggleExpand: @escaping () -> Void,
         onCompleteTask: (() -> Void)? = nil,
-        onDeleteTask: (() -> Void)? = nil
+        onDeleteTask: (() -> Void)? = nil,
+        onAddToGoal: (() -> Void)? = nil
     ) {
         self.taskItem = taskItem
         self.isExpanded = isExpanded
@@ -31,8 +33,10 @@ struct InboxTaskCard: View {
         self.onToggleExpand = onToggleExpand
         self.onCompleteTask = onCompleteTask
         self.onDeleteTask = onDeleteTask
+        self.onAddToGoal = onAddToGoal
         _localExpanded = State(initialValue: isExpanded)
     }
+
 
     private var isCompleted: Bool {
         taskItem.derivedStatus == .completed
@@ -68,23 +72,37 @@ struct InboxTaskCard: View {
                                 .truncationMode(.tail)
                         }
 
-                        Label(
-                            taskItem.availableCompletionPoints > 0
-                                ? L10n.Home.pointsValue(taskItem.availableCompletionPoints)
-                                : L10n.Inbox.pointsClaimed,
-                            systemImage: taskItem.availableCompletionPoints > 0
-                                ? "star.fill"
-                                : "checkmark.seal.fill"
-                        )
+                        HStack(spacing: 6) {
+                            Image(
+                                systemName: taskItem.availableCompletionPoints > 0
+                                    ? "star.fill"
+                                    : "checkmark.seal.fill"
+                            )
+
+                            Text(
+                                taskItem.availableCompletionPoints > 0
+                                    ? L10n.Home.pointsValue(
+                                        taskItem.availableCompletionPoints
+                                    )
+                                    : L10n.Inbox.pointsClaimed
+                            )
+                        }
                         .font(AppFonts.captionHeavy)
                         .foregroundStyle(AppColors.reward)
                         .environment(\.layoutDirection, .leftToRight)
+                        .anchorPreference(
+                            key: RewardAnchorKey.self,
+                            value: .bounds
+                        ) {
+                            ["task-points-\(taskItem.id.uuidString)": $0]
+                        }
                     }
 
                     Spacer()
 
                     statusBadge
                 }
+
 
                 if !taskItem.sessionItems.isEmpty {
                     Divider()

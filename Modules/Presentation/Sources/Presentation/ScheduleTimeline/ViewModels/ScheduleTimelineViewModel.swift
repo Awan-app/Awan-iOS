@@ -7,16 +7,19 @@ public final class ScheduleTimelineViewModel {
     public private(set) var state: ScheduleTimelineState
 
     @ObservationIgnored let useCases: ScheduleTimelineUseCases
+    @ObservationIgnored let notificationScheduler: NotificationScheduler?
     @ObservationIgnored let timeZone: TimeZone
     @ObservationIgnored let mapper: ScheduleTimelineStateMapper
     @ObservationIgnored let calendar: Calendar
 
     public init(
         useCases: ScheduleTimelineUseCases,
+        notificationScheduler: NotificationScheduler? = nil,
         selectedDay: Date = Date(),
         timeZone: TimeZone = .current
     ) {
         self.useCases = useCases
+        self.notificationScheduler = notificationScheduler
         self.timeZone = timeZone
         self.mapper = ScheduleTimelineStateMapper(timeZone: timeZone)
         var calendar = Calendar(identifier: .gregorian)

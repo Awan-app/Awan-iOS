@@ -1,12 +1,17 @@
+import Data
 import Domain
 import Presentation
+import SwiftData
 import XCTest
 @testable import Awan
 
 @MainActor
 final class AppDependencyContainerTests: XCTestCase {
     func testContainerResolvesSchedulingDependencies() async throws {
-        let container = AppDependencyContainer()
+        let schema = SchedulingPersistence.schema
+        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        let modelContainer = try ModelContainer(for: schema, configurations: [config])
+        let container = AppDependencyContainer(modelContainer: modelContainer)
         let fetchZonesUseCase = try XCTUnwrap(
             container.resolver.resolve(FetchZonesUseCase.self)
         )
@@ -14,11 +19,11 @@ final class AppDependencyContainerTests: XCTestCase {
         let timelineUseCases = container.resolver.resolve(ScheduleTimelineUseCases.self)
         let timelineViewModel = container.resolver.resolve(ScheduleTimelineViewModel.self)
 
-        let zones = try await fetchZonesUseCase.execute()
+        let zones = try await fetchZonesUseCase.execute(for: Date())
 
         XCTAssertNotNil(engine)
         XCTAssertNotNil(timelineUseCases)
         XCTAssertNotNil(timelineViewModel)
-        XCTAssertEqual(zones.map(\.name), ["Morning", "Work", "Study", "Personal"])
+        XCTAssertFalse(zones.isEmpty)
     }
 }

@@ -108,18 +108,21 @@ public final class OnboardingViewModel: ZoneManaging {
     private let createOnboardingTemplateUseCase: any CreateOnboardingTemplateUseCase
     private let manageZoneScheduleUseCase: any ManageZoneScheduleUseCase
     private let fetchCategoriesUseCase: any FetchCategoriesUseCase
+    @ObservationIgnored let notificationScheduler: NotificationScheduler?
     @ObservationIgnored private var categoryCancellable: AnyCancellable?
 
     public init(
         completeOnboardingUseCase: any CompleteOnboardingUseCase,
         createOnboardingTemplateUseCase: any CreateOnboardingTemplateUseCase,
         manageZoneScheduleUseCase: any ManageZoneScheduleUseCase,
-        fetchCategoriesUseCase: any FetchCategoriesUseCase
+        fetchCategoriesUseCase: any FetchCategoriesUseCase,
+        notificationScheduler: NotificationScheduler? = nil
     ) {
         self.completeOnboardingUseCase = completeOnboardingUseCase
         self.createOnboardingTemplateUseCase = createOnboardingTemplateUseCase
         self.manageZoneScheduleUseCase = manageZoneScheduleUseCase
         self.fetchCategoriesUseCase = fetchCategoriesUseCase
+        self.notificationScheduler = notificationScheduler
 
         let calendar = Calendar.current
         self.wakeupTime = calendar.date(
@@ -301,6 +304,10 @@ public final class OnboardingViewModel: ZoneManaging {
         isCompleting = true
         completionErrorMessage = nil
         defer { isCompleting = false }
+
+        if notificationsEnabled {
+            let _ = try? await notificationScheduler?.requestAuthorization()
+        }
 
         do {
             let request = try makeDraft().makeRequest()

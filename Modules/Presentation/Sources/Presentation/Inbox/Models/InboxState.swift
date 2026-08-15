@@ -15,7 +15,9 @@ public struct InboxState: Equatable, Sendable {
     public var expandedTaskIDs: Set<UUID>
     public var allTasks: [InboxTaskItem]
     public var failureMessage: String?
-    public var streakTransition: InboxStreakTransition?
+    public var userPoints: Int?
+    public var completionReward: InboxCompletionReward?
+    public var completionRewardAnimation: InboxCompletionRewardAnimation?
     public var mutatingTaskIDs: Set<UUID>
 
     public init(
@@ -27,7 +29,9 @@ public struct InboxState: Equatable, Sendable {
         expandedTaskIDs: Set<UUID> = [],
         allTasks: [InboxTaskItem] = [],
         failureMessage: String? = nil,
-        streakTransition: InboxStreakTransition? = nil,
+        userPoints: Int? = nil,
+        completionReward: InboxCompletionReward? = nil,
+        completionRewardAnimation: InboxCompletionRewardAnimation? = nil,
         mutatingTaskIDs: Set<UUID> = []
     ) {
         self.selectedTopTab = selectedTopTab
@@ -38,10 +42,12 @@ public struct InboxState: Equatable, Sendable {
         self.expandedTaskIDs = expandedTaskIDs
         self.allTasks = allTasks
         self.failureMessage = failureMessage
-        self.streakTransition = streakTransition
+        self.userPoints = userPoints
+        self.completionReward = completionReward
+        self.completionRewardAnimation = completionRewardAnimation
         self.mutatingTaskIDs = mutatingTaskIDs
-      
     }
+
 
     public var filteredTasks: [InboxTaskItem] {
         allTasks.filter { taskItem in
@@ -81,6 +87,36 @@ public struct InboxState: Equatable, Sendable {
 
             return titleMatches || descriptionMatches || sessionMatches
         }
+    }
+}
+
+public struct InboxCompletionReward: Equatable, Sendable {
+    public let pointsAwarded: Int?
+    public let streakTransition: InboxStreakTransition?
+
+    public init(
+        pointsAwarded: Int?,
+        streakTransition: InboxStreakTransition?
+    ) {
+        self.pointsAwarded = pointsAwarded
+        self.streakTransition = streakTransition
+    }
+}
+
+public struct InboxCompletionRewardAnimation: Equatable, Identifiable, Sendable {
+    public let id = UUID()
+    public let taskID: UUID
+    public let oldPoints: Int
+    public let newPoints: Int
+
+    public init(
+        taskID: UUID,
+        oldPoints: Int,
+        newPoints: Int
+    ) {
+        self.taskID = taskID
+        self.oldPoints = oldPoints
+        self.newPoints = newPoints
     }
 }
 

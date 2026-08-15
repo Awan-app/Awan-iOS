@@ -21,4 +21,15 @@ public final class AppCoordinator {
         self.mainCoordinator = MainCoordinator()
         self.onboardingCoordinator = OnboardingCoordinator()
     }
+
+    public func resetForMainFlow() {
+        onboardingCoordinator.reset()
+        mainCoordinator.reset()
+    }
+
+    public func resetForAuthenticationFlow() {
+        authCoordinator.reset()
+        onboardingCoordinator.reset()
+        mainCoordinator.reset()
+    }
 }

@@ -16,6 +16,7 @@ public final class InboxViewModel {
     @ObservationIgnored private let useCases: InboxUseCases
     @ObservationIgnored private let mapper: InboxStateMapper
     @ObservationIgnored private var cancellable: AnyCancellable?
+    @ObservationIgnored private var profileCancellable: AnyCancellable?
 
     public init(
         useCases: InboxUseCases,
@@ -30,6 +31,7 @@ public final class InboxViewModel {
         switch action {
         case .appeared, .refresh:
             load()
+            observeUserProfile()
         case let .searchQueryChanged(query):
             state.searchQuery = query
         case let .taskFilterChanged(filter):
@@ -48,11 +50,12 @@ public final class InboxViewModel {
             deleteTask(id: id)
         case let .selectTopTab(tab):
             state.selectedTopTab = tab
-            
         case .dismissError:
             state.failureMessage = nil
-        case .dismissStreakTransition:
-            state.streakTransition = nil
+        case .dismissCompletionReward:
+            state.completionReward = nil
+        case .dismissCompletionRewardAnimation:
+            state.completionRewardAnimation = nil
         }
     }
 
@@ -68,6 +71,9 @@ public final class InboxViewModel {
         let newDerivedStatus: InboxTaskStatus = newCompletedState
             ? .completed
             : reopenedStatus(for: current)
+
+        state.completionReward = nil
+        state.completionRewardAnimation = nil
 
         state.allTasks[index] = replacing(
             current,
@@ -88,21 +94,44 @@ public final class InboxViewModel {
                 guard let self else { return }
                 self.applyAcceptedTask(result.task)
 
-                if case .completed(let completion) = result,
-                   completion.reward.streak.updated {
-                    self.state.streakTransition = InboxStreakTransition(
-                        oldValue: completion.reward.streak.oldValue,
-                        newValue: completion.reward.streak.newValue,
-                        isNewRecord: completion.reward.streak.maxStreakBroken
-                    )
-                } else {
-                    self.state.streakTransition = nil
+                if case .completed(let completion) = result {
+                    let reward = completion.reward
+                    if reward.points.awarded {
+                        self.state.userPoints = reward.points.newValue
+                    }
+
+                    self.state.completionRewardAnimation = reward.points.awarded
+                        && reward.points.amount > 0
+                        ? InboxCompletionRewardAnimation(
+                            taskID: completion.task.id,
+                            oldPoints: reward.points.oldValue,
+                            newPoints: reward.points.newValue
+                        )
+                        : nil
+
+                    self.state.completionReward = reward.points.awarded
+                        || reward.streak.updated
+                        ? InboxCompletionReward(
+                            pointsAwarded: reward.points.awarded
+                                ? reward.points.amount
+                                : nil,
+                            streakTransition: reward.streak.updated
+                                ? InboxStreakTransition(
+                                    oldValue: reward.streak.oldValue,
+                                    newValue: reward.streak.newValue,
+                                    isNewRecord: reward.streak.maxStreakBroken
+                                )
+                                : nil
+                        )
+                        : nil
                 }
             } catch {
                 guard let self else { return }
                 if let currentIndex = self.state.allTasks.firstIndex(where: { $0.id == id }) {
                     self.state.allTasks[currentIndex] = current
                 }
+                self.state.completionReward = nil
+                self.state.completionRewardAnimation = nil
                 self.state.failureMessage = error.localizedDescription
             }
         }
@@ -192,6 +221,20 @@ public final class InboxViewModel {
                     guard let self else { return }
                     self.state.isLoading = false
                     self.state.allTasks = self.mapper.map(inboxTasks: inboxTasks)
+                }
+            )
+    }
+
+    private func observeUserProfile() {
+        guard let userProfile = useCases.userProfile else { return }
+
+        profileCancellable?.cancel()
+        profileCancellable = userProfile.observe()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { [weak self] profile in
+                    self?.state.userPoints = profile.points
                 }
             )
     }

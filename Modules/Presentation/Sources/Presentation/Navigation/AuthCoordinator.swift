@@ -38,6 +38,11 @@ public final class AuthCoordinator: Coordinating {
         presentedSheet = nil
     }
 
+    public func reset() {
+        path = NavigationPath()
+        presentedSheet = nil
+    }
+
     public func push(_ route: AuthRoute) {
         path.append(route)
     }

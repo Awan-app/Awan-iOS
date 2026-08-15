@@ -17,7 +17,7 @@ struct GoalScheduleEditorContext: Identifiable {
                 1,
                 Int(session.end.timeIntervalSince(session.start) / 60)
             ),
-            allowsDurationEditing: session.isManual
+            allowsDurationEditing: true
         )
     }
 

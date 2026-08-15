@@ -11,6 +11,20 @@ enum CreateGoalPhase: Equatable {
     case scheduleReview
     case confirmingSchedule
     case scheduleFailure(String)
+
+    var transitionID: Int {
+        switch self {
+        case .starter: 0
+        case .loading: 1
+        case .conversation: 2
+        case .proposal: 3
+        case .confirmingGoal: 4
+        case .requestingSchedule: 5
+        case .scheduleReview: 6
+        case .confirmingSchedule: 7
+        case .scheduleFailure: 8
+        }
+    }
 }
 
 struct CreateGoalState {
@@ -27,12 +41,16 @@ struct CreateGoalState {
 
     var requiresFullScreen: Bool {
         switch phase {
-        case .proposal, .confirmingGoal, .requestingSchedule, .scheduleReview,
-             .confirmingSchedule, .scheduleFailure:
+        case .conversation, .proposal, .scheduleReview, .scheduleFailure:
             true
-        case .starter, .loading, .conversation:
+        case .starter, .loading, .confirmingGoal, .requestingSchedule,
+             .confirmingSchedule:
             false
         }
+    }
+
+    var hidesModeSwitcher: Bool {
+        phase != .starter
     }
 
     var isBusy: Bool {

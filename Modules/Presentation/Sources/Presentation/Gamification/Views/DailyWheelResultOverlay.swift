@@ -53,12 +53,8 @@ struct DailyWheelResultOverlay: View {
         switch result {
         case let .spin(spin) where spin.payoutType == .item:
             if let url = spin.item?.imageURL {
-                AsyncImage(url: url) { phase in
-                    if case let .success(image) = phase {
-                        image.resizable().scaledToFit()
-                    } else {
-                        giftArtwork
-                    }
+                AppRemoteImage(url: url) {
+                    giftArtwork
                 }
                 .frame(width: 180, height: 180)
                 .background(AppColors.surface.opacity(0.14), in: Circle())

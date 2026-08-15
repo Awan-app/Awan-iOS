@@ -34,6 +34,44 @@ public struct MockCreateAITaskUseCase: CreateAITaskUseCase {
     }
 }
 
+public struct MockFetchStoreItemsUseCase: FetchStoreItemsUseCase {
+    public init() {}
+    public func execute() async throws -> [StoreItem] {
+        [
+            StoreItem(
+                id: "1",
+                name: "Gold Frame",
+                description: "A shiny gold frame",
+                image: "https://example.com/gold.png",
+                info: nil,
+                price: 100,
+                version: "1.0",
+                type: .frame
+            )
+        ]
+    }
+}
+
+public struct MockBuyStoreItemUseCase: BuyStoreItemUseCase {
+    public init() {}
+    public func execute(itemID: String) async throws -> StorePurchase {
+        StorePurchase(
+            id: UUID().uuidString,
+            item: StoreItem(
+                id: itemID,
+                name: "Gold Frame",
+                description: "A shiny gold frame",
+                image: "https://example.com/gold.png",
+                info: nil,
+                price: 100,
+                version: "1.0",
+                type: .frame
+            ),
+            boughtAt: Date()
+        )
+    }
+}
+
 public struct MockCreateOnboardingTemplateUseCase: CreateOnboardingTemplateUseCase {
     public init() {}
     public func execute(zoneDrafts: [Zone]) async throws {}

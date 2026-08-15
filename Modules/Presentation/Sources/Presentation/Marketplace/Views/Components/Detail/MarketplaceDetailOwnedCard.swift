@@ -2,6 +2,9 @@ import Common
 import SwiftUI
 
 struct MarketplaceDetailOwnedCard: View {
+    var isEquipping: Bool = false
+    var onEquip: () -> Void = {}
+
     var body: some View {
         AppDepthSurface(
             shape: .roundedRectangle(cornerRadius: 22),
@@ -11,37 +14,49 @@ struct MarketplaceDetailOwnedCard: View {
             borderWidth: 1.5, depthOffset: 5,
             contentInsets: EdgeInsets(top: 18, leading: 18, bottom: 20, trailing: 18)
         ) {
-            VStack(alignment: .leading, spacing: 18) {
-                HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(alignment: .center, spacing: 12) {
                     ZStack {
                         Circle()
-                            .fill(AppColors.accentGreen.opacity(0.12))
-                            .frame(width: 44, height: 44)
-                        Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 22, weight: .bold))
-                            .foregroundStyle(AppColors.accentGreen)
+                            .fill(AppColors.accentGreen)
+                            .frame(width: 42, height: 42)
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 17, weight: .black))
+                            .foregroundStyle(AppColors.onAccent)
                     }
-                    VStack(alignment: .leading, spacing: 3) {
+
+                    VStack(alignment: .leading, spacing: 4) {
                         Text(L10n.Marketplace.itsYours)
-                            .font(AppFonts.subheadlineHeavy)
-                            .foregroundStyle(AppColors.accentGreen)
+                            .font(AppFonts.headlineBlack)
+                            .foregroundStyle(AppColors.textPrimary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+
                         Text(L10n.Marketplace.ownedHint)
                             .font(AppFonts.subheadlineSemibold)
                             .foregroundStyle(AppColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .layoutPriority(1)
                 }
-                .padding(14)
-                .background(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(AppColors.accentGreen.opacity(0.06))
-                )
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                AppButton(
-                    title: L10n.Marketplace.statusEquipped,
-                    icon: "wand.and.sparkles",
-                    color: AppColors.accentGreen,
-                    size: .large, onTap: {}
-                )
+                Divider()
+                    .overlay(AppColors.accentGreen.opacity(0.18))
+
+                if isEquipping {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: 48)
+                } else {
+                    AppButton(
+                        title: L10n.Marketplace.equip,
+                        icon: "wand.and.sparkles",
+                        color: AppColors.accentGreen,
+                        size: .large,
+                        onTap: onEquip
+                    )
+                }
             }
         }
     }
