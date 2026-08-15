@@ -119,9 +119,43 @@ public struct DefaultGoalRepository: GoalRepository {
 
 
     public func updateGoal(_ goal: Goal) async throws {
-        try await localDataSource.updateGoal(goal)
+        // Optimistic local update — fires Combine stream immediately so the UI
+        // reflects the change (including deadline removal) without waiting for
+        // the network round-trip. If the model doesn't exist locally yet we
+        // skip and rely on the remote response below.
+        try? await localDataSource.updateGoal(goal)
+
+        let dateString = goal.deadline.map { LocalDateKey.value(for: $0) }
+        let requestDTO = UpdateGoalRequestDTO(
+            title: goal.name,
+            description: goal.description,
+            status: nil,
+            targetDate: dateString
+        )
+        do {
+            let responseDTO = try await remoteDataSource.updateGoal(goalId: goal.id, request: requestDTO)
+            let mappedGoal = try HomeRemoteMapper.goal(responseDTO)
+            // Always trust `goal.deadline` (the user's intent) over whatever
+            // the server echoes back, because some PATCH backends silently
+            // ignore null for optional fields.
+            let finalGoal = Goal(
+                id: mappedGoal.id,
+                name: mappedGoal.name,
+                description: mappedGoal.description,
+                status: mappedGoal.status,
+                deadline: goal.deadline,
+                createdAt: mappedGoal.createdAt
+            )
+            try await localDataSource.updateGoal(finalGoal)
+        } catch {
+            // On failure keep the optimistic local state so the UI stays
+            // consistent, but re-throw so callers can show an error.
+            throw error
+        }
     }
+
     public func deleteGoal(id: UUID) async throws {
+        try await remoteDataSource.deleteGoal(goalId: id)
         try await localDataSource.deleteGoal(id: id)
     }
     public func deleteAllGoals() async throws {
