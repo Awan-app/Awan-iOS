@@ -176,6 +176,7 @@ struct AppRootView: View {
                         case .inventory:  factory.makeProfileInventoryView()
                         case .personalization: factory.makePersonalizationView()
                         case .settings: factory.makeSettingsView()
+                        case .mcpIntegration: factory.makeMCPConnectionView()
                         case .aboutAwan:  factory.makeAboutAwanView()
                         default:          EmptyView()
                         }
@@ -282,7 +283,7 @@ struct AppRootView: View {
                 )
                 .presentationDragIndicator(.visible)
             case .home, .tasks, .calendar, .userInfo, .dailyZones, .inventory,
-                 .personalization, .settings, .aboutAwan, .inboxTaskDetail:
+                 .personalization, .settings, .mcpIntegration, .aboutAwan, .inboxTaskDetail:
                 EmptyView()
             }
         }

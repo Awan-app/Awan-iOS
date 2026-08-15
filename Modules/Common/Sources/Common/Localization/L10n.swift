@@ -1147,8 +1147,13 @@ public enum L10n {
         public static var dummyTimeZone: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_time_zone", value: nil, table: "Localizable") }
         public static var dummySleepSchedule: String { L10n.currentBundle.localizedString(forKey: "profile.dummy_sleep_schedule", value: nil, table: "Localizable") }
         public static var ready: String { L10n.currentBundle.localizedString(forKey: "profile.ready", value: nil, table: "Localizable") }
+        public static var mcpIntegration: String { text("profile.mcp_integration") }
+        public static var mcpSubtitle: String { text("profile.mcp_subtitle") }
         public static var mcpConnectionDetails: String { text("profile.mcp_connection_details") }
-        public static var copyMcpConnectionDetails: String { text("profile.copy_mcp_connection_details") }
+        public static var mcpServerURL: String { text("profile.mcp_server_url") }
+        public static var oauthClientID: String { text("profile.oauth_client_id") }
+        public static var copyMcpServerURL: String { text("profile.copy_mcp_server_url") }
+        public static var copyOAuthClientID: String { text("profile.copy_oauth_client_id") }
         public static var failedLoadMcpConnection: String { text("profile.failed_load_mcp_connection") }
 
         private static func text(_ key: String) -> String {

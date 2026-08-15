@@ -25,13 +25,9 @@ public final class ProfileViewModel {
     private(set) var isLoggingOut = false
     var showLogoutConfirmation = false
     var showLogoutError = false
-    private(set) var mcpConnectionText: String?
-    private(set) var isMCPLoading = false
-
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let fetchZonesUseCase: FetchZonesUseCase
     private let logoutUseCase: LogoutUseCase
-    private let fetchMCPConnectionDetailsUseCase: FetchMCPConnectionDetailsUseCase
     private let onLogout: (() -> Void)?
     @ObservationIgnored private var zonesCancellable: AnyCancellable?
     @ObservationIgnored private var profileCancellable: AnyCancellable?
@@ -40,14 +36,12 @@ public final class ProfileViewModel {
         getUserProfileUseCase: GetUserProfileUseCase,
         fetchZonesUseCase: FetchZonesUseCase,
         logoutUseCase: LogoutUseCase,
-        fetchMCPConnectionDetailsUseCase: FetchMCPConnectionDetailsUseCase,
         onLogout: (() -> Void)? = nil
 
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.fetchZonesUseCase = fetchZonesUseCase
         self.logoutUseCase = logoutUseCase
-        self.fetchMCPConnectionDetailsUseCase = fetchMCPConnectionDetailsUseCase
         self.onLogout = onLogout
         
 
@@ -75,11 +69,6 @@ public final class ProfileViewModel {
             updateProfileState(with: profile)
             observeUserProfile()
             observeDailyZones()
-            
-            // Fetch MCP connection details concurrently (don't block profile loading)
-            Task {
-                await fetchMCPConnectionDetails()
-            }
         } catch is CancellationError {
             return
         } catch {
@@ -87,22 +76,6 @@ public final class ProfileViewModel {
                 loadState = .failure
             }
         }
-    }
-
-    private func fetchMCPConnectionDetails() async {
-        isMCPLoading = true
-        do {
-            let details = try await fetchMCPConnectionDetailsUseCase.execute()
-            mcpConnectionText = details.mcpUrl
-        } catch {
-            // Silently fail or handle error. The requirement states: "Handle loading, success, and error states properly."
-            // Since it's a read-only display, if it fails, we can just leave it nil or set an error message.
-            // Leaving it nil will hide the section or we can show an error placeholder. 
-            // For now, setting to nil handles the error by not displaying the section, 
-            // but let's keep it nil and let the view decide.
-            mcpConnectionText = nil
-        }
-        isMCPLoading = false
     }
 
     public func logout() async {

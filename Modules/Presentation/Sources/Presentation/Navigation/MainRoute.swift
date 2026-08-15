@@ -25,6 +25,7 @@ public enum MainRoute: Hashable, Identifiable, Sendable {
     case inventory
     case personalization
     case settings
+    case mcpIntegration
     case aboutAwan
     case inboxTaskDetail(UUID)
 

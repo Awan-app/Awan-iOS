@@ -92,6 +92,37 @@ struct SettingsView: View {
                                 .padding(.vertical, 6)
 
                             Button(action: {
+                                coordinator.mainCoordinator.push(MainRoute.mcpIntegration)
+                            }) {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "point.3.connected.trianglepath.dotted")
+                                        .font(.system(size: 17, weight: .semibold))
+                                        .foregroundStyle(AppColors.accentBlue)
+                                        .frame(width: 26, alignment: .center)
+
+                                        Text(L10n.Profile.mcpIntegration)
+                                            .font(AppFonts.subheadlineBold)
+                                            .foregroundStyle(AppColors.textPrimary)
+                                            .multilineTextAlignment(.leading)
+                                    
+                                    Spacer(minLength: 8)
+
+                                    Image(systemName: "chevron.forward")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundStyle(AppColors.textSecondary.opacity(0.6))
+                                }
+                                .padding(.vertical, 6)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+
+                            Rectangle()
+                                .fill(AppColors.divider)
+                                .frame(height: 1)
+                                .padding(.leading, 38)
+                                .padding(.vertical, 6)
+
+                            Button(action: {
                                 coordinator.mainCoordinator.push(MainRoute.aboutAwan)
                             }) {
                                 HStack(spacing: 8) {

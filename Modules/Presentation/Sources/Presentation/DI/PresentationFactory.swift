@@ -17,6 +17,7 @@ public struct PresentationFactory {
     private let makeOnboardingViewModel: () -> OnboardingViewModel
     private let makeProfileViewModel: () -> ProfileViewModel
     private let makeSettingsViewModel: () -> SettingsViewModel
+    private let makeMCPConnectionViewModel: () -> MCPConnectionViewModel
     private let makeDailyZonesViewModel: () -> DailyZonesViewModel
     private let makeUserInfoViewModel: () -> UserInfoViewModel
     private let makeInboxViewModel: () -> InboxViewModel
@@ -41,6 +42,7 @@ public struct PresentationFactory {
         makeOnboardingViewModel: @escaping () -> OnboardingViewModel,
         makeProfileViewModel: @escaping () -> ProfileViewModel,
         makeSettingsViewModel: @escaping () -> SettingsViewModel,
+        makeMCPConnectionViewModel: @escaping () -> MCPConnectionViewModel,
         makeDailyZonesViewModel: @escaping () -> DailyZonesViewModel,
         makeUserInfoViewModel: @escaping () -> UserInfoViewModel,
         makeInboxViewModel: @escaping () -> InboxViewModel,
@@ -61,6 +63,7 @@ public struct PresentationFactory {
         self.makeOnboardingViewModel = makeOnboardingViewModel
         self.makeProfileViewModel = makeProfileViewModel
         self.makeSettingsViewModel = makeSettingsViewModel
+        self.makeMCPConnectionViewModel = makeMCPConnectionViewModel
         self.makeDailyZonesViewModel = makeDailyZonesViewModel
         self.makeUserInfoViewModel = makeUserInfoViewModel
         self.makeInboxViewModel = makeInboxViewModel
@@ -190,6 +193,10 @@ public struct PresentationFactory {
 
     func makeSettingsView() -> some View {
         SettingsView()
+    }
+
+    func makeMCPConnectionView() -> some View {
+        MCPConnectionView(viewModel: makeMCPConnectionViewModel())
     }
 
     func makeAboutAwanView() -> some View {

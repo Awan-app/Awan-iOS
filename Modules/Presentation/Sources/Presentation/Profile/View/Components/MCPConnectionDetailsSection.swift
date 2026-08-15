@@ -1,88 +1,56 @@
-//
-//  MCPConnectionDetailsSection.swift
-//  Presentation
-//
-
 import Common
+import Domain
 import SwiftUI
 
 struct MCPConnectionDetailsSection: View {
-    let mcpText: String?
-    let isLoading: Bool
-    
-    @State private var didCopy = false
-    
+    let details: MCPConnectionDetails
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            SectionHeaderLabel(
-                title: L10n.Profile.mcpConnectionDetails,
-                accentColor: AppColors.accentBlue
-            )
-            
-            AppDepthSurface(
-                surfaceColor: AppColors.infoSurface,
-                borderColor: AppColors.accentBlue.opacity(0.3),
-                depthColor: AppColors.accentBlue.opacity(0.4)
-            ) {
-                HStack(alignment: .top, spacing: 12) {
-                    if isLoading {
-                        ProgressView()
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.vertical, 16)
-                    } else if let mcpText = mcpText {
-                        Text(mcpText)
-                            .font(Font.caption.monospaced())
-                            .foregroundStyle(AppColors.textSecondary)
-                            .multilineTextAlignment(.leading)
-                            .lineLimit(nil)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        Button {
-                            copyToClipboard(text: mcpText)
-                        } label: {
-                            Image(systemName: didCopy ? "checkmark" : "doc.on.doc")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(didCopy ? AppColors.reward : AppColors.accentBlue)
-                                .frame(width: 32, height: 32)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(L10n.Profile.copyMcpConnectionDetails)
-                    } else {
-                        Text(L10n.Profile.failedLoadMcpConnection)
-                            .font(Font.caption)
-                            .foregroundStyle(AppColors.textSecondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.vertical, 8)
-                    }
-                }
-                .padding(16)
-            }
-        }
-    }
-    
-    private func copyToClipboard(text: String) {
-        UIPasteboard.general.string = text
-        didCopy = true
-        
-        Task {
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-            await MainActor.run {
-                didCopy = false
+        AppDepthSurface(
+            surfaceColor: AppColors.surface,
+            borderColor: AppColors.accentBlue.opacity(0.24),
+            depthColor: AppColors.accentBlue.opacity(0.30)
+        ) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(L10n.Profile.mcpConnectionDetails)
+                    .font(AppFonts.headlineBlack)
+                    .foregroundStyle(AppColors.textPrimary)
+
+                MCPConnectionDetailRow(
+                    title: L10n.Profile.mcpServerURL,
+                    value: details.mcpUrl,
+                    copyAccessibilityLabel: L10n.Profile.copyMcpServerURL
+                )
+
+                MCPConnectionDetailRow(
+                    title: L10n.Profile.oauthClientID,
+                    value: details.clientId,
+                    copyAccessibilityLabel: L10n.Profile.copyOAuthClientID
+                )
             }
         }
     }
 }
 
-#Preview {
-    VStack {
-        MCPConnectionDetailsSection(
-            mcpText: "MCP URL:\nhttps://awanproduction.up.railway.app/mcp\n\nClient ID:\nawan-mcp",
-            isLoading: false
+#Preview("MCP Details Light") {
+    MCPConnectionDetailsSection(
+        details: MCPConnectionDetails(
+            mcpUrl: "https://backend.example.com/api/v1/mcp",
+            clientId: "awan-ios-client"
         )
-        MCPConnectionDetailsSection(mcpText: nil, isLoading: true)
-        MCPConnectionDetailsSection(mcpText: nil, isLoading: false)
-    }
+    )
     .padding()
     .background(AppColors.screenBackground)
+}
+
+#Preview("MCP Details Dark") {
+    MCPConnectionDetailsSection(
+        details: MCPConnectionDetails(
+            mcpUrl: "https://backend.example.com/api/v1/mcp",
+            clientId: "awan-ios-client"
+        )
+    )
+    .padding()
+    .background(AppColors.screenBackground)
+    .preferredColorScheme(.dark)
 }

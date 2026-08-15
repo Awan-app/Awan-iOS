@@ -267,17 +267,23 @@ struct PresentationAssembly: Assembly {
             let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
             let fetchZonesUseCase = Self.resolve(FetchZonesUseCase.self, from: resolver)
             let logoutUseCase = Self.resolve(LogoutUseCase.self, from: resolver)
-            let fetchMCPConnectionDetailsUseCase = Self.resolve(FetchMCPConnectionDetailsUseCase.self, from: resolver)
             return MainActor.assumeIsolated {
                 ProfileViewModel(
                     getUserProfileUseCase: useCase,
                     fetchZonesUseCase: fetchZonesUseCase,
                     logoutUseCase: logoutUseCase,
-                    fetchMCPConnectionDetailsUseCase: fetchMCPConnectionDetailsUseCase,
                     onLogout: {
                         GoogleSignInHelper.signOut()
                     }
                 )
+            }
+        }
+        .inObjectScope(.transient)
+
+        container.register(MCPConnectionViewModel.self) { resolver in
+            let useCase = Self.resolve(FetchMCPConnectionDetailsUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                MCPConnectionViewModel(fetchConnectionDetailsUseCase: useCase)
             }
         }
         .inObjectScope(.transient)
@@ -419,6 +425,9 @@ struct PresentationAssembly: Assembly {
                     },
                     makeSettingsViewModel: {
                         Self.resolve(SettingsViewModel.self, from: resolver)
+                    },
+                    makeMCPConnectionViewModel: {
+                        Self.resolve(MCPConnectionViewModel.self, from: resolver)
                     },
                     makeDailyZonesViewModel: {
                         Self.resolve(DailyZonesViewModel.self, from: resolver)

@@ -16,6 +16,11 @@ public enum AppFonts {
         design: .rounded,
         weight: .heavy
     )
+    public static let captionMonospacedMedium = Font.system(
+        .caption,
+        design: .monospaced,
+        weight: .medium
+    )
     public static let captionIconBlack = Font.caption.weight(.black)
     public static let caption2IconBlack = Font.caption2.weight(.black)
     public static let caption2Bold = Font.system(

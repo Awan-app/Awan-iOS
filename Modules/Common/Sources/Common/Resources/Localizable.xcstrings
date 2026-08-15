@@ -7688,19 +7688,36 @@
         }
       }
     },
-    "profile.copy_mcp_connection_details" : {
+    "profile.copy_mcp_server_url" : {
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نسخ تفاصيل اتصال MCP"
+            "value" : "نسخ رابط خادم MCP"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Copy MCP Connection Details"
+            "value" : "Copy MCP Server URL"
+          }
+        }
+      }
+    },
+    "profile.copy_oauth_client_id" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نسخ معرف عميل OAuth"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy OAuth Client ID"
           }
         }
       }
@@ -8211,6 +8228,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "MCP Connection Details"
+          }
+        }
+      }
+    },
+    "profile.mcp_integration" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تكامل MCP"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP Integration"
+          }
+        }
+      }
+    },
+    "profile.mcp_server_url" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "رابط خادم MCP"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MCP Server URL"
+          }
+        }
+      }
+    },
+    "profile.mcp_subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اربط مساعدي الذكاء الاصطناعي عبر بروتوكول سياق النموذج"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect AI assistants via Model Context Protocol"
+          }
+        }
+      }
+    },
+    "profile.oauth_client_id" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "معرف عميل OAuth"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OAuth Client ID"
           }
         }
       }
