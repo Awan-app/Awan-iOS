@@ -17,6 +17,7 @@ public struct InboxView: View {
     @State private var animatedPoints: Int?
     @State private var pointsPulse = 0
     @State private var pointsAnimationTask: Task<Void, Never>?
+    @State private var scrollPosition = ScrollPosition()
 
     public init(
         viewModel: InboxViewModel,
@@ -132,6 +133,10 @@ public struct InboxView: View {
             pointsAnimationTask?.cancel()
             pointsAnimationTask = nil
         }
+        .onChange(of: coordinator.mainCoordinator.selectedTab) { _, tab in
+            guard tab == .tasks else { return }
+            scrollPosition.scrollTo(edge: .top)
+        }
     }
 
     private func content(_ state: InboxState) -> some View {
@@ -225,6 +230,7 @@ public struct InboxView: View {
                 .listRowInsets(EdgeInsets())
         }
         .listStyle(.plain)
+        .scrollPosition($scrollPosition)
         .scrollContentBackground(.hidden)
         .padding(.top, 12)
         .scrollDismissesKeyboard(.interactively)

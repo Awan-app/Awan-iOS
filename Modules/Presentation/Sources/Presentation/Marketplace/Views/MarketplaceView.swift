@@ -3,7 +3,9 @@ import Common
 import SwiftUI
 
 public struct MarketplaceView: View {
+    @Environment(AppCoordinator.self) private var coordinator
     @State private var viewModel: MarketplaceViewModel
+    @State private var scrollPosition = ScrollPosition()
 
     private let gridColumns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
 
@@ -26,6 +28,10 @@ public struct MarketplaceView: View {
         .toolbar(.hidden, for: .navigationBar)
         .task {
             viewModel.send(.appeared)
+        }
+        .onChange(of: coordinator.mainCoordinator.selectedTab) { _, tab in
+            guard tab == .store else { return }
+            scrollPosition.scrollTo(edge: .top)
         }
         .sheet(isPresented: Binding(
             get: { state.isFilterSheetPresented },
@@ -109,6 +115,7 @@ public struct MarketplaceView: View {
                 }
                 .padding(.bottom, 120)
             }
+            .scrollPosition($scrollPosition)
             .scrollDismissesKeyboard(.interactively)
         }
         .padding(.horizontal, 16)

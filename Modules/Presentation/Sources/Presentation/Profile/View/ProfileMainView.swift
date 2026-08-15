@@ -6,6 +6,7 @@ struct ProfileMainView: View {
     @Environment(AppCoordinator.self) private var coordinator
     @Environment(LanguageManager.self) private var languageManager
     @State private var viewModel: ProfileViewModel
+    @State private var scrollPosition = ScrollPosition()
 
     init(viewModel: ProfileViewModel) {
         self.viewModel = viewModel
@@ -22,6 +23,7 @@ struct ProfileMainView: View {
                         .padding(.horizontal, 24)
                         .padding(.bottom, 90)
                 }
+                .scrollPosition($scrollPosition)
                 .refreshable {
                     await viewModel.load()
                     await viewModel.refreshEquippedFrame()
@@ -53,6 +55,10 @@ struct ProfileMainView: View {
         }
         .onAppear {
             Task { await viewModel.refreshEquippedFrame() }
+        }
+        .onChange(of: coordinator.mainCoordinator.selectedTab) { _, tab in
+            guard tab == .you else { return }
+            scrollPosition.scrollTo(edge: .top)
         }
     }
 

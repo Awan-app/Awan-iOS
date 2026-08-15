@@ -10,6 +10,7 @@ import SwiftUI
 public struct GoalDetailView: View {
     let goalID: UUID
     @State private var viewModel: GoalsViewModel
+    @State private var scrollPosition = ScrollPosition()
 
     public init(goalID: UUID, viewModel: GoalsViewModel) {
         self.goalID = goalID
@@ -66,6 +67,7 @@ public struct GoalDetailView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 32)
                 }
+                .scrollPosition($scrollPosition)
             } else if viewModel.state.isLoading {
                 ProgressView()
                     .controlSize(.large)
@@ -104,6 +106,9 @@ public struct GoalDetailView: View {
             Button("OK") { viewModel.send(.dismissAddTaskError) }
         } message: {
             Text(viewModel.state.addTaskFailureMessage ?? "")
+        }
+        .onChange(of: viewModel.state.orderedGoalTasks.count) { _, _ in
+            scrollPosition.scrollTo(edge: .top)
         }
     }
 }

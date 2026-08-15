@@ -11,7 +11,7 @@ struct HomeView: View {
     @State private var pinnedHeaderHeight: CGFloat = 0
     @State private var planSummaryHeight: CGFloat = 0
     @State private var homeScrollFrame: CGRect = .zero
-    @State private var homeScrollController = HomeScrollController()
+    @State private var homeScrollPosition = ScrollPosition()
     @State private var homeScrollStorage = HomeScrollStorage()
     @State private var isHeaderCollapsed = false
     @State private var draggedSessionID: UUID?
@@ -224,8 +224,8 @@ struct HomeView: View {
                         .zIndex(1)
                     }
                 }
-                .background(HomeScrollControllerReader(controller: homeScrollController))
             }
+            .scrollPosition($homeScrollPosition)
             .onGeometryChange(for: CGRect.self) { proxy in
                 proxy.frame(in: .global)
             } action: { frame in
@@ -258,6 +258,10 @@ struct HomeView: View {
             }
             .scrollDismissesKeyboard(.interactively)
             .refreshable { viewModel.send(.refresh) }
+//            .onChange(of: coordinator.mainCoordinator.selectedTab) { _, tab in
+//                guard tab == .home else { return }
+//                homeScrollPosition.scrollTo(edge: .top)
+//            }
         }
     }
 
@@ -314,10 +318,18 @@ struct HomeView: View {
             delta,
             dragMinimumScrollOffset - homeScrollStorage.metrics.offset
         )
-        let actualDelta = homeScrollController.scroll(by: boundedDelta)
+        let targetOffset = min(
+            max(
+                homeScrollStorage.metrics.offset + boundedDelta,
+                dragMinimumScrollOffset
+            ),
+            homeScrollStorage.metrics.maximumOffset
+        )
+        let actualDelta = targetOffset - homeScrollStorage.metrics.offset
         guard actualDelta != 0 else { return }
 
-        homeScrollStorage.metrics.offset += actualDelta
+        homeScrollPosition.scrollTo(y: targetOffset)
+        homeScrollStorage.metrics.offset = targetOffset
         dragScrollCompensation += actualDelta
     }
 
