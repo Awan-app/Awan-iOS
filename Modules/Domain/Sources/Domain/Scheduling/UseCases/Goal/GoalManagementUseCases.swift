@@ -36,3 +36,42 @@ public struct DefaultAddTaskToGoalUseCase: AddTaskToGoalUseCase {
         try await repository.addTaskToGoal(goalID: goalID, task: task)
     }
 }
+
+public protocol UpdateGoalUseCase: Sendable {
+    func execute(id: UUID, title: String, description: String?, targetDate: Date?) async throws -> Goal
+}
+
+public struct DefaultUpdateGoalUseCase: UpdateGoalUseCase {
+    private let repository: any GoalRepository
+
+    public init(repository: any GoalRepository) {
+        self.repository = repository
+    }
+
+    public func execute(id: UUID, title: String, description: String?, targetDate: Date?) async throws -> Goal {
+        let updated = Goal(
+            id: id,
+            name: title,
+            description: description,
+            deadline: targetDate
+        )
+        try await repository.updateGoal(updated)
+        return updated
+    }
+}
+
+public protocol DeleteGoalUseCase: Sendable {
+    func execute(id: UUID) async throws
+}
+
+public struct DefaultDeleteGoalUseCase: DeleteGoalUseCase {
+    private let repository: any GoalRepository
+
+    public init(repository: any GoalRepository) {
+        self.repository = repository
+    }
+
+    public func execute(id: UUID) async throws {
+        try await repository.deleteGoal(id: id)
+    }
+}
