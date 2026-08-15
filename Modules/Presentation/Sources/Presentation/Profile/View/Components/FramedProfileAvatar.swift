@@ -12,7 +12,7 @@ struct FramedProfileAvatar<Avatar: View>: View {
     init(
         frameImageURL: String?,
         size: CGFloat,
-        framedAvatarScale: CGFloat = 0.7,
+        framedAvatarScale: CGFloat = 0.75,
         borderColor: Color = AppColors.accentBlue.opacity(0.25),
         borderWidth: CGFloat = 2.5,
         @ViewBuilder avatar: () -> Avatar
