@@ -58,9 +58,10 @@ struct UserInfoProfilePictureSection: View {
     }
 
     private var defaultAvatar: some View {
-        Image("user-avatar")
+        Image(systemName: "person.fill")
             .resizable()
             .scaledToFill()
+            .frame(width: 56,height: 56)
     }
 
     // MARK: - Edit Button
