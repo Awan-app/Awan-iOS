@@ -276,6 +276,16 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(GoalRepository.self, from: resolver)
             )
         }
+        container.register(UpdateGoalUseCase.self) { resolver in
+            DefaultUpdateGoalUseCase(
+                repository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
+        container.register(DeleteGoalUseCase.self) { resolver in
+            DefaultDeleteGoalUseCase(
+                repository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
 
         container.register(SendGoalDecompositionMessageUseCase.self) { resolver in
             DefaultSendGoalDecompositionMessageUseCase(
