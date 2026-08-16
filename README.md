@@ -22,7 +22,6 @@ Awan uses **layer-first Clean Architecture**: features repeat inside shared laye
 | **Domain** | UI- and infrastructure-independent entities, value objects, business rules, scheduling services, repository contracts, typed errors, and focused use cases. |
 | **Data** | Repository implementations, remote and local data sources, DTO/persistence mapping, cache coordination, and SwiftData actors. |
 | **Network** | Alamofire-based transport, endpoint contracts, encoding/decoding, multipart uploads, authentication interception, and token refresh. |
-
 | **Common** | Shared design-system tokens and components, localization, media abstractions, coordinator contracts, and reusable utilities. |
 
 ```mermaid
@@ -54,6 +53,37 @@ flowchart TD
 ```
 
 Transport DTOs and SwiftData models stop at the Data boundary. Presentation renders Domain results through observable UI state and never accesses persistence or networking directly.
+
+### Local-First Caching Flow
+
+For read-heavy data (tasks, sessions, zones, gamification), repositories serve local cache **immediately** via a retained Combine publisher, then fetch remote data and write it back into SwiftData. The same publisher emits the update automatically — no extra trigger needed from the view.
+
+```mermaid
+sequenceDiagram
+    participant V as SwiftUI View
+    participant VM as ViewModel
+    participant UC as Use Case
+    participant R as Repository
+    participant L as Local (SwiftData)
+    participant N as Remote (API)
+
+    V->>VM: onAppear / send(.load)
+    VM->>UC: execute()
+    UC->>R: observe() → publisher
+    R-->>L: query SwiftData
+    L-->>R: cached Domain entities
+    R-->>UC: publisher emits ①
+    UC-->>VM: first result
+    VM-->>V: render cached UI ✅ (instant)
+
+    R->>N: fetch remote
+    N-->>R: ResponseDTO → mapper → Domain entities
+    R->>L: write updated entities
+    L-->>R: SwiftData change
+    R-->>UC: publisher emits ②
+    UC-->>VM: updated result
+    VM-->>V: re-render with fresh data 🔄
+```
 
 ## Tech Stack
 
