@@ -1,6 +1,11 @@
 import SwiftUI
 
 public enum AppFonts {
+    public static let splashDisplay = Font.system(
+        size: 44,
+        weight: .heavy,
+        design: .rounded
+    )
     public static let titleBlack = Font.system(
         .title,
         design: .rounded,

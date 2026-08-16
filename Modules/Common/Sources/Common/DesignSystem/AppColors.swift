@@ -54,6 +54,13 @@ public enum AppColors {
     public static let cloudDepth = asset("CloudDepth")
     public static let cloudHighlight = asset("CloudHighlight")
 
+    public static let splashSkyMidday = asset("SplashSkyMidday")
+    public static let splashSkyMorning = asset("SplashSkyMorning")
+    public static let splashBackgroundStart = asset("SplashBackgroundStart")
+    public static let splashBackground = asset("SplashBackground")
+    public static let splashCloudSurface = asset("SplashCloudSurface")
+    public static let splashText = asset("SplashText")
+
     public static var skyGradient: LinearGradient {
         LinearGradient(
             stops: [
