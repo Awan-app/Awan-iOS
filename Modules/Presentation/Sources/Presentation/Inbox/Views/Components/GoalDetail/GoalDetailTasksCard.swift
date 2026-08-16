@@ -15,65 +15,71 @@ struct GoalDetailTasksCard: View {
     let failureMessage: String?
     let onRetry: () -> Void
     var onAddTask: (() -> Void)? = nil
+    var onCompleteTask: ((UUID) -> Void)? = nil
 
     private var independentCount: Int { tasks.filter { !$0.isDependent }.count }
     private var dependentCount: Int   { tasks.filter {  $0.isDependent }.count }
 
+    @State private var expandedTaskIDs: Set<UUID> = []
+
     var body: some View {
-        AppDepthSurface(
-            shape: .roundedRectangle(cornerRadius: 24),
-            surfaceColor: AppColors.surface,
-            borderColor: AppColors.outline.opacity(0.06),
-            depthColor: AppColors.outline.opacity(0.10),
-            borderWidth: 1.5,
-            depthOffset: 4
-        ) {
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(alignment: .center, spacing: 0) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(L10n.Goals.tasks)
-                            .font(AppFonts.title3Black)
-                            .foregroundStyle(AppColors.textPrimary)
-
-                        if !tasks.isEmpty {
-                            Text(taskSubtitle)
-                                .font(AppFonts.caption2Bold)
-                                .foregroundStyle(AppColors.textSecondary)
-                        }
-                    }
-
-                    Spacer()
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .center, spacing: 0) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(L10n.Goals.tasks)
+                        .font(AppFonts.title3Black)
+                        .foregroundStyle(AppColors.textPrimary)
 
                     if !tasks.isEmpty {
-                        countBadge
+                        Text(taskSubtitle)
+                            .font(AppFonts.caption2Bold)
+                            .foregroundStyle(AppColors.textSecondary)
                     }
                 }
 
-                // ── List states ─────────────────────────────────────────
-                if isLoading && tasks.isEmpty {
-                    loadingView
-                } else if let failure = failureMessage, tasks.isEmpty {
-                    failureView(failure)
-                } else if tasks.isEmpty {
-                    emptyView
-                    if let onAddTask, !isLoading {
-                        addTaskButton(onAddTask)
-                    }
-                } else {
-                    taskRoadmap
+                Spacer()
+
+                if !tasks.isEmpty {
+                    countBadge
                 }
             }
+
+            // ── List states ─────────────────────────────────────────
+            if isLoading && tasks.isEmpty {
+                loadingView
+            } else if let failure = failureMessage, tasks.isEmpty {
+                failureView(failure)
+            } else if tasks.isEmpty {
+                emptyView
+                if let onAddTask, !isLoading {
+                    addTaskButton(onAddTask)
+                }
+            } else {
+                taskRoadmap
+            }
         }
+        .padding(.top, 8)
     }
 
     // MARK: - Sub-views
 
     private var taskRoadmap: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 12) {
             ForEach(Array(tasks.enumerated()), id: \.element.id) { listIndex, item in
                 GoalDetailTaskRow(
                     item: item,
-                    isLast: (listIndex == tasks.count - 1) && (onAddTask == nil)
+                    isLast: (listIndex == tasks.count - 1) && (onAddTask == nil),
+                    isExpanded: expandedTaskIDs.contains(item.id),
+                    onToggleExpand: {
+                        if expandedTaskIDs.contains(item.id) {
+                            expandedTaskIDs.remove(item.id)
+                        } else {
+                            expandedTaskIDs.insert(item.id)
+                        }
+                    },
+                    onCompleteTask: {
+                        onCompleteTask?(item.id)
+                    }
                 )
             }
 
@@ -81,7 +87,7 @@ struct GoalDetailTasksCard: View {
                 addTaskButton(onAddTask)
             }
         }
-        .padding(.top, 2)
+        .padding(.top, 4)
     }
 
     private var countBadge: some View {

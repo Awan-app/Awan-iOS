@@ -94,7 +94,7 @@ enum HomeRemoteMapper {
 
     static func goal(_ dto: GoalInfoResponseDTO) throws -> Goal {
         let deadline: Date?
-        if let targetDate = dto.targetDate {
+        if let targetDate = dto.targetDate, !targetDate.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             guard let parsedDeadline = LocalDateKey.date(from: targetDate) else {
                 throw RemoteDomainMappingError.invalidValue(
                     "goal.targetDate.\(targetDate)"

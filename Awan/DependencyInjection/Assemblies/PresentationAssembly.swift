@@ -219,7 +219,13 @@ struct PresentationAssembly: Assembly {
                 fetchGoalTasks: Self.resolve(FetchGoalTasksUseCase.self, from: resolver),
                 createEmptyGoal: Self.resolve(CreateEmptyGoalUseCase.self, from: resolver),
                 addTaskToGoal: Self.resolve(AddTaskToGoalUseCase.self, from: resolver),
-                fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver)
+                fetchInboxTasks: Self.resolve(FetchInboxTasksUseCase.self, from: resolver),
+                updateGoal: Self.resolve(UpdateGoalUseCase.self, from: resolver),
+                deleteGoal: Self.resolve(DeleteGoalUseCase.self, from: resolver),
+                requestSchedule: Self.resolve(RequestGoalScheduleProposalUseCase.self, from: resolver),
+                confirmSchedule: Self.resolve(ConfirmGoalScheduleUseCase.self, from: resolver),
+                fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
+                setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver)
             )
         }
 
@@ -235,7 +241,7 @@ struct PresentationAssembly: Assembly {
                 return vm
             }
         }
-        .inObjectScope(.transient)
+        .inObjectScope(.container)
 
         container.register(InboxViewModel.self) { resolver in
             let useCases = Self.resolve(InboxUseCases.self, from: resolver)
