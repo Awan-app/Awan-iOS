@@ -17,6 +17,7 @@ public final class GoalsViewModel {
     @ObservationIgnored private let useCases: GoalsUseCases
     @ObservationIgnored private let mapper: GoalsStateMapper
     @ObservationIgnored private var cancellable: AnyCancellable?
+    @ObservationIgnored private var profileCancellable: AnyCancellable?
     @ObservationIgnored private var isObserving = false
 
     public init(
@@ -107,6 +108,10 @@ public final class GoalsViewModel {
             state.scheduleErrorMessage = nil
         case let .completeTask(id):
             completeTask(id: id)
+        case .dismissCompletionReward:
+            state.completionReward = nil
+        case .dismissCompletionRewardAnimation:
+            state.completionRewardAnimation = nil
         }
     }
 
@@ -195,7 +200,7 @@ public final class GoalsViewModel {
         state.inboxTasksForSheet = []
         Task { [weak self] in
             do {
-                try await addTaskToGoal.execute(goalID: goalID, task: task)
+                _ = try await addTaskToGoal.execute(goalID: goalID, task: task)
                 guard let self else { return }
                 self.loadGoalTasks(goalID: goalID)
             } catch {
@@ -212,6 +217,7 @@ public final class GoalsViewModel {
 
 
     public func loadGoalTasks(goalID: UUID) {
+        observeUserProfile()
         state.isLoadingGoalTasks = true
         state.goalTasksFailureMessage = nil
         state.selectedGoalTasks = []
@@ -262,6 +268,8 @@ public final class GoalsViewModel {
         let newCompletedAt: Date? = newCompletedState ? Date() : nil
 
         let updatedTask = current.task.updatingCompletion(newCompletedAt)
+        state.completionReward = nil
+        state.completionRewardAnimation = nil
 
         state.orderedGoalTasks[index] = GoalDetailTaskItem(
             displayIndex: current.displayIndex,
@@ -283,14 +291,53 @@ public final class GoalsViewModel {
                 guard let self else { return }
                 if let idx = self.state.orderedGoalTasks.firstIndex(where: { $0.id == id }) {
                     let item = self.state.orderedGoalTasks[idx]
+                    let sessionItems: [InboxSessionItem]
+                    if case .completed(let completion) = result,
+                       !completion.completedSessions.isEmpty {
+                        let mapper = InboxStateMapper()
+                        sessionItems = completion.completedSessions.map {
+                            mapper.mapSession($0)
+                        }
+                    } else {
+                        sessionItems = item.sessionItems
+                    }
                     self.state.orderedGoalTasks[idx] = GoalDetailTaskItem(
                         displayIndex: item.displayIndex,
                         isDependent: item.isDependent,
                         dependencyIndices: item.dependencyIndices,
                         task: result.task,
                         sessionsSummary: item.sessionsSummary,
-                        sessionItems: item.sessionItems
+                        sessionItems: sessionItems
                     )
+                }
+                if case .completed(let completion) = result {
+                    let reward = completion.reward
+                    if reward.points.awarded {
+                        self.state.userPoints = reward.points.newValue
+                    }
+                    self.state.completionRewardAnimation = reward.points.awarded
+                        && reward.points.amount > 0
+                        ? InboxCompletionRewardAnimation(
+                            taskID: completion.task.id,
+                            oldPoints: reward.points.oldValue,
+                            newPoints: reward.points.newValue
+                        )
+                        : nil
+                    self.state.completionReward = reward.points.awarded
+                        || reward.streak.updated
+                        ? InboxCompletionReward(
+                            pointsAwarded: reward.points.awarded
+                                ? reward.points.amount
+                                : nil,
+                            streakTransition: reward.streak.updated
+                                ? InboxStreakTransition(
+                                    oldValue: reward.streak.oldValue,
+                                    newValue: reward.streak.newValue,
+                                    isNewRecord: reward.streak.maxStreakBroken
+                                )
+                                : nil
+                        )
+                        : nil
                 }
             } catch {
                 guard let self else { return }
@@ -299,6 +346,19 @@ public final class GoalsViewModel {
                 }
             }
         }
+    }
+
+    private func observeUserProfile() {
+        guard let userProfile = useCases.userProfile else { return }
+        profileCancellable?.cancel()
+        profileCancellable = userProfile.observe()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { [weak self] profile in
+                    self?.state.userPoints = profile.points
+                }
+            )
     }
 
     private static func buildOrderedItems(
@@ -457,6 +517,7 @@ public final class GoalsViewModel {
                 self.state.scheduleReviewTasks = []
                 self.state.showsUnscheduledDialog = false
                 self.load()
+                self.loadGoalTasks(goalID: goalID)
             } catch {
                 guard let self else { return }
                 self.state.isConfirmingAISchedule = false

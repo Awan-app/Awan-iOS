@@ -7,7 +7,8 @@ public protocol GoalRepository: Sendable {
     func fetchGoalTasks(goalID: UUID) async throws -> [AwanTask]
     func addGoal(_ goal: Goal) async throws
     func createGoal(title: String, description: String?, targetDate: Date?) async throws -> Goal
-    func addTaskToGoal(goalID: UUID, task: AwanTask) async throws
+    func addTaskToGoal(goalID: UUID, task: AwanTask) async throws -> AwanTask
+    func moveTaskToInbox(_ task: AwanTask) async throws -> AwanTask
     func updateGoal(_ goal: Goal) async throws
     func deleteGoal(id: UUID) async throws
     func deleteAllGoals() async throws
@@ -28,6 +29,24 @@ public extension GoalRepository {
         return goal
     }
 
-    func addTaskToGoal(goalID: UUID, task: AwanTask) async throws {}
-}
+    func addTaskToGoal(goalID: UUID, task: AwanTask) async throws -> AwanTask {
+        AwanTask(
+            id: task.id,
+            title: task.title,
+            description: task.description,
+            status: task.status,
+            completedAt: task.completedAt,
+            goalID: goalID,
+            duration: task.duration,
+            isSplittable: task.isSplittable,
+            mandatory: task.mandatory,
+            estimatedPoints: task.estimatedPoints,
+            dependencyIDs: task.dependencyIDs,
+            category: task.category
+        )
+    }
 
+    func moveTaskToInbox(_ task: AwanTask) async throws -> AwanTask {
+        throw SchedulingError.entityNotFound(id: task.id)
+    }
+}

@@ -9,14 +9,19 @@ import SwiftUI
 
 public struct GoalDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppCoordinator.self) private var coordinator
     let goalID: UUID
-    var viewModel: GoalsViewModel
+    @State private var viewModel: GoalsViewModel
     @State private var scrollPosition = ScrollPosition()
     @State private var isDeleteAlertPresented = false
+    @State private var rewardFlightTaskID: UUID?
+    @State private var animatedPoints: Int?
+    @State private var pointsPulse = 0
+    @State private var pointsAnimationTask: Task<Void, Never>?
 
     public init(goalID: UUID, viewModel: GoalsViewModel) {
         self.goalID = goalID
-        self.viewModel = viewModel
+        _viewModel = State(initialValue: viewModel)
     }
 
     private var goalItem: GoalProgressItem? {
@@ -75,46 +80,69 @@ public struct GoalDetailView: View {
             AppColors.sheetBackground.ignoresSafeArea()
 
             if let item = goalItem {
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 10) {
-                        GoalDetailHeaderCard(goal: item.rawGoal)
+                VStack(spacing: 0) {
+                    GoalDetailScreenHeader(
+                        rewardPoints: animatedPoints ?? viewModel.state.userPoints,
+                        pointsPulse: pointsPulse,
+                        canScheduleWithAI: canScheduleWithAI,
+                        onBack: { dismiss() },
+                        onScheduleWithAI: {
+                            viewModel.send(.requestAISchedule(goalID: goalID))
+                        },
+                        onEdit: {
+                            viewModel.send(.showEditGoalSheet(goalID: goalID))
+                        },
+                        onDelete: {
+                            isDeleteAlertPresented = true
+                        }
+                    )
 
-                        GoalDetailProgressCard(
-                            progressFraction: item.progressFraction,
-                            completedCount: item.completedCount,
-                            totalCount: item.totalCount,
-                            breakdown: item.breakdown
-                        )
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 10) {
+                            GoalDetailHeaderCard(goal: item.rawGoal)
 
-                        if canScheduleWithAI {
-                            GoalDetailAIScheduleCard(
-                                isLoading: viewModel.state.isRequestingAISchedule,
-                                onSchedule: {
-                                    viewModel.send(.requestAISchedule(goalID: goalID))
+                            GoalDetailProgressCard(
+                                progressFraction: item.progressFraction,
+                                completedCount: item.completedCount,
+                                totalCount: item.totalCount,
+                                breakdown: item.breakdown
+                            )
+
+                            if canScheduleWithAI {
+                                GoalDetailAIScheduleCard(
+                                    isLoading: viewModel.state.isRequestingAISchedule,
+                                    onSchedule: {
+                                        viewModel.send(.requestAISchedule(goalID: goalID))
+                                    }
+                                )
+                            }
+
+                            GoalDetailTasksCard(
+                                tasks: viewModel.state.orderedGoalTasks,
+                                isLoading: viewModel.state.isLoadingGoalTasks,
+                                failureMessage: viewModel.state.goalTasksFailureMessage,
+                                onRetry: {
+                                    viewModel.send(.loadGoalTasks(goalID))
+                                },
+                                onAddTask: {
+                                    viewModel.send(.showAddTaskSheet(goalID: goalID))
+                                },
+                                onCompleteTask: { taskID in
+                                    viewModel.send(.completeTask(taskID))
+                                },
+                                onOpenDetails: { taskID in
+                                    coordinator.mainCoordinator.present(
+                                        sheet: .taskDetail(taskID)
+                                    )
                                 }
                             )
                         }
-
-                        GoalDetailTasksCard(
-                            tasks: viewModel.state.orderedGoalTasks,
-                            isLoading: viewModel.state.isLoadingGoalTasks,
-                            failureMessage: viewModel.state.goalTasksFailureMessage,
-                            onRetry: {
-                                viewModel.send(.loadGoalTasks(goalID))
-                            },
-                            onAddTask: {
-                                viewModel.send(.showAddTaskSheet(goalID: goalID))
-                            },
-                            onCompleteTask: { taskID in
-                                viewModel.send(.completeTask(taskID))
-                            }
-                        )
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                        .padding(.bottom, 32)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16)
-                    .padding(.bottom, 32)
+                    .scrollPosition($scrollPosition)
                 }
-                .scrollPosition($scrollPosition)
             } else if viewModel.state.isLoading {
                 ProgressView()
                     .controlSize(.large)
@@ -128,43 +156,17 @@ public struct GoalDetailView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .navigationTitle(L10n.Goals.detailTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            if goalItem != nil {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        if canScheduleWithAI {
-                            Button {
-                                viewModel.send(.requestAISchedule(goalID: goalID))
-                            } label: {
-                                Label(L10n.Goals.scheduleWithAI, systemImage: "sparkles")
-                            }
-                        }
-
-                        Button {
-                            viewModel.send(.showEditGoalSheet(goalID: goalID))
-                        } label: {
-                            Label(L10n.Goals.editButton, systemImage: "pencil")
-                        }
-
-                        Button(role: .destructive) {
-                            isDeleteAlertPresented = true
-                        } label: {
-                            Label(L10n.Goals.deleteButton, systemImage: "trash")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundStyle(AppColors.textPrimary)
-                    }
-                }
-            }
-        }
+        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             if viewModel.state.allGoals.isEmpty {
                 viewModel.send(.appeared)
             }
+            viewModel.send(.loadGoalTasks(goalID))
+        }
+        .onChange(of: coordinator.mainCoordinator.presentedSheet) { previous, current in
+            guard case .taskDetail = previous, current == nil else { return }
+            viewModel.send(.refresh)
             viewModel.send(.loadGoalTasks(goalID))
         }
         .sheet(isPresented: addTaskSheetBinding) {
@@ -250,6 +252,63 @@ public struct GoalDetailView: View {
         } message: {
             Text(viewModel.state.scheduleErrorMessage ?? "")
         }
+        .overlayPreferenceValue(RewardAnchorKey.self) { anchors in
+            GeometryReader { proxy in
+                if let taskID = rewardFlightTaskID,
+                   let animation = viewModel.state.completionRewardAnimation,
+                   animation.taskID == taskID {
+                    let destinationRect = anchors["goal-points-badge"]
+                        .map { proxy[$0] } ?? CGRect(
+                            x: proxy.size.width - 50,
+                            y: 50,
+                            width: 2,
+                            height: 2
+                        )
+                    let sourceRect = anchors[
+                        "task-points-\(taskID.uuidString)"
+                    ].map { proxy[$0] } ?? CGRect(
+                        x: proxy.size.width / 2 - 1,
+                        y: proxy.size.height / 2 - 1,
+                        width: 2,
+                        height: 2
+                    )
+
+                    RewardFlightOverlay(
+                        sourceRect: sourceRect,
+                        destinationRect: destinationRect,
+                        points: animation.newPoints - animation.oldPoints,
+                        onArrived: {
+                            animatePoints(
+                                from: animation.oldPoints,
+                                to: animation.newPoints
+                            )
+                        },
+                        onFinished: finishRewardFlight
+                    )
+                    .id(animation.id)
+                }
+            }
+            .allowsHitTesting(false)
+        }
+        .onChange(of: viewModel.state.completionReward) { _, reward in
+            guard viewModel.state.completionRewardAnimation == nil,
+                  let transition = reward?.streakTransition else {
+                return
+            }
+            presentStreak(transition)
+            viewModel.send(.dismissCompletionReward)
+        }
+        .onChange(of: viewModel.state.completionRewardAnimation) { _, animation in
+            guard let animation else { return }
+            pointsAnimationTask?.cancel()
+            pointsAnimationTask = nil
+            animatedPoints = animation.oldPoints
+            rewardFlightTaskID = animation.taskID
+        }
+        .onDisappear {
+            pointsAnimationTask?.cancel()
+            pointsAnimationTask = nil
+        }
         .onChange(of: viewModel.state.orderedGoalTasks.count) { _, _ in
             scrollPosition.scrollTo(edge: .top)
         }
@@ -258,5 +317,63 @@ public struct GoalDetailView: View {
                 dismiss()
             }
         }
+    }
+
+    private func animatePoints(from oldValue: Int, to newValue: Int) {
+        pointsAnimationTask?.cancel()
+
+        pointsAnimationTask = Task { @MainActor in
+            defer {
+                if !Task.isCancelled {
+                    animatedPoints = nil
+                }
+            }
+
+            let difference = newValue - oldValue
+            guard difference > 0 else {
+                if !Task.isCancelled {
+                    pointsPulse += 1
+                }
+                return
+            }
+
+            let steps = min(difference, 20)
+            for step in 1...steps {
+                guard !Task.isCancelled else { return }
+                let progress = Double(step) / Double(steps)
+                animatedPoints = oldValue + Int(Double(difference) * progress)
+
+                do {
+                    try await Task.sleep(for: .milliseconds(15))
+                } catch {
+                    return
+                }
+            }
+
+            guard !Task.isCancelled else { return }
+            pointsPulse += 1
+        }
+    }
+
+    private func finishRewardFlight() {
+        pointsAnimationTask?.cancel()
+        pointsAnimationTask = nil
+        animatedPoints = nil
+        rewardFlightTaskID = nil
+
+        if let transition = viewModel.state.completionReward?.streakTransition {
+            presentStreak(transition)
+        }
+
+        viewModel.send(.dismissCompletionReward)
+        viewModel.send(.dismissCompletionRewardAnimation)
+    }
+
+    private func presentStreak(_ transition: InboxStreakTransition) {
+        coordinator.mainCoordinator.presentStreakCelebration(
+            previousStreak: transition.oldValue,
+            streak: transition.newValue,
+            isNewRecord: transition.isNewRecord
+        )
     }
 }

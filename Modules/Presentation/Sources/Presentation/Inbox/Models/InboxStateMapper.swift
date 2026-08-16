@@ -42,8 +42,17 @@ public struct InboxStateMapper: Sendable {
             availableCompletionPoints: availableCompletionPoints(
                 task: inboxTask.task,
                 sessions: inboxTask.sessions
+            ),
+            areAllSessionRewardsClaimed: areAllSessionRewardsClaimed(
+                inboxTask.sessions
             )
         )
+    }
+
+    private func areAllSessionRewardsClaimed(_ sessions: [Session]) -> Bool {
+        let rewardEligibleSessions = sessions.filter { $0.status != .cancelled }
+        return !rewardEligibleSessions.isEmpty
+            && rewardEligibleSessions.allSatisfy { $0.firstCompletedAt != nil }
     }
 
     private func availableCompletionPoints(
@@ -64,7 +73,8 @@ public struct InboxStateMapper: Sendable {
             id: session.id,
             timeRangeText: timeRangeText,
             displayStatus: displayStatus,
-            underlyingStatus: session.status
+            underlyingStatus: session.status,
+            hasClaimedReward: session.firstCompletedAt != nil
         )
     }
 

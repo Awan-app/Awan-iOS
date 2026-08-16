@@ -12,14 +12,10 @@ struct DailyZonesScreenHeader: View {
                 .lineLimit(1)
 
             HStack {
-                Button(action: onBack) {
-                    Image(systemName: "chevron.backward")
-                        .font(AppFonts.bodyBold)
-                        .foregroundStyle(AppColors.accentBlue)
-                        .frame(width: 40, height: 40)
-                }
-                .buttonStyle(AppDepthButtonStyle())
-                .accessibilityLabel(L10n.CalendarScreen.back)
+                AppBackButton(
+                    accessibilityLabel: L10n.CalendarScreen.back,
+                    onTap: onBack
+                )
 
                 Spacer()
 

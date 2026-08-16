@@ -63,18 +63,44 @@ public protocol ConfirmGoalScheduleUseCase: Sendable {
 
 public struct DefaultConfirmGoalScheduleUseCase: ConfirmGoalScheduleUseCase {
     private let repository: any GoalDecompositionRepository
+    private let sessionRepository: any SessionRepository
 
-    public init(repository: any GoalDecompositionRepository) {
+    public init(
+        repository: any GoalDecompositionRepository,
+        sessionRepository: any SessionRepository
+    ) {
         self.repository = repository
+        self.sessionRepository = sessionRepository
     }
 
     public func execute(
         goalID: UUID,
         sessions: [GoalScheduleConfirmationItem]
     ) async throws -> [ConfirmedGoalScheduleSession] {
-        try await repository.confirmSchedule(
+        let confirmedSessions = try await repository.confirmSchedule(
             goalID: goalID,
             sessions: sessions
         )
+        var knownSessionIDs = Set(
+            try await sessionRepository.fetchSessions().map(\.id)
+        )
+
+        for confirmed in confirmedSessions {
+            guard knownSessionIDs.insert(confirmed.id).inserted else { continue }
+            let session = Session(
+                id: confirmed.id,
+                taskID: confirmed.taskID,
+                zoneID: confirmed.zoneID,
+                timeRange: try TimeRange(
+                    start: confirmed.start,
+                    end: confirmed.end
+                ),
+                blocking: false,
+                status: .planned
+            )
+            try await sessionRepository.addSession(session)
+        }
+
+        return confirmedSessions
     }
 }

@@ -15,6 +15,7 @@ struct InboxTaskCard: View {
     var onCompleteTask: (() -> Void)? = nil
     var onDeleteTask: (() -> Void)? = nil
     var onAddToGoal: (() -> Void)? = nil
+    var onOpenDetails: (() -> Void)? = nil
 
     @State private var localExpanded: Bool
 
@@ -25,7 +26,8 @@ struct InboxTaskCard: View {
         onToggleExpand: @escaping () -> Void,
         onCompleteTask: (() -> Void)? = nil,
         onDeleteTask: (() -> Void)? = nil,
-        onAddToGoal: (() -> Void)? = nil
+        onAddToGoal: (() -> Void)? = nil,
+        onOpenDetails: (() -> Void)? = nil
     ) {
         self.taskItem = taskItem
         self.isExpanded = isExpanded
@@ -34,6 +36,7 @@ struct InboxTaskCard: View {
         self.onCompleteTask = onCompleteTask
         self.onDeleteTask = onDeleteTask
         self.onAddToGoal = onAddToGoal
+        self.onOpenDetails = onOpenDetails
         _localExpanded = State(initialValue: isExpanded)
     }
 
@@ -74,17 +77,17 @@ struct InboxTaskCard: View {
 
                         HStack(spacing: 6) {
                             Image(
-                                systemName: taskItem.availableCompletionPoints > 0
-                                    ? "star.fill"
-                                    : "checkmark.seal.fill"
+                                systemName: taskItem.areAllSessionRewardsClaimed
+                                    ? "checkmark.seal.fill"
+                                    : "star.fill"
                             )
 
                             Text(
-                                taskItem.availableCompletionPoints > 0
-                                    ? L10n.Home.pointsValue(
+                                taskItem.areAllSessionRewardsClaimed
+                                    ? L10n.Inbox.pointsClaimed
+                                    : L10n.Home.pointsValue(
                                         taskItem.availableCompletionPoints
                                     )
-                                    : L10n.Inbox.pointsClaimed
                             )
                         }
                         .font(AppFonts.captionHeavy)
@@ -147,6 +150,11 @@ struct InboxTaskCard: View {
             withAnimation(.snappy(duration: 0.25)) {
                 localExpanded = newValue
             }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture { onOpenDetails?() }
+        .accessibilityAction(named: L10n.TaskDetails.open) {
+            onOpenDetails?()
         }
     }
 

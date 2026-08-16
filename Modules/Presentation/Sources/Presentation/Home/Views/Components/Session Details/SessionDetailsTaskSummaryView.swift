@@ -8,6 +8,7 @@ struct SessionDetailsTaskSummaryView: View {
     let arePointsClaimed: Bool
     let onClose: () -> Void
     let onDelete: () -> Void
+    let onOpenTaskDetails: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -70,10 +71,26 @@ struct SessionDetailsTaskSummaryView: View {
                 .accessibilityLabel(L10n.Home.deleteSession)
             }
 
-            Text(task.title)
-                .font(AppFonts.title2Black)
-                .foregroundStyle(AppColors.textPrimary)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: 10) {
+                Text(task.title)
+                    .font(AppFonts.title2Black)
+                    .foregroundStyle(AppColors.textPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                Button(action: onOpenTaskDetails) {
+                    HStack(spacing: 6) {
+                        Text(L10n.TaskDetails.open)
+                            .lineLimit(1)
+
+                        Image(systemName: "arrow.up.right.square")
+                    }
+                    .font(AppFonts.captionHeavy)
+                    .foregroundStyle(AppColors.accentBlue)
+                    .padding(.vertical, 8)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(L10n.TaskDetails.open)
+            }
 
             if let description = task.description, !description.isEmpty {
                 Text(description)

@@ -9,6 +9,7 @@ struct GoalDetailTaskRow: View {
     let isExpanded: Bool
     let onToggleExpand: () -> Void
     var onCompleteTask: (() -> Void)? = nil
+    var onOpenDetails: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -19,7 +20,8 @@ struct GoalDetailTaskRow: View {
                     taskItem: item.asInboxTaskItem,
                     isExpanded: isExpanded,
                     onToggleExpand: onToggleExpand,
-                    onCompleteTask: onCompleteTask
+                    onCompleteTask: onCompleteTask,
+                    onOpenDetails: onOpenDetails
                 )
 
                 if item.isDependent && !item.dependencyIndices.isEmpty {

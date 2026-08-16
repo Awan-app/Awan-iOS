@@ -18,6 +18,7 @@ struct HomeView: View {
     @State private var dragLocationY: CGFloat?
     @State private var dragScrollCompensation: CGFloat = 0
     @State private var dragMinimumScrollOffset: CGFloat = 0
+    @State private var pendingTaskDetailsID: UUID?
     private let makeSessionDetailsViewModel: (SessionDetailsContext) -> SessionDetailsViewModel
     private let onBecameActive: (HomeViewModel) -> Void
     
@@ -63,9 +64,13 @@ struct HomeView: View {
             onBecameActive(viewModel)
             viewModel.send(.appeared)
         }
-        .sheet(item: selectedSessionBinding) { detail in
+        .sheet(item: selectedSessionBinding, onDismiss: presentPendingTaskDetails) { detail in
             SessionDetailsView(
                 viewModel: makeSessionDetailsViewModel(detail.context),
+                onOpenTaskDetails: { taskID in
+                    pendingTaskDetailsID = taskID
+                    viewModel.send(.dismissSession)
+                },
                 onDismiss: { viewModel.send(.dismissSession) }
             )
         }
@@ -367,6 +372,12 @@ struct HomeView: View {
             get: { viewModel.state.selectedSession },
             set: { if $0 == nil { viewModel.send(.dismissSession) } }
         )
+    }
+
+    private func presentPendingTaskDetails() {
+        guard let taskID = pendingTaskDetailsID else { return }
+        pendingTaskDetailsID = nil
+        coordinator.mainCoordinator.present(sheet: .taskDetail(taskID))
     }
     private func animatePoints(
         from oldValue: Int,

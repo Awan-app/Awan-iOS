@@ -27,7 +27,7 @@ public enum MainRoute: Hashable, Identifiable, Sendable {
     case settings
     case mcpIntegration
     case aboutAwan
-    case inboxTaskDetail(UUID)
+    case taskDetail(UUID)
 
     public var id: Self { self }
 }

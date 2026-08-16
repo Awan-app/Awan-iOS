@@ -21,6 +21,20 @@ public struct DefaultSessionRepository: SessionRepository {
         try await localDataSource.fetchSessions()
     }
 
+    public func fetchSessions(taskID: UUID) async throws -> [Session] {
+        let timeZoneID = await getTimeZoneID()
+        let sessions = try await remoteDataSource.getTaskSessions(taskID: taskID)
+            .map {
+                try HomeRemoteMapper.session($0, timeZoneID: timeZoneID)
+            }
+            .sorted(by: sessionOrder)
+        try await localDataSource.deleteSessions(taskID: taskID)
+        for session in sessions {
+            try await localDataSource.addSession(session)
+        }
+        return sessions
+    }
+
     public func fetchSessions(for date: Date) async throws -> [Session] {
         let timeZoneID = await getTimeZoneID()
         let dayKey = LocalDateKey.value(
@@ -106,6 +120,42 @@ public struct DefaultSessionRepository: SessionRepository {
         }
         return lhs.id.uuidString < rhs.id.uuidString
     }
+    public func createSession(
+        taskID: UUID,
+        timeRange: TimeRange,
+        zoneID: UUID?
+    ) async throws -> Session {
+        let timeZoneID = await getTimeZoneID()
+        let responses = try await remoteDataSource.createTaskSessions(
+            taskID: taskID,
+            request: CreateTaskSessionsRequestDTO(
+                sessions: [
+                    CreateTaskWithSessionsRequestDTO.SessionPayload(
+                        zoneId: zoneID,
+                        start: HomeRemoteMapper.formatDateTime(
+                            timeRange.start,
+                            timeZoneID: timeZoneID
+                        ),
+                        end: HomeRemoteMapper.formatDateTime(
+                            timeRange.end,
+                            timeZoneID: timeZoneID
+                        )
+                    )
+                ]
+            )
+        )
+        let acceptedSessions = try responses.map {
+            try HomeRemoteMapper.session($0, timeZoneID: timeZoneID)
+        }
+        guard let createdSession = acceptedSessions.first else {
+            throw SchedulingError.entityNotFound(id: taskID)
+        }
+        for session in acceptedSessions {
+            try await localDataSource.addSession(session)
+        }
+        return createdSession
+    }
+
     public func addSession(_ session: Session) async throws {
         try await localDataSource.addSession(session)
     }

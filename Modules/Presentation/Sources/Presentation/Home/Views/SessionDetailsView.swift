@@ -3,13 +3,16 @@ import SwiftUI
 
 struct SessionDetailsView: View {
     @State private var viewModel: SessionDetailsViewModel
+    let onOpenTaskDetails: (UUID) -> Void
     let onDismiss: () -> Void
 
     init(
         viewModel: SessionDetailsViewModel,
+        onOpenTaskDetails: @escaping (UUID) -> Void,
         onDismiss: @escaping () -> Void
     ) {
         _viewModel = State(initialValue: viewModel)
+        self.onOpenTaskDetails = onOpenTaskDetails
         self.onDismiss = onDismiss
     }
 
@@ -29,7 +32,10 @@ struct SessionDetailsView: View {
                                 color: state.color,
                                 arePointsClaimed: state.session.firstCompletedAt != nil,
                                 onClose: { viewModel.send(.attemptDismiss) },
-                                onDelete: { viewModel.send(.requestDelete) }
+                                onDelete: { viewModel.send(.requestDelete) },
+                                onOpenTaskDetails: {
+                                    onOpenTaskDetails(state.task.id)
+                                }
                             )
                             SessionDetailsStatusView(
                                 status: state.statusUIModel,

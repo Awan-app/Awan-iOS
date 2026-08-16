@@ -45,7 +45,7 @@ public struct UpdateTaskRequestDTO: Encodable, Sendable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encodeIfPresent(title, forKey: .title)
-        try container.encodeIfPresent(description, forKey: .description)
+        try container.encode(description, forKey: .description)
         try container.encodeIfPresent(estimatedDuration, forKey: .estimatedDuration)
         try container.encodeIfPresent(mandatory, forKey: .mandatory)
         try container.encodeIfPresent(estimatedPoints, forKey: .estimatedPoints)

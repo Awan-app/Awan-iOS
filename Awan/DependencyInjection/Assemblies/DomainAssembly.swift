@@ -75,6 +75,49 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(TaskRepository.self, from: resolver)
             )
         }
+        container.register(FetchTaskDetailsUseCase.self) { resolver in
+            DefaultFetchTaskDetailsUseCase(
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
+                sessionRepository: Self.resolve(SessionRepository.self, from: resolver),
+                goalRepository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
+        container.register(EditTaskDetailsUseCase.self) { resolver in
+            DefaultEditTaskDetailsUseCase(
+                repository: Self.resolve(TaskRepository.self, from: resolver)
+            )
+        }
+        container.register(FetchTaskDependencyCandidatesUseCase.self) { resolver in
+            DefaultFetchTaskDependencyCandidatesUseCase(
+                taskRepository: Self.resolve(TaskRepository.self, from: resolver),
+                goalRepository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
+        container.register(AddTaskDependencyUseCase.self) { resolver in
+            DefaultAddTaskDependencyUseCase(
+                repository: Self.resolve(TaskRepository.self, from: resolver)
+            )
+        }
+        container.register(RemoveTaskDependencyUseCase.self) { resolver in
+            DefaultRemoveTaskDependencyUseCase(
+                repository: Self.resolve(TaskRepository.self, from: resolver)
+            )
+        }
+        container.register(RemoveTaskFromGoalUseCase.self) { resolver in
+            DefaultRemoveTaskFromGoalUseCase(
+                repository: Self.resolve(GoalRepository.self, from: resolver)
+            )
+        }
+        container.register(DeleteTaskDetailsUseCase.self) { resolver in
+            DefaultDeleteTaskDetailsUseCase(
+                repository: Self.resolve(TaskRepository.self, from: resolver)
+            )
+        }
+        container.register(CreateTaskSessionUseCase.self) { resolver in
+            DefaultCreateTaskSessionUseCase(
+                repository: Self.resolve(SessionRepository.self, from: resolver)
+            )
+        }
         container.register(FetchGoalsUseCase.self) { resolver in
             DefaultFetchGoalsUseCase(
                 repository: Self.resolve(GoalRepository.self, from: resolver)
@@ -315,6 +358,10 @@ struct DomainAssembly: Assembly {
             DefaultConfirmGoalScheduleUseCase(
                 repository: Self.resolve(
                     GoalDecompositionRepository.self,
+                    from: resolver
+                ),
+                sessionRepository: Self.resolve(
+                    SessionRepository.self,
                     from: resolver
                 )
             )

@@ -24,6 +24,7 @@ enum SessionEndpoint: APIEndpoint {
     // MARK: - Task ↔ Session
 
     case createTaskWithSessions(CreateTaskWithSessionsRequestDTO)
+    case createTaskSessions(taskID: UUID, CreateTaskSessionsRequestDTO)
     case getTaskSessions(taskID: UUID)
 
     // MARK: - APIEndpoint
@@ -50,6 +51,8 @@ enum SessionEndpoint: APIEndpoint {
             return "/sessions/\(sessionID.uuidString)"
         case .createTaskWithSessions:
             return "/tasks/with-sessions"
+        case .createTaskSessions(let taskID, _):
+            return "/tasks/\(taskID.uuidString)/sessions"
         case .getTaskSessions(let taskID):
             return "/tasks/\(taskID.uuidString)/sessions"
         case .completeSession(let sessionID):
@@ -63,7 +66,7 @@ enum SessionEndpoint: APIEndpoint {
         switch self {
         case .getSession, .getTaskSessions, .getSessionsByDate, .getSessionsByDateRange:
             return .get
-        case .createTaskWithSessions:
+        case .createTaskWithSessions, .createTaskSessions:
             return .post
         case .updateSession:
             return .put
@@ -93,6 +96,8 @@ enum SessionEndpoint: APIEndpoint {
         case .updateSession(_, let request):
             return request
         case .createTaskWithSessions(let request):
+            return request
+        case .createTaskSessions(_, let request):
             return request
         default:
             return nil

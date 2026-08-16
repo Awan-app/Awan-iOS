@@ -1344,6 +1344,60 @@ public enum L10n {
         }
     }
 
+    public enum TaskDetails {
+        public static var title: String { text("task_details.title") }
+        public static var open: String { text("task_details.open") }
+        public static var totalDuration: String { text("task_details.total_duration") }
+        public static var taskInformation: String { text("task_details.task_information") }
+        public static var titlePlaceholder: String { text("task_details.title_placeholder") }
+        public static var descriptionPlaceholder: String { text("task_details.description_placeholder") }
+        public static var sessions: String { text("task_details.sessions") }
+        public static var noSessions: String { text("task_details.no_sessions") }
+        public static var settings: String { text("task_details.settings") }
+        public static var mandatory: String { text("task_details.mandatory") }
+        public static var mandatoryHint: String { text("task_details.mandatory_hint") }
+        public static var allowSplitting: String { text("task_details.allow_splitting") }
+        public static var allowSplittingHint: String { text("task_details.allow_splitting_hint") }
+        public static var goal: String { text("task_details.goal") }
+        public static var noGoal: String { text("task_details.no_goal") }
+        public static var addToGoal: String { text("task_details.add_to_goal") }
+        public static var chooseGoal: String { text("task_details.choose_goal") }
+        public static var searchGoals: String { text("task_details.search_goals") }
+        public static var dependencies: String { text("task_details.dependencies") }
+        public static var noDependencies: String { text("task_details.no_dependencies") }
+        public static var addDependency: String { text("task_details.add_dependency") }
+        public static var chooseDependency: String { text("task_details.choose_dependency") }
+        public static var searchTasks: String { text("task_details.search_tasks") }
+        public static func pickingDependenciesFrom(_ source: String) -> String {
+            String(format: text("task_details.picking_dependencies_from"), source)
+        }
+        public static var saveChanges: String { text("task_details.save_changes") }
+        public static var discardTitle: String { text("task_details.discard_title") }
+        public static var discardMessage: String { text("task_details.discard_message") }
+        public static var discard: String { text("task_details.discard") }
+        public static var deleteSessionTitle: String { text("task_details.delete_session_title") }
+        public static var deleteSessionMessage: String { text("task_details.delete_session_message") }
+        public static var removeGoalTitle: String { text("task_details.remove_goal_title") }
+        public static var removeGoal: String { text("task_details.remove_goal") }
+        public static var removeGoalMessage: String { text("task_details.remove_goal_message") }
+        public static var removeDependencyTitle: String { text("task_details.remove_dependency_title") }
+        public static var removeDependency: String { text("task_details.remove_dependency") }
+        public static var removeDependencyMessage: String { text("task_details.remove_dependency_message") }
+        public static var noMatches: String { text("task_details.no_matches") }
+
+        public static func hoursMinutes(_ hours: Int, _ minutes: Int) -> String {
+            String(format: text("task_details.hours_minutes"), hours, minutes)
+        }
+
+        public static func minutes(_ minutes: Int) -> String {
+            String(format: text("task_details.minutes"), minutes)
+        }
+
+        private static func text(_ key: String) -> String {
+            L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")
+        }
+    }
+
 
     public enum Marketplace {
         public static var title: String { text("marketplace.title") }
