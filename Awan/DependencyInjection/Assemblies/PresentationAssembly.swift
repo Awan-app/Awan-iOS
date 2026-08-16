@@ -355,6 +355,22 @@ struct PresentationAssembly: Assembly {
         }
         .inObjectScope(.transient)
 
+        container.register(CategoriesViewModel.self) { resolver in
+            let fetchCategoriesUseCase = Self.resolve(FetchCategoriesUseCase.self, from: resolver)
+            let createCategoryUseCase = Self.resolve(CreateCategoryUseCase.self, from: resolver)
+            let updateCategoryUseCase = Self.resolve(UpdateCategoryUseCase.self, from: resolver)
+            let deleteCategoryUseCase = Self.resolve(DeleteCategoryUseCase.self, from: resolver)
+            return MainActor.assumeIsolated {
+                CategoriesViewModel(
+                    fetchCategoriesUseCase: fetchCategoriesUseCase,
+                    createCategoryUseCase: createCategoryUseCase,
+                    updateCategoryUseCase: updateCategoryUseCase,
+                    deleteCategoryUseCase: deleteCategoryUseCase
+                )
+            }
+        }
+        .inObjectScope(.transient)
+
         container.register(UserInfoViewModel.self) { resolver in
             let useCase = Self.resolve(GetUserProfileUseCase.self, from: resolver)
             let updateUseCase = Self.resolve(UpdateUserProfileUseCase.self, from: resolver)
@@ -491,6 +507,9 @@ struct PresentationAssembly: Assembly {
                     },
                     makeDailyZonesViewModel: {
                         Self.resolve(DailyZonesViewModel.self, from: resolver)
+                    },
+                    makeCategoriesViewModel: {
+                        Self.resolve(CategoriesViewModel.self, from: resolver)
                     },
                     makeUserInfoViewModel: {
                         Self.resolve(UserInfoViewModel.self, from: resolver)

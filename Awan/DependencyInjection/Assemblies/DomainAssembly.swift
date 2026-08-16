@@ -70,6 +70,16 @@ struct DomainAssembly: Assembly {
                 repository: Self.resolve(CategoryRepository.self, from: resolver)
             )
         }
+        container.register(UpdateCategoryUseCase.self) { resolver in
+            DefaultUpdateCategoryUseCase(
+                repository: Self.resolve(CategoryRepository.self, from: resolver)
+            )
+        }
+        container.register(DeleteCategoryUseCase.self) { resolver in
+            DefaultDeleteCategoryUseCase(
+                repository: Self.resolve(CategoryRepository.self, from: resolver)
+            )
+        }
         container.register(FetchTasksUseCase.self) { resolver in
             DefaultFetchTasksUseCase(
                 repository: Self.resolve(TaskRepository.self, from: resolver)

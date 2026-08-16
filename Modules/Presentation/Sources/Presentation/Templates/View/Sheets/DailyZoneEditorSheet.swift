@@ -94,7 +94,19 @@ struct DailyZoneEditorSheet: View {
             }
         }
         .sheet(isPresented: $isCreateCategorySheetPresented) {
-            CategoryCreationSheet(viewModel: viewModel)
+            CategoryAddSheet(
+                onSave: { name in
+                    await viewModel.createCategory(name: name)
+                    if viewModel.state.categoryErrorMessage == nil {
+                        isCreateCategorySheetPresented = false
+                    }
+                },
+                onDismiss: {
+                    isCreateCategorySheetPresented = false
+                }
+            )
+            .presentationDetents([.height(320)])
+            .presentationDragIndicator(.visible)
         }
     }
 
