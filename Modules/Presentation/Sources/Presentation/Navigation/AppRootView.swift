@@ -21,6 +21,7 @@ struct AppRootView: View {
     @Environment(AppearanceManager.self)
     private var appearanceManager
     @State private var creationSheetDetent = Self.compactCreationDetent
+    @State private var splashHoldIsComplete = false
     private let factory: PresentationFactory
 
     private var currentLayoutDirection: LayoutDirection {
@@ -52,27 +53,48 @@ struct AppRootView: View {
 
     var body: some View {
         Group {
-            switch authenticationState.status {
-            case .checking:
-                ProgressView()
-            case .unauthenticated:
-                authenticationFlow
-            case .authenticated(let user):
-                if user.isNew {
-                    onboardingFlow
-                } else {
-                    mainFlow
+            if splashHoldIsComplete {
+                switch authenticationState.status {
+                case .checking:
+                    SplashView()
+                case .unauthenticated:
+                    authenticationFlow
+                case .authenticated(let user):
+                    if user.isNew {
+                        onboardingFlow
+                    } else {
+                        mainFlow
+                    }
                 }
+            } else {
+                SplashView()
             }
         }
         .task {
             authenticationState.start()
+        }
+        .task(id: authenticationState.status) {
+            await finishSplashHoldIfReady()
         }
         .onChange(of: authenticationState.status) { previousStatus, status in
             handleAuthenticationTransition(from: previousStatus, to: status)
         }
         .onOpenURL { url in
             GIDSignIn.sharedInstance.handle(url)
+        }
+    }
+
+    private func finishSplashHoldIfReady() async {
+        guard !splashHoldIsComplete,
+              authenticationState.status != .checking else {
+            return
+        }
+
+        try? await Task.sleep(for: .seconds(2))
+        guard !Task.isCancelled else { return }
+
+        withAnimation(.easeOut(duration: 0.18)) {
+            splashHoldIsComplete = true
         }
     }
 
