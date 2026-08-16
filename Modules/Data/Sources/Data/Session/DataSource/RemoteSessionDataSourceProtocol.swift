@@ -21,6 +21,10 @@ public protocol RemoteSessionDataSourceProtocol: Sendable {
     func unlockSession(sessionID: UUID) async throws -> SessionResponseDTO
     func deleteSession(sessionID: UUID) async throws
     func createTaskWithSessions(request: CreateTaskWithSessionsRequestDTO) async throws -> TaskWithSessionsResponseDTO
+    func createTaskSessions(
+        taskID: UUID,
+        request: CreateTaskSessionsRequestDTO
+    ) async throws -> [SessionResponseDTO]
     func getTaskSessions(taskID: UUID) async throws -> [SessionResponseDTO]
     func completeSession(
         sessionID: UUID
@@ -79,6 +83,15 @@ public final class RemoteSessionDataSource: RemoteSessionDataSourceProtocol {
 
     public func createTaskWithSessions(request: CreateTaskWithSessionsRequestDTO) async throws -> TaskWithSessionsResponseDTO {
         try await networkService.request(SessionEndpoint.createTaskWithSessions(request))
+    }
+
+    public func createTaskSessions(
+        taskID: UUID,
+        request: CreateTaskSessionsRequestDTO
+    ) async throws -> [SessionResponseDTO] {
+        try await networkService.request(
+            SessionEndpoint.createTaskSessions(taskID: taskID, request)
+        )
     }
 
     public func getTaskSessions(taskID: UUID) async throws -> [SessionResponseDTO] {

@@ -137,6 +137,11 @@ public struct InboxView: View {
             guard tab == .tasks else { return }
             scrollPosition.scrollTo(edge: .top)
         }
+        .onChange(of: coordinator.mainCoordinator.presentedSheet) { previous, current in
+            guard case .taskDetail = previous, current == nil else { return }
+            viewModel.send(.refresh)
+            goalsViewModel.send(.refresh)
+        }
     }
 
     private func content(_ state: InboxState) -> some View {
@@ -211,6 +216,11 @@ public struct InboxView: View {
                             },
                             onDeleteTask: {
                                 viewModel.send(.deleteTask(taskItem.id))
+                            },
+                            onOpenDetails: {
+                                coordinator.mainCoordinator.present(
+                                    sheet: .taskDetail(taskItem.id)
+                                )
                             }
                         )
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {

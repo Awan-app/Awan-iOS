@@ -9,6 +9,7 @@ public struct PresentationFactory {
     private let makeSessionDetailsViewModel: (
         SessionDetailsContext
     ) -> SessionDetailsViewModel
+    private let makeTaskDetailsViewModel: (UUID) -> TaskDetailsViewModel
     private let makeDailyWheelViewModel: () -> DailyWheelViewModel
     private let makeCalendarViewModel: () -> CalendarViewModel
     private let makeScheduleViewModel: () -> ScheduleTimelineViewModel
@@ -34,6 +35,7 @@ public struct PresentationFactory {
         makeSessionDetailsViewModel: @escaping (
             SessionDetailsContext
         ) -> SessionDetailsViewModel,
+        makeTaskDetailsViewModel: @escaping (UUID) -> TaskDetailsViewModel,
         makeDailyWheelViewModel: @escaping () -> DailyWheelViewModel,
         makeCalendarViewModel: @escaping () -> CalendarViewModel,
         makeScheduleViewModel: @escaping () -> ScheduleTimelineViewModel,
@@ -55,6 +57,7 @@ public struct PresentationFactory {
         self.makeLoginViewModel = makeLoginViewModel
         self.makeHomeViewModel = makeHomeViewModel
         self.makeSessionDetailsViewModel = makeSessionDetailsViewModel
+        self.makeTaskDetailsViewModel = makeTaskDetailsViewModel
         self.makeDailyWheelViewModel = makeDailyWheelViewModel
         self.makeCalendarViewModel = makeCalendarViewModel
         self.makeScheduleViewModel = makeScheduleViewModel
@@ -159,10 +162,11 @@ public struct PresentationFactory {
         MarketplaceView(viewModel: makeMarketplaceViewModel())
     }
 
-    func makeInboxTaskDetailView(taskID: UUID) -> some View {
-        // Placeholder until inbox task detail is implemented.
-        EmptyView()
-            .accessibilityIdentifier("inbox-task-detail-\(taskID.uuidString)")
+    func makeTaskDetailsView(taskID: UUID, onDismiss: @escaping () -> Void) -> some View {
+        TaskDetailsView(
+            viewModel: makeTaskDetailsViewModel(taskID),
+            onDismiss: onDismiss
+        )
     }
 
     func makeGoalDetailView(goalID: UUID) -> GoalDetailView {

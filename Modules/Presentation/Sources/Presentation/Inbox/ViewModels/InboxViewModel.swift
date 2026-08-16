@@ -162,7 +162,8 @@ public final class InboxViewModel {
             sessionsSummary: item.sessionsSummary,
             sessionItems: item.sessionItems,
             rawTask: task,
-            availableCompletionPoints: item.availableCompletionPoints
+            availableCompletionPoints: item.availableCompletionPoints,
+            areAllSessionRewardsClaimed: item.areAllSessionRewardsClaimed
         )
     }
 

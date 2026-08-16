@@ -22,7 +22,7 @@ public struct DefaultCreateEmptyGoalUseCase: CreateEmptyGoalUseCase {
 }
 
 public protocol AddTaskToGoalUseCase: Sendable {
-    func execute(goalID: UUID, task: AwanTask) async throws
+    func execute(goalID: UUID, task: AwanTask) async throws -> AwanTask
 }
 
 public struct DefaultAddTaskToGoalUseCase: AddTaskToGoalUseCase {
@@ -32,7 +32,7 @@ public struct DefaultAddTaskToGoalUseCase: AddTaskToGoalUseCase {
         self.repository = repository
     }
 
-    public func execute(goalID: UUID, task: AwanTask) async throws {
+    public func execute(goalID: UUID, task: AwanTask) async throws -> AwanTask {
         try await repository.addTaskToGoal(goalID: goalID, task: task)
     }
 }

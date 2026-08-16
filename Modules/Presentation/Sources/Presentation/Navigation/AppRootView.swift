@@ -141,8 +141,6 @@ struct AppRootView: View {
                 factory.makeInboxView()
                     .navigationDestination(for: MainRoute.self) { route in
                         switch route {
-                        case let .inboxTaskDetail(taskID):
-                            factory.makeInboxTaskDetailView(taskID: taskID)
                         default:
                             EmptyView()
                         }
@@ -282,8 +280,12 @@ struct AppRootView: View {
                     selection: $creationSheetDetent
                 )
                 .presentationDragIndicator(.visible)
+            case .taskDetail(let taskID):
+                factory.makeTaskDetailsView(taskID: taskID) {
+                    coordinator.mainCoordinator.dismissSheet()
+                }
             case .home, .tasks, .calendar, .userInfo, .dailyZones, .inventory,
-                 .personalization, .settings, .mcpIntegration, .aboutAwan, .inboxTaskDetail:
+                 .personalization, .settings, .mcpIntegration, .aboutAwan:
                 EmptyView()
             }
         }

@@ -21,12 +21,14 @@ public struct DefaultGoalRepository: GoalRepository {
     }
 
     public func fetchGoals() async throws -> [Goal] {
-        try await localDataSource.fetchGoals()
+        try await loadRemoteGoals()
     }
 
     public func fetchGoalTasks(goalID: UUID) async throws -> [AwanTask] {
         let dtos = try await remoteDataSource.getGoalTasks(goalId: goalID)
-        return try dtos.map { try HomeRemoteMapper.task($0, defaultDuration: 30) }
+        let tasks = try dtos.map { try HomeRemoteMapper.task($0, defaultDuration: 30) }
+        try await localTaskDataSource?.upsertTasks(tasks)
+        return tasks
     }
 
     public func observeGoals() -> AnyPublisher<[Goal], Error> {
@@ -96,25 +98,60 @@ public struct DefaultGoalRepository: GoalRepository {
         return goal
     }
 
-    public func addTaskToGoal(goalID: UUID, task: AwanTask) async throws {
+    public func addTaskToGoal(goalID: UUID, task: AwanTask) async throws -> AwanTask {
         let requestDTO = MoveTaskRequestDTO(goalID: goalID)
-        _ = try await remoteTaskDataSource.moveTask(taskID: task.id, request: requestDTO)
-
-        let updatedTask = AwanTask(
-            id: task.id,
-            title: task.title,
-            description: task.description,
-            status: task.status,
-            completedAt: task.completedAt,
-            goalID: goalID,
-            duration: task.duration,
-            isSplittable: task.isSplittable,
-            mandatory: task.mandatory,
-            estimatedPoints: task.estimatedPoints,
-            dependencyIDs: task.dependencyIDs,
-            category: task.category
+        let response = try await remoteTaskDataSource.moveTask(
+            taskID: task.id,
+            request: requestDTO
         )
-        try await localTaskDataSource?.updateTask(updatedTask)
+        let accepted = try HomeRemoteMapper.task(
+            response,
+            defaultDuration: task.duration.minutes
+        )
+        let updatedTask = AwanTask(
+            id: accepted.id,
+            title: accepted.title,
+            description: accepted.description,
+            status: accepted.status,
+            completedAt: accepted.completedAt,
+            goalID: goalID,
+            duration: accepted.duration,
+            isSplittable: accepted.isSplittable,
+            mandatory: accepted.mandatory,
+            estimatedPoints: accepted.estimatedPoints,
+            dependencyIDs: accepted.dependencyIDs,
+            category: accepted.category
+        )
+        try await localTaskDataSource?.upsertTasks([updatedTask])
+        return updatedTask
+    }
+
+    public func moveTaskToInbox(_ task: AwanTask) async throws -> AwanTask {
+        let inbox = try await remoteDataSource.getInbox()
+        let response = try await remoteTaskDataSource.moveTask(
+            taskID: task.id,
+            request: MoveTaskRequestDTO(goalID: inbox.id)
+        )
+        let mapped = try HomeRemoteMapper.task(
+            response,
+            defaultDuration: task.duration.minutes
+        )
+        let accepted = AwanTask(
+            id: mapped.id,
+            title: mapped.title,
+            description: mapped.description,
+            status: mapped.status,
+            completedAt: mapped.completedAt,
+            goalID: inbox.id,
+            duration: mapped.duration,
+            isSplittable: mapped.isSplittable,
+            mandatory: mapped.mandatory,
+            estimatedPoints: mapped.estimatedPoints,
+            dependencyIDs: mapped.dependencyIDs,
+            category: mapped.category
+        )
+        try await localTaskDataSource?.upsertTasks([accepted])
+        return accepted
     }
 
 
@@ -150,4 +187,3 @@ public struct DefaultGoalRepository: GoalRepository {
         try await localDataSource.deleteAllGoals()
     }
 }
-

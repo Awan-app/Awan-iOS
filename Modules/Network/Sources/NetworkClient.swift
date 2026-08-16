@@ -45,7 +45,11 @@ public final class NetworkClient: NetworkServiceProtocol, @unchecked Sendable {
         let dataResponse = await session
             .request(urlRequest, interceptor: interceptor)
             .validate(statusCode: 200..<300)
-            .serializingData()
+            .serializingData(
+                emptyResponseCodes: T.self == EmptyResponse.self
+                    ? Set(200..<300)
+                    : DataResponseSerializer.defaultEmptyResponseCodes
+            )
             .response
 
         return try decodeResponse(dataResponse)

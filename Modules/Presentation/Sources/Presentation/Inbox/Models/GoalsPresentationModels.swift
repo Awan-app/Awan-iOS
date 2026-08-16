@@ -88,16 +88,19 @@ public struct GoalDetailTaskItem: Identifiable, Equatable, Sendable {
     }
 
     public var availableCompletionPoints: Int {
-        if task.completedAt != nil || task.status == .completed {
-            return 0
+        let unrewardedCount = sessionItems.filter { session in
+            session.underlyingStatus != .cancelled
+                && !session.hasClaimedReward
+        }.count
+        return task.estimatedPoints * unrewardedCount
+    }
+
+    public var areAllSessionRewardsClaimed: Bool {
+        let rewardEligibleSessions = sessionItems.filter {
+            $0.underlyingStatus != .cancelled
         }
-        if !sessionItems.isEmpty {
-            let unrewardedCount = sessionItems.filter { session in
-                session.underlyingStatus != .cancelled
-            }.count
-            return task.estimatedPoints * unrewardedCount
-        }
-        return task.estimatedPoints
+        return !rewardEligibleSessions.isEmpty
+            && rewardEligibleSessions.allSatisfy(\.hasClaimedReward)
     }
 
     public var asInboxTaskItem: InboxTaskItem {
@@ -121,7 +124,8 @@ public struct GoalDetailTaskItem: Identifiable, Equatable, Sendable {
             sessionsSummary: sessionsSummary,
             sessionItems: sessionItems,
             rawTask: task,
-            availableCompletionPoints: availableCompletionPoints
+            availableCompletionPoints: availableCompletionPoints,
+            areAllSessionRewardsClaimed: areAllSessionRewardsClaimed
         )
     }
 }

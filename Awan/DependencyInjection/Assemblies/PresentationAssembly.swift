@@ -1,4 +1,5 @@
 import Domain
+import Foundation
 import Presentation
 import Swinject
 
@@ -131,6 +132,41 @@ struct PresentationAssembly: Assembly {
         }
         .inObjectScope(.transient)
 
+        container.register(TaskDetailsUseCases.self) { resolver in
+            TaskDetailsUseCases(
+                fetch: Self.resolve(FetchTaskDetailsUseCase.self, from: resolver),
+                edit: Self.resolve(EditTaskDetailsUseCase.self, from: resolver),
+                fetchGoals: Self.resolve(FetchGoalsUseCase.self, from: resolver),
+                addToGoal: Self.resolve(AddTaskToGoalUseCase.self, from: resolver),
+                removeFromGoal: Self.resolve(RemoveTaskFromGoalUseCase.self, from: resolver),
+                fetchDependencyCandidates: Self.resolve(
+                    FetchTaskDependencyCandidatesUseCase.self,
+                    from: resolver
+                ),
+                addDependency: Self.resolve(AddTaskDependencyUseCase.self, from: resolver),
+                removeDependency: Self.resolve(
+                    RemoveTaskDependencyUseCase.self,
+                    from: resolver
+                ),
+                deleteTask: Self.resolve(DeleteTaskDetailsUseCase.self, from: resolver),
+                deleteSession: Self.resolve(DeleteSessionUseCase.self, from: resolver),
+                createSession: Self.resolve(CreateTaskSessionUseCase.self, from: resolver),
+                updateSession: Self.resolve(UpdateSessionScheduleUseCase.self, from: resolver),
+                userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver),
+                fetchCategories: Self.resolve(FetchCategoriesUseCase.self, from: resolver),
+                fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver)
+            )
+        }
+
+        container.register(TaskDetailsViewModel.self) {
+            (resolver, taskID: UUID) in
+            let useCases = Self.resolve(TaskDetailsUseCases.self, from: resolver)
+            return MainActor.assumeIsolated {
+                TaskDetailsViewModel(taskID: taskID, useCases: useCases)
+            }
+        }
+        .inObjectScope(.transient)
+
         container.register(CreationUseCases.self) { resolver in
             CreationUseCases(
                 fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
@@ -225,7 +261,8 @@ struct PresentationAssembly: Assembly {
                 requestSchedule: Self.resolve(RequestGoalScheduleProposalUseCase.self, from: resolver),
                 confirmSchedule: Self.resolve(ConfirmGoalScheduleUseCase.self, from: resolver),
                 fetchZones: Self.resolve(FetchZonesUseCase.self, from: resolver),
-                setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver)
+                setTaskCompletion: Self.resolve(SetTaskCompletionUseCase.self, from: resolver),
+                userProfile: Self.resolve(GetUserProfileUseCase.self, from: resolver)
             )
         }
 
@@ -241,7 +278,7 @@ struct PresentationAssembly: Assembly {
                 return vm
             }
         }
-        .inObjectScope(.container)
+        .inObjectScope(.transient)
 
         container.register(InboxViewModel.self) { resolver in
             let useCases = Self.resolve(InboxUseCases.self, from: resolver)
@@ -413,6 +450,13 @@ struct PresentationAssembly: Assembly {
                         Self.resolve(
                             SessionDetailsViewModel.self,
                             argument: context,
+                            from: resolver
+                        )
+                    },
+                    makeTaskDetailsViewModel: { taskID in
+                        Self.resolve(
+                            TaskDetailsViewModel.self,
+                            argument: taskID,
                             from: resolver
                         )
                     },

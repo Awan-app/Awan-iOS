@@ -16,6 +16,7 @@ struct GoalDetailTasksCard: View {
     let onRetry: () -> Void
     var onAddTask: (() -> Void)? = nil
     var onCompleteTask: ((UUID) -> Void)? = nil
+    var onOpenDetails: ((UUID) -> Void)? = nil
 
     private var independentCount: Int { tasks.filter { !$0.isDependent }.count }
     private var dependentCount: Int   { tasks.filter {  $0.isDependent }.count }
@@ -79,6 +80,9 @@ struct GoalDetailTasksCard: View {
                     },
                     onCompleteTask: {
                         onCompleteTask?(item.id)
+                    },
+                    onOpenDetails: {
+                        onOpenDetails?(item.id)
                     }
                 )
             }

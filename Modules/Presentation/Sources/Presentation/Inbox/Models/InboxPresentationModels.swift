@@ -35,17 +35,20 @@ public struct InboxSessionItem: Identifiable, Hashable, Sendable {
     public let timeRangeText: String
     public let displayStatus: InboxSessionDisplayStatus
     public let underlyingStatus: Session.Status
+    public let hasClaimedReward: Bool
 
     public init(
         id: UUID,
         timeRangeText: String,
         displayStatus: InboxSessionDisplayStatus,
-        underlyingStatus: Session.Status
+        underlyingStatus: Session.Status,
+        hasClaimedReward: Bool = false
     ) {
         self.id = id
         self.timeRangeText = timeRangeText
         self.displayStatus = displayStatus
         self.underlyingStatus = underlyingStatus
+        self.hasClaimedReward = hasClaimedReward
     }
 }
 
@@ -58,6 +61,7 @@ public struct InboxTaskItem: Identifiable, Hashable, Sendable {
     public let sessionItems: [InboxSessionItem]
     public let rawTask: AwanTask
     public let availableCompletionPoints: Int
+    public let areAllSessionRewardsClaimed: Bool
 
     public init(
         id: UUID,
@@ -67,7 +71,8 @@ public struct InboxTaskItem: Identifiable, Hashable, Sendable {
         sessionsSummary: String,
         sessionItems: [InboxSessionItem],
         rawTask: AwanTask,
-        availableCompletionPoints: Int = 0
+        availableCompletionPoints: Int = 0,
+        areAllSessionRewardsClaimed: Bool = false
     ) {
         self.id = id
         self.title = title
@@ -77,5 +82,6 @@ public struct InboxTaskItem: Identifiable, Hashable, Sendable {
         self.sessionItems = sessionItems
         self.rawTask = rawTask
         self.availableCompletionPoints = availableCompletionPoints
+        self.areAllSessionRewardsClaimed = areAllSessionRewardsClaimed
     }
 }

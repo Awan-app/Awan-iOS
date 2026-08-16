@@ -11475,6 +11475,279 @@
         }
       }
     },
+    "task_details.add_dependency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "إضافة متطلب سابق" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add Dependency" } }
+      }
+    },
+    "task_details.add_to_goal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "إضافة إلى هدف" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add to Goal" } }
+      }
+    },
+    "task_details.allow_splitting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "السماح بتقسيم المهمة" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Allow Task Splitting" } }
+      }
+    },
+    "task_details.allow_splitting_hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "يمكن لآوان تقسيم المهمة إلى جلسات متعددة" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Awan can split this task into multiple sessions" } }
+      }
+    },
+    "task_details.choose_dependency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "اختر متطلبًا سابقًا" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose a Dependency" } }
+      }
+    },
+    "task_details.choose_goal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "اختر هدفًا" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose a Goal" } }
+      }
+    },
+    "task_details.delete_session_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "سيتم حذف هذه الجلسة نهائيًا." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This session will be permanently deleted." } }
+      }
+    },
+    "task_details.delete_session_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "حذف الجلسة؟" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete Session?" } }
+      }
+    },
+    "task_details.dependencies" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "المتطلبات السابقة" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Dependencies" } }
+      }
+    },
+    "task_details.description_placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "أضف وصفًا" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add a description" } }
+      }
+    },
+    "task_details.discard" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "تجاهل" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Discard" } }
+      }
+    },
+    "task_details.discard_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "لديك تغييرات غير محفوظة ستُفقد." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your unsaved task changes will be lost." } }
+      }
+    },
+    "task_details.discard_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "تجاهل التغييرات؟" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Discard Changes?" } }
+      }
+    },
+    "task_details.goal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "الهدف" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Goal" } }
+      }
+    },
+    "task_details.hours_minutes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "%d س %d د" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d h %d min" } }
+      }
+    },
+    "task_details.mandatory" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "إلزامية" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mandatory" } }
+      }
+    },
+    "task_details.mandatory_hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "يجب إكمال هذه المهمة" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This task must be completed" } }
+      }
+    },
+    "task_details.minutes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "%d د" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d min" } }
+      }
+    },
+    "task_details.no_dependencies" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "لا توجد مهام سابقة مطلوبة." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No prerequisite tasks." } }
+      }
+    },
+    "task_details.no_goal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "لم يتم تعيين هدف" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No goal assigned" } }
+      }
+    },
+    "task_details.no_matches" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "لا توجد نتائج مطابقة" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No matches found" } }
+      }
+    },
+    "task_details.no_sessions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "لا توجد جلسات بعد" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No sessions yet" } }
+      }
+    },
+    "task_details.open" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "الانتقال إلى تفاصيل المهمة" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Go to Task Details" } }
+      }
+    },
+    "task_details.picking_dependencies_from" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "الاختيار من «%@»" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Picking from “%@”" } }
+      }
+    },
+    "task_details.remove_dependency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "إزالة المتطلب" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove Dependency" } }
+      }
+    },
+    "task_details.remove_dependency_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "لن تعتمد هذه المهمة بعد الآن على المهمة المحددة." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This task will no longer depend on the selected task." } }
+      }
+    },
+    "task_details.remove_dependency_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "إزالة هذا المتطلب؟" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove this dependency?" } }
+      }
+    },
+    "task_details.remove_goal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "إزالة الهدف" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove Goal" } }
+      }
+    },
+    "task_details.remove_goal_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "سيتم نقل هذه المهمة إلى صندوق الوارد." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This task will be moved to Inbox." } }
+      }
+    },
+    "task_details.remove_goal_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "إزالة المهمة من هذا الهدف؟" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove task from this goal?" } }
+      }
+    },
+    "task_details.save_changes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "حفظ التغييرات" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save Changes" } }
+      }
+    },
+    "task_details.search_goals" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "البحث في الأهداف" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Search goals" } }
+      }
+    },
+    "task_details.search_tasks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "البحث في المهام" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Search tasks" } }
+      }
+    },
+    "task_details.sessions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "الجلسات" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sessions" } }
+      }
+    },
+    "task_details.settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "التفاصيل" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Details" } }
+      }
+    },
+    "task_details.task_information" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "معلومات المهمة" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Task Information" } }
+      }
+    },
+    "task_details.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "تفاصيل المهمة" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Task Details" } }
+      }
+    },
+    "task_details.title_placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "عنوان المهمة" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Task title" } }
+      }
+    },
+    "task_details.total_duration" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : { "stringUnit" : { "state" : "translated", "value" : "المدة الإجمالية" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Total Duration" } }
+      }
+    },
     "user_info.title" : {
       "extractionState" : "manual",
       "localizations" : {

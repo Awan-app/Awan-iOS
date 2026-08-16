@@ -34,6 +34,9 @@ public struct GoalsState: Equatable, Sendable {
     public var scheduleFocusedTaskID: UUID?
     public var showsUnscheduledDialog: Bool
     public var scheduleErrorMessage: String?
+    public var userPoints: Int?
+    public var completionReward: InboxCompletionReward?
+    public var completionRewardAnimation: InboxCompletionRewardAnimation?
 
     public init(
         isLoading: Bool = false,
@@ -62,7 +65,10 @@ public struct GoalsState: Equatable, Sendable {
         scheduleZoneNames: [UUID: String] = [:],
         scheduleFocusedTaskID: UUID? = nil,
         showsUnscheduledDialog: Bool = false,
-        scheduleErrorMessage: String? = nil
+        scheduleErrorMessage: String? = nil,
+        userPoints: Int? = nil,
+        completionReward: InboxCompletionReward? = nil,
+        completionRewardAnimation: InboxCompletionRewardAnimation? = nil
     ) {
         self.isLoading = isLoading
         self.searchQuery = searchQuery
@@ -91,6 +97,9 @@ public struct GoalsState: Equatable, Sendable {
         self.scheduleFocusedTaskID = scheduleFocusedTaskID
         self.showsUnscheduledDialog = showsUnscheduledDialog
         self.scheduleErrorMessage = scheduleErrorMessage
+        self.userPoints = userPoints
+        self.completionReward = completionReward
+        self.completionRewardAnimation = completionRewardAnimation
     }
 
     public var unresolvedScheduleTasks: [GoalScheduleReviewTask] {

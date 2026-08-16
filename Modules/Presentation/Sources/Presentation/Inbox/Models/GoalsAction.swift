@@ -40,5 +40,6 @@ public enum GoalsAction: Sendable {
     case clearFocusedUnscheduledTask
     case dismissScheduleErrorMessage
     case completeTask(UUID)
+    case dismissCompletionReward
+    case dismissCompletionRewardAnimation
 }
-

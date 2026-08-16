@@ -342,16 +342,46 @@ public struct DefaultTaskRepository: TaskRepository {
         try await localDataSource.deleteAllTasks()
     }
     public func addDependency(taskID: UUID, dependsOnID: UUID) async throws {
-        try await localDataSource.addDependency(taskID: taskID, dependsOnID: dependsOnID)
+        try await remoteTaskDataSource.addDependency(
+            taskID: taskID,
+            request: AddDependencyRequestDTO(dependsOnTaskID: dependsOnID)
+        )
+        try await localDataSource.addDependency(
+            taskID: taskID,
+            dependsOnID: dependsOnID
+        )
+        _ = try await refreshTask(id: taskID)
     }
     public func removeDependency(taskID: UUID, dependsOnID: UUID) async throws {
-        try await localDataSource.removeDependency(taskID: taskID, dependsOnID: dependsOnID)
+        try await remoteTaskDataSource.removeDependency(
+            taskID: taskID,
+            dependsOnTaskID: dependsOnID
+        )
+        _ = try await refreshTask(id: taskID)
     }
     public func fetchDependencies(taskID: UUID) async throws -> [AwanTask] {
-        try await localDataSource.fetchDependencies(taskID: taskID)
+        let preferredDuration = await getPreferredSessionDuration()
+        let dependencies = try await remoteTaskDataSource.listDependencies(taskID: taskID)
+            .map {
+                try HomeRemoteMapper.task(
+                    $0,
+                    defaultDuration: preferredDuration
+                )
+            }
+        try await localDataSource.upsertTasks(dependencies)
+        return dependencies
     }
     public func fetchDependents(taskID: UUID) async throws -> [AwanTask] {
-        try await localDataSource.fetchDependents(taskID: taskID)
+        let preferredDuration = await getPreferredSessionDuration()
+        let dependents = try await remoteTaskDataSource.listDependents(taskID: taskID)
+            .map {
+                try HomeRemoteMapper.task(
+                    $0,
+                    defaultDuration: preferredDuration
+                )
+            }
+        try await localDataSource.upsertTasks(dependents)
+        return dependents
     }
 
     private func replacingDependencies(
