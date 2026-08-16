@@ -36,10 +36,14 @@ enum LocalDateKey {
     }
 
     static func date(from value: String) -> Date? {
+        date(from: value, timeZoneID: TimeZone.current.identifier)
+    }
+
+    static func date(from value: String, timeZoneID: String) -> Date? {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = calendar.timeZone
+        formatter.timeZone = TimeZone(identifier: timeZoneID) ?? .current
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.date(from: value)
     }

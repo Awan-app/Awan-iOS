@@ -4,13 +4,16 @@ import Domain
 public final class DefaultTemplateOverrideRepository: TemplateOverrideRepository, Sendable {
     private let remoteDataSource: any RemoteTemplateOverrideDataSourceProtocol
     private let localDataSource: any LocalTemplateOverrideDataSource
+    private let profileDataSource: any LocalUserProfileDataSource
 
     public init(
         remoteDataSource: any RemoteTemplateOverrideDataSourceProtocol,
-        localDataSource: any LocalTemplateOverrideDataSource
+        localDataSource: any LocalTemplateOverrideDataSource,
+        profileDataSource: any LocalUserProfileDataSource
     ) {
         self.remoteDataSource = remoteDataSource
         self.localDataSource = localDataSource
+        self.profileDataSource = profileDataSource
     }
 
     public func createTemplateOverride(
@@ -37,7 +40,10 @@ public final class DefaultTemplateOverrideRepository: TemplateOverrideRepository
         )
         do {
             let response = try await remoteDataSource.createOverride(request: request)
-            let localData = try HomeRemoteMapper.templateOverrideData(response)
+            let localData = try HomeRemoteMapper.templateOverrideData(
+                response,
+                timeZoneID: await userTimeZoneID()
+            )
             try await localDataSource.addTemplateOverride(localData)
             return try HomeRemoteMapper.templateOverride(response)
         } catch {
@@ -48,7 +54,10 @@ public final class DefaultTemplateOverrideRepository: TemplateOverrideRepository
     public func listTemplateOverrides() async throws -> [TemplateOverride] {
         do {
             let responses = try await remoteDataSource.listOverrides()
-            let localOverrides = try responses.map(HomeRemoteMapper.templateOverrideData)
+            let timeZoneID = await userTimeZoneID()
+            let localOverrides = try responses.map {
+                try HomeRemoteMapper.templateOverrideData($0, timeZoneID: timeZoneID)
+            }
             let overrides = try responses.map(HomeRemoteMapper.templateOverride)
             try await localDataSource.replaceTemplateOverrides(localOverrides)
             return overrides
@@ -68,7 +77,10 @@ public final class DefaultTemplateOverrideRepository: TemplateOverrideRepository
         )
         do {
             let response = try await remoteDataSource.updateOverride(overrideId: id, request: request)
-            let localData = try HomeRemoteMapper.templateOverrideData(response)
+            let localData = try HomeRemoteMapper.templateOverrideData(
+                response,
+                timeZoneID: await userTimeZoneID()
+            )
             try await localDataSource.updateTemplateOverride(localData)
             return try HomeRemoteMapper.templateOverride(response)
         } catch {
@@ -99,7 +111,10 @@ public final class DefaultTemplateOverrideRepository: TemplateOverrideRepository
         do {
             _ = try await remoteDataSource.updateBulkTemplateOverride(overrideId: id, request: request)
             let response = try await remoteDataSource.getOverride(overrideId: id)
-            let localData = try HomeRemoteMapper.templateOverrideData(response)
+            let localData = try HomeRemoteMapper.templateOverrideData(
+                response,
+                timeZoneID: await userTimeZoneID()
+            )
             try await localDataSource.updateTemplateOverride(localData)
             return try HomeRemoteMapper.templateOverride(response)
         } catch {
@@ -114,5 +129,10 @@ public final class DefaultTemplateOverrideRepository: TemplateOverrideRepository
         } catch {
             throw TemplateManagementErrorMapper.map(error, overrideOperation: true)
         }
+    }
+
+    private func userTimeZoneID() async -> String {
+        (try? await profileDataSource.fetchProfile())?.preferences.timezone
+            ?? TimeZone.current.identifier
     }
 }

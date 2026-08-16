@@ -128,7 +128,8 @@ struct DataAssembly: Assembly {
         container.register(TemplateOverrideRepository.self) { resolver in
             DefaultTemplateOverrideRepository(
                 remoteDataSource: Self.resolve(RemoteTemplateOverrideDataSourceProtocol.self, from: resolver),
-                localDataSource: Self.resolve(LocalTemplateOverrideDataSource.self, from: resolver)
+                localDataSource: Self.resolve(LocalTemplateOverrideDataSource.self, from: resolver),
+                profileDataSource: Self.resolve(LocalUserProfileDataSource.self, from: resolver)
             )
         }
         container.register(RemoteGamificationDataSource.self) { resolver in

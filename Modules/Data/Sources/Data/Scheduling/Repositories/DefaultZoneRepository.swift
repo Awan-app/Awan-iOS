@@ -61,18 +61,21 @@ public struct DefaultZoneRepository: ZoneRepository {
     }
 
     private func loadRemoteZones(for date: Date) async throws -> [Zone] {
+        async let profile = profileDataSource.fetchProfile()
         async let templateResponses = remoteTemplateDataSource.listTemplates()
         async let templateOverrideResponses =
             remoteTemplateOverrideDataSource.listOverrides()
 
-        let (templateDTOs, templateOverrideDTOs) = try await (
+        let (userProfile, templateDTOs, templateOverrideDTOs) = try await (
+            profile,
             templateResponses,
             templateOverrideResponses
         )
+        let timeZoneID = userProfile?.preferences.timezone ?? TimeZone.current.identifier
         let templates = try templateDTOs.map(HomeRemoteMapper.templateData)
-        let templateOverrides = try templateOverrideDTOs.map(
-            HomeRemoteMapper.templateOverrideData
-        )
+        let templateOverrides = try templateOverrideDTOs.map {
+            try HomeRemoteMapper.templateOverrideData($0, timeZoneID: timeZoneID)
+        }
 
         try await templateDataSource.replaceTemplates(templates)
         try await templateOverrideDataSource.replaceTemplateOverrides(

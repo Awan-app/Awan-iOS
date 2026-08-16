@@ -168,10 +168,13 @@ enum HomeRemoteMapper {
     }
 
     static func templateOverrideData(
-        _ dto: TemplateOverrideResponseDTO
+        _ dto: TemplateOverrideResponseDTO,
+        timeZoneID: String
     ) throws -> TemplateOverrideData {
-        guard let date = LocalDateKey.date(from: dto.dateOfDay),
-              LocalDateKey.value(for: date, timeZoneID: "GMT") == dto.dateOfDay else {
+        guard let date = LocalDateKey.date(
+            from: dto.dateOfDay,
+            timeZoneID: timeZoneID
+        ), LocalDateKey.value(for: date, timeZoneID: timeZoneID) == dto.dateOfDay else {
             throw RemoteDomainMappingError.invalidValue(
                 "templateOverride.dateOfDay.\(dto.dateOfDay)"
             )
