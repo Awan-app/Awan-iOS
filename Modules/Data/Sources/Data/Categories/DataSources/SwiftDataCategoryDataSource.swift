@@ -42,6 +42,18 @@ public actor SwiftDataCategoryDataSource: LocalCategoryDataSource {
         try modelContext.save()
     }
 
+    public func deleteCategory(id: UUID) throws {
+        let targetID = id
+        var descriptor = FetchDescriptor<CategoryModel>(
+            predicate: #Predicate { $0.id == targetID }
+        )
+        descriptor.fetchLimit = 1
+        if let model = try modelContext.fetch(descriptor).first {
+            modelContext.delete(model)
+            try modelContext.save()
+        }
+    }
+
     private static func isOrdered(_ lhs: TaskCategory, _ rhs: TaskCategory) -> Bool {
         lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
     }

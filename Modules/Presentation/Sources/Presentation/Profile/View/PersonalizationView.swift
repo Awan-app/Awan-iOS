@@ -4,6 +4,7 @@ import Foundation
 import SwiftUI
 
 struct PersonalizationView: View {
+    @Environment(AppCoordinator.self) private var coordinator
     @Environment(LanguageManager.self) private var languageManager
     @State private var viewModel: SettingsViewModel
     @State private var isSessionTimeSheetPresented = false
@@ -149,6 +150,12 @@ struct PersonalizationView: View {
                 title: L10n.Profile.sleepSchedule,
                 value: formattedSleepSchedule,
                 onTap: { isSleepScheduleSheetPresented = true }
+            ),
+            PreferenceItem(
+                icon: "square.grid.2x2",
+                title: L10n.Categories.title,
+                value: "",
+                onTap: { coordinator.mainCoordinator.push(MainRoute.categories) }
             )
         ]
     }

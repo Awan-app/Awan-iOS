@@ -196,6 +196,7 @@ struct AppRootView: View {
                         case .inventory:  factory.makeProfileInventoryView()
                         case .personalization: factory.makePersonalizationView()
                         case .settings: factory.makeSettingsView()
+                        case .categories: factory.makeCategoriesManagementView()
                         case .mcpIntegration: factory.makeMCPConnectionView()
                         case .aboutAwan:  factory.makeAboutAwanView()
                         default:          EmptyView()
@@ -307,7 +308,7 @@ struct AppRootView: View {
                     coordinator.mainCoordinator.dismissSheet()
                 }
             case .home, .tasks, .calendar, .userInfo, .dailyZones, .inventory,
-                 .personalization, .settings, .mcpIntegration, .aboutAwan:
+                 .personalization, .settings, .categories, .mcpIntegration, .aboutAwan:
                 EmptyView()
             }
         }

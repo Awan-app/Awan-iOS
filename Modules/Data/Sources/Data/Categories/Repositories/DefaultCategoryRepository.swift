@@ -1,4 +1,5 @@
 import Combine
+import Foundation
 import Domain
 
 public struct DefaultCategoryRepository: CategoryRepository {
@@ -35,6 +36,21 @@ public struct DefaultCategoryRepository: CategoryRepository {
         let category = TaskCategory(id: response.id, name: response.name)
         try await localDataSource.upsertCategory(category)
         return category
+    }
+
+    public func updateCategory(id: UUID, name: String) async throws -> TaskCategory {
+        let response = try await remoteDataSource.updateCategory(
+            id: id,
+            UpdateCategoryRequestDTO(name: name)
+        )
+        let category = TaskCategory(id: response.id, name: response.name)
+        try await localDataSource.upsertCategory(category)
+        return category
+    }
+
+    public func deleteCategory(id: UUID) async throws {
+        try await remoteDataSource.deleteCategory(id: id)
+        try await localDataSource.deleteCategory(id: id)
     }
 
     private func refreshCategories() async throws -> [TaskCategory] {
