@@ -22,7 +22,7 @@ Awan uses **layer-first Clean Architecture**: features repeat inside shared laye
 | **Domain** | UI- and infrastructure-independent entities, value objects, business rules, scheduling services, repository contracts, typed errors, and focused use cases. |
 | **Data** | Repository implementations, remote and local data sources, DTO/persistence mapping, cache coordination, and SwiftData actors. |
 | **Network** | Alamofire-based transport, endpoint contracts, encoding/decoding, multipart uploads, authentication interception, and token refresh. |
-| **Notification** | Local notification scheduling and permission management for session and deadline reminders. |
+
 | **Common** | Shared design-system tokens and components, localization, media abstractions, coordinator contracts, and reusable utilities. |
 
 ```mermaid
@@ -83,7 +83,6 @@ Awan-iOS/
 │   ├── Domain/            # Entities, use cases, repository contracts, scheduling services
 │   ├── Network/           # Alamofire client, endpoints, DTOs, token refresh
 │   ├── Data/              # Repository implementations, SwiftData actors, mappers
-│   ├── Notification/      # Local notification scheduling and permission management
 │   └── Presentation/      # SwiftUI screens, view models, coordinators, routes
 ├── AwanTests/             # Unit tests across all layers
 ├── AwanUITests/           # UI tests
@@ -102,7 +101,7 @@ Feature folders span only the layers they need. Scheduling, templates, gamificat
 - **Daily zones and templates:** reusable weekday templates, date-specific overrides, categorized time zones, overlap validation, reordering, and bulk persistence.
 - **Gamified progress:** points, streak celebrations, activity history, a daily wheel, storefront browsing, purchases, inventory, and item equip/unequip flows.
 - **Authentication and onboarding:** email OTP and Google Sign-In flows, profile setup, wake/sleep preferences, scheduling preferences, zone setup, and notification consent.
-- **Localized reminders:** session alerts before and at start time plus goal-deadline reminders, with localized English and Arabic content delivered through the standalone Notification module.
+- **Localized reminders:** session alerts before and at start time plus goal-deadline reminders, with localized English and Arabic content.
 - **Profile personalization:** profile photo and personal details, theme and language preferences, scheduling settings, equipped cosmetics, and secure logout with local-data cleanup.
 
 ## Quality and Verification
