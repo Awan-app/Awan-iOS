@@ -1,37 +1,56 @@
 # Awan iOS
 
-Awan is a bilingual day-planning app for iOS that turns goals and tasks into practical schedules. It combines AI-assisted planning, a dependency-aware scheduling engine, reusable daily-zone templates, and gamified progress in a modular SwiftUI codebase built with layer-first Clean Architecture.
+Awan is a bilingual day-planning app for iOS that turns goals and tasks into practical daily schedules. It combines AI-assisted goal decomposition, a dependency-aware scheduling engine, reusable daily-zone templates, and gamified progress tracking in a modular SwiftUI codebase built with layer-first Clean Architecture.
 
 ## Highlights
 
-- Build a daily plan from tasks, goals, daily zones, availability, and task dependencies.
-- Break goals into tasks, review proposed sessions, and adjust the schedule before confirming it.
+- Build a complete daily plan from tasks, goals, daily zones, availability windows, and task dependencies.
+- Break goals into tasks with an AI-assisted conversational planner, review proposed sessions, and adjust the schedule before confirming it.
 - Capture tasks manually, by voice, or from a photo or camera image.
 - Track sessions, deadlines, points, streaks, inventory, and marketplace rewards.
-- Use the app in English or Arabic with automatic right-to-left layout and light/dark appearance preferences.
-- Keep scheduling, profile, category, and gamification state in a SwiftData-backed local cache synchronized through repository abstractions.
+- Use the app in **English or Arabic** with automatic right-to-left layout and light/dark appearance preferences.
+- Keep scheduling, profile, category, and gamification state in a **SwiftData-backed local cache** synchronized through repository abstractions.
 
 ## Architecture
 
-Awan uses layer-first Clean Architecture: features repeat inside shared layer packages instead of becoming a package per feature. The app target is the composition root, where Swinject assemblies connect concrete infrastructure to Domain contracts and inject use cases, view models, factories, and coordinators.
+Awan uses **layer-first Clean Architecture**: features repeat inside shared layer packages instead of becoming a package per feature. The app target is the composition root, where Swinject assemblies connect concrete infrastructure to Domain contracts and inject use cases, view models, factories, and coordinators.
 
 | Layer / Pattern | Responsibility |
 |---|---|
 | **Awan app** | Creates the persistent `ModelContainer`, configures platform services, assembles dependencies, and launches the root presentation flow. |
-| **Presentation** | SwiftUI screens, `@Observable` and `@MainActor` view models, screen state, presentation mapping, typed routes, and coordinators. Complex screens use a unidirectional Model-View-Intent flow. |
+| **Presentation** | SwiftUI screens, `@Observable` / `@MainActor` view models, screen state, presentation mapping, typed routes, and coordinators. Complex screens use a unidirectional **Model-View-Intent** flow. |
 | **Domain** | UI- and infrastructure-independent entities, value objects, business rules, scheduling services, repository contracts, typed errors, and focused use cases. |
 | **Data** | Repository implementations, remote and local data sources, DTO/persistence mapping, cache coordination, and SwiftData actors. |
 | **Network** | Alamofire-based transport, endpoint contracts, encoding/decoding, multipart uploads, authentication interception, and token refresh. |
+| **Notification** | Local notification scheduling and permission management for session and deadline reminders. |
 | **Common** | Shared design-system tokens and components, localization, media abstractions, coordinator contracts, and reusable utilities. |
 
-```text
-User action
-  -> SwiftUI View
-  -> Observable ViewModel / Screen Action
-  -> Domain Use Case
-  -> Repository Contract
-  -> Data Repository
-  -> Local Data Source or Network Client
+```mermaid
+flowchart TD
+    A(["👤 User Action"]) --> B["SwiftUI View\n(Presentation)"]
+    B --> C["ViewModel @Observable\n(Presentation)"]
+    C --> D["Use Case\n(Domain)"]
+    D --> E["Repository Contract\n(Domain)"]
+    E --> F["Repository Implementation\n(Data)"]
+    F --> G["Local Data Source\n(SwiftData actor)"]
+    F --> H["Remote Data Source\n(Network)"]
+    H --> I["Alamofire HTTP Client\n(Network)"]
+
+    G -- "Domain entity" --> F
+    I -- "ResponseDTO → mapper" --> F
+    F -- "Domain entity/result" --> D
+    D -- "Use Case result" --> C
+    C -- "Screen State" --> B
+
+    style A fill:#5B6CF9,color:#fff,stroke:none
+    style B fill:#1E2A4A,color:#fff,stroke:#5B6CF9
+    style C fill:#1E2A4A,color:#fff,stroke:#5B6CF9
+    style D fill:#1B3A2D,color:#fff,stroke:#2ECC71
+    style E fill:#1B3A2D,color:#fff,stroke:#2ECC71
+    style F fill:#3A2800,color:#fff,stroke:#F39C12
+    style G fill:#3A2800,color:#fff,stroke:#F39C12
+    style H fill:#3A2800,color:#fff,stroke:#F39C12
+    style I fill:#3A1A00,color:#fff,stroke:#E74C3C
 ```
 
 Transport DTOs and SwiftData models stop at the Data boundary. Presentation renders Domain results through observable UI state and never accesses persistence or networking directly.
@@ -50,28 +69,28 @@ Transport DTOs and SwiftData models stop at the Data boundary. Presentation rend
 | Dependency injection | Swinject | Organizes Data, Domain, and Presentation registrations at the app composition root. |
 | Media and motion | Kingfisher, Lottie | Loads authenticated remote images and renders mascot, streak, and reward animations. |
 | Apple frameworks | Speech, AVFAudio, PhotosUI, UserNotifications | Supports voice input, camera/photo task extraction, and local session/deadline reminders. |
-| Tooling | Swift Package Manager, XCTest, SwiftLint, GitHub Actions | Manages modular dependencies, layer-focused test targets, linting, and configured simulator build checks. |
+| Tooling | Swift Package Manager, XCTest, SwiftLint, GitHub Actions | Manages modular dependencies, layer-focused test targets, linting, and simulator build checks. |
 
-The application targets **iOS 18** and the repository's supported development toolchain is **Xcode 16**.
+The application targets **iOS 18**. The development toolchain is **Xcode 16**; CI runs on macOS 14 with Xcode 15.4.
 
 ## Module Structure
 
 ```text
 Awan-iOS/
-├── Awan/                         # App entry point and composition root
-│   └── DependencyInjection/      # Swinject assemblies for Data, Domain, and UI
+├── Awan/                  # App entry point, composition root, Swinject assemblies
 ├── Modules/
-│   ├── Common/                   # Design system, localization, shared utilities
-│   ├── Domain/                   # Entities, services, contracts, and use cases
-│   ├── Network/                  # HTTP client, authentication, and transport types
-│   ├── Data/                     # Repositories, data sources, mappers, SwiftData
-│   └── Presentation/             # Feature UI, observable state, routes, coordinators
-├── AwanTests/                    # Application unit tests
-├── AwanUITests/                  # Application UI tests
-└── .github/workflows/            # Lint and simulator-build workflow
+│   ├── Common/            # Design system, localization, shared utilities
+│   ├── Domain/            # Entities, use cases, repository contracts, scheduling services
+│   ├── Network/           # Alamofire client, endpoints, DTOs, token refresh
+│   ├── Data/              # Repository implementations, SwiftData actors, mappers
+│   ├── Notification/      # Local notification scheduling and permission management
+│   └── Presentation/      # SwiftUI screens, view models, coordinators, routes
+├── AwanTests/             # Unit tests across all layers
+├── AwanUITests/           # UI tests
+└── .github/workflows/     # SwiftLint + simulator build CI
 ```
 
-Feature folders span only the layers they need. Scheduling, templates, gamification, onboarding, profile, authentication, and AI-assisted creation therefore retain clear boundaries without duplicating package infrastructure.
+Feature folders span only the layers they need. Scheduling, templates, gamification, onboarding, profile, authentication, and AI-assisted creation retain clear boundaries without duplicating package infrastructure.
 
 ## Key Features
 
@@ -83,18 +102,43 @@ Feature folders span only the layers they need. Scheduling, templates, gamificat
 - **Daily zones and templates:** reusable weekday templates, date-specific overrides, categorized time zones, overlap validation, reordering, and bulk persistence.
 - **Gamified progress:** points, streak celebrations, activity history, a daily wheel, storefront browsing, purchases, inventory, and item equip/unequip flows.
 - **Authentication and onboarding:** email OTP and Google Sign-In flows, profile setup, wake/sleep preferences, scheduling preferences, zone setup, and notification consent.
-- **Localized reminders:** session alerts before and at start time plus goal-deadline reminders, with localized English and Arabic content.
+- **Localized reminders:** session alerts before and at start time plus goal-deadline reminders, with localized English and Arabic content delivered through the standalone Notification module.
 - **Profile personalization:** profile photo and personal details, theme and language preferences, scheduling settings, equipped cosmetics, and secure logout with local-data cleanup.
 
 ## Quality and Verification
 
 The repository contains XCTest targets across the architecture packages and the application. Existing suites exercise scheduling rules, dependency ordering, use cases, template resolution, endpoint contracts, DTO decoding, SwiftData data sources, repository coordination, and presentation view models.
 
-The GitHub Actions workflow is configured to run strict SwiftLint checks before an unsigned iOS Simulator build, with Swift Package Manager dependency caching.
+The GitHub Actions CI workflow runs on every push to `main` and `development`:
+
+1. **SwiftLint** — strict lint check with GitHub Actions log reporting.
+2. **Build** — unsigned iOS Simulator build via `xcodebuild`, with Swift Package Manager dependency caching.
+
+Concurrency on the same ref is cancelled automatically.
+
+## Getting Started
+
+### Prerequisites
+
+- Xcode 16 or later
+- iOS 18 Simulator or device
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/Awan-app/Awan-iOS.git
+cd Awan-iOS
+
+# Open the workspace (SPM dependencies resolve automatically)
+open Awan.xcworkspace
+```
+
+> **Note:** The project uses `Secrets.xcconfig` for API keys and Firebase configuration. Obtain the file from a team member before building. `GoogleService-Info.plist` is included in the repository for Firebase initialization.
 
 ## Team
 
 - [Eslam Elnady](https://github.com/EslamElnady0)
-- [Andrew-Magdy-1](https://github.com/Andrew-Magdy-1)
-- [MennaMohamed23](https://github.com/MennaMohamed23)
+- [Andrew Magdy](https://github.com/Andrew-Magdy-1)
+- [Menna Mohamed](https://github.com/MennaMohamed23)
 - [Ahmed Sayed](https://github.com/ahmedSayed321)
