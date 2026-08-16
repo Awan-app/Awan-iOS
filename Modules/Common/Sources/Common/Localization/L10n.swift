@@ -26,6 +26,13 @@ public enum L10n {
     }
 
     public enum Categories {
+        public static var title: String {
+            L10n.currentBundle.localizedString(
+                forKey: "categories.title",
+                value: nil,
+                table: "Localizable"
+            )
+        }
         public static var create: String {
             L10n.currentBundle.localizedString(
                 forKey: "categories.create",
@@ -36,6 +43,41 @@ public enum L10n {
         public static var newName: String {
             L10n.currentBundle.localizedString(
                 forKey: "categories.new_name",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var edit: String {
+            L10n.currentBundle.localizedString(
+                forKey: "categories.edit",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var delete: String {
+            L10n.currentBundle.localizedString(
+                forKey: "categories.delete",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var deleteConfirm: String {
+            L10n.currentBundle.localizedString(
+                forKey: "categories.delete_confirm",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var empty: String {
+            L10n.currentBundle.localizedString(
+                forKey: "categories.empty",
+                value: nil,
+                table: "Localizable"
+            )
+        }
+        public static var save: String {
+            L10n.currentBundle.localizedString(
+                forKey: "categories.save",
                 value: nil,
                 table: "Localizable"
             )

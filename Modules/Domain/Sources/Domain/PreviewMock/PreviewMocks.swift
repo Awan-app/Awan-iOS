@@ -152,6 +152,18 @@ public struct MockCreateCategoryUseCase: CreateCategoryUseCase {
     }
 }
 
+public struct MockUpdateCategoryUseCase: UpdateCategoryUseCase {
+    public init() {}
+    public func execute(id: UUID, name: String) async throws -> TaskCategory {
+        TaskCategory(id: id, name: name)
+    }
+}
+
+public struct MockDeleteCategoryUseCase: DeleteCategoryUseCase {
+    public init() {}
+    public func execute(id: UUID) async throws {}
+}
+
 public struct MockFetchMCPConnectionDetailsUseCase: FetchMCPConnectionDetailsUseCase {
     public init() {}
     public func execute() async throws -> MCPConnectionDetails {
