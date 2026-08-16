@@ -155,6 +155,47 @@ extension ConfirmedGoalScheduleSessionResponseDTO {
     }
 }
 
+extension ConfirmedGoalResponseDTO {
+    func toGoal(createdAt: Date = Date()) throws -> Goal {
+        let deadline: Date?
+        if let targetDate,
+           !targetDate.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            deadline = try GoalDecompositionDateParser.date(targetDate)
+        } else {
+            deadline = nil
+        }
+
+        return Goal(
+            id: id,
+            name: title,
+            description: description,
+            status: try HomeRemoteMapper.goalStatus(status),
+            deadline: deadline,
+            createdAt: createdAt
+        )
+    }
+}
+
+extension ConfirmedGoalTaskResponseDTO {
+    func toTask() throws -> AwanTask {
+        return try AwanTask(
+            id: id,
+            title: title,
+            description: description,
+            status: HomeRemoteMapper.taskStatus(status, completedAt: nil),
+            goalID: goalID,
+            duration: TaskDuration(minutes: max(estimatedDuration, 1)),
+            isSplittable: allowsTaskSplitting,
+            mandatory: mandatory,
+            estimatedPoints: estimatedPoints,
+            dependencyIDs: Set(dependencyIDs),
+            category: category.map {
+                TaskCategory(id: $0.id, name: $0.name)
+            }
+        )
+    }
+}
+
 enum GoalScheduleDateMapper {
     static func date(_ value: String, timeZoneID: String) throws -> Date {
         let formatter = DateFormatter()
@@ -178,7 +219,7 @@ enum GoalScheduleDateMapper {
     }
 }
 
-private enum GoalDecompositionDateParser {
+enum GoalDecompositionDateParser {
     static func date(_ value: String) throws -> Date {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)

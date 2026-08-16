@@ -92,6 +92,14 @@ struct DataAssembly: Assembly {
                 localProfileDataSource: Self.resolve(
                     LocalUserProfileDataSource.self,
                     from: resolver
+                ),
+                localGoalDataSource: Self.resolve(
+                    LocalGoalDataSource.self,
+                    from: resolver
+                ),
+                localTaskDataSource: Self.resolve(
+                    LocalTaskDataSource.self,
+                    from: resolver
                 )
             )
         }

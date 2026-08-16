@@ -10,9 +10,10 @@ public actor SwiftDataTaskDataSource: LocalTaskDataSource {
     public nonisolated func observeTasks() -> AnyPublisher<[AwanTask], Error> {
         changes.publisher()
             .prepend(())
-            .flatMap(maxPublishers: .max(1)) { [self] _ in
+            .map { [self] _ in
                 AsyncValuePublisher.make { try await self.fetchTasks() }
             }
+            .switchToLatest()
             .eraseToAnyPublisher()
     }
 

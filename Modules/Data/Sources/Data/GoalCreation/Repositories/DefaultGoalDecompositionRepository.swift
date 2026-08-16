@@ -4,13 +4,19 @@ import Foundation
 public struct DefaultGoalDecompositionRepository: GoalDecompositionRepository {
     private let remoteDataSource: any RemoteGoalDecompositionDataSource
     private let localProfileDataSource: any LocalUserProfileDataSource
+    private let localGoalDataSource: any LocalGoalDataSource
+    private let localTaskDataSource: any LocalTaskDataSource
 
     public init(
         remoteDataSource: any RemoteGoalDecompositionDataSource,
-        localProfileDataSource: any LocalUserProfileDataSource
+        localProfileDataSource: any LocalUserProfileDataSource,
+        localGoalDataSource: any LocalGoalDataSource,
+        localTaskDataSource: any LocalTaskDataSource
     ) {
         self.remoteDataSource = remoteDataSource
         self.localProfileDataSource = localProfileDataSource
+        self.localGoalDataSource = localGoalDataSource
+        self.localTaskDataSource = localTaskDataSource
     }
 
     public func sendMessage(
@@ -31,6 +37,19 @@ public struct DefaultGoalDecompositionRepository: GoalDecompositionRepository {
         let response = try await remoteDataSource.confirmProposal(
             sessionID: sessionID
         )
+        let existingGoal = try await localGoalDataSource.fetchGoal(id: response.id)
+        let goal = try response.toGoal(
+            createdAt: existingGoal?.createdAt ?? Date()
+        )
+        let tasks = try response.tasks.map { try $0.toTask() }
+
+        if existingGoal == nil {
+            try await localGoalDataSource.addGoal(goal)
+        } else {
+            try await localGoalDataSource.updateGoal(goal)
+        }
+        try await localTaskDataSource.upsertTasks(tasks)
+
         return ConfirmedGoal(
             id: response.id,
             title: response.title,

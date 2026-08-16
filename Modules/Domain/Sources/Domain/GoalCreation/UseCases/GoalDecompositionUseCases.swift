@@ -81,13 +81,8 @@ public struct DefaultConfirmGoalScheduleUseCase: ConfirmGoalScheduleUseCase {
             goalID: goalID,
             sessions: sessions
         )
-        var knownSessionIDs = Set(
-            try await sessionRepository.fetchSessions().map(\.id)
-        )
-
-        for confirmed in confirmedSessions {
-            guard knownSessionIDs.insert(confirmed.id).inserted else { continue }
-            let session = Session(
+        let sessionsToCache = try confirmedSessions.map { confirmed in
+            Session(
                 id: confirmed.id,
                 taskID: confirmed.taskID,
                 zoneID: confirmed.zoneID,
@@ -98,8 +93,8 @@ public struct DefaultConfirmGoalScheduleUseCase: ConfirmGoalScheduleUseCase {
                 blocking: false,
                 status: .planned
             )
-            try await sessionRepository.addSession(session)
         }
+        try await sessionRepository.upsertSessions(sessionsToCache)
 
         return confirmedSessions
     }

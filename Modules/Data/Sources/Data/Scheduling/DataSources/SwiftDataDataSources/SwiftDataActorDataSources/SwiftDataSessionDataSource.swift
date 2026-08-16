@@ -10,9 +10,10 @@ public actor SwiftDataSessionDataSource: LocalSessionDataSource {
     public nonisolated func observeSessions() -> AnyPublisher<[Session], Error> {
         changes.publisher()
             .prepend(())
-            .flatMap(maxPublishers: .max(1)) { [self] _ in
+            .map { [self] _ in
                 AsyncValuePublisher.make { try await self.fetchSessions() }
             }
+            .switchToLatest()
             .eraseToAnyPublisher()
     }
 
@@ -68,6 +69,22 @@ public actor SwiftDataSessionDataSource: LocalSessionDataSource {
             throw SchedulingPersistenceError.duplicateID(session.id)
         }
         modelContext.insert(SessionModel(domain: session))
+        try modelContext.save()
+        changes.send()
+    }
+
+    public func upsertSessions(_ sessions: [Session]) throws {
+        let existing = try modelContext.fetch(FetchDescriptor<SessionModel>())
+        let existingByID = Dictionary(
+            uniqueKeysWithValues: existing.map { ($0.id, $0) }
+        )
+        for session in sessions {
+            if let model = existingByID[session.id] {
+                model.update(from: session)
+            } else {
+                modelContext.insert(SessionModel(domain: session))
+            }
+        }
         try modelContext.save()
         changes.send()
     }

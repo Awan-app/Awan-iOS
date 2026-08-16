@@ -204,7 +204,7 @@ enum HomeRemoteMapper {
     }
 
 
-    private static func taskStatus(
+    static func taskStatus(
         _ raw: String,
         completedAt: String?
     ) throws -> TaskStatus {
@@ -231,7 +231,7 @@ enum HomeRemoteMapper {
         }
     }
 
-    private static func goalStatus(_ raw: String) throws -> GoalStatus {
+    static func goalStatus(_ raw: String) throws -> GoalStatus {
         switch raw.uppercased() {
         case "ACTIVE": .active
         case "COMPLETED": .completed

@@ -159,6 +159,9 @@ public struct DefaultSessionRepository: SessionRepository {
     public func addSession(_ session: Session) async throws {
         try await localDataSource.addSession(session)
     }
+    public func upsertSessions(_ sessions: [Session]) async throws {
+        try await localDataSource.upsertSessions(sessions)
+    }
     public func updateSession(_ session: Session) async throws {
         let timeZoneID = await getTimeZoneID()
         guard let original = try await localDataSource.fetchSessions()

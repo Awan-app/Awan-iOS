@@ -13,6 +13,7 @@ public protocol SessionRepository: Sendable {
         zoneID: UUID?
     ) async throws -> Session
     func addSession(_ session: Session) async throws
+    func upsertSessions(_ sessions: [Session]) async throws
     func updateSession(_ session: Session) async throws
     func deleteSession(id: UUID) async throws
     func deleteSessions(taskID: UUID) async throws
@@ -26,6 +27,17 @@ public protocol SessionRepository: Sendable {
 }
 
 public extension SessionRepository {
+    func upsertSessions(_ sessions: [Session]) async throws {
+        let existingIDs = Set(try await fetchSessions().map(\.id))
+        for session in sessions {
+            if existingIDs.contains(session.id) {
+                try await updateSession(session)
+            } else {
+                try await addSession(session)
+            }
+        }
+    }
+
     func createSession(
         taskID: UUID,
         timeRange: TimeRange,

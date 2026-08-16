@@ -10,9 +10,10 @@ public actor SwiftDataGoalDataSource: LocalGoalDataSource {
     public nonisolated func observeGoals() -> AnyPublisher<[Goal], Error> {
         changes.publisher()
             .prepend(())
-            .flatMap(maxPublishers: .max(1)) { [self] _ in
+            .map { [self] _ in
                 AsyncValuePublisher.make { try await self.fetchGoals() }
             }
+            .switchToLatest()
             .eraseToAnyPublisher()
     }
 

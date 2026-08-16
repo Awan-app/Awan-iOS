@@ -12,6 +12,7 @@ public protocol LocalSessionDataSource: Sendable {
         timeZoneID: String
     ) async throws
     func addSession(_ session: Session) async throws
+    func upsertSessions(_ sessions: [Session]) async throws
     func updateSession(_ session: Session) async throws
     func deleteSession(id: UUID) async throws
     func deleteSessions(taskID: UUID) async throws
