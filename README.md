@@ -95,6 +95,6 @@ The GitHub Actions workflow is configured to run strict SwiftLint checks before 
 ## Team
 
 - [Eslam Elnady](https://github.com/EslamElnady0)
-- Andrew-Magdy-1
+- [Andrew-Magdy-1](https://github.com/Andrew-Magdy-1)
 - [MennaMohamed23](https://github.com/MennaMohamed23)
 - [Ahmed Sayed](https://github.com/ahmedSayed321)
