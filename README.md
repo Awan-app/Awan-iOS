@@ -24,6 +24,15 @@ Awan uses **layer-first Clean Architecture**: features repeat inside shared laye
 | 🌐 **Network** | Alamofire-based transport, endpoint contracts, encoding/decoding, multipart uploads, authentication interception, and token refresh. |
 | 🧩 **Common** | Shared design-system tokens and components, localization, media abstractions, coordinator contracts, and reusable utilities. |
 
+### 🧱 Design Patterns
+
+| Pattern | Role |
+|---|---|
+| 🖼️ **MVVM** | `@Observable @MainActor` view models hold screen state and translate user events into use-case calls. Views remain declarative and render state only. |
+| 🔄 **MVI (Model-View-Intent)** | Complex screens expose a single `send(_ action:)` entry point and one observable state struct, enforcing unidirectional data flow. |
+| 🗺️ **Coordinator + Typed Routes** | Dedicated coordinator objects own navigation stacks and modal state. Typed route enums describe every destination, keeping navigation logic out of views and view models. |
+| 📦 **Repository** | Domain defines the repository protocol; Data provides the implementation. The Presentation layer never touches a concrete data source directly. |
+
 ```mermaid
 flowchart TD
     A(["👤 User Action"]) --> B["🖼️ SwiftUI View\n(Presentation)"]
