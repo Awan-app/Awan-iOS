@@ -5,28 +5,24 @@ struct DailyZonesScreenHeader: View {
     let onBack: () -> Void
 
     var body: some View {
-        ZStack {
+        HStack(spacing: 12) {
+            AppBackButton(
+                accessibilityLabel: L10n.CalendarScreen.back,
+                onTap: onBack
+            )
+
             Text(L10n.Templates.dailyZonesTitle)
                 .font(AppFonts.title3Black)
                 .foregroundStyle(AppColors.textPrimary)
                 .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .layoutPriority(1)
 
-            HStack {
-                AppBackButton(
-                    accessibilityLabel: L10n.CalendarScreen.back,
-                    onTap: onBack
-                )
-
-                Spacer()
-
-                GifImageView("awan-mascot-clock")
-                    .frame(width: 64, height: 64)
-                    .accessibilityHidden(true)
-            }
-            .padding(.horizontal, 24)
+            Spacer(minLength: 0)
         }
-        .frame(height: 64)
+        .padding(.horizontal, 16)
+        .padding(.top, 10)
+        .padding(.bottom, 8)
         .background(AppColors.screenBackground)
-        .zIndex(1)
     }
 }

@@ -115,7 +115,7 @@ private struct GoalAnswerOptionsView: View {
 
                         Spacer(minLength: 8)
 
-                        Image(systemName: "arrow.right")
+                        Image(systemName: "chevron.forward")
                             .font(AppFonts.captionIconBlack)
                             .foregroundStyle(AppColors.accentBlue)
                     }

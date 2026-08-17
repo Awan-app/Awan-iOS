@@ -51,6 +51,17 @@ public final class LocalNotificationService: NotificationScheduling, @unchecked 
                 date: session.timeRange.start,
                 sessionID: session.id
             )
+
+            // Schedule the session end time notification
+            if session.timeRange.end > now {
+                scheduleSessionNotification(
+                    id: "session-end-\(session.id.uuidString)",
+                    title: L10n.Notifications.sessionEndTitle,
+                    body: L10n.Notifications.sessionEndBody(taskTitle),
+                    date: session.timeRange.end,
+                    sessionID: session.id
+                )
+            }
         }
     }
 
@@ -101,13 +112,23 @@ public final class LocalNotificationService: NotificationScheduling, @unchecked 
                     goalID: goal.id
                 )
             }
+
+            // Exact deadline reached
+            scheduleGoalNotification(
+                id: "goal-deadline-\(goal.id.uuidString)",
+                title: L10n.Notifications.goalDeadlineReachedTitle,
+                body: L10n.Notifications.goalDeadlineReachedBody(goal.name),
+                date: deadline,
+                goalID: goal.id
+            )
         }
     }
 
     public func cancelNotifications(for sessionIDs: [UUID]) async {
         let identifiers = sessionIDs.flatMap { [
             "session-start-\($0.uuidString)",
-            "session-now-\($0.uuidString)"
+            "session-now-\($0.uuidString)",
+            "session-end-\($0.uuidString)"
         ] }
         center.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
@@ -116,7 +137,8 @@ public final class LocalNotificationService: NotificationScheduling, @unchecked 
         let identifiers = [
             "goal-7d-\(goalID.uuidString)",
             "goal-1d-\(goalID.uuidString)",
-            "goal-today-\(goalID.uuidString)"
+            "goal-today-\(goalID.uuidString)",
+            "goal-deadline-\(goalID.uuidString)"
         ]
         center.removePendingNotificationRequests(withIdentifiers: identifiers)
     }

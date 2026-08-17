@@ -131,7 +131,7 @@ struct AddInboxTaskSheet: View {
 
                     Spacer(minLength: 8)
 
-                    Image(systemName: "chevron.right")
+                    Image(systemName: "chevron.forward")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(AppColors.textSecondary.opacity(0.4))
                 }

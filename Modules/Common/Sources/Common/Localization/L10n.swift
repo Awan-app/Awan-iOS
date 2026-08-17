@@ -1683,6 +1683,11 @@ public enum L10n {
             String(format: text("notifications.session_now_body"), name)
         }
 
+        public static var sessionEndTitle: String { text("notifications.session_end_title") }
+        public static func sessionEndBody(_ name: String) -> String {
+            String(format: text("notifications.session_end_body"), name)
+        }
+
         public static var goalDeadline7dTitle: String { text("notifications.goal_deadline_7d_title") }
         public static func goalDeadline7dBody(_ name: String) -> String {
             String(format: text("notifications.goal_deadline_7d_body"), name)
@@ -1696,6 +1701,11 @@ public enum L10n {
         public static var goalDeadlineTodayTitle: String { text("notifications.goal_deadline_today_title") }
         public static func goalDeadlineTodayBody(_ name: String) -> String {
             String(format: text("notifications.goal_deadline_today_body"), name)
+        }
+
+        public static var goalDeadlineReachedTitle: String { text("notifications.goal_deadline_reached_title") }
+        public static func goalDeadlineReachedBody(_ name: String) -> String {
+            String(format: text("notifications.goal_deadline_reached_body"), name)
         }
 
         private static func text(_ key: String) -> String {

@@ -6617,6 +6617,74 @@
         }
       }
     },
+    "notifications.session_end_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انتهت الجلسة! 🎉"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session complete! 🎉"
+          }
+        }
+      }
+    },
+    "notifications.session_end_body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أحسنت! انتهت جلسة %@. خذ استراحة أو راجع إنجازك."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Well done! %@ session has ended. Take a break or check your progress."
+          }
+        }
+      }
+    },
+    "notifications.goal_deadline_reached_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انتهى وقت الهدف 🏁"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goal deadline reached 🏁"
+          }
+        }
+      }
+    },
+    "notifications.goal_deadline_reached_body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "وصل موعد الانتهاء لهدف %@. تحقق من تقدمك وما أنجزته!"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The deadline for %@ is here. Check your progress and celebrate your wins!"
+          }
+        }
+      }
+    },
     "onboarding.about_hours" : {
       "extractionState" : "manual",
       "localizations" : {
