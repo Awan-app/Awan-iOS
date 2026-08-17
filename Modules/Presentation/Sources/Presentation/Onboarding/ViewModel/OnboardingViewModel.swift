@@ -337,7 +337,10 @@ public final class OnboardingViewModel: ZoneManaging {
             try await createOnboardingTemplateUseCase.execute(zoneDrafts: zoneDrafts)
 
             return true
-        } catch is CancellationError {
+        }catch OnboardingError.alreadyCompleted {
+            return true
+        }
+        catch is CancellationError {
             return false
         } catch {
             completionErrorMessage = error.localizedDescription

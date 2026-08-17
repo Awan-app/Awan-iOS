@@ -20,7 +20,7 @@ struct OnboardingStepHeader: View {
                 if let onBack {
                     AppButton(
                         title: "",
-                        icon: "arrow.left",
+                        icon: "arrow.backward",
                         color: AppColors.surface,
                         foregroundColor: AppColors.brandDarkBlue,
                         borderColor: AppColors.outline.opacity(0.12),

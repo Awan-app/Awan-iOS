@@ -25,13 +25,17 @@ public final class LanguageManager {
            let savedLanguage = AppLanguage(rawValue: savedValue) {
             self.currentLanguage = savedLanguage
         } else {
-            // Default to device locale or english
             let preferred = Locale.preferredLanguages.first ?? "en"
-            if preferred.starts(with: "ar") {
-                self.currentLanguage = .arabic
-            } else {
-                self.currentLanguage = .english
-            }
+
+            let detectedLanguage: AppLanguage =
+                preferred.starts(with: "ar") ? .arabic : .english
+
+            self.currentLanguage = detectedLanguage
+
+            UserDefaults.standard.set(
+                detectedLanguage.rawValue,
+                forKey: "app_language"
+            )
         }
     }
 }
