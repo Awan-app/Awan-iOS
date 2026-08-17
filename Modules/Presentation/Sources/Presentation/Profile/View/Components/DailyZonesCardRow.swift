@@ -15,7 +15,7 @@ struct DailyZonesCardRow: View {
 
             Spacer(minLength: 4)
 
-            Image(systemName: "chevron.right")
+            Image(systemName: "chevron.forward")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(AppColors.textSecondary)
         }

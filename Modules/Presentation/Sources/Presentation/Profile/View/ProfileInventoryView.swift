@@ -8,6 +8,7 @@ import Domain
 import SwiftUI
 
 public struct ProfileInventoryView: View {
+    @Environment(AppCoordinator.self) private var coordinator
     @State private var viewModel: ProfileInventoryViewModel
 
     private let gridColumns = [
@@ -25,22 +26,32 @@ public struct ProfileInventoryView: View {
         ZStack {
             AppColors.screenBackground.ignoresSafeArea()
 
-            content
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(.visible, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(L10n.Profile.inventory)
-                    .font(AppFonts.titleBlack)
-                    .foregroundStyle(AppColors.brandDarkBlue)
-            }
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    AppBackButton(
+                        accessibilityLabel: L10n.CalendarScreen.back,
+                        onTap: { coordinator.mainCoordinator.pop() }
+                    )
 
-            ToolbarItem(placement: .topBarTrailing) {
-                AwanMascotView(state: .normal)
-                    .frame(width: 42, height: 32)
+                    Text(L10n.Profile.inventory)
+                        .font(AppFonts.title3Black)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .layoutPriority(1)
+
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 8)
+                .background(AppColors.screenBackground)
+
+                content
             }
         }
+        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             viewModel.send(.appeared)
         }

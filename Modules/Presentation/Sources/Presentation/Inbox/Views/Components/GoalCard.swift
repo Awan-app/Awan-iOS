@@ -38,7 +38,7 @@ struct GoalCard: View {
                             if let deadline = goal.deadlineText {
                                 deadlineBadge(deadline)
                             }
-                            Image(systemName: "chevron.right")
+                            Image(systemName: "chevron.forward")
                                 .font(.system(size: 13, weight: .semibold))
                                 .foregroundStyle(AppColors.textSecondary.opacity(0.5))
                         }

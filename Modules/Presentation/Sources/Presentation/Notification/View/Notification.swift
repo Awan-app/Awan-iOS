@@ -71,7 +71,7 @@ struct NotificationView: View {
                     Button(action: { onSkipNotifications() }) {
                         HStack(spacing: 4) {
                             Text(L10n.Onboarding.skipForNow)
-                            Image(systemName: "arrow.right")
+                            Image(systemName: "arrow.forward")
                         }
                         .font(AppFonts.subheadlineHeavy)
                         .foregroundColor(AppColors.accentBlue)

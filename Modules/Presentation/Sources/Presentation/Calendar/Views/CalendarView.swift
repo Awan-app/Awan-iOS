@@ -19,36 +19,38 @@ struct CalendarView: View {
         ZStack {
             AppColors.screenBackground.ignoresSafeArea()
 
-            ScrollView {
-                LazyVStack(spacing: 18) {
-                    header
+            VStack(spacing: 0) {
+                header
 
-                    CalendarMonthView(
-                        month: viewModel.state.displayedMonth,
-                        selectedDate: viewModel.state.selectedDate,
-                        goals: viewModel.state.goals,
-                        activityDays: viewModel.state.activityDays,
-                        navigationDirection: viewModel.state.monthNavigationDirection,
-                        onSelectDate: { date in
-                            viewModel.send(.selectDate(date))
-                            onSelectDate(date)
-                            coordinator.mainCoordinator.pop()
-                        },
-                        onPreviousMonth: {
-                            viewModel.send(.showPreviousMonth)
-                        },
-                        onNextMonth: {
-                            viewModel.send(.showNextMonth)
-                        }
-                    )
+                ScrollView {
+                    LazyVStack(spacing: 18) {
+                        CalendarMonthView(
+                            month: viewModel.state.displayedMonth,
+                            selectedDate: viewModel.state.selectedDate,
+                            goals: viewModel.state.goals,
+                            activityDays: viewModel.state.activityDays,
+                            navigationDirection: viewModel.state.monthNavigationDirection,
+                            onSelectDate: { date in
+                                viewModel.send(.selectDate(date))
+                                onSelectDate(date)
+                                coordinator.mainCoordinator.pop()
+                            },
+                            onPreviousMonth: {
+                                viewModel.send(.showPreviousMonth)
+                            },
+                            onNextMonth: {
+                                viewModel.send(.showNextMonth)
+                            }
+                        )
 
-                    goalsSection
+                        goalsSection
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 28)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .padding(.bottom, 28)
+                .refreshable { viewModel.send(.refresh) }
             }
-            .refreshable { viewModel.send(.refresh) }
 
             if viewModel.state.isLoading {
                 ProgressView()
@@ -91,14 +93,18 @@ struct CalendarView: View {
             )
 
             Text(L10n.Home.calendar)
-                .font(AppFonts.titleBlack)
-                .foregroundStyle(AppColors.brandDarkBlue)
+                .font(AppFonts.title3Black)
+                .foregroundStyle(AppColors.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .layoutPriority(1)
 
-            Spacer()
-
-            AwanMascotView()
-                .frame(width: 58, height: 58)
+            Spacer(minLength: 0)
         }
+        .padding(.horizontal, 16)
+        .padding(.top, 10)
+        .padding(.bottom, 8)
+        .background(AppColors.screenBackground)
     }
 
     @ViewBuilder

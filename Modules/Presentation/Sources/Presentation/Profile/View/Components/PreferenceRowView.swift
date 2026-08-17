@@ -33,7 +33,7 @@ struct PreferenceRowView: View {
                     .foregroundStyle(AppColors.textSecondary)
                     .lineLimit(1)
 
-                Image(systemName: "chevron.right")
+                Image(systemName: "chevron.forward")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(AppColors.textSecondary.opacity(0.6))
             }

@@ -193,7 +193,7 @@ struct AITaskResultSheet: View {
 
                         Spacer()
 
-                        Image(systemName: "arrow.right")
+                        Image(systemName: "arrow.forward")
                             .font(AppFonts.subheadlineBold)
                             .foregroundStyle(AppColors.textSecondary.opacity(0.5))
 
