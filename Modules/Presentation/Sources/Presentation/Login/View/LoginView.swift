@@ -208,18 +208,18 @@ struct LoginView: View {
 
     private var socialSection: some View {
         VStack(spacing: 16) {
-            AppButton(
-                title: L10n.Login.signInWithApple,
-                icon: nil,
-                iconAsset: "apple-icon",
-                color: .black,
-                foregroundColor: .white,
-                onTap: {
-                    triggerHaptic()
-                    viewModel.onAppleSignInTapped()
-                }
-            )
-            .accessibilityLabel(L10n.Login.signInWithApple)
+//            AppButton(
+//                title: L10n.Login.signInWithApple,
+//                icon: nil,
+//                iconAsset: "apple-icon",
+//                color: .black,
+//                foregroundColor: .white,
+//                onTap: {
+//                    triggerHaptic()
+//                    viewModel.onAppleSignInTapped()
+//                }
+//            )
+//            .accessibilityLabel(L10n.Login.signInWithApple)
 
             AppButton(
                 title: L10n.Login.continueWithGoogle,

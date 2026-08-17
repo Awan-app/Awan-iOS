@@ -25,6 +25,7 @@ public final class AuthenticationState {
         observationTask = Task { [observeAuthenticationUseCase] in
             for await user in observeAuthenticationUseCase.execute() {
                 guard !Task.isCancelled else { return }
+                print(user?.isNew)
                 status = user.map(AuthenticationStatus.authenticated) ?? .unauthenticated
             }
         }
