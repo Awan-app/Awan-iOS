@@ -8759,6 +8759,125 @@
         }
       }
     },
+    "profile.open_settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فتح الإعدادات"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        }
+      }
+    },
+    "profile.permission_denied_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يرجى السماح بالإشعارات من إعدادات الجهاز لتلقي التنبيهات والتذكيرات."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please enable notifications in iOS Settings to receive updates and reminders."
+          }
+        }
+      }
+    },
+    "profile.permission_denied_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الإشعارات معطلة"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications Disabled"
+          }
+        }
+      }
+    },
+    "profile.notification_prompt_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يود \"أوان\" إرسال إشعارات إليك"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Awan” Would Like to Send You Notifications"
+          }
+        }
+      }
+    },
+    "profile.notification_prompt_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "قد تتضمن الإشعارات تنبيهات وأصوات وشارات الرموز. يمكن إعداد هذه في الإعدادات."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications may include alerts, sounds, and icon badges. These can be configured in Settings."
+          }
+        }
+      }
+    },
+    "profile.allow" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سماح"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow"
+          }
+        }
+      }
+    },
+    "profile.dont_allow" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عدم السماح"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don’t Allow"
+          }
+        }
+      }
+    },
     "profile.max_streak" : {
       "extractionState" : "manual",
       "localizations" : {
