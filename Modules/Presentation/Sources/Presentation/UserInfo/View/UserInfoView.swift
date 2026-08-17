@@ -19,57 +19,59 @@ public struct UserInfoView: View {
     
     public var body: some View {
         ZStack {
-            VStack(spacing: 24) {
-                
-                Text(L10n.UserInfo.subtitle)
-                .font(.system(size: 16, weight: .medium, design: .rounded))
-                .foregroundColor(AppColors.textSecondary)
-                .padding(.top, 40)
+            AppColors.screenBackground
+                .ignoresSafeArea()
 
-            UserInfoProfilePictureSection(
-                selectedPhotoItem: $selectedPhotoItem,
-                profileImage: $profileImage,
-                viewModel: viewModel
-            )
-            
-            UserInfoPersonalInfoSection(viewModel: viewModel)
-            
-            UserInfoMascotMessageSection(firstName: viewModel.firstName)
-            
-            UserInfoActionButtonsSection(viewModel: viewModel, dismiss: dismiss)
-            
-            Spacer()
-        }
-        .padding(.horizontal, 24)
-        .padding(.top, 24)
-        .padding(.bottom, 40)
-        .background(AppColors.screenBackground.ignoresSafeArea())
-        .preferredColorScheme(appearanceManager.currentAppearance.colorScheme)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.backward")
-                        .font(.body.weight(.semibold))
-                        .foregroundColor(viewModel.isSaving ? AppColors.textSecondary : AppColors.accentBlue)
-                        .environment(\.layoutDirection, languageManager.currentLanguage == .arabic ? .rightToLeft : .leftToRight)
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    AppBackButton(
+                        accessibilityLabel: L10n.CalendarScreen.back,
+                        onTap: { dismiss() }
+                    )
+                    .disabled(viewModel.isSaving)
+
+                    Text(L10n.UserInfo.title)
+                        .font(AppFonts.title3Black)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .layoutPriority(1)
+
+                    Spacer(minLength: 0)
                 }
-                .disabled(viewModel.isSaving)
-            }
-            ToolbarItem(placement: .principal) {
-                Text(L10n.UserInfo.title)
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundColor(AppColors.brandDarkBlue)
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                GifImageView("Animated AWAN mascot")
-                    .frame(width: 65, height: 65)
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 8)
+                .background(AppColors.screenBackground)
+
+                ScrollView {
+                    VStack(spacing: 24) {
+                        Text(L10n.UserInfo.subtitle)
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundColor(AppColors.textSecondary)
+                            .padding(.top, 8)
+
+                        UserInfoProfilePictureSection(
+                            selectedPhotoItem: $selectedPhotoItem,
+                            profileImage: $profileImage,
+                            viewModel: viewModel
+                        )
+
+                        UserInfoPersonalInfoSection(viewModel: viewModel)
+
+                        UserInfoMascotMessageSection(firstName: viewModel.firstName)
+
+                        UserInfoActionButtonsSection(viewModel: viewModel, dismiss: dismiss)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 40)
+                }
             }
         }
+        .preferredColorScheme(appearanceManager.currentAppearance.colorScheme)
+        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
+        .toolbar(.hidden, for: .tabBar)
         .task {
             viewModel.observeUserProfile()
             await viewModel.refreshEquippedFrame()
@@ -127,7 +129,7 @@ public struct UserInfoView: View {
         }
         }
     }
-}
+
 
 #Preview {
     UserInfoView(

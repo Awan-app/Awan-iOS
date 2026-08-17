@@ -3,6 +3,7 @@ import Domain
 import SwiftUI
 
 struct MCPConnectionView: View {
+    @Environment(AppCoordinator.self) private var coordinator
     @Environment(LanguageManager.self) private var languageManager
     @State private var viewModel: MCPConnectionViewModel
 
@@ -15,29 +16,50 @@ struct MCPConnectionView: View {
             AppColors.screenBackground
                 .ignoresSafeArea()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 18) {
-                    Text(L10n.Profile.mcpSubtitle)
-                        .font(AppFonts.bodySemibold)
-                        .foregroundStyle(AppColors.textSecondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    AppBackButton(
+                        accessibilityLabel: L10n.CalendarScreen.back,
+                        onTap: { coordinator.mainCoordinator.pop() }
+                    )
 
-                    MCPConnectionContent(state: viewModel.state) {
-                        Task { await viewModel.load() }
-                    }
+                    Text(L10n.Profile.mcpIntegration)
+                        .font(AppFonts.title3Black)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .layoutPriority(1)
+
+                    Spacer(minLength: 0)
                 }
-                .id(languageManager.currentLanguage)
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 40)
-            }
-            .refreshable {
-                await viewModel.load()
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 8)
+                .background(AppColors.screenBackground)
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 18) {
+                        Text(L10n.Profile.mcpSubtitle)
+                            .font(AppFonts.bodySemibold)
+                            .foregroundStyle(AppColors.textSecondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        MCPConnectionContent(state: viewModel.state) {
+                            Task { await viewModel.load() }
+                        }
+                    }
+                    .id(languageManager.currentLanguage)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .padding(.bottom, 40)
+                }
+                .refreshable {
+                    await viewModel.load()
+                }
             }
         }
-        .navigationTitle(L10n.Profile.mcpIntegration)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(.visible, for: .navigationBar)
+        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             if viewModel.state == .idle {
                 await viewModel.load()

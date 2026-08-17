@@ -18,19 +18,12 @@ struct OnboardingStepHeader: View {
         VStack(spacing: 12) {
             HStack {
                 if let onBack {
-                    AppButton(
-                        title: "",
-                        icon: "arrow.backward",
-                        color: AppColors.surface,
-                        foregroundColor: AppColors.brandDarkBlue,
-                        borderColor: AppColors.outline.opacity(0.12),
-                        size: .compact,
-                        expandsHorizontally: false,
-                        useGradient: false,
-                        onTap: { onBack() }
+                    AppBackButton(
+                        accessibilityLabel: L10n.CalendarScreen.back,
+                        onTap: onBack
                     )
                 } else {
-                    Color.clear.frame(width: 44, height: 44)
+                    Color.clear.frame(width: 40, height: 40)
                 }
                 
                 Spacer()
@@ -55,4 +48,3 @@ struct OnboardingStepHeader: View {
     OnboardingStepHeader(currentStep: 1, totalSteps: 4, onSkip: {}, onBack: {})
         .padding()
 }
-

@@ -16,6 +16,7 @@ struct OtpVerificationView: View {
     @FocusState private var isOtpFocused: Bool
 
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(AppCoordinator.self) private var appCoordinator
 
     init(viewModel: OtpVerificationViewModel) {
         self.viewModel = viewModel
@@ -41,9 +42,20 @@ struct OtpVerificationView: View {
             .ignoresSafeArea()
 
             VStack(spacing: 0) {
+                // Back button header
+                HStack(spacing: 12) {
+                    AppBackButton(
+                        accessibilityLabel: L10n.CalendarScreen.back,
+                        onTap: { appCoordinator.authCoordinator.pop() }
+                    )
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 8)
 
                 Spacer()
-                    .frame(height: 48)
+                    .frame(height: 16)
 
                 AuthCloudLogoView()
                     .padding(.bottom, 24)
@@ -137,6 +149,8 @@ struct OtpVerificationView: View {
                 isOtpFocused = true
             }
         }
+        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .onChange(of: viewModel.state) { _, newState in
             if newState == .success {
                 isOtpFocused = false

@@ -1210,6 +1210,13 @@ public enum L10n {
         public static var copyMcpServerURL: String { text("profile.copy_mcp_server_url") }
         public static var copyOAuthClientID: String { text("profile.copy_oauth_client_id") }
         public static var failedLoadMcpConnection: String { text("profile.failed_load_mcp_connection") }
+        public static var openSettings: String { text("profile.open_settings") }
+        public static var permissionDeniedTitle: String { text("profile.permission_denied_title") }
+        public static var permissionDeniedMessage: String { text("profile.permission_denied_message") }
+        public static var notificationPromptTitle: String { text("profile.notification_prompt_title") }
+        public static var notificationPromptMessage: String { text("profile.notification_prompt_message") }
+        public static var allow: String { text("profile.allow") }
+        public static var dontAllow: String { text("profile.dont_allow") }
 
         private static func text(_ key: String) -> String {
             L10n.currentBundle.localizedString(forKey: key, value: nil, table: "Localizable")

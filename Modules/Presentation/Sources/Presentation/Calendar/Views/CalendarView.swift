@@ -85,16 +85,10 @@ struct CalendarView: View {
 
     private var header: some View {
         HStack(spacing: 12) {
-            Button {
-                coordinator.mainCoordinator.pop()
-            } label: {
-                Image(systemName: "chevron.backward")
-                    .font(AppFonts.subheadlineBlack)
-                    .foregroundStyle(AppColors.accentBlue)
-                    .frame(width: 42, height: 42)
-            }
-            .buttonStyle(AppDepthButtonStyle())
-            .accessibilityLabel(L10n.CalendarScreen.back)
+            AppBackButton(
+                accessibilityLabel: L10n.CalendarScreen.back,
+                onTap: { coordinator.mainCoordinator.pop() }
+            )
 
             Text(L10n.Home.calendar)
                 .font(AppFonts.titleBlack)

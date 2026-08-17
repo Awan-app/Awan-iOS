@@ -2,6 +2,7 @@ import Common
 import SwiftUI
 
 struct AboutAwanView: View {
+    @Environment(AppCoordinator.self) private var coordinator
     private let version: String
     private let build: String
 
@@ -19,49 +20,70 @@ struct AboutAwanView: View {
             AppColors.screenBackground
                 .ignoresSafeArea()
 
-            ScrollView {
-                AppDepthSurface(
-                    surfaceColor: AppColors.infoSurface,
-                    borderColor: AppColors.accentBlue.opacity(0.28),
-                    depthColor: AppColors.accentBlueDepth.opacity(0.34)
-                ) {
-                    VStack(spacing: 20) {
-                        AwanMascotView()
-                            .frame(width: 132, height: 132)
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    AppBackButton(
+                        accessibilityLabel: L10n.CalendarScreen.back,
+                        onTap: { coordinator.mainCoordinator.pop() }
+                    )
 
-                        Text(L10n.Onboarding.welcomeTitle)
-                            .font(AppFonts.titleBlack)
-                            .foregroundStyle(AppColors.brandDarkBlue)
-                            .multilineTextAlignment(.center)
+                    Text(L10n.Profile.aboutAwan)
+                        .font(AppFonts.title3Black)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .layoutPriority(1)
 
-                        Text(L10n.Onboarding.welcomeSubtitle)
-                            .font(AppFonts.bodySemibold)
-                            .foregroundStyle(AppColors.textSecondary)
-                            .multilineTextAlignment(.center)
-
-                        Rectangle()
-                            .fill(AppColors.divider)
-                            .frame(height: 1)
-
-                        HStack(spacing: 20) {
-                            versionItem(
-                                title: L10n.Profile.version,
-                                value: version
-                            )
-                            versionItem(
-                                title: L10n.Profile.build,
-                                value: build
-                            )
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
+                    Spacer(minLength: 0)
                 }
-                .padding(24)
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 8)
+                .background(AppColors.screenBackground)
+
+                ScrollView {
+                    AppDepthSurface(
+                        surfaceColor: AppColors.infoSurface,
+                        borderColor: AppColors.accentBlue.opacity(0.28),
+                        depthColor: AppColors.accentBlueDepth.opacity(0.34)
+                    ) {
+                        VStack(spacing: 20) {
+                            AwanMascotView()
+                                .frame(width: 132, height: 132)
+
+                            Text(L10n.Onboarding.welcomeTitle)
+                                .font(AppFonts.titleBlack)
+                                .foregroundStyle(AppColors.brandDarkBlue)
+                                .multilineTextAlignment(.center)
+
+                            Text(L10n.Onboarding.welcomeSubtitle)
+                                .font(AppFonts.bodySemibold)
+                                .foregroundStyle(AppColors.textSecondary)
+                                .multilineTextAlignment(.center)
+
+                            Rectangle()
+                                .fill(AppColors.divider)
+                                .frame(height: 1)
+
+                            HStack(spacing: 20) {
+                                versionItem(
+                                    title: L10n.Profile.version,
+                                    value: version
+                                )
+                                versionItem(
+                                    title: L10n.Profile.build,
+                                    value: build
+                                )
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .padding(24)
+                }
             }
         }
-        .navigationTitle(L10n.Profile.aboutAwan)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(.visible, for: .navigationBar)
+        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
     }
 
     private func versionItem(title: String, value: String) -> some View {
