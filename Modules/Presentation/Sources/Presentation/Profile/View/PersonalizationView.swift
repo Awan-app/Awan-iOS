@@ -20,11 +20,32 @@ struct PersonalizationView: View {
             AppColors.screenBackground
                 .ignoresSafeArea()
 
-            content
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    AppBackButton(
+                        accessibilityLabel: L10n.CalendarScreen.back,
+                        onTap: { coordinator.mainCoordinator.pop() }
+                    )
+
+                    Text(L10n.Profile.personalization)
+                        .font(AppFonts.title3Black)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .layoutPriority(1)
+
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 8)
+                .background(AppColors.screenBackground)
+
+                content
+            }
         }
-        .navigationTitle(L10n.Profile.personalization)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(.visible, for: .navigationBar)
+        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .sheet(isPresented: $isSessionTimeSheetPresented) {
             SessionTimeSheet(
                 initialDuration: viewModel.sessionTime > 0 ? viewModel.sessionTime : 60,
