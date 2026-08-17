@@ -442,6 +442,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SupportingFiles/Info.plist;
 				INFOPLIST_KEY_NSAppTransportSecurity = "<dict><key>NSAllowsArbitraryLoads</key><true/></dict>";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera so you can take a photo.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Awan uses the microphone to turn your spoken task into text.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Awan uses speech recognition to transcribe your spoken task.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -475,6 +476,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SupportingFiles/Info.plist;
 				INFOPLIST_KEY_NSAppTransportSecurity = "<dict><key>NSAllowsArbitraryLoads</key><true/></dict>";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera so you can take a photo.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Awan uses the microphone to turn your spoken task into text.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Awan uses speech recognition to transcribe your spoken task.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
