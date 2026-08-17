@@ -94,34 +94,38 @@ public struct CategoriesManagementView: View {
     }
 
     private var contentList: some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                ForEach(viewModel.categories) { category in
-                    CategoryManagementRow(
-                        category: category,
-                        onEdit: {
-                            viewModel.editingCategory = category
-                        },
-                        onDelete: {
-                            viewModel.promptDelete(category: category)
-                        }
-                    )
-                }
-
-                AppButton(
-                    title: L10n.Categories.create,
-                    icon: "plus.circle.fill",
-                    color: AppColors.accentBlue,
-                    foregroundColor: AppColors.onAccent,
-                    onTap: {
-                        viewModel.isCreateSheetPresented = true
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 12) {
+                    ForEach(viewModel.categories) { category in
+                        CategoryManagementRow(
+                            category: category,
+                            onEdit: {
+                                viewModel.editingCategory = category
+                            },
+                            onDelete: {
+                                viewModel.promptDelete(category: category)
+                            }
+                        )
                     }
-                )
-                .padding(.top, 8)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .padding(.bottom, 16)
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 16)
-            .padding(.bottom, 40)
+
+            AppButton(
+                title: L10n.Categories.create,
+                icon: "plus.circle.fill",
+                color: AppColors.accentBlue,
+                foregroundColor: AppColors.onAccent,
+                onTap: {
+                    viewModel.isCreateSheetPresented = true
+                }
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 28)
         }
     }
 }

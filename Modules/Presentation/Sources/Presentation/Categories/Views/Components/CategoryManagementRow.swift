@@ -10,7 +10,7 @@ struct CategoryManagementRow: View {
     var body: some View {
         AppDepthSurface(
             shape: .roundedRectangle(cornerRadius: 16),
-            contentInsets: EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 16)
+            contentInsets: EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14)
         ) {
             HStack(spacing: 12) {
                 Circle()

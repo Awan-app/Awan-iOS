@@ -43,7 +43,8 @@ struct GoalDetailTaskRow: View {
 
             Rectangle()
                 .fill(AppColors.outline.opacity(0.18))
-                .frame(width: 1.5, height: 10)
+                .frame(width: 1.5, height: 6)
+                .frame(width: 32, alignment: .center)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.leading, 12)
@@ -52,9 +53,10 @@ struct GoalDetailTaskRow: View {
     private var bottomConnector: some View {
         Rectangle()
             .fill(AppColors.outline.opacity(0.18))
-            .frame(width: 1.5, height: 12)
+            .frame(width: 1.5, height: 16)
+            .frame(width: 32, alignment: .center)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, 27.25)
+            .padding(.leading, 12)
     }
 
     private var stepCircle: some View {

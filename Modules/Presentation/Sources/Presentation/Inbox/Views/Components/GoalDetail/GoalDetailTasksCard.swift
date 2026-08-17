@@ -65,7 +65,7 @@ struct GoalDetailTasksCard: View {
     // MARK: - Sub-views
 
     private var taskRoadmap: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 0) {
             ForEach(Array(tasks.enumerated()), id: \.element.id) { listIndex, item in
                 GoalDetailTaskRow(
                     item: item,
@@ -145,31 +145,42 @@ struct GoalDetailTasksCard: View {
     }
 
     private func addTaskButton(_ action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(alignment: .center, spacing: 12) {
-                ZStack {
-                    Circle()
-                        .fill(AppColors.accentBlue.opacity(0.14))
-                        .frame(width: 28, height: 28)
-                        .overlay {
-                            Circle()
-                                .stroke(AppColors.accentBlue.opacity(0.45), lineWidth: 1.5)
-                        }
+        VStack(spacing: 0) {
+            // Top connector line from last task's bottomConnector
+            Rectangle()
+                .fill(AppColors.outline.opacity(0.18))
+                .frame(width: 1.5, height: 6)
+                .frame(width: 32, alignment: .center)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, 12)
 
-                    Image(systemName: "plus")
-                        .font(.system(size: 11, weight: .black))
+            Button(action: action) {
+                HStack(alignment: .center, spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(AppColors.accentBlue.opacity(0.14))
+                            .frame(width: 28, height: 28)
+                            .overlay {
+                                Circle()
+                                    .stroke(AppColors.accentBlue.opacity(0.45), lineWidth: 1.5)
+                            }
+
+                        Image(systemName: "plus")
+                            .font(.system(size: 11, weight: .black))
+                            .foregroundStyle(AppColors.accentBlue)
+                    }
+                    .frame(width: 32, height: 28)
+
+                    Text(L10n.Home.addTask)
+                        .font(AppFonts.subheadlineBold)
                         .foregroundStyle(AppColors.accentBlue)
+
+                    Spacer()
                 }
-                .frame(width: 32, height: 28)
-
-                Text(L10n.Home.addTask)
-                    .font(AppFonts.subheadlineBold)
-                    .foregroundStyle(AppColors.accentBlue)
-
-                Spacer()
+                .padding(.leading, 12)
+                .contentShape(Rectangle())
             }
-            .contentShape(Rectangle())
+            .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
     }
 }
