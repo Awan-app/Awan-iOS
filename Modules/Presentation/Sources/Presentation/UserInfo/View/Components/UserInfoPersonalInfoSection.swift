@@ -42,36 +42,6 @@ struct UserInfoPersonalInfoSection: View {
                             .foregroundColor(AppColors.textSecondary)
                     }
                     .padding(.vertical, 16)
-                    
-                    Divider().padding(.leading, 120)
-                    
-                    // Date of Birth
-                    HStack {
-                        Text(L10n.UserInfo.dateOfBirth)
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
-                            .foregroundColor(AppColors.brandDarkBlue)
-                            .frame(width: 100, alignment: .leading)
-                        
-                        Text(viewModel.dateOfBirth.formatted(.dateTime.day().month(.wide).year()))
-                            .font(.system(size: 16, weight: .medium, design: .rounded))
-                            .foregroundColor(AppColors.textSecondary)
-                            .overlay(
-                                DatePicker(
-                                    "",
-                                    selection: $viewModel.dateOfBirth,
-                                    displayedComponents: .date
-                                )
-                                .labelsHidden()
-                                .colorMultiply(.clear)
-                            )
-                        
-                        Spacer()
-                        
-                        Image(systemName: "calendar")
-                            .font(.title2)
-                            .foregroundColor(AppColors.accentBlue)
-                    }
-                    .padding(.vertical, 16)
                 }
             }
         }

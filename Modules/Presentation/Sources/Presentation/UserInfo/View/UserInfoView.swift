@@ -67,49 +67,42 @@ public struct UserInfoView: View {
                     .padding(.bottom, 40)
                 }
             }
-        }
-        .preferredColorScheme(appearanceManager.currentAppearance.colorScheme)
-        .navigationBarHidden(true)
-        .toolbar(.hidden, for: .navigationBar)
-        .toolbar(.hidden, for: .tabBar)
-        .task {
-            viewModel.observeUserProfile()
-            await viewModel.refreshEquippedFrame()
-        }
-        
-        // MARK: - Full-screen loading overlay
-        if viewModel.isSaving {
-            Color.black.opacity(0.3)
-                .ignoresSafeArea()
-                .allowsHitTesting(true)
-                .overlay {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .tint(.white)
-                        .scaleEffect(1.5)
-                        .padding(24)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-                }
-                .transition(.opacity)
-                .zIndex(2)
-        }
-        
-        // MARK: - Toast overlay
-        if viewModel.showToast, let message = viewModel.toastMessage {
-            VStack {
-                Spacer()
-                HStack(spacing: 8) {
-                    Image(systemName: viewModel.toastIsSuccess ? "checkmark.circle.fill" : "xmark.circle.fill")
-                        .font(.system(size: 16, weight: .semibold))
-                    Text(message)
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
-                }
+
+            // MARK: - Full-screen loading overlay
+            if viewModel.isSaving {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(true)
+                    .overlay {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .tint(.white)
+                            .scaleEffect(1.5)
+                            .padding(24)
+                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                    }
+                    .transition(.opacity)
+                    .zIndex(2)
+            }
+
+            // MARK: - Toast overlay
+            if viewModel.showToast, let message = viewModel.toastMessage {
+                VStack {
+                    Spacer()
+                    HStack(spacing: 8) {
+                        Image(systemName: viewModel.toastIsSuccess ? "checkmark.circle.fill" : "xmark.circle.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                        Text(message)
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .lineLimit(2)
+                    }
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .background(viewModel.toastIsSuccess ? AppColors.accentGreen : Color.red)
                     .cornerRadius(8)
                     .shadow(radius: 4)
+                    .padding(.horizontal, 24)
                     .padding(.bottom, 24)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .onAppear {
@@ -124,11 +117,20 @@ public struct UserInfoView: View {
                             }
                         }
                     }
+                }
+                .zIndex(3)
             }
-            .zIndex(3)
         }
+        .preferredColorScheme(appearanceManager.currentAppearance.colorScheme)
+        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
+        .toolbar(.hidden, for: .tabBar)
+        .task {
+            viewModel.observeUserProfile()
+            await viewModel.refreshEquippedFrame()
         }
     }
+}
 
 
 #Preview {

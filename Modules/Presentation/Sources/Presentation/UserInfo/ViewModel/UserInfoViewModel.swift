@@ -10,9 +10,6 @@ public final class UserInfoViewModel {
     public var firstName = ""
     public var lastName = ""
     public var email = ""
-    public var dateOfBirth = Calendar.current.date(
-        from: DateComponents(year: 2000, month: 7, day: 21)
-    ) ?? Date()
     public var profileImageData: Data?
     public var profileImageMimeType: String?
     public var profileImageFileName: String?
@@ -67,13 +64,10 @@ public final class UserInfoViewModel {
         defer { isSaving = false }
 
         do {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd"
-
             try await updateUserProfileUseCase.execute(
                 firstName: firstName,
                 lastName: lastName,
-                birthDate: dateFormatter.string(from: dateOfBirth)
+                birthDate: nil
             )
 
             if let imageData = profileImageData,
@@ -114,13 +108,6 @@ public final class UserInfoViewModel {
         lastName = profile.lastName
         email = profile.email
         profilePictureUrl = profile.profilePictureUrl
-
-        let components = DateComponents(
-            year: profile.birthDate.year,
-            month: profile.birthDate.month,
-            day: profile.birthDate.day
-        )
-        dateOfBirth = Calendar.current.date(from: components) ?? dateOfBirth
     }
 
     private func observeEquippedItems() {
