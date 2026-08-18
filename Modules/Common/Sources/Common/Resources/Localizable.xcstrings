@@ -10252,13 +10252,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اختر متى يتكرر هذا القالب"
+            "value" : "اختر متى يتكرر هذا الروتين"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose when this template repeats"
+            "value" : "Choose when this routine repeats"
           }
         }
       }
@@ -10371,13 +10371,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "هذه الأيام مستخدمة بالفعل في %@. عدّل القالب الآخر أولًا."
+            "value" : "هذه الأيام مستخدمة بالفعل في %@. عدّل الروتين الآخر أولًا."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Those days already belong to %@. Edit the other template first."
+            "value" : "Those days already belong to %@. Edit the other routine first."
           }
         }
       }
@@ -10422,13 +10422,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إنشاء قالب"
+            "value" : "إنشاء روتين"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create template"
+            "value" : "Create routine"
           }
         }
       }
@@ -10542,13 +10542,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "يوم واحد أو أكثر ينتمي الآن إلى قالب آخر."
+            "value" : "يوم واحد أو أكثر ينتمي الآن إلى روتين آخر."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "One or more days now belong to another template."
+            "value" : "One or more days now belong to another routine."
           }
         }
       }
@@ -10576,13 +10576,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حذف القالب"
+            "value" : "حذف الروتين"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete template"
+            "value" : "Delete routine"
           }
         }
       }
@@ -10610,13 +10610,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سيؤدي هذا أيضًا إلى حذف جميع الفترات في القالب نهائيًا."
+            "value" : "سيؤدي هذا أيضًا إلى حذف جميع الفترات في الروتين نهائيًا."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This also permanently deletes every zone in the template."
+            "value" : "This also permanently deletes every zone in the routine."
           }
         }
       }
@@ -10729,13 +10729,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تعديل القالب"
+            "value" : "تعديل الروتين"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Edit template"
+            "value" : "Edit routine"
           }
         }
       }
@@ -10763,13 +10763,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "يوم واحد أو أكثر من أيام الأسبوع ينتمي إلى قالب آخر."
+            "value" : "يوم واحد أو أكثر من أيام الأسبوع ينتمي إلى روتين آخر."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "One or more weekdays belong to another template."
+            "value" : "One or more weekdays belong to another routine."
           }
         }
       }
@@ -10848,13 +10848,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "هذا التاريخ يتبع القالب الأسبوعي حاليًا."
+            "value" : "هذا التاريخ يتبع الروتين الأسبوعي حاليًا."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This date currently follows its weekly template."
+            "value" : "This date currently follows its weekly routine."
           }
         }
       }
@@ -10865,13 +10865,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "يمكن اختيار الأيام غير المستخدمة في قالب آخر فقط."
+            "value" : "يمكن اختيار الأيام غير المستخدمة في روتين آخر فقط."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Only days not used by another template can be selected."
+            "value" : "Only days not used by another routine can be selected."
           }
         }
       }
@@ -10950,13 +10950,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "كل أيام الأسبوع مستخدمة. عدّل قالبًا آخر لتحرير يوم."
+            "value" : "كل أيام الأسبوع مستخدمة. عدّل روتينًا آخر لتحرير يوم."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "All weekdays are assigned. Edit another template to free a day."
+            "value" : "All weekdays are assigned. Edit another routine to free a day."
           }
         }
       }
@@ -10967,13 +10967,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "لا يوجد قالب أسبوعي لهذا التاريخ. أنشئ استثناءً لإضافة فترات."
+            "value" : "لا يوجد روتين أسبوعي لهذا التاريخ. أنشئ استثناءً لإضافة فترات."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No weekly template covers this date. Create an override to add zones."
+            "value" : "No weekly routine covers this date. Create an override to add zones."
           }
         }
       }
@@ -10984,13 +10984,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "لا توجد قوالب أسبوعية"
+            "value" : "لا توجد روتينات أسبوعية"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No weekly templates"
+            "value" : "No weekly routines"
           }
         }
       }
@@ -11001,13 +11001,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "أنشئ قالبًا وحدد أيام الأسبوع التي يديرها."
+            "value" : "أنشئ روتينًا وحدد أيام الأسبوع التي يديرها."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create a template and assign the weekdays it should manage."
+            "value" : "Create a routine and assign the weekdays it should manage."
           }
         }
       }
@@ -11239,13 +11239,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حفظ القالب"
+            "value" : "حفظ الروتين"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save template"
+            "value" : "Save routine"
           }
         }
       }
@@ -11256,13 +11256,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حفظ تفاصيل القالب"
+            "value" : "حفظ تفاصيل الروتين"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save template details"
+            "value" : "Save routine details"
           }
         }
       }
@@ -11290,13 +11290,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "القوالب"
+            "value" : "الروتينات"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Templates"
+            "value" : "Routines"
           }
         }
       }
@@ -11341,13 +11341,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "اسم القالب"
+            "value" : "اسم الروتين"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Template name"
+            "value" : "Routine name"
           }
         }
       }
@@ -11511,13 +11511,13 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "قالب أسبوعي"
+            "value" : "روتين أسبوعي"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weekly template"
+            "value" : "Weekly routine"
           }
         }
       }
